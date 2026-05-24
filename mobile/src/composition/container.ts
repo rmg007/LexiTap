@@ -4,9 +4,9 @@ import {
   SQLiteContentTierRepository,
   SQLiteUserProgressRepository,
   SQLiteQuizSessionRepository,
-  SQLiteQuizAttemptRepository,
   SQLiteEntitlementRepository,
   SQLiteUserStatsRepository,
+  SQLiteAnswerWriter,
 } from '@/infrastructure/db';
 import { AsyncStorageAdapter } from '@/infrastructure/storage';
 import { createSupabaseClient } from '@/infrastructure/sync/supabaseClient';
@@ -22,6 +22,7 @@ import { CheckAccessUseCase } from '@/application/tier/CheckAccessUseCase';
 import { UnlockTierUseCase } from '@/application/tier/UnlockTierUseCase';
 import { SyncProgressUseCase } from '@/application/user/SyncProgressUseCase';
 import type { SyncService } from '@/application/user/SyncService';
+import { RunDiagnosticUseCase } from '@/application/onboarding/RunDiagnosticUseCase';
 
 import { tierConfigProvider } from '@/config/tierConfigProvider';
 import type { Services, ReadQueries } from '@/presentation/services';
@@ -100,7 +101,7 @@ export async function createContainer(): Promise<Container> {
   const tiers = new SQLiteContentTierRepository(db);
   const progress = new SQLiteUserProgressRepository(db);
   const sessions = new SQLiteQuizSessionRepository(db);
-  const attempts = new SQLiteQuizAttemptRepository(db);
+  const answerWriter = new SQLiteAnswerWriter(db);
   const entitlements = new SQLiteEntitlementRepository(db);
   const stats = new SQLiteUserStatsRepository(db);
 
@@ -113,10 +114,15 @@ export async function createContainer(): Promise<Container> {
 
   const services: Services = {
     startQuiz: new StartQuizUseCase(words, progress, sessions),
-    answerQuestion: new AnswerQuestionUseCase(attempts, progress, v1FixedScheduler),
+    answerQuestion: new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler),
     checkAccess: new CheckAccessUseCase(entitlements, tierConfigProvider),
     unlockTier: new UnlockTierUseCase(entitlements, tierConfigProvider),
     syncProgress: new SyncProgressUseCase(sync),
+    runDiagnostic: new RunDiagnosticUseCase(words, progress, v1FixedScheduler),
+    onboarding: {
+      isComplete: () => storage.isOnboardingComplete(),
+      markComplete: () => storage.setOnboardingComplete(),
+    },
     queries: buildReadQueries(words, progress, stats),
   };
 

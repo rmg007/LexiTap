@@ -4,3 +4,4 @@ export { QuizScreen, type QuizScreenProps } from '@/presentation/screens/QuizScr
 export { ProgressScreen } from '@/presentation/screens/ProgressScreen';
 export { SettingsScreen } from '@/presentation/screens/SettingsScreen';
 export { buildQuestion, type BuiltQuestion, type BuildQuestionInput } from '@/presentation/screens/quizQuestion';
+export { OnboardingDiagnosticScreen, type OnboardingDiagnosticScreenProps } from '@/presentation/screens/onboarding';

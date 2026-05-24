@@ -1,7 +1,7 @@
 import type { WordId } from '@/domain/vocabulary/ids';
 import type { UserProgress, MasteryLevel } from '@/domain/user/UserProgress';
 import type { UserProgressRepository } from '@/domain/user/UserProgressRepository';
-import type { QuizAttemptRepository } from '@/domain/quiz/repositories';
+import type { AnswerWriter } from '@/domain/quiz/AnswerWriter';
 import type { AssessmentType, QuizResult, QuizSession } from '@/domain/quiz/types';
 import type { Scheduler } from '@/domain/srs/Scheduler';
 import { advanceSession, currentWord } from '@/domain/quiz/QuizSession';
@@ -30,7 +30,7 @@ export interface AnswerQuestionOutput {
 
 export class AnswerQuestionUseCase {
   constructor(
-    private readonly attempts: QuizAttemptRepository,
+    private readonly answerWriter: AnswerWriter,
     private readonly progress: UserProgressRepository,
     private readonly scheduler: Scheduler,
   ) {}
@@ -50,22 +50,7 @@ export class AnswerQuestionUseCase {
     // Compute next SRS state via the version-tagged scheduler.
     const next = this.scheduler.next({ masteryLevel: preMastery, isCorrect, now: nowMs });
 
-    // 1. Append the immutable attempt (replay-complete: pre-mastery + schedule).
-    await this.attempts.append({
-      sessionId: session.id,
-      wordId,
-      assessmentType: input.assessmentType,
-      userAnswer: input.userAnswer,
-      correctAnswer: input.correctAnswer,
-      isCorrect,
-      answeredAt: nowMs,
-      timeToAnswerMs: input.timeToAnswerMs,
-      preMasteryLevel: preMastery,
-      scheduledReviewDate: next.nextReviewDate,
-      schedulerVersion: this.scheduler.version,
-    });
-
-    // 2. Update progress (mutable SRS state).
+    // Updated progress (mutable SRS state).
     const updated: UserProgress = {
       wordId,
       masteryLevel: next.masteryLevel,
@@ -77,9 +62,40 @@ export class AnswerQuestionUseCase {
       firstSeenAt: existing?.firstSeenAt ?? nowMs,
       schedulerVersion: this.scheduler.version,
     };
-    await this.progress.upsert(updated);
 
-    // 3. Advance the session.
+    // Atomically persist: append-only attempt + mutable progress + append-only
+    // event_log audit row. All-or-nothing so replay/audit never diverges from
+    // hot SRS state (DATABASE_SCHEMA.md / SYSTEM_ARCHITECTURE.md).
+    await this.answerWriter.write({
+      attempt: {
+        sessionId: session.id,
+        wordId,
+        assessmentType: input.assessmentType,
+        userAnswer: input.userAnswer,
+        correctAnswer: input.correctAnswer,
+        isCorrect,
+        answeredAt: nowMs,
+        timeToAnswerMs: input.timeToAnswerMs,
+        preMasteryLevel: preMastery,
+        scheduledReviewDate: next.nextReviewDate,
+        schedulerVersion: this.scheduler.version,
+      },
+      progress: updated,
+      event: {
+        eventType: 'answer_recorded',
+        payload: JSON.stringify({
+          wordId,
+          sessionId: session.id,
+          assessmentType: input.assessmentType,
+          isCorrect,
+          preMastery,
+          postMastery: next.masteryLevel,
+        }),
+        occurredAt: nowMs,
+      },
+    });
+
+    // Advance the session.
     const advanced = advanceSession(session, isCorrect);
 
     return {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider } from '@/presentation/theme';
@@ -30,6 +30,24 @@ export default function RootLayout(): React.JSX.Element {
       cancelled = true;
     };
   }, []);
+
+  // First-run gate: once services resolve, send a brand-new user (no completion
+  // flag yet) into the onboarding diagnostic before the tabs mount.
+  useEffect(() => {
+    if (services === null) return;
+    let cancelled = false;
+    services.onboarding
+      .isComplete()
+      .then((done) => {
+        if (!cancelled && !done) router.replace('/onboarding');
+      })
+      .catch((error) => {
+        logger.warn('Onboarding gate check failed; skipping', { error: String(error) });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [services]);
 
   return (
     <SafeAreaProvider>

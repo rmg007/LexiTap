@@ -14,6 +14,7 @@ const KEYS = {
   timezone: 'lexitap.timezone',
   syncCursor: 'lexitap.sync.cursor',
   forgivenessConfigVersion: 'lexitap.forgiveness.config.version',
+  onboardingComplete: 'lexitap.onboarding.completed',
 } as const;
 
 export class AsyncStorageAdapter {
@@ -49,5 +50,16 @@ export class AsyncStorageAdapter {
 
   async setForgivenessConfigVersion(version: string): Promise<void> {
     await AsyncStorage.setItem(KEYS.forgivenessConfigVersion, version);
+  }
+
+  // First-run onboarding gate. True once the user has completed (or skipped
+  // through) the diagnostic, so the gate never re-shows it. This is a UX flag,
+  // not learning data — the seeded mastery itself lives in user.db.
+  async isOnboardingComplete(): Promise<boolean> {
+    return (await AsyncStorage.getItem(KEYS.onboardingComplete)) === '1';
+  }
+
+  async setOnboardingComplete(): Promise<void> {
+    await AsyncStorage.setItem(KEYS.onboardingComplete, '1');
   }
 }

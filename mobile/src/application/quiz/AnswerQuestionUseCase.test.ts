@@ -1,9 +1,9 @@
 import { AnswerQuestionUseCase } from '@/application/quiz/AnswerQuestionUseCase';
 import { WordNotInSessionError } from '@/domain/quiz/errors';
 import { v1FixedScheduler, DAY_MS } from '@/domain/srs/v1-fixed';
-import type { QuizAttempt, QuizSession } from '@/domain/quiz/types';
+import type { QuizSession } from '@/domain/quiz/types';
 import type { UserProgress } from '@/domain/user/UserProgress';
-import type { QuizAttemptRepository } from '@/domain/quiz/repositories';
+import type { AnswerWriter, AnswerWrite } from '@/domain/quiz/AnswerWriter';
 import type { UserProgressRepository } from '@/domain/user/UserProgressRepository';
 import type { Word } from '@/domain/vocabulary/Word';
 import { asSessionId, asTierId, asWordId, type WordId } from '@/domain/vocabulary/ids';
@@ -36,10 +36,10 @@ function session(words: Word[], idx = 0): QuizSession {
   };
 }
 
-class MockAttempts implements QuizAttemptRepository {
-  appended: Array<Omit<QuizAttempt, 'id'>> = [];
-  async append(a: Omit<QuizAttempt, 'id'>): Promise<void> {
-    this.appended.push(a);
+class MockAnswerWriter implements AnswerWriter {
+  writes: AnswerWrite[] = [];
+  async write(w: AnswerWrite): Promise<void> {
+    this.writes.push(w);
   }
 }
 
@@ -58,7 +58,7 @@ class MockProgress implements UserProgressRepository {
 
 describe('AnswerQuestionUseCase', () => {
   it('appends an attempt, updates progress via SRS, advances session (correct)', async () => {
-    const attempts = new MockAttempts();
+    const answerWriter = new MockAnswerWriter();
     const progress = new MockProgress();
     progress.store.set('a', {
       wordId: asWordId('a'),
@@ -69,7 +69,7 @@ describe('AnswerQuestionUseCase', () => {
       totalCorrect: 2,
       schedulerVersion: 'v1-fixed',
     });
-    const uc = new AnswerQuestionUseCase(attempts, progress, v1FixedScheduler);
+    const uc = new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler);
 
     const out = await uc.execute({
       session: session([word('a'), word('b')]),
@@ -81,15 +81,33 @@ describe('AnswerQuestionUseCase', () => {
       nowMs: NOW,
     });
 
+    // single atomic write carrying attempt + progress + event
+    expect(answerWriter.writes).toHaveLength(1);
+    const written = answerWriter.writes[0]!;
+
     // append-only attempt with replay fields
-    expect(attempts.appended).toHaveLength(1);
-    expect(attempts.appended[0]).toMatchObject({
+    expect(written.attempt).toMatchObject({
       wordId: 'a',
       isCorrect: true,
       preMasteryLevel: 1,
       scheduledReviewDate: NOW + 3 * DAY_MS, // mastery 1->2 = +3d
       schedulerVersion: 'v1-fixed',
     });
+
+    // event_log audit row
+    expect(written.event.eventType).toBe('answer_recorded');
+    expect(written.event.occurredAt).toBe(NOW);
+    expect(JSON.parse(written.event.payload!)).toEqual({
+      wordId: 'a',
+      sessionId: 1,
+      assessmentType: 'multiple_choice',
+      isCorrect: true,
+      preMastery: 1,
+      postMastery: 2,
+    });
+
+    // progress written atomically alongside the attempt
+    expect(written.progress.masteryLevel).toBe(2);
 
     // progress updated
     expect(out.progress.masteryLevel).toBe(2);
@@ -103,9 +121,9 @@ describe('AnswerQuestionUseCase', () => {
   });
 
   it('handles a first-time word (no existing progress) on an incorrect answer', async () => {
-    const attempts = new MockAttempts();
+    const answerWriter = new MockAnswerWriter();
     const progress = new MockProgress();
-    const uc = new AnswerQuestionUseCase(attempts, progress, v1FixedScheduler);
+    const uc = new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler);
 
     const out = await uc.execute({
       session: session([word('a')]),
@@ -126,7 +144,7 @@ describe('AnswerQuestionUseCase', () => {
 
   it('throws when the answered word is not the current question', async () => {
     const uc = new AnswerQuestionUseCase(
-      new MockAttempts(),
+      new MockAnswerWriter(),
       new MockProgress(),
       v1FixedScheduler,
     );

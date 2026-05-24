@@ -8,6 +8,8 @@ export {
   type AnswerQuestionWrite,
 } from '@/infrastructure/db/answerQuestionTransaction';
 
+export { SQLiteAnswerWriter } from '@/infrastructure/db/SQLiteAnswerWriter';
+
 export { SQLiteWordRepository } from '@/infrastructure/db/repositories/SQLiteWordRepository';
 export { SQLiteContentTierRepository } from '@/infrastructure/db/repositories/SQLiteContentTierRepository';
 export { SQLiteUserProgressRepository } from '@/infrastructure/db/repositories/SQLiteUserProgressRepository';
