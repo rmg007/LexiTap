@@ -38,8 +38,9 @@ The base is intentionally wide. Because `domain/` has no React, SQLite, or Expo 
 
 ## Tooling
 
-- **Jest** (Expo default test runner).
-- **`@testing-library/react-native`** for the few component tests.
+- **Jest** for mobile tests (Expo default test runner).
+- **Vitest** for content-tool tests.
+- **`@testing-library/react-native`** is planned only if component tests need user-level rendering helpers; it is not currently installed.
 - **`jest.mock` / `jest.fn`** for mocked repositories.
 - Tests live alongside source: `QuizSession.ts` -> `QuizSession.test.ts`. Integration tests go in `__tests__/integration/`.
 - Run via `npm test`; the full gate is `npm run check` (lint + typecheck + test).
@@ -148,7 +149,7 @@ Each rule gets a passing fixture and a failing fixture; the test asserts the val
 
 Spending test effort here is low-value at this scale:
 
-- **Third-party libraries** — Expo, React Native, TanStack Query, Zustand, expo-sqlite. Assume they work; test only your usage of them.
+- **Third-party libraries** — Expo, React Native, expo-sqlite, and any planned state/sync libraries once installed. Assume they work; test only your usage of them.
 - **Trivial getters/setters and pure pass-through wrappers.**
 - **Exact pixel layout / styling** — verified by eye on Simulator and Emulator, not by snapshot tests that break on every nudge.
 - **A heavy automated E2E suite** (Detox/Maestro) — deferred. The cost of maintaining device-driving E2E tests exceeds their value for a solo founder; critical flows are checked manually on both platforms per the Day-1 checklist.
@@ -160,7 +161,7 @@ Spending test effort here is low-value at this scale:
 "Tests pass" means all three exit 0:
 
 ```bash
-npm test          # jest
+npm test          # Jest in mobile; Vitest in content-tool
 npm run typecheck # tsc --noEmit
 npm run lint      # eslint
 # or simply:

@@ -93,7 +93,7 @@ src/
 - `domain/` may import only from `domain/`.
 - `application/` may import from `application/` and `domain/`.
 - `presentation/` may import from `application/`, `domain/`, and `config/` — never directly from `infrastructure/db`.
-- SRS scheduling logic lives in `domain/` (e.g. `src/srs/v1-fixed.ts`). Entitlement/paywall logic lives in `application/`.
+- SRS scheduling logic lives in `domain/` (e.g. `src/domain/srs/v1-fixed.ts`). Entitlement/paywall logic lives in `application/`.
 
 **Configuration over conditionals.** Branching on a variant string (`variant === 'esl' ? ... : ...`) is banned. Drive behavior from `config/tiers.ts` so the codebase stays reusable for a future Schools app.
 
@@ -186,5 +186,5 @@ From the operating-layer doc, enforced in review:
 - `react-native-async-storage` for *structured* data — use `expo-sqlite`. (AsyncStorage is fine for small key-value like `user.timezone`.)
 - Default exports.
 - `lodash`.
-- `TextInput` in `src/screens/quiz/` or `src/components/assessments/`.
+- `TextInput` in `mobile/src/presentation/screens/QuizScreen.tsx`, any future `mobile/src/presentation/screens/quiz/`, or `mobile/src/presentation/components/assessments/`.
 - `new Date()` for streak-boundary comparison — convert to stored `user.timezone` first.

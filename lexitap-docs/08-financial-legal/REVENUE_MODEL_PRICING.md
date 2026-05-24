@@ -24,6 +24,7 @@ LexiTap is a solo-founder ESL vocabulary app. The audience is global ESL test-ta
 - [ARPPU & LTV Modeling](#arppu--ltv-modeling)
 - [Revenue Projections (Years 1-3)](#revenue-projections-years-1-3)
 - [Repricing Discipline](#repricing-discipline)
+- [Official Source Currentness](#official-source-currentness)
 - [Open Questions](#open-questions)
 
 ---
@@ -60,7 +61,7 @@ The strategic pivot to subscriptions and B2B bulk seat sales directly corrects t
 
 1. **Curing Post-Test Churn:** Standardized test preparation (TOEFL/IELTS) is a finite user need. Under the old model, users bought a single tier and churned, creating a capped LTV and a perpetual marketing treadmill. Subscriptions align revenue with the high-intensity study window, and annual models accommodate students taking multiple tests over a year.
 2. **Predictable B2B Group Cashflow:** Cram schools buy seat bundles on behalf of entire classrooms. This establishes substantial, high-value direct transactions (up to $1,199) and stable annual renewal loops, shifting the business away from micro-conversions.
-3. **Eliminating Cash Micro-Payouts:** Replaces PayPal micro-commissions to individual freelance teachers with an in-app reward credit program, wiping out FATCA, Digital Services Tax, and KYC/AML compliance overhead.
+3. **Eliminating Cash Micro-Payouts:** Replaces PayPal/Wise teacher micro-payouts with an in-app reward credit program, reducing FATCA, Digital Services Tax, KYC/AML, and cross-border payout complexity. Confirm non-cash reward treatment with counsel before launch.
 
 ---
 
@@ -72,8 +73,9 @@ Every transaction incurs fee erosion, but the channels perform very differently:
   - Commission: **15%** of gross (enrolled in Apple Small Business Program and Google's 15% tier).
   - Managed entirely via RevenueCat.
 - **B2B Web Direct (Stripe Checkout):**
-  - Commission: **3%** of gross (standard Stripe processing fee).
-  - Web payments are **100% compliant** with store guidelines because the bulk licenses are sold to organizations for multi-user distribution off-store (Apple Guideline 3.1.3(c)).
+  - Planning fee: **~3%** of gross for domestic-card modeling.
+  - Current Stripe US standard pricing is **2.9% + $0.30** per successful domestic card transaction, plus possible additional fees for manually entered cards, international cards, and currency conversion.
+  - Web payments for institutional seat packs are an intended compliance strategy under Apple/Google rules, not a guaranteed exemption. Final implementation requires counsel and store-review validation, with no in-app steering to web checkout.
 
 ---
 
@@ -85,13 +87,13 @@ Every transaction incurs fee erosion, but the channels perform very differently:
 - **$4.99 Monthly Subscription:** Gross $4.99 → Net of Store (15%) = **$4.24**
 - **$24.99 Annual Subscription:** Gross $24.99 → Net of Store (15%) = **$21.24**
 
-### B2B Bulk purchases (3% Stripe Cut)
+### B2B Bulk purchases (Stripe Domestic Card Estimate)
 
-- **$199 Classroom Pack (20 seats):** Gross $199.00 → Net of Stripe (3%) = **$193.03**
-- **$399 Academy Pack (50 seats):** Gross $399.00 → Net of Stripe (3%) = **$387.03**
-- **$1,199 Campus Pack (200 seats):** Gross $1,199.00 → Net of Stripe (3%) = **$1,163.03**
+- **$199 Classroom Pack (20 seats):** Gross $199.00 → Net of Stripe (2.9% + $0.30) = **$192.93**
+- **$399 Academy Pack (50 seats):** Gross $399.00 → Net of Stripe (2.9% + $0.30) = **$387.13**
+- **$1,199 Campus Pack (200 seats):** Gross $1,199.00 → Net of Stripe (2.9% + $0.30) = **$1,163.93**
 
-*Direct web sales yield a net margin of 97% of gross revenue, compared to 85% for app store subscriptions.*
+*Domestic direct web sales yield a net margin of roughly 97% of gross revenue, compared to 85% for app store subscriptions. International cards and currency conversion can materially lower this margin.*
 
 ---
 
@@ -106,7 +108,7 @@ Blended Average Revenue Per Paying User (ARPPU) target: **$12 net per year**.
 
 ## Revenue Projections (Years 1-3)
 
-Net revenue subtracts 15% store commission on B2C IAP and 3% card fees on B2B direct transactions.
+Net revenue subtracts 15% store commission on B2C IAP and uses a ~3% domestic-card planning approximation for B2B direct transactions. International-card and currency-conversion fees should be sensitivity-tested once actual school geographies are known.
 
 ### Year 1
 - **Conservative Scenario (10,000 active users):**
@@ -144,9 +146,16 @@ Net revenue subtracts 15% store commission on B2C IAP and 3% card fees on B2B di
   - Consumer churn spikes (triggers trial or price reduction).
   - High B2B contract retention (triggers volume pricing expansion).
 
+## Official Source Currentness
+
+Checked on 2026-05-24:
+- Stripe US pricing: <https://stripe.com/us/pricing>
+- Apple App Review Guidelines: <https://developer.apple.com/app-store/review/guidelines/>
+- Google Play payments policy: <https://support.google.com/googleplay/android-developer/answer/9858738>
+
 ---
 
 ## Open Questions
 
 - **Regional Pricing Adjustments:** Will we offer custom localized subscription tiers for emerging market individual learners? (Currently deferred to post-launch).
-- **Stripe Transaction Minimums:** Do small Classroom Pack transactions incur fixed Stripe card processing minimum penalties? (Stripe's 2.9% + $0.30 fee represents ~$6.00 on a $199 contract, well within our 3% modeling margin).
+- **International Card Sensitivity:** Which percentage of B2B contracts will use international cards or currency conversion, and should regional school contracts require local payment methods to protect margin?

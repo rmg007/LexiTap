@@ -44,7 +44,7 @@ Per-surface requirements:
 - **MultipleChoice:** each option is a button with `accessibilityState={{ selected }}`; on submit, the result is announced via an accessibility live region: "Correct" or "Not quite — the answer is hard-working and careful. You'll see this again." Never announce "wrong" punitively.
 - **DragDrop:** drag is not screen-reader friendly by itself. Provide a **tap-to-place fallback**: focus a chip, double-tap to pick up (announce "picked up candid"), focus a target, double-tap to drop (announce "placed candid in honest, direct"). This fallback is mandatory, not optional.
 - **Progress:** mastery rings expose `accessibilityValue` as percent and a text equivalent ("Foundation, 61 percent mastered").
-- **Paywall:** price, billing model (one-time vs annual), and "dismiss" are all clearly labeled; the close control is reachable first.
+- **Paywall:** price, billing model (one-time, monthly, or annual), and "dismiss" are all clearly labeled; the close control is reachable first.
 - **Focus order** follows visual reading order top-to-bottom; modals trap focus and restore it on dismiss.
 
 ## Color and Contrast

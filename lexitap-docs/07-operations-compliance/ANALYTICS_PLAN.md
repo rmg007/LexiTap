@@ -29,8 +29,8 @@ tags: [analytics, events, tracking, retention, conversion, funnel, event-schema,
 
 Analytics exists to answer the validation questions in
 [../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md): is the core loop
-retentive (D7 > 30% go-target, kill below 20% at Week 10), and does the free→paid conversion work? Constraints: ~$144 total
-budget (free tiers only), offline-first (events must survive being offline for days), privacy-first
+retentive (D7 > 30% go-target, kill below 20% at Week 10), and does the free→paid conversion work? Constraints: ~$194 realistic first-year
+cash outlay (free tiers where possible), offline-first (events must survive being offline for days), privacy-first
 (pseudonymous, no ad trackers, opt-out), and solo-founder (low maintenance, few dashboards that
 matter).
 

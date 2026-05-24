@@ -1,4 +1,4 @@
-# CLAUDE.md — LexiTap
+# AGENTS.md — LexiTap
 
 LexiTap is a solo-founder, offline-first ESL vocabulary mobile app. Global ESL learners (non-native English speakers) only — American-student vocab is a separate future "USA Schools" product. Never blend audiences.
 

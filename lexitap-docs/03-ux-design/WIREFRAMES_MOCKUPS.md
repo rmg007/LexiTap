@@ -198,25 +198,25 @@ CORRECT                          GENTLE CORRECTION
 │                              │
 │  • Audio pronunciations      │
 │  • Official-test context     │
-│  • Yours forever — no        │
-│    subscription, no ads      │
+│  • Cancel anytime            │
+│  • No ads                    │
 │                              │
 │ ┌─────────────────────────┐ │
-│ │ TOEFL          $14.99    │ │
-│ │ one-time      [ Unlock ] │ │  ← primary
+│ │ Premium       $4.99/mo   │ │
+│ │ monthly       [ Choose ] │ │
 │ └─────────────────────────┘ │
 │ ┌─────────────────────────┐ │
-│ │ Premium Pass  $29.99/yr  │ │  ← value anchor
+│ │ Premium Pass  $24.99/yr  │ │  ← value anchor
 │ │ Unlocks ALL paid tiers   │ │
 │ │              [ Choose ]  │ │
 │ └─────────────────────────┘ │
-│  Teacher code TEACHER_MARIA  │  ← if active: shows discount
-│  applied · 20% off           │
+│  Teacher code TEACHER_MARIA  │  ← if active: shows trial
+│  applied · 14-day trial      │
 │  Restore purchases           │  ← always present
 └─────────────────────────────┘
 ```
 
-> Honest framing per Marketing Pillars: own-forever, zero-ads, best-bang-for-buck. Always dismissible. Referral discount shows struck-through original. No auto-renew dark patterns.
+> Honest framing per Marketing Pillars: zero ads, best-bang-for-buck, cancel anytime. Always dismissible. Teacher code shows extended trial, not off-store discount steering. No auto-renew dark patterns.
 
 ## Onboarding and Knowledge Map
 

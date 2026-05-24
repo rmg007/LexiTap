@@ -20,7 +20,7 @@ MVP screens are Home, Quiz, Progress, Settings (locked, [PRODUCT_REQUIREMENTS_DO
 - [2. Daily Review Session](#2-daily-review-session)
 - [3. Learning New Words](#3-learning-new-words)
 - [4. Hitting the Daily Cap (Forgiveness)](#4-hitting-the-daily-cap-forgiveness)
-- [5. Purchasing a Tier (Paywall)](#5-purchasing-a-tier-paywall)
+- [5. Purchasing Premium (Paywall)](#5-purchasing-premium-paywall)
 - [6. Redeeming a Teacher Referral Code](#6-redeeming-a-teacher-referral-code)
 - [7. Switching Devices (Sync)](#7-switching-devices-sync)
 - [8. Maintaining and Recovering a Streak](#8-maintaining-and-recovering-a-streak)
@@ -136,43 +136,43 @@ REVIEW ▶ cap reached ▶ FORGIVENESS sheet
 
 Anti-pattern guard: never show overdue counts as a red alarm or home-screen guilt badge ([SRS_FORGIVENESS_MECHANICS.md](../02-product-definition/SRS_FORGIVENESS_MECHANICS.md) anti-patterns).
 
-## 5. Purchasing a Tier (Paywall)
+## 5. Purchasing Premium (Paywall)
 
-Goal: convert at the moment of genuine need (test prep urgency), with one-time ownership framing and zero dark patterns. Pricing in [PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md).
+Goal: convert at the moment of genuine need (test prep urgency), with clear subscription framing and zero dark patterns. Pricing in [PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md).
 
 Steps:
 
 1. Trigger points: tier-exhaustion suggestion (flow 3), a locked tier tapped on Progress, or Settings → "Unlock content."
-2. **Paywall sheet** presents the relevant tier (e.g. TOEFL $14.99 one-time) and the Premium Pass ($29.99/yr) as the value anchor ("unlocks all paid tiers"). Honest framing: own forever, no auto-renew trap, no ads.
-3. If a referral code is active (flow 6), the discounted price is shown with the original struck through.
+2. **Paywall sheet** presents Premium Pass monthly ($4.99/mo) and annual ($24.99/yr) options, plus the Common 3000 one-time unlock ($1.99) where applicable. Honest framing: cancel anytime, no auto-renew tricks, no ads.
+3. If a teacher advocate code is active (flow 6), the extended trial is shown without steering users to off-store discounts.
 4. User taps **Unlock** → native StoreKit / Google Play Billing purchase sheet (IAP adapter, [SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md)).
-5. On success → entitlement written locally (source of truth = SQLite) and synced to cloud; tier content unlocks immediately; confirmation toast. On Premium Pass, all paid tiers unlock.
+5. On success → entitlement written locally (source of truth = SQLite) and synced to cloud; tier content unlocks immediately; confirmation toast. On Premium Pass, all current and future paid tiers unlock.
 6. **Restore purchases** is always available (Settings + Paywall footer) for reinstalls/new devices.
 
 ```
 trigger ▶ PAYWALL sheet ▶ Unlock ▶ native purchase
    │                          ├─ success ─▶ entitlement saved ▶ content unlocked
    │                          └─ cancel/fail ─▶ back, no nag
-   └─ referral code active ─▶ discounted price shown
+   └─ teacher code active ─▶ extended trial shown
 ```
 
 Edge cases: purchase pending/deferred (family approval) → "We'll unlock as soon as it's approved." Offline at purchase time → block gracefully with "connect to complete purchase," never lose entitlement once granted.
 
 ## 6. Redeeming a Teacher Referral Code
 
-Goal: apply a teacher's code for the student discount and attribute the referral ([PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md) teacher network; commission tiers 20–35%).
+Goal: apply a teacher's code for an extended Premium trial and attribute the referral for non-cash advocate rewards ([PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md) teacher network).
 
 Steps:
 
 1. Entry: Settings → "Have a teacher code?" or a deep-link from the teacher's shared message (e.g. code `TEACHER_MARIA`).
 2. User selects the code from a list (or it is prefilled from the deep link) — selection-based, no free typing where avoidable; if manual entry is unavoidable it uses a constrained code picker, not a free-text quiz input (the no-typing rule governs quiz flows specifically).
 3. App validates the code (online check; cached for offline reuse once validated).
-4. Valid → discount attaches to the account and is reflected at the Paywall (flow 5). A confirmation shows the discount and the teacher attribution.
+4. Valid → extended trial attaches to the account and is reflected at the Paywall (flow 5). A confirmation shows the trial and the teacher attribution.
 5. Invalid/expired → gentle inline message, no penalty, option to try another.
 
 ```
 Settings/deep-link ▶ select code ▶ validate
-                                     ├─ valid ─▶ discount attached ▶ shown at Paywall
+                                     ├─ valid ─▶ trial attached ▶ shown at Paywall
                                      └─ invalid ─▶ gentle retry
 ```
 

@@ -9,7 +9,7 @@ tags: [dependencies, licenses, vendor-risk, lock-in, budget, expo, supabase, ele
 
 # Third-Party Dependency Audit
 
-Every external service and key library LexiTap depends on, with its cost, license, lock-in risk, and failure exposure — mapped against the ~$144 Year 1 budget. The guiding constraint: keep everything on free tiers except the three unavoidable paid items (Apple, Google, audio). Pairs with [REVENUE_MODEL_PRICING.md](./REVENUE_MODEL_PRICING.md) and the tech stack in [../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md](../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md).
+Every external service and key library LexiTap depends on, with its cost, license, lock-in risk, and failure exposure — mapped against the ~$194 realistic Year 1 cash outlay. The guiding constraint: keep everything on free tiers except the unavoidable paid items (Apple, Google, domain, audio). Pairs with [REVENUE_MODEL_PRICING.md](./REVENUE_MODEL_PRICING.md) and the tech stack in [../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md](../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md).
 
 ## Contents
 
@@ -18,6 +18,8 @@ Every external service and key library LexiTap depends on, with its cost, licens
 - [Key npm / Library Audit](#key-npm--library-audit)
 - [Content and Word-List Licensing](#content-and-word-list-licensing)
 - [Lock-In Summary](#lock-in-summary)
+- [Decision Notes](#decision-notes)
+- [Official Source Currentness](#official-source-currentness)
 - [Open Questions](#open-questions)
 
 ## Year 1 Budget Map
@@ -28,42 +30,43 @@ Every external service and key library LexiTap depends on, with its cost, licens
 | Google Play Developer | $25 | One-time | Lifetime registration |
 | ElevenLabs audio (TOEFL) | ~$50 | One-off / month-of | Premium TTS; generate, cache, cancel |
 | Domain (lexitap.app) | ~$20 | Annual | Registrar varies; project docs cite ~$20/yr |
-| **Subtotal** | **~$194** | | Exceeds the ~$144 target |
-| Everything else | $0 | Free tier | Expo/EAS, Supabase, RevenueCat (free to ~$2.5k MRR), Unsplash, PayPal, OpenAI free credits, Vercel |
+| **Subtotal** | **~$194** | | Realistic first-year cash outlay |
+| Everything else | $0 | Free tier | Expo/EAS, Supabase within quotas, RevenueCat (free to $2.5k monthly tracked revenue), Unsplash, OpenAI free credits, Vercel |
 
-**Budget note / source inconsistency:** the strict line items above sum to ~$194, while the locked Year 1 budget is "~$144 total." The ~$144 figure holds only if (a) Google's $25 is treated as a one-time, not annual, cost and excluded from a recurring view, (b) ElevenLabs audio comes in at the low end and is a single non-recurring generation, and (c) the domain is the cheapest first-year promo. Treat ~$144 as the aspirational floor and ~$194 as the realistic first-year cash outlay. Either way, even the conservative Year 1 revenue ($3,600) covers it many times over. This gap is flagged as an Open Question, not silently reconciled.
+**Budget note:** treat ~$194 as the realistic first-year cash outlay. Lower legacy estimates should not drive planning because they undercount Google Play registration, domain, and audio-enrichment costs. Even the conservative Year 1 revenue model (~$3,600 net) covers the realistic cost base many times over.
 
 ## Service Audit
 
 | Service | Role | Cost | License / Terms | Lock-in | Risk |
 |---------|------|------|-----------------|---------|------|
 | **Expo / EAS** | RN framework + cloud build/submit | Free tier | Expo OSS = MIT; EAS = commercial SaaS | Medium — RN code is portable, but EAS Build/Submit and OTA updates are Expo-specific | Low. Mature, widely used. Free build queue is slow but sufficient solo. |
-| **Supabase** | Auth + Postgres + cloud sync + teacher/referral/promo backend | Free until ~50K users, then ~$25/mo | Apache-2.0 core (self-hostable); hosted = commercial | Medium-low — it's Postgres; data is exportable and Supabase is self-hostable | Low-medium. Single backend for sync + business logic = concentration risk, mitigated by Postgres portability. |
+| **Supabase** | Auth + Postgres + cloud sync + teacher/referral/promo backend | Free within quotas: 50K auth MAU, 500 MB DB, 5 GB egress, 1 GB storage, 500K Edge Function invocations; paid plan when quotas/production needs require | Apache-2.0 core (self-hostable); hosted = commercial | Medium-low — it's Postgres; data is exportable and Supabase is self-hostable | Low-medium. Single backend for sync + business logic = concentration risk, mitigated by Postgres portability. Watch quota usage and free-project inactivity. |
 | **ElevenLabs** | Premium TTS for TOEFL (and later pronunciation tiers) | ~$50 one-off | Commercial; check audio-usage/redistribution rights in plan tier | Low — audio is generated, cached, and bundled; no runtime dependency | Medium. Confirm the license permits redistributing generated audio inside a paid app. Generate-and-cancel keeps cost one-off. |
 | **OpenAI** | Content enrichment (definitions, synonyms, example sentences) at build time | Free credits / minimal | Commercial API; usage-based | None at runtime — build-time only, output is stored | Low cost; medium content risk (review AI output for accuracy before shipping). |
 | **Unsplash** | Imagery for word cards (dual-coding) | Free | Unsplash License (free commercial use, no attribution required, cannot sell unmodified photos as-is) | Low — images cached/bundled | Low-medium. License permits app use; verify no per-image restrictions and avoid building a competing image service. |
-| **PayPal** | Teacher commission payouts | Free to send; transaction fees on payout | Commercial ToS | Low — just a payout rail; swappable | Low. Cross-border payout fees and country availability are the real concern for global teachers. |
+| **PayPal / Wise** | Historical teacher cash-payout option, not in current plan | $0 because unused | Commercial ToS | Low — not a runtime dependency | Retired by the non-cash advocate model. Revisit only if cash commissions return. |
 | **Apple App Store** | iOS distribution + IAP | $99/yr + 15% commission | Apple Developer Agreement | High — required channel for iOS; IAP mandatory for digital goods | Structural, unavoidable. See compliance doc. |
 | **Google Play** | Android distribution + IAP | $25 once + 15% commission | Play Developer Distribution Agreement | High — required channel for Play | Structural, unavoidable. |
-| **RevenueCat** | IAP + subscription entitlements, server-side receipt validation | Free up to ~$2.5k MRR | Commercial SaaS (SDK is MIT) | Medium — entitlement logic flows through its SDK, but it sits behind the `IapService` port so a swap is bounded | Low-medium. Wiring deferred to Phase 3; free tier covers the projection horizon. |
+| **RevenueCat** | IAP + subscription entitlements, server-side receipt validation | Free up to $2.5k monthly tracked revenue (MTR), then usage-based | Commercial SaaS (SDK is MIT) | Medium — entitlement logic flows through its SDK, but it sits behind the `IapService` port so a swap is bounded | Low-medium. Wiring deferred to Phase 3; free tier covers the projection horizon. |
 | **Vercel** | Static website + teacher portal hosting | Free tier | Commercial SaaS | Low — static HTML, trivially movable | Low. |
 
 ## Key npm / Library Audit
 
-| Library | Role | License | Risk / Note |
-|---------|------|---------|-------------|
-| react-native / react | Core | MIT | Foundational; low risk. |
-| expo (SDK 52) | Framework | MIT | See Expo lock-in above. |
-| expo-sqlite | Bundled words.db + local progress | MIT | Core offline store; low risk. |
-| react-native-purchases (RevenueCat) | IAP | MIT | Locked IAP vendor — chosen over `expo-iap` and the deprecated `expo-in-app-purchases`. Native SDK install deferred to Phase 3 (`StubIapService` bound until then). Adds a native config plugin; see RevenueCat service row. |
-| expo-router | Navigation | MIT | Low risk. |
-| @tanstack/react-query v5 | Server state / sync | MIT | Low risk. |
-| zustand | Local state | MIT | Low risk. |
-| @supabase/supabase-js | Backend client | MIT | Low risk. |
-| commander.js (content tool) | CLI | MIT | Build-time only; low risk. |
-| Jest + Testing Library | Tests | MIT | Dev-only. |
+| Library | Status | Role | License | Risk / Note |
+|---------|--------|------|---------|-------------|
+| react-native / react | Installed | Core | MIT | Foundational; low risk. |
+| expo (SDK 52 repo pin) | Installed | Framework | MIT | Current repo pin is SDK 52. Latest Expo docs list SDK 56; evaluate upgrade with `npx expo-doctor` before submission. |
+| expo-sqlite | Installed | Bundled words.db + local progress | MIT | Core offline store; low risk. |
+| expo-router | Installed | Navigation | MIT | Low risk. |
+| @supabase/supabase-js | Installed | Backend client | MIT | Low risk. |
+| better-sqlite3 | Installed | Content CLI SQLite export | MIT | Build-time only; low risk. |
+| csv-parse | Installed | Content CLI CSV import | MIT | Build-time only; low risk. |
+| Jest / Vitest | Installed / dev | Tests | MIT | Dev-only. `@testing-library/react-native` is not currently installed. |
+| react-native-purchases (RevenueCat) | Planned Phase 3 | IAP | MIT | Locked IAP vendor — chosen over `expo-iap` and the deprecated `expo-in-app-purchases`. Native SDK install deferred to Phase 3 (`StubIapService` bound until then). Adds a native config plugin; see RevenueCat service row. |
+| @tanstack/react-query v5 | Planned | Server state / sync | MIT | Not currently installed. Add only when sync complexity needs it. |
+| zustand | Planned | Local state | MIT | Not currently installed. Add only when global UI state exceeds simple React state. |
 
-All core libraries are MIT/permissive — no copyleft (GPL) exposure in the runtime dependency tree. The previously-flagged library risk (`expo-in-app-purchases` being unmaintained) is retired: the deprecated package is not used, and RevenueCat (`react-native-purchases`) is the locked replacement.
+Installed core libraries are MIT/permissive — no copyleft (GPL) exposure in the runtime dependency tree. The previously-flagged library risk (`expo-in-app-purchases` being unmaintained) is retired: the deprecated package is not used, and RevenueCat (`react-native-purchases`) is the locked Phase 3 replacement.
 
 ## Content and Word-List Licensing
 
@@ -81,14 +84,24 @@ This is the highest legal-risk dependency category and the founder's primary IP 
 |----------|--------------|-----|
 | High (structural) | Apple, Google | Required distribution channels; cannot ship mobile without them. |
 | Medium | Expo/EAS, Supabase, RevenueCat | Portable underneath (RN code, Postgres data) or port-isolated (RevenueCat behind `IapService`), but tooling/workflow is vendor-shaped. |
-| Low | ElevenLabs, OpenAI, Unsplash, Vercel, PayPal | Outputs cached or trivially swappable; no runtime coupling. |
+| Low | ElevenLabs, OpenAI, Unsplash, Vercel; PayPal/Wise retired | Outputs cached or trivially swappable; no runtime coupling. |
 
 Net: lock-in is concentrated where it is unavoidable (app stores) and deliberately minimized everywhere else via cache-and-bundle and Postgres-portability choices.
 
+## Decision Notes
+
+- **Budget reconciliation — resolved:** use ~$194 as realistic first-year cash outlay; do not use lower legacy budget estimates for planning.
+- **IAP vendor — resolved:** RevenueCat (`react-native-purchases`) is locked, replacing the deprecated `expo-in-app-purchases`; native wiring lands in Phase 3 (see [APP_STORE_DISTRIBUTION_STRATEGY.md](./APP_STORE_DISTRIBUTION_STRATEGY.md) and [../05-engineering-process/DEPLOYMENT_RELEASE_RUNBOOK.md](../05-engineering-process/DEPLOYMENT_RELEASE_RUNBOOK.md#9-revenuecat-payments-and-iap)). RevenueCat's free threshold is $2.5k MTR / monthly tracked revenue, not recurring-revenue-only semantics.
+
+## Official Source Currentness
+
+Checked on 2026-05-24:
+- Supabase billing docs: <https://supabase.com/docs/guides/platform/billing-on-supabase>
+- RevenueCat pricing: <https://www.revenuecat.com/pricing>
+- Expo SDK reference: <https://docs.expo.dev/versions/latest/>
+
 ## Open Questions
 
-- **Budget reconciliation:** confirm whether the ~$144 target excludes Google's one-time $25 and assumes the lowest ElevenLabs/domain costs; otherwise realistic first-year outlay is ~$194. Update the locked budget figure or document the accounting basis.
 - **ElevenLabs license:** verify the plan tier permits redistributing generated audio inside a paid commercial app.
-- **IAP vendor — resolved:** RevenueCat (`react-native-purchases`) is locked, replacing the deprecated `expo-in-app-purchases`; native wiring lands in Phase 3 (see [APP_STORE_DISTRIBUTION_STRATEGY.md](./APP_STORE_DISTRIBUTION_STRATEGY.md) and [../05-engineering-process/DEPLOYMENT_RELEASE_RUNBOOK.md](../05-engineering-process/DEPLOYMENT_RELEASE_RUNBOOK.md#9-revenuecat-payments-and-iap)). Confirm RevenueCat's free tier (up to ~$2.5k MRR) covers the projection horizon.
 - **Word-list provenance:** document the exact source and license of each sourced corpus (P0 backlog #41 content sourcing).
-- **Supabase paid-tier trigger:** $25/mo kicks in around 50K users — model it into the Year 2 cost base when it arrives.
+- **Supabase paid-tier trigger:** model the paid plan into the Year 2 cost base when auth MAU, database size, egress, storage, Edge Function usage, or production reliability needs exceed the free tier.

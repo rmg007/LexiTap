@@ -67,11 +67,11 @@ Not in scope:
 
 Content sourcing is **frequency-based and already resolved**. The founder possesses the corpora:
 
-| Tier slug   | Source corpus                          | Free? |
-|-------------|----------------------------------------|-------|
-| `foundation`| Top 3,000 most-used English words      | Yes   |
-| `advanced`  | Words 3,001–9,000 by real-world frequency | Yes |
-| `toefl`     | 3,000 TOEFL words                      | No ($14.99) |
+| Tier slug   | Source corpus                          | Access |
+|-------------|----------------------------------------|--------|
+| `foundation`| Top 3,000 most-used English words      | Free |
+| `advanced`  | Words 3,001–9,000 by real-world frequency | Free |
+| `toefl`     | 3,000 TOEFL words                      | Premium Pass |
 
 Therefore pipeline work is **enrichment only** — definitions, audio, imagery, example
 sentences, synonyms/antonyms. There is no acquisition phase.
@@ -110,7 +110,7 @@ lexitap-content-tool/
 ├── lexitap.config.json       # app_id, tier definitions
 ├── .env                       # OPENAI_API_KEY, ELEVENLABS_API_KEY, UNSPLASH_ACCESS_KEY (gitignored)
 ├── src/
-│   ├── cli.ts                # arg parsing (commander), dispatch
+│   ├── cli.ts                # argument parsing and command dispatch
 │   ├── commands/
 │   │   ├── import.ts
 │   │   ├── validate.ts
@@ -388,7 +388,7 @@ echo "Build complete: data/output/words.db"
 Wire into `package.json`:
 
 ```json
-{ "scripts": { "build:db": "bash scripts/build-db.sh" } }
+{ "scripts": { "build:db": "tsx src/cli.ts export" } }
 ```
 
 ## App-Agnostic Parameterization
@@ -405,7 +405,7 @@ not Phase-1 scope — LexiTap is the only `app_id` we build now.
   "tiers": [
     { "slug": "foundation", "name": "LexiTap Foundation (CEFR A2-B1)", "is_free": true,  "price_usd": null,  "sku": null,                "display_order": 1, "requires_theme": true,  "audio": false },
     { "slug": "advanced",   "name": "LexiTap Advanced (CEFR B2-C1)",   "is_free": true,  "price_usd": null,  "sku": null,                "display_order": 2, "requires_theme": true,  "audio": false },
-    { "slug": "toefl",      "name": "TOEFL Vocabulary",                "is_free": false, "price_usd": 14.99, "sku": "com.lexitap.toefl", "display_order": 3, "requires_theme": false, "audio": true  }
+    { "slug": "toefl",      "name": "TOEFL Vocabulary",                "is_free": false, "price_usd": null,  "sku": null,                "display_order": 3, "requires_theme": false, "audio": true  }
   ]
 }
 ```

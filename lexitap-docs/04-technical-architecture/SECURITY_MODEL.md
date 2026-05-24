@@ -9,7 +9,7 @@ tags: [security, secrets, rls, receipt-validation, auth, threat-model, data-at-r
 
 # Security Model
 
-The security posture for LexiTap: a solo-founder, offline-first ESL app with no custom server and a ~$144/year budget. Security is delivered through three pillars — secrets discipline, Supabase Row-Level Security, and server-side validation of anything that grants money or entitlements. The threat model is sized for the asset value: there are no high-value secrets in the app, and the local DB holds only the user's own learning progress.
+The security posture for LexiTap: a solo-founder, offline-first ESL app with no custom server and a realistic ~$194 first-year cash outlay. Security is delivered through three pillars — secrets discipline, Supabase Row-Level Security, and server-side validation of anything that grants money or entitlements. The threat model is sized for the asset value: there are no high-value secrets in the app, and the local DB holds only the user's own learning progress.
 
 ## Table of Contents
 
@@ -37,7 +37,7 @@ The security posture for LexiTap: a solo-founder, offline-first ESL app with no 
                           RLS + Edge Functions are the trust boundary
 ```
 
-Core principle: **the client is untrusted.** Anything that grants an entitlement, records a referral commission, or decrements a promo code is decided server-side. The client can read/write only its own rows, and only through RLS-enforced policies.
+Core principle: **the client is untrusted.** Anything that grants an entitlement, records a teacher advocate reward, or decrements a promo code is decided server-side. The client can read/write only its own rows, and only through RLS-enforced policies.
 
 ## Secrets Management
 
@@ -83,7 +83,7 @@ CREATE POLICY own_account ON user_accounts
   USING (id = auth.uid()) WITH CHECK (id = auth.uid());
 ```
 
-Teacher/referral/promo tables are **not** client-writable. `referrals` and `promo_codes` decrements happen only in Edge Functions (service role); clients get read-only or no direct access. This prevents a tampered client from minting referral commissions or infinite promo redemptions.
+Teacher/referral/promo tables are **not** client-writable. `referrals` and `promo_codes` decrements happen only in Edge Functions (service role); clients get read-only or no direct access. This prevents a tampered client from minting advocate rewards or infinite promo redemptions.
 
 ## Receipt and Entitlement Validation
 
@@ -106,12 +106,12 @@ Referral and promo redemptions follow the same pattern: server-side, transaction
 
 ## Threat Model
 
-Sized for a $144 solo app whose primary asset is paid vocabulary content and small referral commissions.
+Sized for a ~$194 solo app whose primary asset is paid vocabulary content and non-cash advocate rewards.
 
 | Threat | Likelihood | Mitigation |
 |--------|-----------|------------|
 | Cracked client self-grants entitlements | medium | Server-side receipt validation; RLS blocks client entitlement writes |
-| Forged/replayed referral to mint commission | low-medium | Server-side `redeem_referral`; `receipt_id` UNIQUE; commission computed server-side |
+| Forged/replayed referral to mint advocate rewards | low-medium | Server-side `redeem_teacher_code`; `source_event_id` UNIQUE; rewards computed server-side |
 | Promo code brute force / over-redemption | low-medium | Server-side decrement + active/expiry checks in one transaction |
 | User reads another user's progress | low | RLS `user_id = auth.uid()` on all sync tables |
 | Stolen anon key | n/a | Anon key is public by design; RLS is the real control |
@@ -132,5 +132,5 @@ Sized for a $144 solo app whose primary asset is paid vocabulary content and sma
 ## Open Questions
 
 - Whether to enforce email verification before enabling sync (leaning yes for abuse resistance, but it adds friction).
-- Rate-limiting strategy for `redeem_promo` / `redeem_referral` Edge Functions (Supabase-native limits vs in-function counters).
+- Rate-limiting strategy for `redeem_promo` / `redeem_teacher_code` Edge Functions (Supabase-native limits vs in-function counters).
 - Account-deletion data flow: RLS cascade delete vs an Edge Function sweep (see [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md)).

@@ -4,12 +4,12 @@ category: product
 status: active
 updated: 2026-05-24
 priority: P1
-tags: [user-stories, epics, onboarding, srs, sync, gamification, teacher-referral]
+tags: [user-stories, epics, onboarding, srs, sync, gamification, teacher-advocate]
 ---
 
 # User Stories — LexiTap
 
-User stories grouped by epic, each with acceptance criteria. Requirements detail lives in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md); prioritization in [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md). Personas: **Learner** (ESL user, the primary persona), **Test-Prep Learner** (TOEFL/IELTS candidate, high urgency), **Professional** (Business English), **Teacher** (referral partner).
+User stories grouped by epic, each with acceptance criteria. Requirements detail lives in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md); prioritization in [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md). Personas: **Learner** (ESL user, the primary persona), **Test-Prep Learner** (TOEFL/IELTS candidate, high urgency), **Professional** (Business English), **Teacher Advocate** (referral partner).
 
 ## Table of Contents
 
@@ -17,10 +17,10 @@ User stories grouped by epic, each with acceptance criteria. Requirements detail
 - [Epic: Daily Review](#epic-daily-review)
 - [Epic: Learning New Words](#epic-learning-new-words)
 - [Epic: Progress Tracking](#epic-progress-tracking)
-- [Epic: Purchasing a Tier](#epic-purchasing-a-tier)
+- [Epic: Purchasing Premium](#epic-purchasing-premium)
 - [Epic: Streak and Gamification](#epic-streak-and-gamification)
 - [Epic: Cloud Sync Across Devices](#epic-cloud-sync-across-devices)
-- [Epic: Teacher Referral Redemption](#epic-teacher-referral-redemption)
+- [Epic: Teacher Advocate Redemption](#epic-teacher-advocate-redemption)
 
 ## Epic: Onboarding
 
@@ -79,17 +79,17 @@ As a Learner, I want a view of how many words I've mastered so that I feel my pr
 As a Test-Prep Learner, I want to see my curriculum and remaining words so that I can gauge how close I am to my goal.
 - Knowledge Map shows known vs remaining; no leaderboard framing.
 
-## Epic: Purchasing a Tier
+## Epic: Purchasing Premium
 
 *(Phase 3+ — not in MVP, captured for sequencing.)*
 
-**US-B1 — Unlock a test-prep tier once.**
-As a Test-Prep Learner, I want to buy TOEFL vocabulary as a one-time purchase so that I own it without a subscription.
-- One-time IAP; restores across devices via account.
+**US-B1 — Subscribe for test-prep content.**
+As a Test-Prep Learner, I want to subscribe only while I am studying intensely so that TOEFL/IELTS content matches my deadline window.
+- Premium Pass monthly/annual IAP; restores across devices via account.
 
 **US-B2 — Get everything for one annual price.**
 As a Professional, I want a Premium Pass that unlocks all paid tiers including future drops so that I get the best value.
-- $29.99/yr unlocks launch + post-launch tiers automatically.
+- $24.99/yr unlocks launch + post-launch tiers automatically.
 
 **US-B3 — Restore my purchases.**
 As a Learner, I want to restore purchases on a new device so that I don't pay twice.
@@ -119,17 +119,17 @@ As a Learner, I want to sign in on a new device and pick up where I left off so 
 As a Learner, I want the app to work without a connection so that I can study on a commute.
 - Fully usable offline; results queue and sync later, never blocking the UI.
 
-## Epic: Teacher Referral Redemption
+## Epic: Teacher Advocate Redemption
 
 *(Phase 3+ — referral system ships with paid tiers.)*
 
 **US-T1 — Use my teacher's code.**
-As a Learner, I want to enter my teacher's referral code so that I get my student discount.
-- 20% student discount applied; code validated via Supabase.
+As a Learner, I want to enter my teacher's referral code so that I get an extended Premium trial.
+- 14-day Premium trial applied; code validated via Supabase; no off-store discount steering.
 
-**US-T2 — Earn commission as a teacher.**
-As a Teacher, I want my students' purchases attributed to my code so that I earn my tiered commission (20–35%).
-- Purchases attribute to teacher; commission tier reflects referral count.
+**US-T2 — Earn non-cash rewards as a teacher.**
+As a Teacher, I want active student referrals attributed to my code so that I can earn Premium seats or credits to gift.
+- Active referrals attribute to teacher; rewards are digital-only and require legal/tax review before launch.
 
 **US-T3 — Redeem a promo code.**
 As a Learner, I want to redeem a goodwill promo code so that I can unlock a tier for free when given one.

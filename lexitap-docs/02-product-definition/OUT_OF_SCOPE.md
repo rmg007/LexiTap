@@ -60,7 +60,7 @@ Explicit non-goals. This document protects scope discipline: each item is someth
 - **Rationale:** English-only UI is acceptable for an MVP serving motivated ESL learners; localization is significant ongoing effort.
 - **Revisit when:** >30% of traffic comes from non-English-primary markets (backlog #31).
 
-## Open Questions
+## Decision Notes
 
 - Idioms and phrasal verbs ship as recognition-only paid tiers post-launch — confirm no item in those tiers implies active production, to stay consistent with the no-typing boundary.
-- Apple Sign-In: not a scope-out per se, but its MVP inclusion is undecided (Apple guideline 4.8 may force it once Google Sign-In ships) — tracked in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md#open-questions).
+- Sign in with Apple is not a scope-out. If Google Sign-In remains in scope, Sign in with Apple ships in Phase 3 and is tracked in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md#decision-notes).

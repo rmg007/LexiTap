@@ -27,7 +27,7 @@ LexiTap is built by a solo founder running autonomous Claude Code agents, one pe
 
 > If a task requires the founder to type a command or remember something, automate it or skip it.
 
-This single constraint shapes every protocol below. The founder is one person with a Year-1 budget of roughly $144. There is no QA team, no reviewer on call, no on-call rotation. The adversarial review personas exist precisely *because* there is no human reviewer — the agent must review its own work as adversarially as a hostile colleague would.
+This single constraint shapes every protocol below. The founder is one person with a realistic Year-1 cash outlay of roughly $194. There is no QA team, no reviewer on call, no on-call rotation. The adversarial review personas exist precisely *because* there is no human reviewer — the agent must review its own work as adversarially as a hostile colleague would.
 
 Practical consequences:
 
@@ -145,7 +145,7 @@ Checklist:
 
 Checklist:
 
-- [ ] No `TextInput` in `src/screens/quiz/` or `src/components/assessments/` (banned — defeats the no-typing UX).
+- [ ] No `TextInput` in `mobile/src/presentation/screens/QuizScreen.tsx`, any future `mobile/src/presentation/screens/quiz/`, or `mobile/src/presentation/components/assessments/` (banned — defeats the no-typing UX).
 - [ ] All interactive elements have a VoiceOver/TalkBack `accessibilityLabel`.
 - [ ] All touch targets are at least 44x44 dp.
 - [ ] Dark mode supported in all new components.
@@ -183,5 +183,5 @@ Load the minimum needed to do the task correctly. Over-loading context dilutes a
 
 ## Open Questions
 
-- The exact format of `docs/plans/NNN_*.yaml` is not yet pinned (no code exists). To be defined when Track B scaffolding lands.
+- The exact format of `docs/plans/NNN_*.yaml` is not yet pinned. Define it before plan automation depends on machine-readable fields.
 - Whether the Compound Learning append should be auto-committed by a hook or left to the agent's discretion is undecided; leaning toward a hook to satisfy the autonomy constraint.

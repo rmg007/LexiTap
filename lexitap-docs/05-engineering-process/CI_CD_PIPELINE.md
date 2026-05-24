@@ -9,20 +9,20 @@ tags: [ci-cd, github-actions, eas-build, eas-submit, ship-and-watch, free-tier, 
 
 # CI/CD Pipeline Spec
 
-The continuous-integration and delivery pipeline for LexiTap. Two pieces: a lightweight GitHub Actions check that gates every PR (ESLint + TypeScript), and the EAS Build/Submit pipeline that produces and ships the iOS and Android binaries. On top of both sits the autonomous "Ship and Watch" loop. Everything here is shaped by the Year-1 budget of roughly $144 — free tiers only where possible. Day-1 setup context is in [../02-product-definition/ROADMAP.md](../02-product-definition/ROADMAP.md).
+The continuous-integration and delivery pipeline for LexiTap. Two pieces: a lightweight GitHub Actions check that gates every PR (lint + typecheck + tests), and the EAS Build/Submit pipeline that produces and ships the iOS and Android binaries. On top of both sits the autonomous "Ship and Watch" loop. Everything here is shaped by the realistic ~$194 first-year cash outlay — free tiers only where possible. Day-1 setup context is in [../02-product-definition/ROADMAP.md](../02-product-definition/ROADMAP.md).
 
 ## Table of Contents
 
-- [PR Check: ESLint + tsc](#pr-check-eslint--tsc)
+- [PR Check: lint + typecheck + test](#pr-check-lint--typecheck--test)
 - [Ship and Watch Loop](#ship-and-watch-loop)
 - [EAS Build and Submit](#eas-build-and-submit)
 - [Free-Tier Constraints](#free-tier-constraints)
 - [Secrets](#secrets)
 - [Open Questions](#open-questions)
 
-## PR Check: ESLint + tsc
+## PR Check: lint + typecheck + test
 
-Every pull request runs lint and typecheck. This is the same gate the agent runs locally (`npm run check`), enforced in CI so nothing merges red. Tests can be added to this job once the test suite exists; the locked Day-1 requirement is ESLint + TypeScript on every PR.
+Every pull request runs lint, typecheck, and tests. This is the same gate the agent runs locally (`npm run check`), enforced in CI so nothing merges red.
 
 `.github/workflows/ci.yml`:
 
@@ -143,12 +143,12 @@ jobs:
 
 ## Free-Tier Constraints
 
-Year-1 budget is roughly $144. The pipeline is designed to stay near-free:
+Realistic first-year cash outlay is roughly $194. The pipeline is designed to stay near-free:
 
 - **GitHub Actions:** free for public repos; the free private-repo minute allotment is ample for lint+typecheck on `ubuntu-latest`. Keep macOS runners out of routine CI.
 - **EAS Build:** the free plan grants a limited number of cloud builds per month. Reserve them for milestones — do not build on every PR. Local `eas build --local` is a fallback if free builds run out.
 - **Store fees (unavoidable, planned):** Apple Developer Program $99/year, Google Play one-time $25. These are the bulk of the budget.
-- **Supabase:** free tier covers auth + sync to roughly 50K users; cost is $0/month until then (see the cloud-sync rationale in [../02-product-definition/ROADMAP.md](../02-product-definition/ROADMAP.md)).
+- **Supabase:** free tier covers 50K auth MAU subject to database-size, egress, storage, Edge Function, and inactivity constraints. Cost is $0/month only while usage stays inside those quotas (see the cloud-sync rationale in [../02-product-definition/ROADMAP.md](../02-product-definition/ROADMAP.md)).
 
 ## Secrets
 

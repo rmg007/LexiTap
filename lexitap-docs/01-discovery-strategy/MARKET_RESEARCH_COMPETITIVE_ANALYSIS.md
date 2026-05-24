@@ -34,21 +34,21 @@ tags: [market-research, competitive-analysis, wordup, knowji, elsa, memrise, ank
 
 Demand is concentrated in **Asia-Pacific** — the largest and fastest-growing region, driven by globalization and career pressure to gain English proficiency. This is squarely LexiTap's audience: non-native speakers with a goal. Individual learners are 36.10% of market share; the 18–24 cohort shows the highest engagement of any demographic at 48%.
 
-Note: ASO localization into APAC languages is explicitly deferred at the current ~$144 budget; revisit when >$500/quarter is available or organic discovery shows blockage.
+Note: ASO localization into APAC languages is explicitly deferred at the current ~$194 first-year budget; revisit when >$500/quarter is available or organic discovery shows blockage.
 
 ## Two Market Tailwinds
 
 **1. AI commoditization.** By 2026, AI is a baseline expectation, not a differentiator. AI-powered features already command 33.5% of digital language-learning revenue, and every major competitor (Duolingo Max, ELSA, TalkPal, Enverson AI) has bolted on generative AI. The market has shifted from "has AI" to "implements AI well." Implication for LexiTap: do not lead marketing with AI — a basic chatbot is table stakes. LexiTap ships no AI chatbot at MVP and does not pretend AI is a hook.
 
-**2. Subscription fatigue.** WordUp's and ELSA's own competitive threat lists name consumer resistance to high-cost recurring subscriptions as a category-level risk. Lifetime/one-time deals are rising across the sector precisely to answer it. LexiTap's one-time purchase model is a structural response to a documented market shift — not just a founder preference.
+**2. Subscription fatigue.** WordUp's and ELSA's own competitive threat lists name consumer resistance to high-cost recurring subscriptions as a category-level risk. LexiTap responds with low-cost, deadline-matched Premium pricing ($4.99/mo or $24.99/yr), a $1.99 Common 3000 trial unlock, transparent cancellation copy, and B2B school seat packs rather than high-friction consumer upsells.
 
 ## Documented Market Gaps
 
 Three gaps are research-confirmed and under-served even at market saturation:
 
 1. **Intermediate plateau (B1/B2 → C1/C2).** Apps move beginners well, then strand them in dry text flashcards. LexiTap's free Advanced tier (words 3,001–9,000 by frequency) is the bridge.
-2. **Industry-specific professional jargon.** Generic "business English" exists; granular domain corpora largely do not. LexiTap covers this coarsely via Business English ($9.99); deep per-field corpora are a Year 2+ question.
-3. **Lexical chunking and collocations.** Pedagogical research (the Lexical Approach) shows language is acquired in multi-word chunks, yet most apps teach isolated words. LexiTap's Idioms & Expressions and Phrasal Verbs tiers ($9.99 each, post-launch) target this directly.
+2. **Industry-specific professional jargon.** Generic "business English" exists; granular domain corpora largely do not. LexiTap covers this coarsely via Business English inside Premium; deep per-field corpora are a Year 2+ question.
+3. **Lexical chunking and collocations.** Pedagogical research (the Lexical Approach) shows language is acquired in multi-word chunks, yet most apps teach isolated words. LexiTap's Idioms & Expressions and Phrasal Verbs Premium drops target this directly.
 
 ## Competitor Teardowns
 
@@ -69,9 +69,9 @@ Audio-visual memorization via custom cartoon illustrations + narrative example s
 
 **Product & audience.** Primarily American students and test-takers, sold as a family of **separate, exam-specific apps**: grade-level lists (Knowji Vocab 3–6, 7, 9, etc.), SAT (e.g. SAT Top 500), GRE, ACT, ASVAB, ISEE, plus TOEFL/IELTS for the ESL/ELL slice. iOS, Android, and (latterly) web. Note the audience contrast: Knowji is built around the **US K-12 / college-admissions / standardized-test** ladder, whereas LexiTap serves **global ESL learners only** and deliberately keeps American-student vocab (SAT/ACT, grade-level) out of scope. The overlap with LexiTap is narrow — only Knowji's TOEFL/IELTS lane and its general design pattern.
 
-**Pedagogy.** SRS that tracks per-word strength, surfaces weak words more often, and suggests when to drill again before forgetting. Four learning modes — passive & active recall (including spelling), receptive & productive — so unlike LexiTap's recognition-only/no-typing stance, Knowji *does* push into active production (spelling) and self-recorded pronunciation (record-and-compare against the reference voice, with no AI grading). Goal-setting by words/day or target completion date; a progress tracker showing words learned and mastery level. Heavy lean on dual-coding (image + audio + sentence).
+**Pedagogy.** SRS that tracks per-word strength, surfaces weak words more often, and suggests when to drill again before forgetting. Four learning modes — recognition, spelling production, receptive, and productive — so unlike LexiTap's recognition-only/no-typing stance, Knowji *does* push into active production (spelling) and self-recorded pronunciation (record-and-compare against the reference voice, with no AI grading). Goal-setting by words/day or target completion date; a progress tracker showing words learned and mastery level. Heavy lean on dual-coding (image + audio + sentence).
 
-**Pricing/monetization (corrected).** Historically a **per-app, one-time paid download**, NOT a recurring monthly subscription. A free "Knowji Vocab Lite" acted as the funnel; full apps were individually purchased. Exact price points are not fully verifiable post-closure, but the documented range is roughly **$3.99 up to ~$9.99 per app** (a 2014 promo put two flagship apps at $6.99 / "30% off"; at least one user review references paying $9.99). *Uncertainty flagged: precise current/final pricing per app could not be confirmed from the live App Store, which now 404s for these listings.* This actually makes Knowji a **one-time-pricing precedent that pre-dates and parallels LexiTap's model** — earlier doc copy describing it as a "$4.99–10/mo subscription (~$60–120/yr)" appears to be incorrect and is superseded here.
+**Pricing/monetization (corrected).** Historically a **per-app, paid-up-front download**, NOT a recurring monthly subscription. A free "Knowji Vocab Lite" acted as the funnel; full apps were individually purchased. Exact price points are not fully verifiable post-closure, but the documented range appears to run from low single digits to just under $10 per app (a 2014 promo put two flagship apps at $6.99 / "30% off"; at least one user review references top-end pricing). *Uncertainty flagged: precise current/final pricing per app could not be confirmed from the live App Store, which now 404s for these listings.* Knowji is useful as evidence that committed vocab learners tolerate small paid unlocks, but LexiTap's current model is **low-cost Premium subscription + B2B school seats**, not a separate paid app per exam.
 
 **Strengths.** Per-word custom illustration is a real moat (dual-coding); users report learning "faster than just flashcards." Rich linguistic metadata per word. Apple editorial validation for four years. One-time pricing avoided subscription fatigue.
 
@@ -79,7 +79,7 @@ Audio-visual memorization via custom cartoon illustrations + narrative example s
 
 **Its own AI threat.** Generative AI can now produce bespoke per-user mnemonic images on demand, eroding the moat of a fixed library of hand-drawn cartoons — plausibly a factor in the wind-down and the pivot to an "AI" framing.
 
-> **LexiTap implications.** (1) **Validate, don't copy, the aesthetic** — Knowji's juvenile cartoons are the clearest "what not to do" for our adult-professional, dark-mode-first identity; this directly supports Brand Identity finalization (the blocker this teardown gates). (2) **Beat the catalog fragmentation** — Knowji's separate-app-per-exam structure manufactures post-test churn; LexiTap's single-app tiered ladder (Foundation → Advanced → TOEFL/IELTS → Business → Idioms/Phrasal) plus **free cloud sync** directly answers both its churn and its device-bound SRS. (3) **Reframe the pricing story** — Knowji is *additional precedent* that one-time vocab pricing is viable, but its closure warns that pricing model alone is not a moat: pair one-time ownership with the retention floor (offline-first reliability, no-typing UX, sync) so LexiTap doesn't repeat the "good app, no durable business" outcome. Adopt-worthy: its dual-coding richness (image+audio+sentence) and goal-setting. Avoid: active spelling/production testing (off-strategy for our no-typing recognition model) and self-recorded pronunciation (that's ELSA's lane).
+> **LexiTap implications.** (1) **Validate, don't copy, the aesthetic** — Knowji's juvenile cartoons are the clearest "what not to do" for our adult-professional, dark-mode-first identity; this directly supports Brand Identity finalization (the blocker this teardown gates). (2) **Beat the catalog fragmentation** — Knowji's separate-app-per-exam structure manufactures post-test churn; LexiTap's single-app Premium ladder (Foundation → Advanced → TOEFL/IELTS → Business → Idioms/Phrasal) plus **free cloud sync** directly answers both its churn and its device-bound SRS. (3) **Reframe the pricing story** — Knowji shows users can pay for focused vocabulary value, but its closure warns that pricing model alone is not a moat: pair low-cost Premium access with the retention floor (offline-first reliability, no-typing UX, sync) so LexiTap doesn't repeat the "good app, no durable business" outcome. Adopt-worthy: its dual-coding richness (image+audio+sentence) and goal-setting. Avoid: spelling/production testing (off-strategy for our no-typing recognition model) and self-recorded pronunciation (that's ELSA's lane).
 
 ### ELSA Speak — pronunciation lane (we do not enter)
 
@@ -89,9 +89,9 @@ Voice-recognition AI for accent correction. ~$13.33/mo, $89–99/yr. Documented 
 
 Video-based native-speaker contextual learning; intermediate conversational audience. ~$90/yr. Their video moat is not LexiTap's.
 
-### Anki — one-time-pricing precedent
+### Anki — paid-up-front precedent
 
-Utilitarian open-source SRS for serious learners (med students, polyglots). Desktop/Android free; the **paid iOS app is the primary revenue source** — validating one-time pricing for committed audiences.
+Utilitarian open-source SRS for serious learners (med students, polyglots). Desktop/Android free; the **paid iOS app is the primary revenue source** — validating paid-up-front willingness to pay for committed audiences.
 
 ### Duolingo — NOT a competitor (retention reference only)
 
@@ -111,7 +111,7 @@ Free vocab app as a lead generator for $149+ premium prep courses. Vocab is not 
 
 **LexiTap's actual differentiators:**
 
-- **Price + ownership** — one-time purchases; Premium Pass $29.99/yr vs. $84–120/yr peers (Duolingo Super ~$84, ELSA ~$99, Knowji ~$120).
+- **Price + fit** — Premium Pass $4.99/mo or $24.99/yr, with Common 3000 at $1.99, vs. $84–120/yr peers (Duolingo Super ~$84, ELSA ~$99, historic Knowji catalog spend could stack across apps).
 - **No-typing UX** — tap/drag/match; the product name embodies it.
 - **Offline-first reliability** — reliability is the retention floor; the 5-minute commute is the atomic engagement unit.
 - **Free cloud sync** — directly answers Knowji's device-bound SRS and WordUp's sync failures.
@@ -127,7 +127,7 @@ Free vocab app as a lead generator for $149+ premium prep courses. Vocab is not 
 | Ignores idioms/phrasal/collocations | WordUp | Dedicated Idioms & Phrasal Verbs tiers |
 | Punitive SRS backlog | WordUp | SRS forgiveness mechanics (daily cap, soft catch-up) |
 | Cross-platform sync failures | WordUp | Free cloud sync in Foundation + Advanced |
-| Paywall hostility / auto-renewal backlash | WordUp, ELSA | One-time purchases; only Premium Pass recurs, no silent renewal |
+| Paywall hostility / auto-renewal backlash | WordUp, ELSA | Low-cost Premium with clear monthly/annual terms, a $1.99 Common 3000 unlock, no silent renewal tricks |
 | Subscription fatigue (category) | All | One-time pricing as structural response |
 
 ## Open Questions
@@ -135,4 +135,4 @@ Free vocab app as a lead generator for $149+ premium prep courses. Vocab is not 
 - WordUp's multimedia "wow factor" gap: LexiTap's lighter audio + imagery + curated sentences captures dual-coding cheaply but feels less spectacular at launch. Does positioning on reliability/price/ownership fully compensate? Watch beta qualitative.
 - Per-word AI mnemonic imagery (Knowji's own named threat) is a Year 2 differentiator (Backlog #34) — when does conversion data justify the content-pipeline cost?
 - Knowji teardown (Backlog #42) completed 2026-05-24 via desk research; note Knowji closed in 2025 so a first-person hands-on of the live app may no longer be possible. First-person hands-on teardown of WordUp (Backlog #44) is still pending; that profile remains research-based.
-- Knowji's per-app one-time pricing is now a second one-time-pricing precedent (alongside Anki) — but its closure raises the question: is one-time vocab pricing durable as a standalone business, or only as a feature of a broader retention/ownership story? Watch against LexiTap's own LTV data (first repricing review Month 3 / 100 payers).
+- Knowji's per-app paid-up-front model is a useful willingness-to-pay precedent (alongside Anki), but its closure raises the question: is focused vocabulary durable as a standalone business without subscriptions, B2B seats, and retention loops? Watch against LexiTap's own LTV data (first repricing review Month 3 / 100 payers).

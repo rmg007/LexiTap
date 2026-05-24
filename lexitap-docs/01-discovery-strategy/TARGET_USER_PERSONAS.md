@@ -23,11 +23,11 @@ The market skews APAC and toward the 18–24 cohort (48% engagement, the highest
 
 - **Profile:** 19, Chinese, applying to US universities. CEFR B2 reaching for C1. Studies on her phone between classes and on the subway.
 - **Goal:** Hit the TOEFL vocabulary bar for admission by a fixed exam date.
-- **Pains:** Existing tools are dry or expensive; she has lost flashcard progress switching phones; she resents subscriptions for a one-time exam.
+- **Pains:** Existing tools are dry or expensive; she has lost flashcard progress switching phones; she distrusts high-cost subscriptions that outlast a short exam window.
 - **Trigger to convert:** A booked TOEFL test date. Urgency is acute and time-boxed.
-- **Willingness to pay:** High. $14.99 one-time for TOEFL Vocabulary is trivial against application stakes; a parent will approve $10–15 far more readily than a monthly charge.
+- **Willingness to pay:** High. $4.99 monthly Premium is easy to justify during the final prep window; $24.99 annual is viable if her school year spans multiple tests or she wants future IELTS/GRE content too.
 - **Acquisition channel:** Teacher referral network (her cram-school/ESL teacher), r/TOEFL, App Store SEO ("best TOEFL vocabulary").
-- **Why LexiTap wins her:** No-typing commute study, free cloud sync (never lose months of prep), one-time purchase she owns, audio pronunciation on the TOEFL tier.
+- **Why LexiTap wins her:** No-typing commute study, free cloud sync (never lose months of prep), low-cost Premium access, audio pronunciation on the TOEFL tier.
 
 ## Persona 2 — Rafael, the IELTS Immigrant (primary)
 
@@ -35,9 +35,9 @@ The market skews APAC and toward the 18–24 cohort (48% engagement, the highest
 - **Goal:** Pass IELTS across all four sections for a PR/visa pathway.
 - **Pains:** IELTS is a life-changing gate; he cannot afford to waste hundreds of hours on words he already knows or will never use. Distrusts auto-renewing apps after being burned.
 - **Trigger to convert:** Visa/immigration timeline with an IELTS deadline.
-- **Willingness to pay:** Medium-high. $14.99 one-time IELTS is justified by the immigration stakes; recurring billing is a hard no.
+- **Willingness to pay:** Medium-high. $4.99/mo during the immigration prep sprint is justified by the stakes; he needs honest cancellation and no dark-pattern renewal copy.
 - **Acquisition channel:** Immigration forums, r/IELTS, teacher referral, App Store SEO ("how to study for IELTS").
-- **Why LexiTap wins him:** One-time ownership (anti-subscription pillar), offline reliability, frequency-ordered path from free Advanced into paid IELTS.
+- **Why LexiTap wins him:** Low-cost, cancel-anytime Premium, offline reliability, frequency-ordered path from free Advanced into paid IELTS.
 
 ## Persona 3 — Aisha, the ESL Professional (primary, steady WTP)
 
@@ -45,7 +45,7 @@ The market skews APAC and toward the 18–24 cohort (48% engagement, the highest
 - **Goal:** Sound confident in meetings, emails, and presentations; close the professional-jargon gap.
 - **Pains:** Generic business-English modules are too shallow; she finds idioms and phrasal verbs the hardest part of real workplace English — exactly WordUp's documented blindspot. Embarrassed to use a cartoonish app at work.
 - **Trigger to convert:** A promotion, a client-facing role, or a high-stakes presentation.
-- **Willingness to pay:** Steady. $9.99 Business English, plus strong pull toward Idioms ($9.99) and Phrasal Verbs ($9.99) post-launch — a natural multi-tier buyer and a prime Premium Pass ($29.99/yr) candidate.
+- **Willingness to pay:** Steady. Premium annual ($24.99/yr) is attractive because Business English, Idioms, and Phrasal Verbs all compound for her workplace goals.
 - **Acquisition channel:** LinkedIn/professional content, App Store, word-of-mouth. Less teacher-driven.
 - **Why LexiTap wins her:** Adult-professional minimalist aesthetic (Notion/Superhuman ref — passes the "pull it out on the commute without embarrassment" test), idioms/phrasal-verb coverage, no-typing micro-sessions.
 
@@ -55,9 +55,9 @@ The market skews APAC and toward the 18–24 cohort (48% engagement, the highest
 - **Goal:** Master the notoriously difficult GRE/GMAT verbal vocabulary as a non-native speaker.
 - **Pains:** The GRE vocab section is brutal; sentence-correction and verbal reasoning hinge on precise word knowledge. He is a "desperate, motivated" buyer.
 - **Trigger to convert:** Grad/B-school application cycle with a test date.
-- **Willingness to pay:** Very high — the desperate-audience segment driving the optimistic 15% conversion scenario. $14.99 one-time GRE or GMAT is easy; strong Premium Pass candidate if taking both.
-- **Acquisition channel:** r/GRE, r/GMAT, App Store SEO, teacher/coaching referral. Note: GRE ($14.99) and GMAT ($14.99) are post-launch content drops (Week 22+), so Sunil converts in the post-launch wave.
-- **Why LexiTap wins him:** Price (vs. Magoosh's $149+ courses), one-time ownership, focused frequency-based difficulty progression.
+- **Willingness to pay:** Very high — the desperate-audience segment driving the optimistic conversion scenario. $4.99/mo is low friction for a test sprint; $24.99/yr is compelling if he studies GRE and GMAT or keeps vocabulary active across application cycles.
+- **Acquisition channel:** r/GRE, r/GMAT, App Store SEO, teacher/coaching referral. Note: GRE and GMAT are Premium post-launch content drops (Week 22+), so Sunil converts in the post-launch wave.
+- **Why LexiTap wins him:** Price (vs. Magoosh's $149+ courses), low-cost Premium access, focused frequency-based difficulty progression.
 
 ## Persona 5 — Linh, the Free-Tier Habit Builder (the funnel)
 
@@ -65,7 +65,7 @@ The market skews APAC and toward the 18–24 cohort (48% engagement, the highest
 - **Goal:** Build everyday and academic vocabulary; improve gradually.
 - **Pains:** Beginner apps stop being useful at the intermediate plateau; she does not want to pay before she knows an app sticks.
 - **Trigger to convert:** Later — when a TOEFL/IELTS plan or a job emerges, she becomes Mei/Rafael/Aisha.
-- **Willingness to pay:** Low now. She lives on free Foundation (top 3,000) and Advanced (3,001–9,000) with free cloud sync. She is the top of the funnel and the daily-habit base that the paid thesis depends on. Common 3000 ($2.99) is her low-friction first paid step that proves willingness to pay.
+- **Willingness to pay:** Low now. She lives on free Foundation (top 3,000) and Advanced (3,001–9,000) with free cloud sync. She is the top of the funnel and the daily-habit base that the paid thesis depends on. Common 3000 ($1.99) is her low-friction first paid step that proves willingness to pay.
 - **Acquisition channel:** TikTok/YouTube Shorts ("word of the day"), teacher referral, organic App Store.
 - **Why LexiTap wins her:** Genuinely useful free tiers, no ads, no typing, the streak/habit loop — and a frictionless ladder into paid when urgency arrives.
 
@@ -75,11 +75,11 @@ The market skews APAC and toward the 18–24 cohort (48% engagement, the highest
 
 | Persona | Primary tier | WTP | Lead channel | Conversion trigger |
 |---------|-------------|-----|--------------|--------------------|
-| Mei (TOEFL applicant) | TOEFL $14.99 | High | Teacher + r/TOEFL + ASO | Exam date |
-| Rafael (IELTS immigrant) | IELTS $14.99 | Med-high | Forums + teacher + ASO | Visa timeline |
-| Aisha (ESL professional) | Business $9.99 → Idioms/Phrasal → Pass | Steady | LinkedIn + ASO + WOM | Promotion / client role |
-| Sunil (GRE/GMAT applicant) | GRE/GMAT $14.99 (post-launch) | Very high | r/GRE, r/GMAT + ASO | Application cycle |
-| Linh (free habit builder) | Foundation/Advanced (free) → Common3000 $2.99 | Low now | Shorts + teacher + organic | Future deadline |
+| Mei (TOEFL applicant) | Premium monthly/annual → TOEFL | High | Teacher + r/TOEFL + ASO | Exam date |
+| Rafael (IELTS immigrant) | Premium monthly/annual → IELTS | Med-high | Forums + teacher + ASO | Visa timeline |
+| Aisha (ESL professional) | Premium annual → Business + Idioms/Phrasal | Steady | LinkedIn + ASO + WOM | Promotion / client role |
+| Sunil (GRE/GMAT applicant) | Premium monthly/annual → GRE/GMAT post-launch | Very high | r/GRE, r/GMAT + ASO | Application cycle |
+| Linh (free habit builder) | Foundation/Advanced (free) → Common 3000 $1.99 | Low now | Shorts + teacher + organic | Future deadline |
 
 ## Open Questions
 

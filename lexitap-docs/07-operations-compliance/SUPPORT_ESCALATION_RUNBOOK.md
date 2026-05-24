@@ -4,13 +4,13 @@ category: operations-compliance
 status: active
 updated: 2026-05-24
 priority: P2
-tags: [support, escalation, bug-triage, runbook, sync-conflicts, refunds, teacher-payouts, sla]
+tags: [support, escalation, bug-triage, runbook, sync-conflicts, refunds, teacher-rewards, sla]
 ---
 
 # Support and Escalation Runbook
 
 > Phase-0 planning document. Defines realistic solo-founder support: one inbox, common-issue
-> playbooks, triage/escalation, SLAs honest for one person, and teacher-payout disputes. Pairs with
+> playbooks, triage/escalation, SLAs honest for one person, and teacher-reward disputes. Pairs with
 > [ERROR_MONITORING_PLAN.md](./ERROR_MONITORING_PLAN.md) and the data model in
 > [../04-technical-architecture/DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md).
 
@@ -20,7 +20,7 @@ tags: [support, escalation, bug-triage, runbook, sync-conflicts, refunds, teache
 - [Channels and SLAs](#channels-and-slas)
 - [Triage and Severity](#triage-and-severity)
 - [Common Issue Playbooks](#common-issue-playbooks)
-- [Teacher-Payout Disputes](#teacher-payout-disputes)
+- [Teacher-Reward Disputes](#teacher-reward-disputes)
 - [Escalation Path](#escalation-path)
 - [Tooling](#tooling)
 - [Open Questions](#open-questions)
@@ -98,20 +98,20 @@ follow the data-subject-rights process in [GDPR_COPPA_COMPLIANCE.md](./GDPR_COPP
 Confirm provider used at signup (`auth_provider`); a user who signed up with Google cannot sign in
 with email/password and vice versa. Trigger password reset via Supabase Auth for email accounts.
 
-## Teacher-Payout Disputes
+## Teacher-Reward Disputes
 
-Teachers are paid via PayPal on a monthly manual export while small (per
+Teachers receive non-cash Premium seats or credits while the advocate loop stays digital-only (per
 [../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md](../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md)).
 Dispute playbook:
 
-1. Pull the teacher's `referrals` rows (code, product, commission rate, `tier_at_purchase`,
-   `receipt_id`) and reconcile against the dashboard total.
-2. Common cause: a referred purchase was later refunded — refunded purchases are void and reverse
-   the commission; explain with the receipt id.
-3. Verify commission rate matched the teacher's tier at time of purchase (rates are snapshotted per
-   referral, not retroactively re-rated).
-4. Confirm `paypal_email` on file is correct before re-sending a payout.
-5. Honor genuine reconciliation errors in the next monthly run; log the adjustment.
+1. Pull the teacher's `referrals` rows (code, referred account, reward status, qualifying activity,
+   and source event id) and reconcile against the dashboard total.
+2. Common cause: a referred account never completed the qualifying trial/activity threshold or was
+   later flagged as fraudulent/self-referred; explain with the source event id.
+3. Verify the reward tier matched the teacher's status at time of qualification; tiers are
+   snapshotted per referral, not retroactively re-rated.
+4. Confirm the Premium seat or credit destination before re-issuing a reward.
+5. Honor genuine reconciliation errors in the next reward run; log the adjustment.
 
 ## Escalation Path
 
@@ -119,7 +119,7 @@ Dispute playbook:
   [ERROR_MONITORING_PLAN.md](./ERROR_MONITORING_PLAN.md) staged rollout.
 - **Privacy/legal** → privacy inbox + flag for counsel if a rights request is complex.
 - **Payment/refund** → store support (Apple/Google) for the user; we cannot override.
-- **Payout** → manual PayPal reconciliation as above.
+- **Teacher reward** → manual non-cash reward reconciliation as above.
 - **Out of scope (pronunciation, fluency claims)** → set expectations: LexiTap is a vocabulary tool,
   not a pronunciation or fluency product.
 
@@ -133,4 +133,4 @@ playbook above to keep response time low.
 
 - Build a public FAQ/help page on the website for top-five deflections before launch?
 - Threshold (tickets/day) at which a help-desk tool becomes worth the setup cost.
-- Minimum PayPal payout threshold and exact monthly payout date (coordinate with referral doc).
+- Exact qualifying threshold and cadence for issuing teacher Premium-seat rewards.

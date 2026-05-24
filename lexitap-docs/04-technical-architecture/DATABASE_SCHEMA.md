@@ -27,7 +27,7 @@ Comprehensive v2.1 schema reference — the canonical source for the LexiTap dat
   - [user_stats](#user_stats-streak--forgiveness-state)
 - [Cross-DB Queries (ATTACH)](#cross-db-queries-attach)
 - [Supabase: Sync Mirror Tables](#supabase-sync-mirror-tables)
-- [Supabase: Teacher / Referral / Promo](#supabase-teacher--referral--promo)
+- [Supabase: Teacher Advocate / Promo](#supabase-teacher-advocate--promo)
 - [Soft-Delete Rationale](#soft-delete-rationale)
 - [Append-Only Rationale](#append-only-rationale)
 - [Migration Strategy](#migration-strategy)
@@ -62,15 +62,15 @@ CREATE TABLE content_tiers (
   name          TEXT NOT NULL,        -- "LexiTap Foundation (CEFR A2-B1)"
   description   TEXT,
   is_free       INTEGER NOT NULL,     -- 1 free, 0 paid
-  price_usd     REAL,                 -- NULL if free
-  sku           TEXT,                 -- IAP product id, e.g. 'com.lexitap.toefl'
+  price_usd     REAL,                 -- direct SKU price only; NULL for free or Premium-bundled content
+  sku           TEXT,                 -- IAP product id only when a tier has a direct unlock SKU
   word_count    INTEGER NOT NULL,     -- built from sourced content, NOT pre-committed
   display_order INTEGER NOT NULL,
   is_active     INTEGER DEFAULT 1     -- 0 for post-launch drops not yet released
 );
 ```
 
-Launch-wave tiers: `foundation`/`advanced` (free), `toefl`/`ielts` ($14.99), `business` ($9.99), `common3k` ($2.99). Post-launch (`is_active=0` until released): `gre`, `gmat`, `idioms`, `phrasal_verbs`. `word_count` is populated from actual sourced content — never hardcoded at planning time.
+Launch-wave tiers: `foundation`/`advanced` (free), `common3k` ($1.99 non-consumable unlock), and Premium-bundled content (`toefl`, `ielts`, `business`). Post-launch (`is_active=0` until released): `gre`, `gmat`, `idioms`, `phrasal_verbs`, all included in Premium Pass unless the pricing model is intentionally changed. `word_count` is populated from actual sourced content — never hardcoded at planning time.
 
 ### words
 
@@ -116,7 +116,7 @@ Purchased paid tiers. Free tiers are implicitly unlocked and never stored here.
 CREATE TABLE user_entitlements (
   tier_id       TEXT PRIMARY KEY,
   purchased_at  INTEGER NOT NULL,
-  expires_at    INTEGER,            -- NULL one-time, set for annual
+  expires_at    INTEGER,            -- NULL for permanent unlocks, set for subscriptions / B2B seats
   receipt_token TEXT,
   FOREIGN KEY (tier_id) REFERENCES content_tiers(id)
 );
@@ -304,23 +304,27 @@ CREATE TABLE user_stats_sync (
 
 Streak boundaries are evaluated in the user's IANA timezone (AsyncStorage source of truth, mirrored to `user_accounts.timezone`), never UTC or device-current tz at travel time. No retroactive re-anchoring.
 
-## Supabase: Teacher / Referral / Promo
+## Supabase: Teacher Advocate / Promo
 
 ```sql
 CREATE TABLE teachers (
   id UUID PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL,
   referral_code TEXT UNIQUE NOT NULL, total_referrals INTEGER DEFAULT 0,
-  total_earnings DECIMAL DEFAULT 0, current_tier INTEGER DEFAULT 1,  -- 1-4
-  paypal_email TEXT, created_at TIMESTAMP DEFAULT NOW()
+  total_active_referrals INTEGER DEFAULT 0,
+  reward_credits INTEGER DEFAULT 0,
+  current_reward_tier INTEGER DEFAULT 1,
+  created_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE referrals (
   id UUID PRIMARY KEY, teacher_id UUID REFERENCES teachers(id),
-  teacher_code TEXT NOT NULL, product_id TEXT NOT NULL,
-  product_price DECIMAL NOT NULL, student_discount DECIMAL NOT NULL,
-  student_paid DECIMAL NOT NULL, teacher_commission_rate DECIMAL NOT NULL,
-  teacher_commission DECIMAL NOT NULL, tier_at_purchase INTEGER NOT NULL,
-  purchased_at TIMESTAMP DEFAULT NOW(), receipt_id TEXT UNIQUE
+  teacher_code TEXT NOT NULL, referred_user_id UUID,
+  premium_trial_days INTEGER DEFAULT 14,
+  reward_status TEXT NOT NULL DEFAULT 'pending',
+  reward_credits_awarded INTEGER DEFAULT 0,
+  reward_tier_at_qualification INTEGER,
+  attributed_at TIMESTAMP DEFAULT NOW(),
+  source_event_id TEXT UNIQUE
 );
 
 CREATE TABLE promo_codes (

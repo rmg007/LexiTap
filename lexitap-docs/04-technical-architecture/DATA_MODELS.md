@@ -156,7 +156,7 @@ export interface QuizResult {
 export interface Entitlement {
   tierId: TierId;
   purchasedAt: number;
-  expiresAt: number | null;   // null = one-time, set = annual
+  expiresAt: number | null;   // null = permanent unlock, set = subscription / B2B seat expiry
   receiptToken?: string;
 }
 

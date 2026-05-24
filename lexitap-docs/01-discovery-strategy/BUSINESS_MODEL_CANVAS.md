@@ -25,21 +25,21 @@ tags: [business-model, canvas, revenue, value-proposition, cost-structure, budge
 ## 2. Value Propositions
 
 **For Cram Schools:**
-- Higher exam pass rates via high-efficacy spelling/active recall training.
+- Better vocabulary retention via high-efficacy recognition practice and offline-first SRS.
 - Low-cost bulk licenses (up to 70% cheaper than individual App Store purchases).
 - School Admin Dashboard to monitor student progress, review times, and streaks.
-- Secure, web-based direct purchasing bypassing App Store overhead.
+- Secure, web-based direct purchasing for institutional seat packs where store rules permit; no in-app steering to web checkout.
 
 **For Individual Learners:**
 - Low-cost Premium access ($4.99/mo, $24.99/yr) matching their exact, short-term study window.
-- Spelling-construction active recall widget that prepares them for actual TOEFL/IELTS writing tests.
+- No-typing recognition widgets that turn short study windows into focused vocabulary decisions.
 - Offline-first reliability for 5-minute commute windows.
 - Free cloud sync across multiple devices.
 - Notion/Superhuman-style adult dark aesthetic.
 
 **For Teacher Advocates:**
 - High-value 14-day free trials to gift to students.
-- In-app Premium credit rewards for active referrals, completely bypassing payment friction.
+- In-app Premium credit rewards for active referrals, avoiding cash payout friction.
 
 ---
 
@@ -47,7 +47,7 @@ tags: [business-model, canvas, revenue, value-proposition, cost-structure, budge
 
 - **Primary B2B:** Direct cold email/outreach by the founder to cram school directors; self-serve B2B licensing web portal.
 - **Teacher Advocate Loop:** Non-cash referral code system built into onboarding.
-- **Organic B2C:** App Store Optimization (ASO) focused on "active recall" and "spelling"; Reddit (r/TOEFL, r/IELTS, r/ESL); YouTube Shorts.
+- **Organic B2C:** App Store Optimization (ASO) focused on TOEFL/IELTS vocabulary, offline vocabulary practice, spaced repetition, and no-typing review; Reddit (r/TOEFL, r/IELTS, r/ESL); YouTube Shorts.
 - **Owned:** lexitap.app marketing website + B2B seat dashboard.
 
 ---
@@ -83,26 +83,26 @@ tags: [business-model, canvas, revenue, value-proposition, cost-structure, budge
 | Google Play account | $25 one-time | Google Developer portal. |
 | Domain (lexitap.app) | $20/yr | Vercel domain name. |
 | Premium TTS audio (ElevenLabs) | ~$50 | TOEFL/IELTS audio enrichment (Phase 3). |
-| Supabase Backend | $0 | Free tier up to 50K users. |
+| Supabase Backend | $0 | Free tier covers 50K auth MAU subject to database, egress, storage, Edge Function, and inactivity constraints. |
 | Vercel B2B Portal Hosting | $0 | Free tier hosting. |
 | **Year-1 All-In Total** | **~$194** | Minimal variable costs due to offline-first app architecture. |
 
-*Note: By eliminating cash teacher commissions, we cut out transactional fees and the legal/compliance overhead of cross-border micro-payout accounting.*
+*Note: By using non-cash teacher rewards, we avoid transactional payout fees and reduce the legal/compliance overhead of cross-border micro-payout accounting.*
 
 ---
 
 ## 7. Key Activities
 
-- **Product Development:** React Native app build, spelling active recall widget programming, web-based B2B bulk license redemption portal.
+- **Product Development:** React Native app build, no-typing recognition widgets, web-based B2B bulk license redemption portal.
 - **Content Enrichment:** USA/UK audio integration and spelling list formatting.
 - **B2B Outreach:** Founder-led direct sales and bulk trials onboarding.
-- **Organic Content:** Creating active recall video Shorts, Reddit seeding, and ASO maintenance.
+- **Organic Content:** Creating recognition-practice video Shorts, Reddit seeding, and ASO maintenance.
 
 ---
 
 ## 8. Key Resources
 
-- **Active Recall Tech:** Custom spelling/construction tap UI.
+- **Recognition Widget System:** MultipleChoice, DragDrop, ImageMatch, and Classification tap/drag UI.
 - **Bulk Token System:** Database-driven bulk seat license allocation.
 - **Content Assets:** Frequency-ranked ESL corpora with accent-split audio.
 - **Founder Time:** Sole constraint; managed via strict scope gating.
@@ -121,6 +121,6 @@ tags: [business-model, canvas, revenue, value-proposition, cost-structure, budge
 ## Key Metrics
 
 - **Acquisition:** Direct cram-school pilot sign-ups; bulk seat token redemption rate; organic installs.
-- **Activation/Retention:** Onboarding diagnostic completion rate; D1/D7/D30 active retention; spelling widget error rate.
+- **Activation/Retention:** Onboarding diagnostic completion rate; D1/D7/D30 active retention; recognition review error rate.
 - **Monetization:** Blended monthly churn (target <8%); individual conversion rate (target >1.5%); B2B bulk average contract value.
-- **ASO Rank:** Position for "active recall" and "TOEFL spelling" search terms.
+- **ASO Rank:** Position for "TOEFL vocabulary", "IELTS vocabulary", "offline vocabulary", and "spaced repetition" search terms.
