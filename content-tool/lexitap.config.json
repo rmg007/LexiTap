@@ -1,0 +1,38 @@
+{
+  "app_id": "lexitap",
+  "tiers": [
+    {
+      "slug": "foundation",
+      "name": "LexiTap Foundation (CEFR A2-B1)",
+      "description": "Top ~3,000 most-used English words for everyday communication.",
+      "is_free": true,
+      "price_usd": null,
+      "sku": null,
+      "display_order": 1,
+      "requires_theme": true,
+      "audio": false
+    },
+    {
+      "slug": "advanced",
+      "name": "LexiTap Advanced (CEFR B2-C1)",
+      "description": "Words 3,001-9,000 by real-world frequency for fluent expression.",
+      "is_free": true,
+      "price_usd": null,
+      "sku": null,
+      "display_order": 2,
+      "requires_theme": true,
+      "audio": false
+    },
+    {
+      "slug": "toefl",
+      "name": "TOEFL Vocabulary",
+      "description": "3,000 academic words for the TOEFL exam, with reference audio.",
+      "is_free": false,
+      "price_usd": 14.99,
+      "sku": "com.lexitap.toefl",
+      "display_order": 3,
+      "requires_theme": false,
+      "audio": true
+    }
+  ]
+}

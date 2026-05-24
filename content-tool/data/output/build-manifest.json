@@ -1,0 +1,17 @@
+{
+  "app_id": "lexitap",
+  "content_version": "0.0.3",
+  "user_version": 3,
+  "built_at": "2026-05-24T10:59:37.822Z",
+  "tiers": {
+    "foundation": 30,
+    "advanced": 10,
+    "toefl": 6
+  },
+  "total_words": 46,
+  "source_files": [
+    "advanced.csv",
+    "foundation.csv",
+    "toefl.csv"
+  ]
+}

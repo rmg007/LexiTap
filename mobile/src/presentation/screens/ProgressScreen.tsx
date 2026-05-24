@@ -1,0 +1,107 @@
+import React, { useCallback, useEffect, useState } from 'react';
+import { View } from 'react-native';
+import { Screen } from '@/presentation/screens/Screen';
+import { useTheme } from '@/presentation/theme';
+import { Text, Card, ProgressBar, StreakBadge } from '@/presentation/components';
+import { useServices } from '@/presentation/services';
+import {
+  masteryCompletion,
+  countMastered,
+  evaluateStreakAtRisk,
+  toLocalCivilDate,
+  initialStreakState,
+  asTierId,
+  type MasteryLevel,
+  type UserStats,
+} from '@/domain/index';
+import { listActiveTiers } from '@/config/tiers';
+
+// Progress: streak summary + per-tier mastery (rings/bars driven by the pure
+// mastery aggregation helpers). Offline-first reads; failures fall back to an
+// empty dashboard rather than an error.
+
+interface TierMastery {
+  tierId: string;
+  displayName: string;
+  completion: number;
+  mastered: number;
+  total: number;
+}
+
+export function ProgressScreen(): React.JSX.Element {
+  const { spacing } = useTheme();
+  const { queries } = useServices();
+  const [stats, setStats] = useState<UserStats | null>(null);
+  const [tiers, setTiers] = useState<readonly TierMastery[]>([]);
+
+  const load = useCallback(async () => {
+    try {
+      setStats(await queries.getUserStats());
+    } catch {
+      setStats(null);
+    }
+    const active = listActiveTiers();
+    const results: TierMastery[] = [];
+    for (const tier of active) {
+      let levels: readonly number[] = [];
+      try {
+        levels = await queries.getMasteryLevels(asTierId(tier.id));
+      } catch {
+        levels = [];
+      }
+      const masteryLevels = levels as readonly MasteryLevel[];
+      results.push({
+        tierId: tier.id,
+        displayName: tier.displayName,
+        completion: masteryCompletion(masteryLevels),
+        mastered: countMastered(masteryLevels),
+        total: masteryLevels.length,
+      });
+    }
+    setTiers(results);
+  }, [queries]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const streak = stats?.streak ?? initialStreakState();
+  const today = toLocalCivilDate(Date.now(), Intl.DateTimeFormat().resolvedOptions().timeZone);
+  const { atRisk } = evaluateStreakAtRisk(streak, today);
+
+  return (
+    <Screen>
+      <Text variant="title" color="textPrimary" accessibilityRole="header">
+        Progress
+      </Text>
+
+      <Card>
+        <View style={{ gap: spacing.s3 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text variant="headline" color="textPrimary">
+              Streak
+            </Text>
+            <StreakBadge streak={streak} atRisk={atRisk} />
+          </View>
+          <Text variant="body" color="textSecondary" tabularNums>
+            {`Longest: ${streak.longestStreak} · Sessions: ${stats?.totalSessions ?? 0} · Mastered: ${stats?.totalWordsMastered ?? 0}`}
+          </Text>
+        </View>
+      </Card>
+
+      {tiers.map((tier) => (
+        <Card key={tier.tierId}>
+          <View style={{ gap: spacing.s3 }}>
+            <Text variant="headline" color="textPrimary">
+              {tier.displayName}
+            </Text>
+            <ProgressBar progress={tier.completion} label={`${tier.displayName} mastery`} />
+            <Text variant="caption" color="textTertiary" tabularNums>
+              {`${tier.mastered} of ${tier.total} mastered`}
+            </Text>
+          </View>
+        </Card>
+      ))}
+    </Screen>
+  );
+}

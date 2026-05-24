@@ -1,0 +1,62 @@
+import React, { createContext, useContext, type ReactNode } from 'react';
+import type { StartQuizUseCase } from '@/application/quiz/StartQuizUseCase';
+import type { AnswerQuestionUseCase } from '@/application/quiz/AnswerQuestionUseCase';
+import type { CheckAccessUseCase } from '@/application/tier/CheckAccessUseCase';
+import type { UnlockTierUseCase } from '@/application/tier/UnlockTierUseCase';
+import type { SyncProgressUseCase } from '@/application/user/SyncProgressUseCase';
+import type { TierId } from '@/domain/index';
+import type { UserStats } from '@/domain/index';
+
+// The Services context is the ONLY way the presentation layer reaches the
+// application layer. It imports TYPES ONLY from @/application and @/domain; the
+// concrete value (use-case instances bound to infrastructure adapters) is
+// constructed at the composition root and injected at integration time. ESLint
+// bans presentation from importing infrastructure concretes, so this seam keeps
+// the boundary clean.
+
+// Read accessors the screens need that are not themselves use cases. These are
+// modelled as plain async method signatures so the integration owner can back
+// them with whatever read repository / query they like (offline-first: a read
+// failure should resolve, not block the quiz path).
+export interface ReadQueries {
+  // Aggregate stats for Home / Progress (streak, totals, mastered count).
+  getUserStats(): Promise<UserStats | null>;
+  // Per-tier mastery levels for the Progress dashboard rings/bars.
+  getMasteryLevels(tierId: TierId): Promise<readonly number[]>;
+}
+
+export interface Services {
+  // Quiz flow.
+  readonly startQuiz: StartQuizUseCase;
+  readonly answerQuestion: AnswerQuestionUseCase;
+  // Entitlements / paywall.
+  readonly checkAccess: CheckAccessUseCase;
+  readonly unlockTier: UnlockTierUseCase;
+  // Offline-tolerant sync (a failure is a silent no-op).
+  readonly syncProgress: SyncProgressUseCase;
+  // Read queries for dashboards.
+  readonly queries: ReadQueries;
+}
+
+const ServicesContext = createContext<Services | null>(null);
+
+interface ServicesProviderProps {
+  value: Services;
+  children: ReactNode;
+}
+
+export function ServicesProvider({
+  value,
+  children,
+}: ServicesProviderProps): React.JSX.Element {
+  return <ServicesContext.Provider value={value}>{children}</ServicesContext.Provider>;
+}
+
+/** Access the injected services. Throws if used outside a ServicesProvider. */
+export function useServices(): Services {
+  const ctx = useContext(ServicesContext);
+  if (ctx === null) {
+    throw new Error('useServices must be used within a ServicesProvider');
+  }
+  return ctx;
+}
