@@ -36,7 +36,7 @@ The hands-on setup runbook for shipping LexiTap to the iOS App Store and Google 
 Use these concrete values, not the generic placeholders that float around setup tutorials:
 
 - **Bundle ID / Android package:** `com.lexitap.app` — confirm against `app.config.ts` before registering; both are **permanent** once published.
-- **IAP product SKUs:** `com.lexitap.*` per [../04-technical-architecture/DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md) and the product table in [../08-financial-legal/APP_STORE_DISTRIBUTION_STRATEGY.md](../08-financial-legal/APP_STORE_DISTRIBUTION_STRATEGY.md#iap-product-setup).
+- **IAP product SKUs:** `com.lexitap.*` per [../04-technical-architecture/DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md) and the product table in [../08-financial-legal/APP_STORE_DISTRIBUTION_STRATEGY.md](../08-financial-legal/APP_STORE_DISTRIBUTION_STRATEGY.md#sku-setup--revenuecat-configurations).
 - **IAP vendor:** RevenueCat (locked). Native SDK install + `RevenueCatIapService` are deferred to Phase 3; `StubIapService` stays bound in the composition root until then. See [../08-financial-legal/MONETIZATION_COMPLIANCE.md](../08-financial-legal/MONETIZATION_COMPLIANCE.md).
 - **Secrets:** `.env` in dev, EAS secrets in production — never committed or hardcoded (see [CI_CD_PIPELINE.md](./CI_CD_PIPELINE.md)).
 
@@ -49,9 +49,9 @@ Do these first; everything else depends on them.
 | Apple Developer | developer.apple.com | $99/yr | Required to ship on iOS |
 | Google Play Console | play.google.com/console | $25 one-time | Required to ship on Android |
 | Expo / EAS | expo.dev | Free tier | Required for EAS Build/Submit/Update |
-| RevenueCat | revenuecat.com | Free up to $2.5k MRR | IAP + subscriptions |
+| RevenueCat | revenuecat.com | Free up to $2.5k MTR / monthly tracked revenue | IAP + subscriptions |
 
-The Apple + Google fees ($99 + $25) are the largest single line in the ~$144 Year 1 budget — see [../08-financial-legal/THIRD_PARTY_DEPENDENCY_AUDIT.md](../08-financial-legal/THIRD_PARTY_DEPENDENCY_AUDIT.md).
+The Apple + Google fees ($99 + $25) are the largest unavoidable platform line items in the realistic ~$194 first-year cash outlay — see [../08-financial-legal/THIRD_PARTY_DEPENDENCY_AUDIT.md](../08-financial-legal/THIRD_PARTY_DEPENDENCY_AUDIT.md).
 
 ## 2. Apple Developer Program
 
@@ -143,7 +143,7 @@ RevenueCat is the locked vendor; wiring is deferred to Phase 3 but the store/con
 1. **Create project** at app.revenuecat.com → add iOS app (Bundle ID + ASC API key) + Android app (Package Name + Play service credentials).
 2. **ASC API key for RevenueCat:** App Store Connect → Users and Access → Integrations → In-App Purchase → generate → download `.p8` + Key ID + Issuer ID → paste into RevenueCat iOS settings.
 3. **Play service credentials:** console.cloud.google.com → enable Google Play Android Developer API → create Service Account → grant Financial data viewer in Play Console (Setup → API access) → download JSON → upload to RevenueCat Android settings.
-4. **Create products** in App Store Connect (Non-Consumable per one-time tier; one Auto-Renewable Subscription for Premium Pass) and Google Play (matching IDs), using the `com.lexitap.*` SKUs.
+4. **Create products** in App Store Connect and Google Play using the locked SKUs: Common 3000 as a Non-Consumable (`com.lexitap.common3k`) plus Premium Pass Monthly/Annual as Auto-Renewable Subscriptions (`com.lexitap.premium.monthly`, `com.lexitap.premium.annual`).
 5. **Entitlements + Offerings:** create the `premium` entitlement, attach both stores' product IDs, create the `default` offering. App code reads it via `Purchases.getOfferings()`.
 6. **API keys:** copy iOS (`appl_…`) and Android (`goog_…`) public SDK keys → store as EAS secrets `REVENUECAT_IOS_KEY` / `REVENUECAT_ANDROID_KEY`.
 
@@ -158,7 +158,7 @@ eas submit --platform ios
 
 ## 11. Submitting to the App Store
 
-Pre-submission: 6.9" screenshots uploaded · listing text/URLs filled · privacy policy URL live · age rating done · IAP products approved · App Privacy questionnaire filled · build tested on TestFlight · Export Compliance answered.
+Pre-submission: 6.9" screenshots uploaded · listing text/URLs filled · privacy policy URL live · age rating done · IAP products approved · App Privacy questionnaire filled · build tested on TestFlight · `npx expo-doctor` run and any SDK/platform warnings triaged · Export Compliance answered.
 
 ```bash
 eas build --platform ios --profile production
@@ -177,7 +177,7 @@ Review timeline: first submit 1–3 days, updates ~24h, expedited review availab
 
 ## 12. Submitting to Google Play
 
-Promote in order: Internal → Closed → Open → Production. Pre-submission: listing complete · content rating done · data safety submitted · privacy policy live · signing configured · target API level meets Play's current minimum (usually latest − 1).
+Promote in order: Internal → Closed → Open → Production. Pre-submission: listing complete · content rating done · data safety submitted · privacy policy live · signing configured · `npx expo-doctor` run and any SDK/platform warnings triaged · target API level meets Play's current minimum (usually latest − 1).
 
 ```bash
 eas build --platform android --profile production   # .aab
@@ -234,7 +234,7 @@ Rules:
 
 - **Runtime version gating:** an OTA update only applies to builds whose `runtimeVersion` matches. Bump `runtimeVersion` on every native/store build so stale binaries never pull an incompatible JS bundle. Misconfiguring this is the classic way to brick installs — verify before the first production OTA.
 - **Offline-first invariant:** updates download in the background and apply on next launch; the app must stay fully usable offline if an update never arrives. Never gate core quiz/review behind an update fetch (consistent with the offline-first rules in [CODING_STANDARDS.md](./CODING_STANDARDS.md)).
-- **Channels mirror tracks:** map EAS Update channels to the rollout tracks in [../08-financial-legal/APP_STORE_DISTRIBUTION_STRATEGY.md](../08-financial-legal/APP_STORE_DISTRIBUTION_STRATEGY.md#phased-rollout) (e.g. `preview` for TestFlight/internal, `production` for live) so beta and production get independent update streams.
+- **Channels mirror tracks:** map EAS Update channels to the rollout tracks in [../08-financial-legal/APP_STORE_DISTRIBUTION_STRATEGY.md](../08-financial-legal/APP_STORE_DISTRIBUTION_STRATEGY.md#phased-rollout-playbook) (e.g. `preview` for TestFlight/internal, `production` for live) so beta and production get independent update streams.
 - **Store-policy guardrail:** OTA may fix bugs and adjust content, but must not materially change the app's purpose or bypass review for features that require it (both stores prohibit this). Content drops go through review because they add IAP products anyway.
 
 ```bash
@@ -244,6 +244,6 @@ eas update --branch production --message "fix: …"   # ship an OTA bundle
 
 ## Reconciliations
 
-- **Screenshot sizes:** this runbook's 6.9"-only requirement (2025) supersedes the older 6.7"/6.5" guidance in [../08-financial-legal/APP_STORE_DISTRIBUTION_STRATEGY.md](../08-financial-legal/APP_STORE_DISTRIBUTION_STRATEGY.md#apple-app-store-submission-requirements). Treat 6.9" as canonical.
+- **Screenshot sizes:** this runbook's 6.9"-only requirement is the current internal planning default; verify App Store Connect's live screenshot requirements during Phase 5 before final submission.
 - **IAP vendor:** the strategy doc's "Open Question" on `expo-in-app-purchases` vs RevenueCat is **resolved — RevenueCat is locked**. The maintenance-mode `expo-in-app-purchases` is not used.
 - **Sign in with Apple:** if Google Sign-In ships, Apple Guideline 4.8 also requires Sign in with Apple — schedule that auth work before iOS submission (tracked in the distribution strategy doc's review-risk table).

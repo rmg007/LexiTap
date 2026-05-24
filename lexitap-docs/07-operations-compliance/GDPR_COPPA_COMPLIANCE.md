@@ -52,8 +52,8 @@ Guiding principles: data minimization, purpose limitation, on-device-first, and 
 | D8 | Streak / gamification stats | Learning | Pseudonymous | Device + `user_stats_sync` | Controller | Until deletion |
 | D9 | Usage analytics events | Analytics | Pseudonymous | Device `event_log`; aggregates only leave | Controller | Aggregates only |
 | D10 | Crash / error diagnostics | Diagnostics | Pseudonymous | Error provider | Controller; provider processor | ~90 days |
-| D11 | Teacher PII + PayPal email | Teacher | Yes | Supabase `teachers` | Controller; PayPal processor | Payout/tax term |
-| D12 | Referral / commission records | Teacher | Yes (linked) | Supabase `referrals` | Controller | Payout/tax term |
+| D11 | Teacher email + display name | Teacher | Yes (low) | Supabase `teachers` | Controller; Supabase processor | Until account deletion |
+| D12 | Referral / advocate credit records | Teacher | Pseudonymous (linked to D11) | Supabase `referrals` | Controller | Until account deletion |
 
 ## Data Flow
 
@@ -64,7 +64,7 @@ Guiding principles: data minimization, purpose limitation, on-device-first, and 
 3. **Purchases:** IAP via Apple/Google; receipts validated server-side; entitlement written locally
    and mirrored.
 4. **Teacher portal (separate surface):** Teacher signup writes `teachers`; referred purchases write
-   `referrals`; payouts go out via PayPal.
+   `referrals`; teacher advocates receive in-app Premium credits only — no cash payout, no third-party payment processor.
 5. **Analytics/diagnostics:** Events logged locally; only pseudonymous aggregates and crash traces
    leave the device.
 
@@ -77,7 +77,7 @@ Guiding principles: data minimization, purpose limitation, on-device-first, and 
 | D7 | Tax/accounting retention | Legal obligation (6(1)(c)) |
 | D9 | Aggregate product analytics | Legitimate interests (6(1)(f)); consent where required |
 | D10 | Crash diagnostics, security | Legitimate interests (6(1)(f)) |
-| D11–D12 | Teacher program operation + payout | Contract (6(1)(b)) + legal obligation for records |
+| D11–D12 | Teacher advocate program (in-app credit rewards only; no cash payout) | Contract (6(1)(b)) |
 
 A short Legitimate Interests Assessment (LIA) backs D9/D10: minimal pseudonymous data, clear benefit
 (stability and product improvement), low impact, opt-out available.
@@ -136,7 +136,6 @@ Transparency prompt is needed because we do not track.
   data — we receive only validated receipts, not card data.
 - **Error-monitoring provider (e.g. Sentry):** DPA in place; scrub PII from payloads; minimal
   retention. See [ERROR_MONITORING_PLAN.md](./ERROR_MONITORING_PLAN.md).
-- **PayPal:** Processor for teacher payouts; teacher consent captured at portal signup.
 - **ElevenLabs:** Build-time only; no end-user personal data sent, so not a runtime sub-processor.
 - Maintain a **sub-processor list** (this table) and update the privacy policy on change.
 

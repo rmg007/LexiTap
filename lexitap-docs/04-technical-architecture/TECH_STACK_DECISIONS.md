@@ -27,7 +27,7 @@ Each technology choice for LexiTap recorded as a decision record: the choice, th
 
 ## TSD-001 Expo (managed) over bare React Native
 
-**Decision:** React Native 0.73+ via **Expo SDK 50, managed workflow**, Hermes engine, npm.
+**Decision:** React Native via **Expo managed workflow**, Hermes engine, npm. Current repo pin: Expo SDK 52 (`expo ~52.0.0`), React Native 0.76.5, React 18.3.1.
 
 **Rationale:** A solo founder cannot afford to maintain native iOS/Android toolchains. Expo managed gives OTA-friendly builds, `expo-router`, `expo-sqlite`, `expo-haptics`, and `expo-av` out of the box, and EAS Build removes the need for a local Mac/Xcode CI rig. Config plugins cover the few native needs (IAP).
 
@@ -65,10 +65,10 @@ Each technology choice for LexiTap recorded as a decision record: the choice, th
 
 **Decision:** **Supabase** (Postgres + Auth + Storage + RPC) for cloud sync, auth, and the teacher/referral backend. Cloud sync is FREE for all users.
 
-**Rationale:** Postgres + Row-Level Security maps cleanly to our per-user mirror tables (`user_progress_sync`, `user_entitlements_sync`, `user_stats_sync`) and the teacher/referral/promo relational data. Supabase Auth handles email + Google OAuth and password hashing. RLS lets us enforce "users see only their rows" without a server. Generous free tier fits the $144 budget. SQL backend means no second query dialect to learn.
+**Rationale:** Postgres + Row-Level Security maps cleanly to our per-user mirror tables (`user_progress_sync`, `user_entitlements_sync`, `user_stats_sync`) and the teacher/referral/promo relational data. Supabase Auth handles email + Google OAuth and password hashing. RLS lets us enforce "users see only their rows" without a server. The free tier fits the Year-1 budget while usage stays inside auth MAU, database, egress, storage, Edge Function, and inactivity constraints. SQL backend means no second query dialect to learn.
 
 **Alternatives rejected:**
-- *Firebase/Firestore* — NoSQL document model is a poor fit for relational referral/commission data; vendor lock-in; RLS-equivalent (security rules) is harder to reason about for money flows. Rejected.
+- *Firebase/Firestore* — NoSQL document model is a poor fit for relational referral/reward data; vendor lock-in; RLS-equivalent (security rules) is harder to reason about for entitlement flows. Rejected.
 - *Self-hosted Postgres + custom API* — operational burden a solo founder cannot carry. Rejected (see TSD-005).
 - *AWS Amplify* — heavier, more services to wire, easier to overspend. Rejected for budget.
 
@@ -76,9 +76,9 @@ Each technology choice for LexiTap recorded as a decision record: the choice, th
 
 ## TSD-005 No backend server at MVP
 
-**Decision:** **No custom backend server** at MVP. All cloud logic runs on Supabase managed services: Postgres, Auth, RLS policies, and Postgres RPC functions / Edge Functions only where strictly needed (e.g., receipt validation, referral commission write).
+**Decision:** **No custom backend server** at MVP. All cloud logic runs on Supabase managed services: Postgres, Auth, RLS policies, and Postgres RPC functions / Edge Functions only where strictly needed (e.g., receipt validation, entitlement updates, referral/promo writes).
 
-**Rationale:** A solo founder with a $144/year budget cannot run, secure, patch, and monitor a server. The app is offline-first; the cloud's job is sync + auth + teacher backend, all of which Supabase covers declaratively. Pushing logic to RLS + RPC keeps the trust boundary inside Supabase.
+**Rationale:** A solo founder with a realistic ~$194 first-year cash outlay cannot run, secure, patch, and monitor a server. The app is offline-first; the cloud's job is sync + auth + teacher backend, all of which Supabase covers declaratively. Pushing logic to RLS + RPC keeps the trust boundary inside Supabase.
 
 **Alternatives rejected:** Node/Express on a VPS or serverless platform — unnecessary operational and cost surface for MVP. Revisit only if a feature genuinely cannot be expressed as RLS + RPC.
 
@@ -92,7 +92,7 @@ Each technology choice for LexiTap recorded as a decision record: the choice, th
 
 **Alternatives rejected:** Local fastlane + self-managed signing (more setup, more secrets handling); Codemagic/Bitrise (extra cost). EAS is the path of least resistance for an Expo app.
 
-**Consequences:** Build minutes count against budget; we batch builds and rely on the free/cheap tier. Apple Developer ($99) + Google Play ($25 one-time) are the dominant line items in the $144 budget.
+**Consequences:** Build minutes count against budget; we batch builds and rely on the free/cheap tier. Apple Developer ($99) + Google Play ($25 one-time) are the dominant platform line items in the realistic ~$194 first-year cash outlay.
 
 ## TSD-007 TTS provider deferred (audio launch-TOEFL only)
 
@@ -106,26 +106,26 @@ Each technology choice for LexiTap recorded as a decision record: the choice, th
 
 ## TSD-008 State and data libraries
 
-**Decision:** **TanStack Query v5** for server/async data; **Zustand** for global UI state; `expo-router` for navigation; `react-native-reanimated` v3 for animation; `expo-haptics` (subtle); `@expo/vector-icons`. Jest + `@testing-library/react-native` for tests.
+**Decision:** Keep the installed scaffold lean: `expo-router` for navigation, Jest for mobile tests, Vitest for content-tool tests. Add TanStack Query v5 for server/async data, Zustand for global UI state, `react-native-reanimated` for richer animation, `expo-haptics`, and icon packages only when the feature that needs each dependency lands.
 
-**Rationale:** TanStack Query gives caching/retry/stale handling for the (sparse) sync calls; Zustand is a tiny, unopinionated global store. Both are well-supported in Expo and keep the dependency count low. `lodash` is banned in favor of native ES2023.
+**Rationale:** The current app does not need extra state libraries yet. TanStack Query gives caching/retry/stale handling if sync complexity grows; Zustand is a tiny, unopinionated global store if global UI state outgrows simple React state. Deferring them keeps the dependency count honest. `lodash` is banned in favor of native ES2023.
 
 **Alternatives rejected:** Redux/Redux-Toolkit (boilerplate-heavy for our small global state); MobX (more magic than needed). Rejected for simplicity.
 
-**Consequences:** Domain/application layers stay framework-free; these libraries live only in `presentation/` and `infrastructure/`.
+**Consequences:** Domain/application layers stay framework-free; installed and planned UI/data libraries live only in `presentation/` and `infrastructure/`. Planned dependencies must be added to `mobile/package.json` before docs describe them as installed.
 
 ## Decision Summary Table
 
 | ID | Area | Choice | Top alternative rejected |
 |----|------|--------|--------------------------|
-| TSD-001 | Framework | Expo SDK 50 managed | Bare React Native |
+| TSD-001 | Framework | Expo managed, current repo pin SDK 52 | Bare React Native |
 | TSD-002 | Language | TypeScript 5.x strict | Plain JS |
 | TSD-003 | Local DB | expo-sqlite (two-DB ATTACH) | AsyncStorage / WatermelonDB |
 | TSD-004 | Cloud | Supabase | Firebase |
 | TSD-005 | Server | None (managed only) | Custom Node backend |
 | TSD-006 | Build/ship | EAS Build + Submit | Local fastlane |
 | TSD-007 | Audio | Bundled MP3, TTS deferred | On-device TTS |
-| TSD-008 | State/data | TanStack Query + Zustand | Redux |
+| TSD-008 | State/data | Lean installed scaffold; TanStack Query + Zustand planned only if needed | Redux |
 
 ## Open Questions
 

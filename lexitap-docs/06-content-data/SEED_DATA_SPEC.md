@@ -169,6 +169,52 @@ A tier is "seed-complete" when:
 6. After `enrich`, the `build-manifest.json` enrichment coverage matches the launch plan
    (TOEFL audio 100%, synonyms across all tiers, imagery per the free-tier coverage decision).
 
+## Vocabulary Accuracy QA Checklist
+
+This checklist exists because LexiTap makes explicit exam-preparation claims. An incorrect definition on a TOEFL word a student studies and then gets wrong on the actual ETS exam is a product liability issue, not just a quality miss. Run this before setting `is_active = 1` on any paid tier.
+
+### Reference Authorities by Tier
+
+| Tier | Authoritative cross-reference sources |
+|------|---------------------------------------|
+| `foundation` / `advanced` | Oxford Learner's Dictionary (oxfordlearnersdictionaries.com); Cambridge Learner's Dictionary; Macmillan Dictionary (designed for ESL/EFL learners — not native-speaker dictionaries) |
+| `toefl` | ETS Official Guide to the TOEFL Test (sample vocabulary); Academic Word List (AWL, Coxhead 2000 — 570 word families that account for ~10% of TOEFL academic text); Oxford Phrasal Academic Lexicon (OPAL) |
+| `ielts` | Official Cambridge Guide to IELTS; Cambridge English Vocabulary Profile (EVP — maps words to CEFR bands B1–C2); Collins COBUILD Advanced Learner's Dictionary |
+| `business` | Longman Business English Dictionary; Cambridge Business English Dictionary |
+| `gre` / `gmat` | Merriam-Webster's Collegiate Dictionary (GRE uses Merriam-Webster definitions verbatim); ETS GRE Vocabulary in Context materials |
+| `idioms` / `phrasal_verbs` | Macmillan Phrasal Verbs Plus; Cambridge Idioms Dictionary; COCA (corpus.byu.edu) for frequency confirmation |
+
+### Per-Word QA Checks
+
+For a **5% random sample** of each tier (minimum 50 words, or all words if tier < 100):
+
+- [ ] **Definition accuracy** — definition matches the primary sense given in the reference authority for this tier. Flag any where LexiTap's definition describes a secondary or rare sense as if it were primary.
+- [ ] **Definition register** — definition language is at least one CEFR band simpler than the target word (e.g., a C1 word is defined using B1/B2 vocabulary). No "pertaining to," "wherein," "denotes."
+- [ ] **No copyright verbatim copy** — definition is paraphrased in the author's own words. Direct copy from any published dictionary is a licensing violation. The definition must be functionally equivalent but not word-for-word identical.
+- [ ] **Example sentence naturalness** — sentence sounds like natural English. Run suspect sentences through a corpus check (COCA: corpus.byu.edu — free, no account required) to confirm the phrase pattern appears in real usage.
+- [ ] **Example sentence disambiguates the target** — the sentence context strongly implies the target word. A test: could a B2 learner guess the right answer from the context alone? If multiple unrelated words fit the blank equally well, rewrite.
+- [ ] **CEFR level plausibility** — if `cefr_level` is set, it should match the Cambridge EVP band (±1 band is acceptable; a B1 label on a C2 word is a flag).
+- [ ] **Multi-word entry integrity** (idioms/phrasal verbs only) — confirm the phrase is in common use by checking COCA frequency > 10 occurrences per 100M words. Archaic or regional idioms should be flagged.
+- [ ] **No culturally narrow examples** — example sentences must not rely on US-specific cultural references (sports, celebrities, institutions) that a learner in Vietnam, Brazil, or Egypt would not recognize. The audience is global APAC/ESL-dominant.
+
+### Audio QA Checks (TOEFL tier and any premium audio tier)
+
+For **100% of audio files** before the tier publishes:
+
+- [ ] **Pronunciation correct** — the generated audio matches the standard reference pronunciation. Cross-check stress pattern against Merriam-Webster (US accent) or Oxford (UK accent) as labeled.
+- [ ] **No artifacts** — no clipping, background noise, unintended silence longer than 0.3s at start/end, or robotic prosody severe enough to confuse a learner.
+- [ ] **Accent label matches audio** — if `audio_path` encodes `_us` or `_gb`, the accent delivered matches the label.
+- [ ] **Multi-word entries pronounced as a unit** — phrasal verbs and idioms are pronounced as complete phrases, not word-by-word with unnatural pausing.
+
+### Pre-Publication Sign-Off
+
+Before calling a tier seed-complete and running `export`:
+
+1. Founder reviews QA sample report (document pass/fail counts in `data/working/qa-log-<tier>-<date>.md`).
+2. All **errors** (wrong definition, misleading example, broken audio) are fixed before publication.
+3. **Warnings** (minor naturalness issues, borderline CEFR level) are documented and accepted or fixed at the founder's discretion.
+4. QA log is committed alongside the `build-manifest.json` so future content updates have a baseline.
+
 ## Open Questions
 
 - **Definition sourcing.** Whether the founder hand-authors all definitions or the pipeline

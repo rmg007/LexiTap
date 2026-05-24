@@ -42,14 +42,14 @@ Monetization + the launch-wave paid catalog.
 | Feature | MoSCoW | Notes |
 | --- | --- | --- |
 | Paywall screen | Must | Phase 3. |
-| Apple + Google IAP | Must | RevenueCat (`react-native-purchases`) — locked vendor. |
+| Apple + Google IAP | Must | RevenueCat (`react-native-purchases`) — locked vendor; native install planned for Phase 3. |
 | Entitlement management | Must | Via Supabase. |
-| TOEFL tier ($14.99) + premium audio | Must | First paid tier. |
+| TOEFL premium content + audio | Must | First Premium Pass content focus. |
 | Restore purchases | Must | Cross-device. |
-| Teacher referral code validation | Must | 20% student discount. |
+| Teacher referral code validation | Must | Extended 14-day trial / non-cash rewards only; no off-store discount steering. |
 | Promo code system | Must | Goodwill marketing. |
-| IELTS ($14.99), Business English ($9.99), Common 3000 ($2.99) | Must | Launch-wave tiers. |
-| Premium Pass ($29.99/yr) | Must | Unlocks all paid tiers incl. future drops. |
+| IELTS, Business English, Common 3000 | Must | Launch-wave content; Common 3000 one-time unlock is $1.99, IELTS/Business are Premium Pass content. |
+| Premium Pass ($4.99/mo, $24.99/yr) | Must | Unlocks all paid tiers incl. future drops. |
 | ImageMatch + Classification widgets | Should | Phase 4. |
 | UX polish (animations, haptics) | Should | Phase 4. |
 | Advanced tier full word list (3,001–9,000) | Should | MVP shipped a subset. |
@@ -60,10 +60,10 @@ Monthly cadence; order may shift on conversion data.
 
 | Feature | MoSCoW | Notes |
 | --- | --- | --- |
-| GRE Vocabulary ($14.99) | Should | Week 22 target. |
-| GMAT Vocabulary ($14.99) | Should | Week 26 target. |
-| Idioms & Expressions ($9.99) | Should | Week 30 — fills WordUp blindspot. |
-| Phrasal Verbs ($9.99) | Should | Week 34 — fills WordUp blindspot. |
+| GRE Vocabulary | Should | Week 22 target; included in Premium Pass. |
+| GMAT Vocabulary | Should | Week 26 target; included in Premium Pass. |
+| Idioms & Expressions | Should | Week 30; fills WordUp blindspot; included in Premium Pass. |
+| Phrasal Verbs | Should | Week 34; fills WordUp blindspot; included in Premium Pass. |
 | Audio Playlist passive mode | Should | Backlog #49; needs 3-clip audio + background entitlement. |
 | Context-aware push notifications | Should | Part of habit-loop design (backlog #43). |
 | Notification strategy (reminders, streak protection) | Should | Backlog #20. |

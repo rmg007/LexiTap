@@ -18,5 +18,5 @@ System architecture, tech stack decisions, database schema, API contract, data m
 | [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md) | Database Schema | P0 | active | Full v2.1 schema: every table, indexes, soft-delete + append-only rationale, ATTACH strategy, Supabase sync mirrors, migrations. |
 | [API_CONTRACT.md](./API_CONTRACT.md) | API Contract and Supabase Interface | P1 | active | Supabase auth, sync push/pull, receipt/referral/promo RPCs, request/response shapes, error model, retry semantics. |
 | [DATA_MODELS.md](./DATA_MODELS.md) | Data Models and Domain Entities | P1 | active | TypeScript domain types, repository interfaces (ports), and DB-row-to-domain mapping. |
-| [INFRASTRUCTURE_DIAGRAM.md](./INFRASTRUCTURE_DIAGRAM.md) | Infrastructure Diagram | P2 | active | Component diagram (app, bundled DB, Supabase, EAS, content CLI, referral portal) and $144 budget constraints. |
-| [SECURITY_MODEL.md](./SECURITY_MODEL.md) | Security Model | P0 | active | Secrets (.env + EAS), Supabase RLS policies, receipt validation, auth, data-at-rest, threat model for a $144 solo app. |
+| [INFRASTRUCTURE_DIAGRAM.md](./INFRASTRUCTURE_DIAGRAM.md) | Infrastructure Diagram | P2 | active | Component diagram (app, bundled DB, Supabase, EAS, content CLI, referral portal) and ~$194 first-year budget constraints. |
+| [SECURITY_MODEL.md](./SECURITY_MODEL.md) | Security Model | P0 | active | Secrets (.env + EAS), Supabase RLS policies, receipt validation, auth, data-at-rest, threat model for a ~$194 solo app. |

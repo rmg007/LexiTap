@@ -9,7 +9,7 @@ tags: [infrastructure, supabase, eas, content-cli, referral-portal, budget, diag
 
 # Infrastructure Diagram
 
-How LexiTap's components connect: the mobile app, the bundled content DB, Supabase (auth/Postgres/storage), EAS Build/Submit, the content CLI tool, and the teacher referral portal. Designed for a solo founder on a ~$144/year budget with no custom server.
+How LexiTap's components connect: the mobile app, the bundled content DB, Supabase (auth/Postgres/storage), EAS Build/Submit, the content CLI tool, and the teacher referral portal. Designed for a solo founder with a realistic ~$194 first-year cash outlay and no custom server.
 
 ## Table of Contents
 
@@ -67,8 +67,8 @@ How LexiTap's components connect: the mobile app, the bundled content DB, Supaba
                                     │ reads teachers/referrals
                                     ▼
    ┌──────────────────────────────────────────────────────────────────┐
-   │  Teacher Referral Portal (web)  → Supabase Postgres                │
-   │   referral codes, commission tiers, PayPal payout info             │
+   │  Teacher Advocate Portal (web)  → Supabase Postgres                │
+   │   referral codes, reward credits, Premium-seat grants              │
    └──────────────────────────────────────────────────────────────────┘
 ```
 
@@ -82,7 +82,7 @@ How LexiTap's components connect: the mobile app, the bundled content DB, Supaba
 | Supabase | managed cloud | Auth, Postgres sync mirrors, teacher backend, Edge Functions | free tier (target) |
 | EAS Build/Submit | Expo cloud | Build + submit signed binaries | free/low tier |
 | Content CLI (Track A) | dev machine | Generate/validate/enrich/export `words.db` | one-time enrichment $ |
-| Teacher referral portal | web (Supabase-backed) | Referral codes, commissions, payouts | minimal/free |
+| Teacher advocate portal | web (Supabase-backed) | Referral codes, non-cash reward credits, Premium-seat grants | minimal/free |
 
 Detail references: content CLI in [../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md](../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md); referral portal in [../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md](../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md); API surface in [API_CONTRACT.md](./API_CONTRACT.md).
 
@@ -119,7 +119,7 @@ data/input/*.csv|json ─▶ import ─▶ working SQLite
 
 ## Budget Constraints
 
-Year-1 budget ~$144. Dominant fixed line items: Apple Developer Program ($99/yr), Google Play one-time ($25). That leaves roughly **$20** of headroom, which is why:
+Realistic Year-1 cash outlay is roughly ~$194. Dominant line items are Apple Developer Program ($99/yr), Google Play one-time registration ($25), domain (~$20/yr), and build-time premium audio generation (up to ~$50). The architecture is intentionally constrained by that ceiling:
 
 - **No custom server** — Supabase free tier (managed Postgres/Auth/Edge Functions) absorbs cloud needs at the ~1,000-user target.
 - **Cloud sync is dumb and sparse** — push on close / pull on open only; no realtime subscriptions, no background workers, no analytics pipeline (would add cost and operational load).

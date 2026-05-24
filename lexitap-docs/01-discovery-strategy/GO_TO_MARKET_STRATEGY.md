@@ -23,7 +23,7 @@ ESL academies, cram schools, and private prep agencies (predominantly in the Asi
 
 These schools already charge substantial fees for exam-prep courses and constantly search for high-efficacy supplementary tools to boost student outcomes. 
 
-Pivoting from high-friction consumer ad spending to B2B sales allows LexiTap to secure bulk seat contracts that bypass the app stores' 15% billing commissions (since B2B licenses are sold directly via the web portal).
+Pivoting from high-friction consumer ad spending to B2B sales allows LexiTap to secure bulk seat contracts that reduce consumer-store friction where institutional web-purchased access is permitted by store rules. This is a compliance-sensitive strategy, not a blanket exemption.
 
 ### Mechanics
 
@@ -42,7 +42,7 @@ Bulk B2B sales are driven by direct founder outreach (email, LinkedIn, Zoom demo
 
 ## Secondary Channel — Non-Cash Teacher Advocate Loop
 
-We completely eliminate the compliance and accounting overhead of cash payouts (via PayPal/Wise) to individual freelance teachers. 
+We avoid the compliance and accounting overhead of cash payouts (via PayPal/Wise) to individual freelance teachers.
 
 Instead, individual teachers are positioned as "Advocates," and we incentivize them using high-value, digital-only referral hooks.
 
@@ -51,18 +51,18 @@ Instead, individual teachers are positioned as "Advocates," and we incentivize t
 - **Referral Codes:** Each teacher advocate gets a unique referral code (e.g. `TEACHER_MARIA`).
 - **Student Benefit:** Students who enter `TEACHER_MARIA` at onboarding receive a 14-day free trial of the Premium Subscription (normally 3 days) to build habit loops before gating.
 - **Teacher Incentive:** For every 3 students who remain active past their trial period, the teacher advocate receives a free Premium year pass or credit that they can gift to a colleague, use themselves, or pass to a low-income student.
-- **Compliance Alignment:** Because zero money changes hands off-store between LexiTap and teacher advocates, we completely bypass VAT/digital sales tax, FATCA/1099 withholding, KYC/AML regulatory barriers, and micro-payment fee erosion.
+- **Compliance Alignment:** Because zero cash changes hands off-store between LexiTap and teacher advocates, the model reduces tax, KYC/AML, and micro-payment complexity. Non-cash rewards still require legal/tax review before launch.
 
 ---
 
 ## Organic Channels & ASO
 
 - **App Store Optimization (ASO):** Focus heavily on high-efficacy keyword search terms:
-  - Keywords: *English spelling active recall, TOEFL vocabulary spelling, IELTS active recall, offline English flashcards, business English vocabulary, vocabulary builder, spaced repetition.*
-  - App Name: "LexiTap: TOEFL & IELTS Active Recall"
-  - Subtitle: "English spelling vocabulary builder. Offline-first."
-- **Reddit / communities:** Establish authentic presence in r/TOEFL, r/IELTS, r/ESL, and r/languagelearning. Address active spelling retention, share "how to study spelling for TOEFL writing," and highlight the value of active spelling over passive flashcards.
-- **YouTube Shorts & TikTok:** Create rapid "Spell this word" video quizzes matching the "Active Recall" UI. Audience-matched to the 18–24 demographic, emphasizing that active recall is the key to passing standardized writing tests.
+  - Keywords: *TOEFL vocabulary, IELTS vocabulary, offline English vocabulary, business English vocabulary, vocabulary builder, spaced repetition, no-typing review.*
+  - App Name: "LexiTap: TOEFL & IELTS Vocab"
+  - Subtitle: "Offline vocabulary review. No typing."
+- **Reddit / communities:** Establish authentic presence in r/TOEFL, r/IELTS, r/ESL, and r/languagelearning. Share study tactics for high-frequency vocabulary retention, commute-window review, and no-typing practice.
+- **YouTube Shorts & TikTok:** Create rapid "pick the meaning" and "match the phrase" video quizzes matching the recognition UI. Audience-matched to the 18–24 demographic, emphasizing fast offline study sessions.
 
 ---
 
@@ -73,11 +73,11 @@ Aligned to the canonical phases in [../02-product-definition/ROADMAP.md](../02-p
 | Weeks | Phase | GTM action | Outcome / Gate |
 |-------|-------|-----------|----------------|
 | 1 | Phase 0 — Validation | Initial cram school cold outreach; pitch bulk beta trials | 3 cram schools commit to free bulk pilots |
-| 2–6 | Phase 1 — Build MVP | Build web portal stubs; seed active recall video Shorts | Core MVP running; spelling widgets verified |
+| 2–6 | Phase 1 — Build MVP | Build web portal stubs; seed recognition-practice video Shorts | Core MVP running; recognition widgets verified |
 | 7–10 | Phase 2 — Validation | Deploy 50-user consumer beta; launch bulk pilots with the 3 cram schools | D7 retention >30%; qualitative school validation |
 | 11–12 | Phase 3 — Subscription / Paid Beta | Launch individual subscriptions + bulk portal stubs; convert beta schools | 10 subscribers + 2 paid cram-school contracts |
 | 12–16 | Phase 4 — Launch Wave Tiers | IELTS / Business tiers live; launch B2B self-serve web portal | $1,000/month recurring revenue |
-| 17–18 | Phase 5 — Launch prep | Complete App Store metadata (Spelling screenshots); EULA, domain setup | Live on both stores |
+| 17–18 | Phase 5 — Launch prep | Complete App Store metadata (recognition screenshots); EULA, domain setup | Live on both stores |
 | 19–21 | Phase 6 — Growth | Scale cram school sales; deploy advocate credits; ASO | 1,000 total active users |
 | 22+ | Post-launch drops | Launch GRE/GMAT content updates to active Premium base | Lock in annual subscription renewals |
 

@@ -18,7 +18,7 @@ LexiTap has **no custom backend server** (see [TECH_STACK_DECISIONS.md](./TECH_S
 - [Sync: Push](#sync-push)
 - [Sync: Pull](#sync-pull)
 - [RPC: Receipt Validation](#rpc-receipt-validation)
-- [RPC: Referral Redemption](#rpc-referral-redemption)
+- [RPC: Teacher Advocate Redemption](#rpc-teacher-advocate-redemption)
 - [RPC: Promo Code Redemption](#rpc-promo-code-redemption)
 - [Error Model](#error-model)
 - [Retry Semantics](#retry-semantics)
@@ -96,21 +96,22 @@ returns:{ valid: boolean, tier_id: string, expires_at: bigint | null }
 
 On `valid: true` the function writes the verified entitlement to `user_entitlements_sync` server-side (the client cannot self-grant entitlements; RLS denies client writes that don't originate from a validated receipt). The client then mirrors the granted entitlement into local `user_entitlements`.
 
-## RPC: Referral Redemption
+## RPC: Teacher Advocate Redemption
 
-Recording a referral (commission math, teacher tier) must be server-authoritative to prevent client tampering. Postgres RPC / Edge Function:
+Recording a teacher-code redemption and reward eligibility must be server-authoritative to prevent client tampering. Postgres RPC / Edge Function:
 
 ```
-POST  rpc: redeem_referral
-body:   { teacher_code: string, product_id: string, receipt_id: string }
-returns:{ accepted: boolean, student_discount: decimal, student_paid: decimal }
+POST  rpc: redeem_teacher_code
+body:   { teacher_code: string, source_event_id: string }
+returns:{ accepted: boolean, premium_trial_days: integer, reward_status: 'pending'|'not_applicable' }
 side-effects (server-side, transactional):
-  - INSERT referrals (commission computed from teacher.current_tier)
-  - UPDATE teachers SET total_referrals += 1, total_earnings += commission, current_tier = ...
-constraints: receipt_id is UNIQUE → duplicate redemption rejected
+  - INSERT referrals (teacher attribution + reward status)
+  - GRANT extended Premium trial entitlement when eligible
+  - UPDATE teachers SET total_active_referrals += 1, reward_credits = ...
+constraints: source_event_id is UNIQUE → duplicate redemption rejected
 ```
 
-Commission rate is derived from `teachers.current_tier` (1-4) on the server; the client never sends or computes commission. See [../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md](../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md) for the referral program rules.
+Reward eligibility is derived from server-side teacher and learner activity state; the client never sends or computes reward credits. See [../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md](../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md) for the advocate program rules.
 
 ## RPC: Promo Code Redemption
 
@@ -150,7 +151,7 @@ type SyncResult =
 - **Sync (push/pull):** never blocks the user. On `NetworkError` or `ServerError`, no immediate retry loop — retry on the next app open. Sync is fully idempotent (upsert + cursor), so dropped/duplicate pushes are harmless.
 - **RPCs (receipt/referral/promo):** at-most-once user intent, made idempotent by unique keys (`receipt_id`) and server-side decrement guards. Client may retry on `NetworkError`/`ServerError` with capped exponential backoff (e.g. 1s, 2s, 4s, max 3 attempts); a `ConflictError` on retry is treated as success.
 - **Auth:** one transparent session refresh on 401; if it fails, drop to signed-out state and continue offline.
-- No background daemon, no persistent retry queue beyond the AsyncStorage sync cursor — right-sized for ~1,000 users and the $144 budget.
+- No background daemon, no persistent retry queue beyond the AsyncStorage sync cursor — right-sized for ~1,000 users and the realistic ~$194 first-year cash outlay.
 
 ## Open Questions
 

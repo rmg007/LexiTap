@@ -108,7 +108,7 @@ The Supabase URL and anon key are safe to ship in the client (the anon key is pu
 
 ## 4. Supabase Project Setup
 
-Supabase provides auth and progress cloud sync (free to roughly 50K users). One-time setup:
+Supabase provides auth and progress cloud sync. The free plan includes 50K auth MAU but also has database-size, egress, storage, Edge Function, and inactivity constraints, so production planning must watch more than MAU alone. One-time setup:
 
 1. Create a project at the Supabase dashboard. Note the project URL and `anon` public key into `.env`.
 2. Enable **Email/Password** and **Google** auth providers (Auth -> Providers).
@@ -126,13 +126,13 @@ The CLI generates the bundled `words.db`. Full command reference is in [../06-co
 cd ../lexitap-content
 
 # import a sourced word list
-npx lexitap-tool import --source data/input/foundation.csv --tier foundation
+npm run cli -- import --source data/input/foundation.csv --tier foundation
 
 # validate (gate: no orphan words, required fields, blanks in examples)
-npx lexitap-tool validate
+npm run cli -- validate
 
 # export to SQLite
-npx lexitap-tool export --output data/output/words.db
+npm run cli -- export --output data/output/words.db
 
 # or the one-command build
 npm run build:db
@@ -181,5 +181,5 @@ A green `npm run check` plus a booting app on at least one simulator confirms th
 
 ## Open Questions
 
-- The exact Supabase sync table schema is not yet pinned (no code). Define it alongside the device `user.db` schema in `DATABASE_SCHEMA.md` when Track B sync lands.
+- The device `user.db` schema exists; keep the exact Supabase mirror table migrations aligned with `DATABASE_SCHEMA.md` as Track B sync evolves.
 - Whether the Track A -> Track B `words.db` copy is a manual `cp`, an npm script, or a CI artifact download is tied to the open question in [GIT_WORKFLOW.md](./GIT_WORKFLOW.md).

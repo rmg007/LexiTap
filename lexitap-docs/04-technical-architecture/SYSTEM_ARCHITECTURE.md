@@ -34,7 +34,7 @@ LexiTap is a solo-founder, offline-first ESL vocabulary app. The architecture is
 2. **Offline-first correctness** — the local SQLite database is the source of truth. Cloud sync (Supabase) is a mirror, never an authority. Core features must work with the radio off.
 3. **Reuse across future sister apps** — the domain and application layers are parameterized by `app_id` + tier slug so a future "USA Schools" product can reuse them without a rewrite. This is a *constraint on how we write code today*, not Phase 1 scope.
 
-Hard constraints that shape every decision: solo founder, ~$144 Year-1 budget, no backend server at MVP (Supabase managed services only), no `TextInput` in quiz flows.
+Hard constraints that shape every decision: solo founder, ~$194 realistic Year-1 cash outlay, no backend server at MVP (Supabase managed services only), no `TextInput` in quiz flows.
 
 ## The Four Layers
 
@@ -95,7 +95,7 @@ src/
 │   ├── iap/             # IAP adapter (StubIapService at MVP), receipt validation calls
 │   └── storage/         # AsyncStorage wrapper (timezone, sync cursor)
 ├── presentation/
-│   ├── screens/         # expo-router routes (screens/quiz/ = no TextInput)
+│   ├── screens/         # QuizScreen / future quiz routes = no TextInput
 │   ├── components/      # assessments/ = no TextInput
 │   └── theme/
 ├── composition/         # container.ts — DI composition root (binds ports → adapters)
@@ -188,7 +188,7 @@ This is what lets domain tests run as pure unit tests and lets a future cloud-ba
 
 ## Invariants
 
-1. No `TextInput` in quiz flows (`screens/quiz/`, `components/assessments/`).
+1. No `TextInput` in quiz flows (`mobile/src/presentation/screens/QuizScreen.tsx`, any future `mobile/src/presentation/screens/quiz/`, and `mobile/src/presentation/components/assessments/`).
 2. SQLite is the source of truth; cloud sync is a mirror.
 3. Offline-first: no network in core learn/review features.
 4. Content is bundled (`words.db` in the app binary).
@@ -199,4 +199,4 @@ This is what lets domain tests run as pure unit tests and lets a future cloud-ba
 ## Open Questions
 
 - Exact ESLint rule set for enforcing layer import boundaries (candidate: `eslint-plugin-boundaries`) — not yet selected.
-- Whether the composition root is hand-rolled or a lightweight DI lib — leaning hand-rolled to avoid a dependency at $144 budget.
+- Whether the composition root is hand-rolled or a lightweight DI lib — leaning hand-rolled to avoid a dependency at the current budget.
