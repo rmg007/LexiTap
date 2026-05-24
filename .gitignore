@@ -14,6 +14,8 @@ dist-ssr
 
 # Build output
 content-tool/data/output/*.db
+content-tool/data/output/build-manifest.json
+content-tool/data/working/
 build
 coverage
 
