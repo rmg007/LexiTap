@@ -9,7 +9,7 @@ tags: [tech-stack, decisions, rationale, react-native, expo, supabase, sqlite, t
 
 # Tech Stack Decision Doc
 
-Each technology choice for LexiTap recorded as a decision record: the choice, the rationale, the alternatives rejected, and the consequences. These are locked decisions; revisit only via a new ADR. Operating stack summary lives in [../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md](../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md).
+Each technology choice for LexiTap recorded as a decision record: the choice, the rationale, the alternatives rejected, and the consequences. These are locked decisions; revisit only via a new ADR. Operating stack summary lives in [../05-engineering-process/CODING_STANDARDS.md](../05-engineering-process/CODING_STANDARDS.md).
 
 ## Table of Contents
 
@@ -98,7 +98,7 @@ Each technology choice for LexiTap recorded as a decision record: the choice, th
 
 **Decision:** Audio pronunciation is **launch-TOEFL only**; the TTS provider choice is **deferred and made at the content layer**, not the app. The app just plays a bundled `assets/audio/{word_id}.mp3` if `audio_path` is set.
 
-**Rationale:** Audio is generated offline by the content CLI (Track A) and bundled — not generated on-device, not fetched at runtime. So the provider is a content-pipeline cost decision, not an app architecture decision. Candidates from [../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md](../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md): Google Cloud TTS (~$10/600 words) vs ElevenLabs (~$50, higher quality).
+**Rationale:** Audio is generated offline by the content CLI (Track A) and bundled — not generated on-device, not fetched at runtime. So the provider is a content-pipeline cost decision, not an app architecture decision. Candidates from [../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md](../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md): Google Cloud TTS (~$10/600 words) vs ElevenLabs (~$50, higher quality).
 
 **Alternatives rejected:** On-device TTS (`expo-speech`) — robotic, inconsistent across platforms, defeats the curated-quality goal. Runtime fetch — violates offline-first.
 

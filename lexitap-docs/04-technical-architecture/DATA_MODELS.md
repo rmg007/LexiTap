@@ -170,11 +170,20 @@ export interface TierAccess {
 
 ## Sync and Stats Types
 
+Streak and freeze state is owned by `StreakState` (gamification domain); `UserStats` composes it with lifetime totals. See [../02-product-definition/SRS_FORGIVENESS_MECHANICS.md](../02-product-definition/SRS_FORGIVENESS_MECHANICS.md) for the freeze rules and [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md#user_stats-streak--forgiveness-state) for the persisted row.
+
 ```ts
-export interface UserStats {
+// Pure streak/forgiveness state — a function of (state, today), no I/O.
+export interface StreakState {
   currentStreak: number;
   longestStreak: number;
-  lastActivityDate?: number;
+  lastActivityLocalDate: number | null;  // YYYYMMDD in the user's IANA tz (civil date)
+  freezeCount: number;                    // banked streak freezes
+  freezesGrantedTotal: number;
+}
+
+export interface UserStats {
+  streak: StreakState;
   totalSessions: number;
   totalWordsMastered: number;
 }
@@ -189,7 +198,8 @@ export interface UserAccount {
 
 export interface EventLogEntry {
   id: number;
-  eventType: 'review_completed' | 'session_ended' | 'tier_unlocked' | string;
+  // Open string; only 'answer_recorded' is emitted today (others planned).
+  eventType: 'answer_recorded' | 'session_completed' | 'tier_unlocked' | string;
   payload?: unknown;           // JSON-parsed
   occurredAt: number;
 }

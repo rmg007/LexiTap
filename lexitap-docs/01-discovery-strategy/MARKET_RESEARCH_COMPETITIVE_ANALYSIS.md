@@ -9,7 +9,7 @@ tags: [market-research, competitive-analysis, wordup, knowji, elsa, memrise, ank
 
 # Market Research and Competitive Analysis
 
-> This is the comprehensive research brain. The operating-layer extract — the decisions already pushed into product strategy — lives in [../../notion-docs/COMPETITIVE_ANALYSIS.md](../../notion-docs/COMPETITIVE_ANALYSIS.md) and [../../notion-docs/PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md). This doc expands the landscape; it does not restate the extraction audit trail.
+> Comprehensive market research and competitive landscape. The decisions distilled from this research live in [../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md) (positioning, pricing) and [VISION_PROBLEM_STATEMENT.md](./VISION_PROBLEM_STATEMENT.md). This doc expands the landscape; it does not restate the product decisions.
 
 ## Table of Contents
 
@@ -111,7 +111,7 @@ Free vocab app as a lead generator for $149+ premium prep courses. Vocab is not 
 
 **LexiTap's actual differentiators:**
 
-- **Price + ownership** — one-time purchases; Premium Pass $29.99/yr vs. $84–168/yr peers.
+- **Price + ownership** — one-time purchases; Premium Pass $29.99/yr vs. $84–120/yr peers (Duolingo Super ~$84, ELSA ~$99, Knowji ~$120).
 - **No-typing UX** — tap/drag/match; the product name embodies it.
 - **Offline-first reliability** — reliability is the retention floor; the 5-minute commute is the atomic engagement unit.
 - **Free cloud sync** — directly answers Knowji's device-bound SRS and WordUp's sync failures.

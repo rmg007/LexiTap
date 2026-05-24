@@ -19,3 +19,4 @@ Agent conventions, coding standards, git workflow, testing strategy, CI/CD pipel
 | [TESTING_STRATEGY.md](./TESTING_STRATEGY.md) | Testing Strategy | P1 | active |
 | [CI_CD_PIPELINE.md](./CI_CD_PIPELINE.md) | CI/CD Pipeline Spec | P1 | active |
 | [ENVIRONMENT_SETUP.md](./ENVIRONMENT_SETUP.md) | Environment Setup Guide | P1 | active |
+| [DEPLOYMENT_RELEASE_RUNBOOK.md](./DEPLOYMENT_RELEASE_RUNBOOK.md) | Deployment and Release Runbook | P1 | active |

@@ -159,7 +159,7 @@ CORRECT                          GENTLE CORRECTION
 └─────────────────────────────┘
 ```
 
-> Streak and mastery are framed as growth, never deficit. Locked tiers are an invitation (tap → Paywall), not a wall. Counts shown internally; external marketing copy still avoids committing word counts ([SESSION_STATE.md](../../notion-docs/SESSION_STATE.md)).
+> Streak and mastery are framed as growth, never deficit. Locked tiers are an invitation (tap → Paywall), not a wall. Counts shown internally; external marketing copy still avoids committing word counts ([PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md)).
 
 ## Settings
 

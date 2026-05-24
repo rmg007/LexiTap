@@ -2,11 +2,11 @@
 // is itself an infrastructure concern and no domain port exists for it. The
 // application layer depends on this interface, not a concrete vendor SDK.
 //
-// expo-in-app-purchases is DEPRECATED; the concrete implementation is pending
-// the RevenueCat vs expo-iap decision — see
-// lexitap-docs/08-financial-legal/THIRD_PARTY_DEPENDENCY_AUDIT.md. We
-// deliberately ship a no-op stub (StubIapService) and add NO real IAP
-// dependency yet.
+// RevenueCat (react-native-purchases) is the locked IAP vendor, chosen over
+// expo-iap and the deprecated expo-in-app-purchases — see
+// lexitap-docs/08-financial-legal/THIRD_PARTY_DEPENDENCY_AUDIT.md. The native
+// SDK install is deferred to Phase 3; until then we deliberately ship a no-op
+// stub (StubIapService) and add NO real IAP dependency.
 
 // A purchasable product (a paid content tier), surfaced on the paywall.
 export interface IapProduct {
@@ -40,6 +40,6 @@ export interface IapService {
   purchase(sku: string): Promise<PurchaseResult>;
   // Re-grant entitlements the user already owns (App Store / Play requirement).
   restorePurchases(): Promise<PurchaseResult[]>;
-  // Validate a store receipt (eventually server-side via Supabase Edge Fn).
+  // Validate a store receipt (server-side validation handled by RevenueCat).
   validateReceipt(receiptToken: string): Promise<ReceiptValidation>;
 }

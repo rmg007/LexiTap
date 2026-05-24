@@ -9,7 +9,7 @@ tags: [environment-setup, day-1, node, expo, eas, worktrees, supabase, dotenv, s
 
 # Environment Setup Guide
 
-Step-by-step Day-1 setup to get both tracks of LexiTap running on a fresh machine: tooling, repo and worktree init, environment variables, the Supabase project, running the content CLI, and running the app on a simulator or device. This is the concrete companion to the Day-1 infrastructure checklist in [../../notion-docs/IMPLEMENTATION_ROADMAP.md](../../notion-docs/IMPLEMENTATION_ROADMAP.md). The two-track worktree model it sets up is detailed in [GIT_WORKFLOW.md](./GIT_WORKFLOW.md).
+Step-by-step Day-1 setup to get both tracks of LexiTap running on a fresh machine: tooling, repo and worktree init, environment variables, the Supabase project, running the content CLI, and running the app on a simulator or device. This is the concrete companion to the Day-1 infrastructure checklist in [../02-product-definition/ROADMAP.md](../02-product-definition/ROADMAP.md). The two-track worktree model it sets up is detailed in [GIT_WORKFLOW.md](./GIT_WORKFLOW.md).
 
 ## Table of Contents
 
@@ -116,11 +116,11 @@ Supabase provides auth and progress cloud sync (free to roughly 50K users). One-
 4. Enable **Row Level Security** on every user-data table so a user can read/write only their own rows. This is mandatory — the anon key is public.
 5. Keep the service-role key server-side only; it never goes in `.env` or the app.
 
-Sync is non-blocking and offline-tolerant: the device's SQLite is the source of truth, and a sync failure is a silent no-op (see the offline-first rules in [../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md](../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md)).
+Sync is non-blocking and offline-tolerant: the device's SQLite is the source of truth, and a sync failure is a silent no-op (see the offline-first rules in [CODING_STANDARDS.md](./CODING_STANDARDS.md)).
 
 ## 5. Run the Content CLI (Track A)
 
-The CLI generates the bundled `words.db`. Full command reference is in [../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md](../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md).
+The CLI generates the bundled `words.db`. Full command reference is in [../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md](../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md).
 
 ```bash
 cd ../lexitap-content

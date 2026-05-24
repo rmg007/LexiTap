@@ -9,7 +9,7 @@ tags: [srs, forgiveness, daily-cap, soft-catch-up, streak-freeze, scheduler, gam
 
 # SRS Forgiveness Mechanics
 
-Resolves backlog #43, the Phase 1 blocker that gates all scheduler/SRS code. This document specifies three forgiveness mechanics that wrap the locked `v1-fixed` scheduler so a returning or lapsed learner is never punished with a wall of overdue reviews or a destroyed streak. It is the authoritative design for [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md) Open Question #43 and the forgiveness properties required there.
+Resolves backlog #43, the Phase 1 blocker that gates all scheduler/SRS code. This document specifies three forgiveness mechanics that wrap the locked `v1-fixed` scheduler so a returning or lapsed learner is never punished with a wall of overdue reviews or a destroyed streak. It is the authoritative design that resolves backlog #43 and satisfies the forgiveness properties required in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md).
 
 The mechanics live in the domain layer ([../04-technical-architecture/SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md)): the cap and catch-up in `src/domain/srs/`, the streak machine in `src/domain/gamification/`. All functions are pure (no React, no SQLite, no network, no `Date.now()` inside — time is injected). Persisted state additions are in [Data Requirements](#data-requirements).
 

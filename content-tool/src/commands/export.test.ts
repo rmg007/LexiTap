@@ -56,13 +56,11 @@ function seedWorking() {
   const working = openMemoryContentDb();
   importRows(working, [parsed('alpha'), parsed('beta'), parsed('gamma')], {
     tier: 'foundation',
-    defaultType: 'vocabulary',
     onConflict: 'update',
     now: () => 1,
   });
   importRows(working, [parsed('delta', null)], {
     tier: 'toefl',
-    defaultType: 'vocabulary',
     onConflict: 'update',
     now: () => 1,
   });
@@ -75,6 +73,12 @@ describe('computeUserVersion', () => {
     expect(computeUserVersion(10200, 'patch')).toBe(10201);
     expect(computeUserVersion(10200, 'minor')).toBe(10300);
     expect(computeUserVersion(10200, 'major')).toBe(20000);
+  });
+
+  it('carries overflow instead of bleeding into the next segment', () => {
+    expect(computeUserVersion(199, 'patch')).toBe(200); // patch 99 -> minor+1
+    expect(computeUserVersion(19999, 'patch')).toBe(20000); // minor 99 + patch 99 -> major+1
+    expect(computeUserVersion(9999, 'minor')).toBe(10000); // minor 99 -> major+1, patch reset
   });
 });
 
@@ -129,8 +133,7 @@ describe('buildOutputDb (export smoke test)', () => {
     // foundation row missing theme -> validation error
     importRows(working, [parsed('orphan', null)], {
       tier: 'foundation',
-      defaultType: 'vocabulary',
-      onConflict: 'update',
+        onConflict: 'update',
       now: () => 1,
     });
     const output = openMemoryContentDb();
@@ -155,6 +158,43 @@ describe('buildOutputDb (export smoke test)', () => {
       .get() as WordRow;
     expect(toeflRow.audio_path).toMatch(/^assets\/audio\/.*\.mp3$/);
     expect(toeflRow.synonyms).toBe('[]');
+    working.close();
+    output.close();
+  });
+
+  it('reports per-tier enrichment coverage and asset totals', async () => {
+    const working = seedWorking();
+    await runEnrich(working, defaultProviders(), {
+      tier: 'foundation',
+      addSynonyms: true,
+      addAudio: false,
+      addImages: false,
+      force: false,
+    });
+    await runEnrich(working, defaultProviders(), {
+      tier: 'toefl',
+      addSynonyms: true,
+      addAudio: true,
+      addImages: false,
+      force: false,
+    });
+    const output = openMemoryContentDb();
+    const result = buildOutputDb(working, output, config, 1);
+
+    expect(result.coverage['foundation']).toEqual({
+      words: 3,
+      with_synonyms: 3,
+      with_audio: 0,
+      with_images: 0,
+    });
+    expect(result.coverage['toefl']).toEqual({
+      words: 1,
+      with_synonyms: 1,
+      with_audio: 1,
+      with_images: 0,
+    });
+    expect(result.assets).toEqual({ audio: 1, images: 0 });
+
     working.close();
     output.close();
   });

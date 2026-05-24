@@ -10,7 +10,7 @@
 import type { DB } from '@/lib/db';
 import { openWorkingDb } from '@/lib/db';
 import { loadConfig, findTier } from '@/lib/config';
-import { defaultProviders } from '@/providers/defaultProviders';
+import { selectProviders } from '@/providers/defaultProviders';
 import type { ProviderRegistry } from '@/providers/types';
 import { logger } from '@/lib/logger';
 import { flagValue } from '@/commands/validate';
@@ -23,6 +23,8 @@ export interface EnrichOptions {
   addImages: boolean;
   force: boolean;
   limit?: number;
+  /** Provider name requested via --provider (validated by selectProviders). */
+  provider?: string;
 }
 
 export interface EnrichSummary {
@@ -84,6 +86,7 @@ export async function enrichCommand(args: string[]): Promise<void> {
   if (!findTier(config, tier)) throw new Error(`unknown tier '${tier}'`);
 
   const limitRaw = flagValue(args, '--limit');
+  const provider = flagValue(args, '--provider');
   const options: EnrichOptions = {
     tier,
     addSynonyms: args.includes('--add-synonyms'),
@@ -91,20 +94,23 @@ export async function enrichCommand(args: string[]): Promise<void> {
     addImages: args.includes('--add-images'),
     force: args.includes('--force'),
     limit: limitRaw ? Number.parseInt(limitRaw, 10) : undefined,
+    provider,
   };
 
+  // Validate the provider name up front so --dry-run also catches typos.
+  const providers = selectProviders(provider);
+  const via = provider ? ` via ${provider}` : '';
+
   if (args.includes('--dry-run')) {
-    logger.print(`dry-run: would enrich tier '${tier}' (no provider calls, $0)`);
+    logger.print(`dry-run: would enrich tier '${tier}'${via} (no provider calls, $0)`);
     return;
   }
 
-  // Default providers are offline; a real provider is swapped in here later.
-  const providers = defaultProviders();
   const db = openWorkingDb();
   try {
     const summary = await runEnrich(db, providers, options);
     logger.print(
-      `enriched synonyms ${summary.synonyms} / audio ${summary.audio} / images ${summary.images}`,
+      `enriched${via} synonyms ${summary.synonyms} / audio ${summary.audio} / images ${summary.images}`,
     );
   } finally {
     db.close();

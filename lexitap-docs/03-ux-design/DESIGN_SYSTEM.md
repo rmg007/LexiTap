@@ -9,9 +9,9 @@ tags: [design-system, brand, colors, typography, components, dark-mode, tokens, 
 
 # Design System
 
-The LexiTap design system. Dark-mode-first, typography-driven, adult-professional. Every token and component here exists to pass the brand test from [BRAND_IDENTITY.md](../../notion-docs/BRAND_IDENTITY.md): "would a professional ESL learner pull this out on their commute without embarrassment?"
+The LexiTap design system. Dark-mode-first, typography-driven, adult-professional. Every token and component here exists to pass the brand test: "would a professional ESL learner pull this out on their commute without embarrassment?"
 
-This document is the source of truth for visual and interaction tokens. It expands the palette and aesthetic constraints in [BRAND_IDENTITY.md](../../notion-docs/BRAND_IDENTITY.md) into implementation-ready specs and feeds the wireframes in [WIREFRAMES_MOCKUPS.md](./WIREFRAMES_MOCKUPS.md) and the accessibility floor in [ACCESSIBILITY_REQUIREMENTS.md](./ACCESSIBILITY_REQUIREMENTS.md).
+This document is the source of truth for visual and interaction tokens and for the working brand decisions (palette, typography, aesthetic constraints), pending standalone brand-identity finalization (backlog #42, [ROADMAP.md](../02-product-definition/ROADMAP.md)). It expands those constraints into implementation-ready specs and feeds the wireframes in [WIREFRAMES_MOCKUPS.md](./WIREFRAMES_MOCKUPS.md) and the accessibility floor in [ACCESSIBILITY_REQUIREMENTS.md](./ACCESSIBILITY_REQUIREMENTS.md).
 
 ## Table of Contents
 
@@ -33,11 +33,11 @@ This document is the source of truth for visual and interaction tokens. It expan
 3. **Calm, not loud.** Teal is the single accent. No primary-color overload, no classroom-poster saturation. Color is reserved for meaning (accent, success, gentle correction), never decoration.
 4. **Non-punitive by construction.** There is no harsh red anywhere in the assessment feedback path. Correction states use amber/neutral, never alarm red. See [ACCESSIBILITY_REQUIREMENTS.md](./ACCESSIBILITY_REQUIREMENTS.md) for the color-independent feedback rule.
 5. **Functional motion only.** Animation confirms an interaction or guides attention. It never celebrates with fanfare. Haptics confirm taps quietly.
-6. **No mascots, no cartoons, no illustrated characters.** That is Knowji's lane (see Competitive Frame in [PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md)). Imagery is contextual (ImageMatch, word context) and never whimsical.
+6. **No mascots, no cartoons, no illustrated characters.** That is Knowji's lane (see Competitive Frame in [MARKET_RESEARCH_COMPETITIVE_ANALYSIS.md](../01-discovery-strategy/MARKET_RESEARCH_COMPETITIVE_ANALYSIS.md)). Imagery is contextual (ImageMatch, word context) and never whimsical.
 
 ## Color System
 
-Canonical values are dark mode. The teal primary (#20B2AA) is inherited from [BRAND_IDENTITY.md](../../notion-docs/BRAND_IDENTITY.md). Note the brand doc's listed background (#FFFFFF) and text (#333333) describe the light/marketing context; the dark-mode-first product UI inverts these as defined below. This is a deliberate expansion, not a contradiction — flagged in [Open Questions](#open-questions).
+Canonical values are dark mode. The teal primary (#20B2AA) is the LexiTap brand color. The brand's marketing/light context uses a white background (#FFFFFF) and dark-gray text (#333333); the dark-mode-first product UI inverts these as defined below. This is a deliberate expansion, not a contradiction — flagged in [Open Questions](#open-questions).
 
 ### Dark theme (canonical)
 
@@ -81,7 +81,7 @@ Light-mode accent/success/caution are darkened so text and icons meet WCAG AA on
 
 ## Typography
 
-Typeface: **Inter** (UI) with **DM Sans** as the brand/marketing alternate, per [BRAND_IDENTITY.md](../../notion-docs/BRAND_IDENTITY.md). Ship Inter variable for the app. The studied word may render in Inter at heavier weight; no decorative display faces.
+Typeface: **Inter** (UI) with **DM Sans** as the brand/marketing alternate. Ship Inter variable for the app. The studied word may render in Inter at heavier weight; no decorative display faces.
 
 Scale is a modular 1.2 ratio, rounded to even pixels, expressed in points (React Native logical units). All sizes scale with the OS Dynamic Type setting (see accessibility doc).
 
@@ -142,7 +142,7 @@ All buttons: min 48x48 touch target even when visually smaller (see accessibilit
 
 ### Quiz widgets
 
-All widgets share a frame: prompt area (top), interaction area (middle), feedback area (bottom). No `TextInput` anywhere — interaction is tap/drag/match/classify only (hard invariant from [ARCHITECTURE.md](../../notion-docs/ARCHITECTURE.md)).
+All widgets share a frame: prompt area (top), interaction area (middle), feedback area (bottom). No `TextInput` anywhere — interaction is tap/drag/match/classify only (hard invariant from [SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md)).
 
 - **MultipleChoice (MVP)** — prompt word in `display`; 2–4 option cards stacked, each a full-width tappable card (`radius.md`, min height 56). Selected option gets `accent` border. On submit: chosen-correct fills `success.subtle` with a check; chosen-incorrect fills `caution.subtle` with a gentle dash icon (never a red X) and the correct option simultaneously highlights `success`. Feedback copy is encouraging, never scolding.
 - **DragDrop (MVP)** — draggable chips (`radius.full`, `bg.surface.raised`) and labeled drop zones (`bg.surface.sunken`, dashed `border.subtle`). On drag start: chip lifts (scale 1.04 + shadow) and haptic `selection`. Valid drop target highlights `accent` border. Snap-to on release; gentle settle animation.
@@ -153,7 +153,7 @@ Feedback states for all widgets use the success/caution token pair plus an icon 
 
 ### Streak indicator
 
-Pill (`radius.full`) with the `streak` flame glyph + integer in `mono` tabular figures. Lives top-right on Home. States: active (warm flame, `streak` color), at-risk (flame outline + `caution` ring when today's session is not yet done), frozen (snowflake glyph, `text.secondary`, when a streak-freeze is consumed). The streak answers "did you show up today?" — never displays time or word-count targets (locked decision in [SESSION_STATE.md](../../notion-docs/SESSION_STATE.md)). No red, no guilt, no shrinking-heart animation.
+Pill (`radius.full`) with the `streak` flame glyph + integer in `mono` tabular figures. Lives top-right on Home. States: active (warm flame, `streak` color), at-risk (flame outline + `caution` ring when today's session is not yet done), frozen (snowflake glyph, `text.secondary`, when a streak-freeze is consumed). The streak answers "did you show up today?" — never displays time or word-count targets (locked decision in [SRS_FORGIVENESS_MECHANICS.md](../02-product-definition/SRS_FORGIVENESS_MECHANICS.md)). No red, no guilt, no shrinking-heart animation.
 
 ### Progress rings and bars
 
@@ -185,12 +185,12 @@ Haptics confirm; they never punish. There is no error haptic on a wrong answer.
 
 ## Token Implementation Notes
 
-- Stack is React Native (Expo) + TypeScript per [ARCHITECTURE.md](../../notion-docs/ARCHITECTURE.md). Tokens live in `src/presentation/theme/` as a typed object, consumed via a `useTheme()` hook that returns the active (dark/light) map.
+- Stack is React Native (Expo) + TypeScript per [SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md). Tokens live in `src/presentation/theme/` as a typed object, consumed via a `useTheme()` hook that returns the active (dark/light) map.
 - Tokens are presentation-layer only; the domain layer never imports them (hexagonal boundary).
 - Theme switching reads the OS appearance setting by default with a manual override in Settings; dark is the fallback when "system" is unavailable.
 
 ## Open Questions
 
-- **Background/text token reconciliation:** [BRAND_IDENTITY.md](../../notion-docs/BRAND_IDENTITY.md) lists white background / dark-gray text, which describes the marketing/light context. The product UI is dark-mode-first, so this doc treats dark as canonical and light as derived. Confirm with founder that the brand doc's palette is understood as marketing-surface guidance, not a product-UI override.
+- **Background/text token reconciliation:** the brand's marketing palette (white background / dark-gray text) describes the marketing/light context. The product UI is dark-mode-first, so this doc treats dark as canonical and light as derived. Confirm at brand-identity finalization (backlog #42, [ROADMAP.md](../02-product-definition/ROADMAP.md)) that the marketing palette is understood as marketing-surface guidance, not a product-UI override.
 - **Icon family license:** Lucide proposed for permissive licensing; confirm before adoption.
 - **DM Sans vs Inter split:** proposal is Inter for UI, DM Sans for marketing/logo. Confirm we are not shipping two faces inside the app.

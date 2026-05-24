@@ -9,7 +9,7 @@ tags: [onboarding, first-run, diagnostic, adaptive, knowledge-map, srs-seeding, 
 
 # Onboarding Flow Spec
 
-Detailed specification of LexiTap's first-run adaptive diagnostic and Knowledge Map reveal. This is the resolved approach for Backlog #45 ([SESSION_STATE.md](../../notion-docs/SESSION_STATE.md), Open Decision #2): a **simplified adaptive diagnostic** that approximates a computerized adaptive test, leverages the endowed-progress effect for D1 retention, and seeds initial SRS state — without the engineering cost of full IRT at MVP.
+Detailed specification of LexiTap's first-run adaptive diagnostic and Knowledge Map reveal. This is the resolved approach for backlog #45 ([FEATURE_BACKLOG.md](../02-product-definition/FEATURE_BACKLOG.md)): a **simplified adaptive diagnostic** that approximates a computerized adaptive test, leverages the endowed-progress effect for D1 retention, and seeds initial SRS state — without the engineering cost of full IRT at MVP.
 
 This expands the high-level onboarding flow in [USER_FLOWS.md](./USER_FLOWS.md) flow 1 and the wireframes in [WIREFRAMES_MOCKUPS.md](./WIREFRAMES_MOCKUPS.md). Visual tokens from [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md); screen-reader handling from [ACCESSIBILITY_REQUIREMENTS.md](./ACCESSIBILITY_REQUIREMENTS.md).
 
@@ -30,7 +30,7 @@ This expands the high-level onboarding flow in [USER_FLOWS.md](./USER_FLOWS.md) 
 ## Goals and Constraints
 
 1. **Place the learner** on a vocabulary-knowledge band quickly (~10–25 items, target < 2 minutes).
-2. **Maximize self-efficacy** via the endowed-progress effect — show the learner how many words they already know (the WordUp Knowledge Map insight, [PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md)).
+2. **Maximize self-efficacy** via the endowed-progress effect — show the learner how many words they already know (the WordUp Knowledge Map insight, [PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md)).
 3. **Resist overclaiming** with pseudo-word probes (signal-detection correction).
 4. **Seed the SRS** so the first real sessions are well-targeted, not random.
 5. **No typing** — every response is a tap (Yes/No, choice). Honors the core invariant.
@@ -109,7 +109,7 @@ The payoff screen — the endowed-progress moment. This is the one place the des
 
 ## Stage 6: Seeding Initial SRS State
 
-The diagnostic's purpose beyond motivation is a warm-started SRS so the first sessions are well-targeted. Seeding uses the SRS model in [ARCHITECTURE.md](../../notion-docs/ARCHITECTURE.md) (`masteryLevel` 0–5, interval ladder `[1,3,7,14,30]`).
+The diagnostic's purpose beyond motivation is a warm-started SRS so the first sessions are well-targeted. Seeding uses the SRS model in [SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md) (`masteryLevel` 0–5, interval ladder `[1,3,7,14,30]`).
 
 Per word, by its position relative to the estimated frontier rank:
 

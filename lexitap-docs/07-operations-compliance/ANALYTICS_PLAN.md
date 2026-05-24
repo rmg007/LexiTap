@@ -28,8 +28,8 @@ tags: [analytics, events, tracking, retention, conversion, funnel, event-schema,
 ## Goals and Constraints
 
 Analytics exists to answer the validation questions in
-[../../notion-docs/PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md): is the core loop
-retentive (D7 > 30% kill-gate), and does the free→paid conversion work? Constraints: ~$144 total
+[../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md): is the core loop
+retentive (D7 > 30% go-target, kill below 20% at Week 10), and does the free→paid conversion work? Constraints: ~$144 total
 budget (free tiers only), offline-first (events must survive being offline for days), privacy-first
 (pseudonymous, no ad trackers, opt-out), and solo-founder (low maintenance, few dashboards that
 matter).
@@ -38,7 +38,7 @@ matter).
 
 | Metric | Definition | Target / Use |
 |--------|------------|--------------|
-| D1 / D7 / D30 retention | % of new users active 1 / 7 / 30 days after install | D7 > 30% is the Phase-1 go/kill gate; D1 > 50%, D30 > 15% |
+| D1 / D7 / D30 retention | % of new users active 1 / 7 / 30 days after install | D7 > 30% Phase-1 go-target (kill if < 20% at Week 10); D1 > 50%, D30 > 15% |
 | Session length | Median active seconds per session | > 3 min (engagement health) |
 | Sessions / DAU | Daily sessions per active user | Habit-formation signal |
 | Streak adherence | % of active users with streak >= 7; streak break rate | Validates streak-as-product thesis |
@@ -54,7 +54,7 @@ matter).
 
 Naming: `object_action`, snake_case, past-tense action. Reuse the on-device `event_log` table
 (`event_type`, `payload`, `occurred_at`) defined in
-[../../notion-docs/DATABASE_SCHEMA.md](../../notion-docs/DATABASE_SCHEMA.md).
+[../04-technical-architecture/DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md).
 
 | Event | When | Key properties |
 |-------|------|----------------|

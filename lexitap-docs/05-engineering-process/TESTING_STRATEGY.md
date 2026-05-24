@@ -9,7 +9,7 @@ tags: [testing, jest, unit-tests, mocked-repositories, srs-replay, content-valid
 
 # Testing Strategy
 
-How LexiTap is tested. The hexagonal architecture (see [../../notion-docs/ARCHITECTURE.md](../../notion-docs/ARCHITECTURE.md)) makes most of the high-value logic testable as pure functions with zero mocking, which is exactly where test effort concentrates. This doc defines the test pyramid, what each layer tests, what is deliberately left untested, and the two domain-specific test categories that protect LexiTap's riskiest surfaces: SRS replay and content validation.
+How LexiTap is tested. The hexagonal architecture (see [../04-technical-architecture/SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md)) makes most of the high-value logic testable as pure functions with zero mocking, which is exactly where test effort concentrates. This doc defines the test pyramid, what each layer tests, what is deliberately left untested, and the two domain-specific test categories that protect LexiTap's riskiest surfaces: SRS replay and content validation.
 
 ## Table of Contents
 
@@ -54,7 +54,7 @@ The domain layer holds the logic where a bug hurts most: spaced-repetition sched
 describe('SpacedRepetition (v1-fixed)', () => {
   it('advances interval on a correct answer', () => {
     const next = SpacedRepetition.calculateNextReviewDate(1, true);
-    expect(next).toEqual(addDays(new Date(), 3)); // mastery 1 -> 2 -> 7d... per [1,3,7,14,30]
+    expect(next).toEqual(addDays(new Date(), 7)); // mastery 1 -> 2 -> 7d per [1,3,7,14,30]
   });
 
   it('regresses but never below the floor on an incorrect answer', () => {
@@ -129,7 +129,7 @@ Replay tests must:
 
 ## Content Validation Tests
 
-The content CLI's `validate` command is the gate that keeps bad data out of `words.db` (see [../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md](../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md)). Its rules get unit tests so a regression cannot silently let malformed content ship.
+The content CLI's `validate` command is the gate that keeps bad data out of `words.db` (see [../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md](../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md)). Its rules get unit tests so a regression cannot silently let malformed content ship.
 
 Cover the validation rules:
 

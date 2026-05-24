@@ -8,8 +8,9 @@ import type {
 // No-op IAP implementation. Lets the app build and the paywall render an empty/
 // disabled state without a real store SDK.
 //
-// TODO(iap): replace with a real implementation once the RevenueCat vs expo-iap
-// decision lands. expo-in-app-purchases is DEPRECATED — do NOT wire it. See
+// TODO(iap): replace with RevenueCatIapService (react-native-purchases) at
+// Phase 3 — RevenueCat is the locked vendor; do NOT wire the deprecated
+// expo-in-app-purchases. See
 // lexitap-docs/08-financial-legal/THIRD_PARTY_DEPENDENCY_AUDIT.md. No real IAP
 // dependency is installed yet by design.
 export class StubIapService implements IapService {

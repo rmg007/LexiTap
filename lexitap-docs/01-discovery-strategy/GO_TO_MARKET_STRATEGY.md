@@ -4,77 +4,86 @@ category: strategy
 status: active
 updated: 2026-05-24
 priority: P0
-tags: [gtm, teacher-referral, commission, promo-codes, launch-sequence, content-marketing, channels, aso]
+tags: [gtm, cram-schools, B2B-sales, bulk-licenses, non-cash-referrals, launch-sequence, channels, aso]
 ---
 
 # Go-to-Market Strategy
 
-> Comprehensive GTM playbook. Operating-layer summary in [../../notion-docs/PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md) (Go-to-Market section). Personas in [TARGET_USER_PERSONAS.md](./TARGET_USER_PERSONAS.md); economics in [BUSINESS_MODEL_CANVAS.md](./BUSINESS_MODEL_CANVAS.md).
+> Comprehensive GTM playbook. A condensed summary lives in [../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md) (Go-to-Market section). Personas in [TARGET_USER_PERSONAS.md](./TARGET_USER_PERSONAS.md); economics in [BUSINESS_MODEL_CANVAS.md](./BUSINESS_MODEL_CANVAS.md).
 
 ## Strategy in One Line
 
-A solo founder with a ~$144 budget cannot buy users. So the primary channel is a teacher referral network where teachers do the marketing in exchange for commission, backed by secondary organic channels (App Store SEO, Reddit, Shorts). The goal: 1,000 users in ~21 weeks.
+A solo founder with a ~$194 budget scales user acquisition via bulk B2B cram-school licensing trials, backed by a non-cash, compliant teacher-advocate referral loop and organic ASO/Reddit channels.
 
-## Primary Channel — Teacher Referral Network
+---
 
-ESL/cram-school/freelance English teachers each reach dozens of motivated students. One teacher with 50 students is a built-in network effect; the teacher's recommendation carries trust LexiTap cannot buy. Incentives are aligned: teachers want students to succeed, and successful students buy tiers.
+## Primary Channel — B2B Cram-School Licensing
+
+ESL academies, cram schools, and private prep agencies (predominantly in the Asia-Pacific region) have large, aggregated groups of high-stakes test prep students. 
+
+These schools already charge substantial fees for exam-prep courses and constantly search for high-efficacy supplementary tools to boost student outcomes. 
+
+Pivoting from high-friction consumer ad spending to B2B sales allows LexiTap to secure bulk seat contracts that bypass the app stores' 15% billing commissions (since B2B licenses are sold directly via the web portal).
 
 ### Mechanics
 
-- **Referral codes:** each teacher gets a unique code (e.g. `TEACHER_MARIA`).
-- **Student discount:** students who use a teacher code get 20% off paid tiers — the hook that makes the code worth sharing.
-- **Tiered commission** on student purchases, escalating with cumulative referrals:
-
-| Tier | Cumulative referrals | Commission |
-|------|---------------------|-----------|
-| 1 | 1–10 | 20% |
-| 2 | 11–50 | 25% |
-| 3 | 51–200 | 30% |
-| 4 | 201+ | 35% |
-
-- **Worked example:** 50 students each buy TOEFL at $14.99 (less 20% student discount = $11.99 net) → at Tier 2 (25%) the teacher earns ~$150; the founder's own example figure is "$200+" at scale across multiple tiers/purchases.
-- **Promo codes (distinct from referral codes):** free full-tier unlocks for goodwill marketing (e.g., gifting a friend, a community contact). These drive zero revenue but seed advocates and reviews.
-- **Payout:** tracked via Supabase teacher/referral tables; teachers see referrals and earnings in the lexitap.app/teachers dashboard. (Payout cadence/threshold mechanics are a P1 backlog item — see Open Questions.)
+- **Cram School Seat Packs:** Schools buy seats in fixed bulk sizes directly via the web-based B2B portal:
+  - **Classroom Pack:** 20 seats — $199/year (~$9.95/seat)
+  - **Academy Pack:** 50 seats — $399/year (~$7.98/seat)
+  - **Campus Pack:** 200 seats — $1,199/year (~$5.99/seat)
+- **Student Activation:** On purchase, the school administrator receives a unique B2B invitation link and seat tokens. Students redeem these tokens in-app during onboarding to unlock the Premium tier immediately.
+- **Admin Dashboard:** The portal (hosted on the web) allows the school director or class teacher to monitor student progress, review times, average mastery level, and streak status, proving the pedagogical ROI of the app.
 
 ### Why it works for this budget
 
-CAC is effectively the commission, which is paid only on realized revenue — there is no upfront ad spend. The teacher absorbs the marketing labor. This is the only channel that scales user acquisition without cash the founder does not have.
+Bulk B2B sales are driven by direct founder outreach (email, LinkedIn, Zoom demos) to school directors. This channel requires zero upfront ad spend, generating immediate cash flow to fund operational costs, and onboard hundreds of highly active students in single transactions.
 
-## Secondary Channels (Organic)
+---
 
-- **App Store SEO / ASO:** keyword set — vocabulary, english, TOEFL, IELTS, ESL, test prep, spaced repetition, offline, no typing, tap, flashcards. App name "LexiTap: Vocabulary Without Typing"; subtitle "TOEFL, IELTS & English vocabulary. No keyboard." (APAC-language ASO localization deferred until >$500/quarter or organic blockage shows.)
-- **Reddit / forums:** authentic presence in r/TOEFL, r/IELTS, r/ESL, and post-launch r/GRE, r/GMAT — answer questions, share "word of the day," do not spam.
-- **TikTok / YouTube Shorts:** "word of the day," "TOEFL words you need to know," "no typing = no frustration" demo, "how spaced repetition works." Cheap, audience-matched to the 18–24 cohort (48% engagement).
+## Secondary Channel — Non-Cash Teacher Advocate Loop
 
-## Content Marketing
+We completely eliminate the compliance and accounting overhead of cash payouts (via PayPal/Wise) to individual freelance teachers. 
 
-- Blog/SEO articles on lexitap.app: "Best TOEFL vocabulary," "How to study for IELTS," idiom/phrasal-verb explainers (lean into WordUp's documented blindspot).
-- Repurpose each article into Shorts and Reddit-friendly posts.
-- Lead with the marketing pillars: own-forever / no auto-renewal, zero ads, best bang for the buck, no-typing/mobile/offline. Never lead with SRS or AI (table stakes). Never compare directly to Duolingo (different audience). Never over-promise fluency.
+Instead, individual teachers are positioned as "Advocates," and we incentivize them using high-value, digital-only referral hooks.
 
-## The 21-Week Path to 1,000 Users
+### Mechanics
 
-Aligned to the validation phases in [../../notion-docs/PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md) and the build checklist in [../../notion-docs/PROJECT_OVERVIEW.md](../../notion-docs/PROJECT_OVERVIEW.md):
+- **Referral Codes:** Each teacher advocate gets a unique referral code (e.g. `TEACHER_MARIA`).
+- **Student Benefit:** Students who enter `TEACHER_MARIA` at onboarding receive a 14-day free trial of the Premium Subscription (normally 3 days) to build habit loops before gating.
+- **Teacher Incentive:** For every 3 students who remain active past their trial period, the teacher advocate receives a free Premium year pass or credit that they can gift to a colleague, use themselves, or pass to a low-income student.
+- **Compliance Alignment:** Because zero money changes hands off-store between LexiTap and teacher advocates, we completely bypass VAT/digital sales tax, FATCA/1099 withholding, KYC/AML regulatory barriers, and micro-payment fee erosion.
 
-| Weeks | Phase | GTM action | Outcome |
-|-------|-------|-----------|---------|
-| 1 | Phase 0 — Validation | Validation research; start sourcing teacher contacts | Thesis confirmed; teacher shortlist |
-| 2–6 | Phase 1 — Build free MVP | Begin content marketing early (blog, Shorts); recruit beta teachers | Audience warmed pre-launch |
-| 6–9 | Phase 2 — Beta + WTP | 50 beta testers via teachers/Reddit/groups; measure D7; show TOEFL mockups to top 20 | D7 >30%; 5/20 say yes to $14.99 |
-| 10–11 | Phase 2 close | Lock TOEFL build decision on WTP signal | Go/no-go on first paid tier |
-| 12–15 | Phase 3 — First paid module | Build + launch TOEFL; activate first teacher codes | 10 paying users; 5% conversion |
-| 16–18 | Phases 4–5 — Expand + launch | Add IELTS/Business/Common3K + Premium Pass; App Store launch; deploy teacher portal | Public launch live |
-| 19–21 | Phase 6 — Growth | Activate full teacher network; ASO; Reddit/Shorts cadence | Scale toward 1,000 users |
-| 22+ | Post-launch drops | Monthly content drops: GRE, GMAT, Idioms, Phrasal Verbs (order by conversion data) | Expand WTP surface; mitigate post-test churn |
+---
 
-## Launch Sequence Notes
+## Organic Channels & ASO
 
-- Tier launch order: TOEFL first (highest WTP, best teacher-network fit), then IELTS, Business English, Common 3000, Premium Pass.
-- Pre-launch: register domain, Apple ($99) + Google ($25) accounts, app icon, website, support@lexitap.app, @lexitap social handles, teacher signup page, privacy policy + ToS.
-- Free cloud sync is a launch-day differentiator against Knowji's device-bound SRS and WordUp's sync failures — feature it.
+- **App Store Optimization (ASO):** Focus heavily on high-efficacy keyword search terms:
+  - Keywords: *English spelling active recall, TOEFL vocabulary spelling, IELTS active recall, offline English flashcards, business English vocabulary, vocabulary builder, spaced repetition.*
+  - App Name: "LexiTap: TOEFL & IELTS Active Recall"
+  - Subtitle: "English spelling vocabulary builder. Offline-first."
+- **Reddit / communities:** Establish authentic presence in r/TOEFL, r/IELTS, r/ESL, and r/languagelearning. Address active spelling retention, share "how to study spelling for TOEFL writing," and highlight the value of active spelling over passive flashcards.
+- **YouTube Shorts & TikTok:** Create rapid "Spell this word" video quizzes matching the "Active Recall" UI. Audience-matched to the 18–24 demographic, emphasizing that active recall is the key to passing standardized writing tests.
+
+---
+
+## The 21-Week Path to 1,000 Active Users
+
+Aligned to the canonical phases in [../02-product-definition/ROADMAP.md](../02-product-definition/ROADMAP.md) and the gating metrics in [VISION_PROBLEM_STATEMENT.md](./VISION_PROBLEM_STATEMENT.md):
+
+| Weeks | Phase | GTM action | Outcome / Gate |
+|-------|-------|-----------|----------------|
+| 1 | Phase 0 — Validation | Initial cram school cold outreach; pitch bulk beta trials | 3 cram schools commit to free bulk pilots |
+| 2–6 | Phase 1 — Build MVP | Build web portal stubs; seed active recall video Shorts | Core MVP running; spelling widgets verified |
+| 7–10 | Phase 2 — Validation | Deploy 50-user consumer beta; launch bulk pilots with the 3 cram schools | D7 retention >30%; qualitative school validation |
+| 11–12 | Phase 3 — Subscription / Paid Beta | Launch individual subscriptions + bulk portal stubs; convert beta schools | 10 subscribers + 2 paid cram-school contracts |
+| 12–16 | Phase 4 — Launch Wave Tiers | IELTS / Business tiers live; launch B2B self-serve web portal | $1,000/month recurring revenue |
+| 17–18 | Phase 5 — Launch prep | Complete App Store metadata (Spelling screenshots); EULA, domain setup | Live on both stores |
+| 19–21 | Phase 6 — Growth | Scale cram school sales; deploy advocate credits; ASO | 1,000 total active users |
+| 22+ | Post-launch drops | Launch GRE/GMAT content updates to active Premium base | Lock in annual subscription renewals |
+
+---
 
 ## Open Questions
 
-- Teacher payout cadence, minimum threshold, and payment rails (PayPal? Wise? store credit?) — P1 backlog; needs resolution before teacher network activation in Phase 6.
-- Cold-start for the teacher network: how are the first ~10 teachers recruited, and what proof do they need to participate pre-revenue? Likely founder's direct ESL contacts + promo-code goodwill seeding.
-- Which secondary channel produces the best organic conversion (Reddit vs. Shorts vs. ASO) — instrument and double down post-launch.
+- **B2B Contract Signing Rails:** Do we need structured enterprise contracts for larger schools, or will self-serve terms of service suffice? Revisit at 10+ cram school sign-ups.
+- **Localization of B2B landing pages:** Should the B2B licensing portal landing page be localized into Korean, Japanese, and Mandarin immediately, or is English sufficient? English for Phase 3; localize in Year 2.

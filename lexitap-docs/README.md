@@ -9,9 +9,7 @@ tags: [index, docs, overview]
 
 # LexiTap Docs — Full Product Documentation
 
-Full research and product documentation. 8 categories, 40 documents. Separate from notion-docs/ (14 agent-handoff docs). Load from category READMEs, not directly from this index.
-
-For agent-handoff docs, see `../notion-docs/`. Load `../notion-docs/SESSION_STATE.md` first in any new session.
+Full research and product documentation. 8 categories, 41 documents. This is the single canonical doc layer. Load from category READMEs, not directly from this index.
 
 ## Category Index
 
@@ -21,7 +19,7 @@ For agent-handoff docs, see `../notion-docs/`. Load `../notion-docs/SESSION_STAT
 | Product Definition | [./02-product-definition/](./02-product-definition/) | 5 | active |
 | UX and Design | [./03-ux-design/](./03-ux-design/) | 5 | active |
 | Technical Architecture | [./04-technical-architecture/](./04-technical-architecture/) | 7 | active |
-| Engineering Process | [./05-engineering-process/](./05-engineering-process/) | 6 | active |
+| Engineering Process | [./05-engineering-process/](./05-engineering-process/) | 7 | active |
 | Content and Data | [./06-content-data/](./06-content-data/) | 3 | active |
 | Operations and Compliance | [./07-operations-compliance/](./07-operations-compliance/) | 5 | active |
 | Financial and Legal | [./08-financial-legal/](./08-financial-legal/) | 4 | active |

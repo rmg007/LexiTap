@@ -12,7 +12,7 @@ tags: [support, escalation, bug-triage, runbook, sync-conflicts, refunds, teache
 > Phase-0 planning document. Defines realistic solo-founder support: one inbox, common-issue
 > playbooks, triage/escalation, SLAs honest for one person, and teacher-payout disputes. Pairs with
 > [ERROR_MONITORING_PLAN.md](./ERROR_MONITORING_PLAN.md) and the data model in
-> [../../notion-docs/DATABASE_SCHEMA.md](../../notion-docs/DATABASE_SCHEMA.md).
+> [../04-technical-architecture/DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md).
 
 ## Table of Contents
 
@@ -101,7 +101,7 @@ with email/password and vice versa. Trigger password reset via Supabase Auth for
 ## Teacher-Payout Disputes
 
 Teachers are paid via PayPal on a monthly manual export while small (per
-[../../notion-docs/WEBSITE_TEACHER_REFERRAL.md](../../notion-docs/WEBSITE_TEACHER_REFERRAL.md)).
+[../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md](../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md)).
 Dispute playbook:
 
 1. Pull the teacher's `referrals` rows (code, product, commission rate, `tier_at_purchase`,

@@ -6,8 +6,8 @@ status: active
 
 # LexiTap Roadmap
 
-**21 weeks from validation to 1,000 users.**
-Solo founder. $144 Year 1 budget. Teacher referral network as primary GTM.
+**21 weeks from validation to 1,000 active users (including B2B cram-school seats).**
+Solo founder. $194 Year 1 budget. B2B Cram School licensing + non-cash teacher referrals as primary GTM.
 
 ---
 
@@ -18,7 +18,7 @@ Solo founder. $144 Year 1 budget. Teacher referral network as primary GTM.
 | Phase | **0 — Validation** (Week 1) |
 | Code written | None |
 | Stack | React Native (Expo) + TypeScript + SQLite + Supabase |
-| Target | Global ESL learners (non-native English speakers only) |
+| Target | Global ESL learners (cram schools & test prep individuals) |
 
 ---
 
@@ -26,19 +26,20 @@ Solo founder. $144 Year 1 budget. Teacher referral network as primary GTM.
 
 These must be done before any Phase 1 code is written. Nothing else gates Phase 1 start.
 
-- [ ] **Backlog #43** — SRS Forgiveness Mechanics design (daily review cap + soft catch-up + streak freeze — blocks all scheduler/SRS code)
-- [ ] **Backlog #41** — Content Sourcing Strategy (blocks content tool build, Track A Week 2-3)
-- [ ] **Backlog #42** — Knowji competitive teardown (~$10 + 4-6 hrs — blocks Brand Identity finalization)
+- [x] **Backlog #43** — SRS Forgiveness Mechanics design (daily review cap + soft catch-up + streak freeze — blocks all scheduler/SRS code) — resolved; see [lexitap-docs/02-product-definition/SRS_FORGIVENESS_MECHANICS.md](lexitap-docs/02-product-definition/SRS_FORGIVENESS_MECHANICS.md)
+- [x] **Backlog #41** — Content Sourcing Strategy (blocks content tool build, Track A Week 2-3) — resolved 2026-05-23
+- [ ] **Backlog #42** — Knowji competitive teardown (~$10 + 4-6 hrs — blocks Brand Identity finalization) — research-based teardown done; first-person hands-on still outstanding
 
 ---
 
 ## Phase 0 — Validation (Week 1)
 
-**Gate:** 7/10 parents say yes to free download + 3/5 juniors say maybe/yes to paid. If not — stop.
+**Gate:** 7/10 parents say yes to free download + 3/5 cram schools say yes to bulk licensing free trial. If not — stop.
 
 - [ ] Interview 10 parents
 - [ ] Interview 5 high schoolers
 - [ ] Survey 20 TOEFL test-takers
+- [ ] Pitch bulk pilot to 5 local ESL cram schools
 - [ ] Source Foundation word list (top 3,000 most-used words)
 - [ ] Source TOEFL word list (~3,000 words)
 - [ ] Resolve 3 Phase 1 blockers (above)
@@ -74,18 +75,19 @@ These must be done before any Phase 1 code is written. Nothing else gates Phase 
 - [ ] Load bundled `words.db`
 - [ ] Cloud sync (background, non-blocking, on app open/close)
 - [ ] Screens: Home, Quiz, Progress, Settings
-- [ ] Assessment widgets: MultipleChoice, DragDrop
-- [ ] Hooks: useSpacedRepetition, useMastery, useQuizSession, useSync
+- [ ] Assessment widgets: MultipleChoice, DragDrop, SpellingActiveRecall
+- [ ] Hooks: useSpacedRepetition, useMastery, useQuizSession, useSync, useSeatLicensing
 - [ ] Streak counter (non-negotiable gamification)
-- [ ] Deliverable: Working iOS + Android app, free tier, cloud sync included
+- [ ] Deliverable: Working iOS + Android app, free tier, active recall, cloud sync included
 
 ---
 
 ## Phase 2 — Validation (Weeks 7-10)
 
-**Gate:** D7 retention >30% → proceed. 20-30% → fix core loop. <20% → product broken, pivot/kill.
+**Gate:** D7 retention >30% + 2 cram schools onboarded for free beta trials. If not — stop.
 
 - [ ] Recruit 50 beta testers (TestFlight + Google Play Internal)
+- [ ] Pitch and onboard 2 local cram schools for bulk pilot
 - [ ] Measure D1 retention (target >50%)
 - [ ] Measure D7 retention (target >30%)
 - [ ] Measure D30 retention (target >15%)
@@ -95,20 +97,19 @@ These must be done before any Phase 1 code is written. Nothing else gates Phase 
 
 ---
 
-## Phase 3 — First Paid Tier (Weeks 11-12)
+## Phase 3 — Subscription & Bulk Beta (Weeks 11-12)
 
 - [ ] Source TOEFL audio (ElevenLabs, ~$50)
 - [ ] Content tool: enrich TOEFL tier with audio
-- [ ] Paywall screen
-- [ ] Apple + Google IAP integration (`expo-in-app-purchases`)
-- [ ] Teacher referral code validation (Supabase)
-- [ ] Promo code system (Supabase)
-- [ ] Early adopter push ($11.99 intro vs $14.99 list)
-- [ ] **Gate: 10 paying users**
+- [ ] Paywall screen (unified premium subscription: $4.99/mo, $24.99/yr)
+- [ ] Apple + Google IAP integration (RevenueCat)
+- [ ] B2B cram-school seat activation validation (Supabase)
+- [ ] Early adopter push ($19.99/yr intro premium pass)
+- [ ] **Gate: 10 paying individual subscribers + 2 paid cram-school contracts**
 
 ---
 
-## Phase 4 — Launch Wave Tiers (Weeks 12-16)
+## Phase 4 — Launch Wave Content Drops (Weeks 12-16)
 
 Content tool additions:
 - [ ] Source + import IELTS word list
@@ -117,25 +118,22 @@ Content tool additions:
 - [ ] Export updated `words.db` (6 tiers total)
 
 Mobile additions:
-- [ ] Add IAP products for new tiers
-- [ ] Update paywall UI
-- [ ] Premium Pass logic ($29.99/yr — covers all paid tiers including future drops)
-- [ ] Assessment widgets: ImageMatch, Classification
+- [ ] Update paywall UI with IELTS/Business highlights
+- [ ] B2B school management portal deploy (web-based bulk purchase)
+- [ ] Assessment widgets: Classification, ImageMatch
 - [ ] UX polish (animations, haptics)
-- [ ] **Gate: $1,000/month revenue**
+- [ ] **Gate: $1,000/month recurring revenue**
 
 ---
 
 ## Phase 5 — Launch Prep (Weeks 17-18)
 
 - [ ] App icon (1024×1024)
-- [ ] App Store screenshots (6)
-- [ ] App Store description
-- [ ] Privacy policy
-- [ ] Terms of service
+- [ ] App Store screenshots showing Active Recall spelling
+- [ ] App Store description emphasizing subscription value & schools
+- [ ] Privacy policy & Terms of Service
 - [ ] Support email setup
-- [ ] Launch lexitap.app website
-- [ ] Deploy teacher referral portal
+- [ ] Launch lexitap.app website with B2B licensing portal
 - [ ] Apple App Store submission ($99/year)
 - [ ] Google Play submission ($25 one-time)
 - [ ] **Deliverable: Live on both stores**
@@ -145,18 +143,19 @@ Mobile additions:
 ## Phase 6 — Growth + Content Drops (Week 19+)
 
 Growth:
-- [ ] Activate teacher referral network
+- [ ] Scale cram-school institutional sales outreach
+- [ ] Activate non-cash teacher referral program (in-app rewards / free unlocks)
 - [ ] Reddit presence (r/TOEFL, r/ESL, r/languagelearning)
-- [ ] App Store Optimization
+- [ ] App Store Optimization for "spelling active recall"
 - [ ] Content marketing (blog, TikTok/YouTube Shorts)
 
 Content drop cadence:
-- [ ] Week 22 — GRE Vocabulary ($14.99)
-- [ ] Week 26 — GMAT Vocabulary ($14.99)
-- [ ] Week 30 — Idioms & Expressions ($9.99)
-- [ ] Week 34 — Phrasal Verbs ($9.99)
+- [ ] Week 22 — GRE Vocabulary (included in Premium)
+- [ ] Week 26 — GMAT Vocabulary (included in Premium)
+- [ ] Week 30 — Idioms & Expressions (included in Premium)
+- [ ] Week 34 — Phrasal Verbs (included in Premium)
 
-**Gate: 1,000 users**
+**Gate: 1,000 active users**
 
 ---
 
@@ -164,15 +163,15 @@ Content drop cadence:
 
 | Week | Milestone |
 |------|-----------|
-| 1 | Validation interviews + word lists sourced |
+| 1 | Validation interviews + word lists sourced + cram school outreach |
 | 3 | Content tool done (Track A) |
-| 6 | Mobile MVP done — free tier + cloud sync |
-| 10 | Retention data from 50 beta users |
-| 11 | WTP validated |
-| 12 | First 10 paying users |
-| 17 | All launch-wave tiers complete |
+| 6 | Mobile MVP done — free tiers + active recall spelling widget |
+| 10 | Retention data from 50 beta users + B2B school trials |
+| 11 | WTP validated for Premium Subscription & Cram School bulk |
+| 12 | First 10 paying subscribers + 2 cram school accounts |
+| 17 | All launch-wave tiers + B2B web portal complete |
 | 19 | App Store live |
-| 21 | 1,000 users |
+| 21 | 1,000 active users |
 
 ---
 
@@ -180,10 +179,10 @@ Content drop cadence:
 
 | Milestone | Target |
 |-----------|--------|
-| First paying users | 10 users (Week 12) |
-| Monthly revenue | $1,000 (Phase 4) |
-| Year 1 (conservative) | $3,600 |
-| Year 2 (growth) | $30,000 |
+| First paying users | 10 subscribers + 2 schools (Week 12) |
+| Monthly revenue | $1,000 recurring (Phase 4) |
+| Year 1 (conservative) | $3,600 net |
+| Year 2 (growth) | $30,000 net |
 | Year 3 (mature) | $67,500 net |
 
 ---
@@ -192,10 +191,10 @@ Content drop cadence:
 
 | Point | Condition | Action |
 |-------|-----------|--------|
-| Week 1 | Validation interviews fail | Stop — pivot or kill |
+| Week 1 | Validation interviews/school interest fail | Stop — pivot or kill |
 | Week 10 | D7 retention <20% | Product broken — pivot/kill |
-| Week 12 | <5 paying users | Pivot to B2B or rethink pricing |
-| Week 20 | <100 users acquired | Rethink GTM, invest in teacher network |
+| Week 12 | <5 paying subscribers OR 0 B2B schools paid | Pivot to consumer-only or restructure pricing |
+| Week 20 | <100 active users acquired | Rethink GTM, pivot sales strategy |
 
 ---
 
@@ -203,7 +202,6 @@ Content drop cadence:
 
 | Folder | Purpose |
 |--------|---------|
-| `notion-docs/` | 14 agent-handoff docs — load `SESSION_STATE.md` first |
-| `lexitap-docs/` | Full research docs (~40-50 files, 8 categories) — not yet scaffolded |
+| `lexitap-docs/` | Full research docs (41 files, 8 categories) — the single canonical doc layer |
 
-Detailed specs live in `notion-docs/`. This file is the at-a-glance tracker.
+Detailed specs live in `lexitap-docs/`. This file is the at-a-glance tracker.

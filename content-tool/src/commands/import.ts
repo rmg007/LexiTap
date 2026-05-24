@@ -18,7 +18,6 @@ export type OnConflict = 'update' | 'skip' | 'error';
 
 export interface ImportOptions {
   tier: string;
-  defaultType: WordType;
   onConflict: OnConflict;
   /** Injected clock so imports are deterministic in tests. */
   now: () => number;
@@ -142,7 +141,6 @@ export function importCommand(args: string[]): void {
   try {
     const summary = importRows(db, rows, {
       tier,
-      defaultType: type,
       onConflict,
       now: () => Date.now(),
     });

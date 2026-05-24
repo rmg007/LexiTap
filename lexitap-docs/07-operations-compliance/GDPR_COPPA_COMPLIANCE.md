@@ -36,7 +36,7 @@ teacher backend all process personal data.
 
 Guiding principles: data minimization, purpose limitation, on-device-first, and provable deletion
 (account deletion cascades cloud data per
-[../../notion-docs/DATABASE_SCHEMA.md](../../notion-docs/DATABASE_SCHEMA.md) sync edge cases).
+[../04-technical-architecture/DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md) sync edge cases).
 
 ## Data Inventory
 

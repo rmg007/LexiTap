@@ -9,7 +9,7 @@ tags: [ci-cd, github-actions, eas-build, eas-submit, ship-and-watch, free-tier, 
 
 # CI/CD Pipeline Spec
 
-The continuous-integration and delivery pipeline for LexiTap. Two pieces: a lightweight GitHub Actions check that gates every PR (ESLint + TypeScript), and the EAS Build/Submit pipeline that produces and ships the iOS and Android binaries. On top of both sits the autonomous "Ship and Watch" loop. Everything here is shaped by the Year-1 budget of roughly $144 — free tiers only where possible. Day-1 setup context is in [../../notion-docs/IMPLEMENTATION_ROADMAP.md](../../notion-docs/IMPLEMENTATION_ROADMAP.md).
+The continuous-integration and delivery pipeline for LexiTap. Two pieces: a lightweight GitHub Actions check that gates every PR (ESLint + TypeScript), and the EAS Build/Submit pipeline that produces and ships the iOS and Android binaries. On top of both sits the autonomous "Ship and Watch" loop. Everything here is shaped by the Year-1 budget of roughly $144 — free tiers only where possible. Day-1 setup context is in [../02-product-definition/ROADMAP.md](../02-product-definition/ROADMAP.md).
 
 ## Table of Contents
 
@@ -148,7 +148,7 @@ Year-1 budget is roughly $144. The pipeline is designed to stay near-free:
 - **GitHub Actions:** free for public repos; the free private-repo minute allotment is ample for lint+typecheck on `ubuntu-latest`. Keep macOS runners out of routine CI.
 - **EAS Build:** the free plan grants a limited number of cloud builds per month. Reserve them for milestones — do not build on every PR. Local `eas build --local` is a fallback if free builds run out.
 - **Store fees (unavoidable, planned):** Apple Developer Program $99/year, Google Play one-time $25. These are the bulk of the budget.
-- **Supabase:** free tier covers auth + sync to roughly 50K users; cost is $0/month until then (see the cloud-sync rationale in [../../notion-docs/IMPLEMENTATION_ROADMAP.md](../../notion-docs/IMPLEMENTATION_ROADMAP.md)).
+- **Supabase:** free tier covers auth + sync to roughly 50K users; cost is $0/month until then (see the cloud-sync rationale in [../02-product-definition/ROADMAP.md](../02-product-definition/ROADMAP.md)).
 
 ## Secrets
 

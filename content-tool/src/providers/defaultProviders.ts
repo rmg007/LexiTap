@@ -49,3 +49,30 @@ export function defaultProviders(): ProviderRegistry {
     image: new NoopImageProvider(),
   };
 }
+
+/**
+ * Provider names the pipeline recognizes per modality
+ * (CONTENT_PIPELINE_ARCHITECTURE.md enrich `--provider`). Real adapters for
+ * these are deferred (they need API keys/network); offline defaults stand in so
+ * CI runs unchanged. Selecting a name validates it and is recorded for the
+ * manifest/logs — an unknown name is a hard error rather than a silent no-op.
+ */
+export const KNOWN_PROVIDERS: ReadonlySet<string> = new Set([
+  'openai', // synonyms/antonyms (text)
+  'elevenlabs', // audio
+  'google', // audio (alt)
+  'unsplash', // images
+]);
+
+/**
+ * Resolve the provider registry for an optional `--provider` name. Until real
+ * adapters are wired the offline defaults are returned regardless, but an
+ * unrecognized name throws so a typo never silently produces an empty build.
+ */
+export function selectProviders(provider?: string): ProviderRegistry {
+  if (provider !== undefined && !KNOWN_PROVIDERS.has(provider)) {
+    const known = [...KNOWN_PROVIDERS].join(', ');
+    throw new Error(`unknown --provider '${provider}' (known: ${known})`);
+  }
+  return defaultProviders();
+}

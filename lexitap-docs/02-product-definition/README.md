@@ -18,3 +18,4 @@ Product requirements, user stories, feature backlog, roadmap, and scope constrai
 | [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md) | Feature Backlog and Prioritization | P1 | active |
 | [ROADMAP.md](./ROADMAP.md) | Product Roadmap | P0 | active |
 | [OUT_OF_SCOPE.md](./OUT_OF_SCOPE.md) | Out-of-Scope Document | P0 | active |
+| [SRS_FORGIVENESS_MECHANICS.md](./SRS_FORGIVENESS_MECHANICS.md) | SRS Forgiveness Mechanics | P0 | active |

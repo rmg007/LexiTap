@@ -14,16 +14,22 @@
  * Foundation words.db from a clean checkout.
  */
 
-import { writeFileSync, readFileSync, existsSync, readdirSync } from 'node:fs';
-import { resolve } from 'node:path';
-import type { DB } from '@/lib/db';
 import {
-  openWorkingDb,
-  createFreshOutputDb,
-  OUTPUT_DB_PATH,
-  WORKING_DB_PATH,
-} from '@/lib/db';
+  writeFileSync,
+  readFileSync,
+  existsSync,
+  readdirSync,
+  mkdirSync,
+  rmSync,
+  copyFileSync,
+} from 'node:fs';
+import { createHash } from 'node:crypto';
+import { resolve, dirname } from 'node:path';
+import type { DB } from '@/lib/db';
+import { openWorkingDb, createFreshOutputDb, WORKING_DB_PATH } from '@/lib/db';
 import { loadConfig, type AppConfig, type TierConfig, PROJECT_ROOT } from '@/lib/config';
+import { resolveAppPaths } from '@/lib/paths';
+import { buildWordIndex } from '@/lib/fingerprint';
 import { validateRows } from '@/commands/validate';
 import { importRows } from '@/commands/import';
 import { runEnrich } from '@/commands/enrich';
@@ -71,10 +77,50 @@ function tierConfigToRow(tier: TierConfig, wordCount: number): TierRow {
   };
 }
 
+/** Per-tier enrichment coverage written into the manifest (SEED_DATA_SPEC quality bar #6). */
+export interface TierCoverage {
+  words: number;
+  with_synonyms: number;
+  with_audio: number;
+  with_images: number;
+}
+
 export interface ExportResult {
   userVersion: number;
   tierCounts: Record<string, number>;
+  coverage: Record<string, TierCoverage>;
+  assets: { audio: number; images: number };
   totalWords: number;
+  /** { word_id: content fingerprint } for the active rows, recorded for diffing. */
+  wordIndex: Record<string, string>;
+}
+
+/** A field counts as "covered" when it is non-null (offline noop synonyms emit '[]', still covered). */
+function computeCoverage(words: WordRow[], tiers: readonly TierConfig[]): {
+  coverage: Record<string, TierCoverage>;
+  assets: { audio: number; images: number };
+} {
+  const coverage: Record<string, TierCoverage> = {};
+  for (const tier of tiers) {
+    coverage[tier.slug] = { words: 0, with_synonyms: 0, with_audio: 0, with_images: 0 };
+  }
+  let audio = 0;
+  let images = 0;
+  for (const w of words) {
+    const c = coverage[w.tier_id];
+    if (!c) continue;
+    c.words += 1;
+    if (w.synonyms !== null) c.with_synonyms += 1;
+    if (w.audio_path !== null) {
+      c.with_audio += 1;
+      audio += 1;
+    }
+    if (w.image_path !== null) {
+      c.with_images += 1;
+      images += 1;
+    }
+  }
+  return { coverage, assets: { audio, images } };
 }
 
 /**
@@ -125,17 +171,72 @@ export function buildOutputDb(
 
   output.pragma(`user_version = ${userVersion}`);
 
-  return { userVersion, tierCounts, totalWords: words.length };
+  const { coverage, assets } = computeCoverage(words, config.tiers);
+  const wordIndex = buildWordIndex(words);
+  return { userVersion, tierCounts, coverage, assets, totalWords: words.length, wordIndex };
 }
 
-/** Map a semver-ish bump to the integer user_version (major*10000+minor*100+patch). */
+/**
+ * Export step 4: rebuild the output asset bundle. Clears `destAssetsDir` (drops
+ * unreferenced files), then copies each referenced audio/image from the
+ * enrichment scratch dir (`data/`). Offline builds only assign asset *paths*
+ * without synthesizing files, so a missing source is warned-and-skipped rather
+ * than fatal. Returns how many files were copied vs. referenced-but-absent.
+ */
+export function copyAssets(
+  words: WordRow[],
+  dataDir: string,
+  destAssetsDir: string,
+): { copied: number; missing: number } {
+  if (existsSync(destAssetsDir)) rmSync(destAssetsDir, { recursive: true });
+
+  let copied = 0;
+  let missing = 0;
+  for (const w of words) {
+    for (const rel of [w.audio_path, w.image_path]) {
+      if (!rel) continue;
+      const src = resolve(dataDir, rel);
+      if (!existsSync(src)) {
+        missing += 1;
+        continue;
+      }
+      const dest = resolve(destAssetsDir, '..', rel);
+      mkdirSync(dirname(dest), { recursive: true });
+      copyFileSync(src, dest);
+      copied += 1;
+    }
+  }
+  return { copied, missing };
+}
+
+/**
+ * Map a semver-ish bump to the integer user_version (major*10000+minor*100+patch).
+ * Each segment is two digits; a bump that overflows 99 carries into the next
+ * segment (patch 99 -> minor+1, minor 99 -> major+1) so the encoding stays valid.
+ */
 export function computeUserVersion(current: number, bump: 'major' | 'minor' | 'patch'): number {
-  const major = Math.floor(current / 10000);
-  const minor = Math.floor((current % 10000) / 100);
-  const patch = current % 100;
-  if (bump === 'major') return (major + 1) * 10000;
-  if (bump === 'minor') return major * 10000 + (minor + 1) * 100;
-  return major * 10000 + minor * 100 + (patch + 1);
+  let major = Math.floor(current / 10000);
+  let minor = Math.floor((current % 10000) / 100);
+  let patch = current % 100;
+  if (bump === 'major') {
+    major += 1;
+    minor = 0;
+    patch = 0;
+  } else if (bump === 'minor') {
+    minor += 1;
+    patch = 0;
+  } else {
+    patch += 1;
+  }
+  if (patch > 99) {
+    minor += Math.floor(patch / 100);
+    patch %= 100;
+  }
+  if (minor > 99) {
+    major += Math.floor(minor / 100);
+    minor %= 100;
+  }
+  return major * 10000 + minor * 100 + patch;
 }
 
 /**
@@ -159,7 +260,6 @@ async function bootstrapWorkingIfEmpty(working: DB, config: AppConfig): Promise<
       const { rows } = parseByExtension(path, text);
       importRows(working, rows, {
         tier: tier.slug,
-        defaultType: 'vocabulary',
         onConflict: 'update',
         now: () => Date.now(),
       });
@@ -176,19 +276,29 @@ async function bootstrapWorkingIfEmpty(working: DB, config: AppConfig): Promise<
   }
 }
 
-function writeManifest(config: AppConfig, result: ExportResult, contentVersion: string): void {
+/** sha1 of each source file in data/input/, keyed by filename (manifest source_hashes). */
+function hashSourceFiles(): Record<string, string> {
   const inputDir = resolve(PROJECT_ROOT, 'data', 'input');
-  const sourceFiles = existsSync(inputDir)
-    ? readdirSync(inputDir).filter((f) => f.endsWith('.csv') || f.endsWith('.json'))
-    : [];
+  if (!existsSync(inputDir)) return {};
+  const files = readdirSync(inputDir).filter((f) => f.endsWith('.csv') || f.endsWith('.json'));
+  const hashes: Record<string, string> = {};
+  for (const file of files) {
+    const content = readFileSync(resolve(inputDir, file));
+    hashes[file] = `sha1:${createHash('sha1').update(content).digest('hex')}`;
+  }
+  return hashes;
+}
+
+function writeManifest(config: AppConfig, result: ExportResult, contentVersion: string): void {
   const manifest = {
     app_id: config.app_id,
     content_version: contentVersion,
     user_version: result.userVersion,
     built_at: new Date().toISOString(),
-    tiers: result.tierCounts,
+    tiers: result.coverage,
     total_words: result.totalWords,
-    source_files: sourceFiles,
+    assets: result.assets,
+    source_hashes: hashSourceFiles(),
   };
   const manifestPath = resolve(PROJECT_ROOT, 'data', 'output', 'build-manifest.json');
   writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');

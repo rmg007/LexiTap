@@ -4,66 +4,74 @@ category: strategy
 status: active
 updated: 2026-05-24
 priority: P0
-tags: [vision, problem-statement, thesis, esl, freemium, kill-criteria, conversion]
+tags: [vision, problem-statement, thesis, esl, subscription, B2B, active-recall, kill-criteria, conversion]
 ---
 
 # Vision and Problem Statement
 
-> Operating-layer summary lives in [../../notion-docs/PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md) (Executive Summary, Core Thesis). This is the comprehensive version: the full reasoning behind why LexiTap exists, who it serves, and the conditions under which we kill it.
+> A condensed summary lives in [../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md) (Executive Summary, Core Thesis). This is the comprehensive version: the full reasoning behind why LexiTap exists, who it serves, and the conditions under which we kill it.
 
 ## The Problem
 
 Global ESL learners — non-native English speakers preparing for high-stakes tests, professional advancement, or real-world fluency — are badly served by the 2026 vocabulary-app market. The pain is not a shortage of apps. It is that the existing apps fail this specific audience along four concrete axes:
 
-**1. The intermediate plateau is abandoned.** The market is saturated at the beginner level (Duolingo et al.), but learners at B1/B2 trying to push into C1/C2 fall off a cliff. Industry research documents this gap explicitly: most apps move beginners well and then leave them with dry, text-only flashcards. The learner who already knows 3,000 words and needs the next 6,000 for a TOEFL section has no good frequency-ordered path.
+**1. The intermediate plateau is abandoned.** The market is saturated at the beginner level (Duolingo et al.), but learners at B1/B2 trying to push into C1/C2 fall off a cliff. Industry research documents this gap explicitly: most apps move beginners well and then leave them with dry, text-only flashcards. The learner who already knows 3,000 words and needs the next 6,000 for a TOEFL section has no frequency-ordered path that actually leads to recall.
 
-**2. Subscription extraction has broken trust.** ELSA Speak charges $89–99/yr and is the subject of documented auto-renewal backlash; first-hand founder evaluation (2026-05-22) put its felt value at roughly $5 — a >90% gap between asking price and delivered value. WordUp removed its core "learn now" feature post-launch, a documented trust-destruction event. The audience that pays for test prep is the audience most burned by recurring billing on a finite need.
+**2. Predatory and high-cost subscription models.** ELSA Speak charges $89–99/yr, generating documented auto-renewal backlash; first-hand evaluation (2026-05-22) shows a felt value of roughly $5. WordUp removed its core "learn now" feature post-launch, destroying consumer trust. High-stakes test-prep students are repeatedly burned by recurring consumer subscriptions that fail to match their actual, intensive study windows.
 
-**3. Mobile friction punishes the core use case.** The atomic unit of ESL study is a 5-minute commute window. Typing answers on a phone keyboard, waiting for video clips to load (WordUp's documented media-parsing failures), or losing progress to a device-bound SRS (Knowji warns against multiple users sharing a device — it "irreversibly disrupts" the schedule) all sever the habit loop at exactly the moment it forms.
+**3. Mobile friction and passive limits.** The atomic unit of ESL study is a 5-minute commute window. Most vocab apps rely on tedious typing on a mobile keyboard or, conversely, pure passive flashcards that do not exercise active retrieval. The student needs a high-efficacy, friction-free active recall system (like spelling-construction tap controls) that mimics actual test conditions (which grade on active spelling/writing).
 
-**4. The pedagogical blindspot.** WordUp — the closest competitor on audience — focuses almost exclusively on single words and, per its own SWOT, ignores multi-word collocations, idioms, and phrasal verbs. These are the classic ESL pain points. The market leader has named the gap and not filled it.
+**4. The pedagogical blindspot.** Closest competitors like WordUp focus almost exclusively on isolated single words, ignoring multi-word collocations, idioms, and phrasal verbs. These are the primary ESL pain points on high-stakes standardized tests.
 
 ## The Vision
 
-LexiTap is the vocabulary app a serious non-native English speaker can pull out on their commute without embarrassment and without fear of being billed forever. An offline-first, no-typing, tap-based mastery tool that takes a learner from everyday English (top 3,000 words, free) through advanced English (3,001–9,000, free) and into the specific high-stakes content they will pay for once — TOEFL, IELTS, Business English, and post-launch GRE/GMAT/idioms/phrasal verbs — with cloud sync included free so a lost phone never costs months of progress.
+LexiTap is the ultimate vocabulary mastery app for global ESL learners and the institutions that teach them. It is an offline-first, high-efficacy active recall tool that takes a learner from everyday English (top 3,000 words, free) through advanced English (3,001–9,000, free) and into specific high-stakes content (TOEFL, IELTS, Business English, GRE, GMAT, idioms, phrasal verbs). 
 
-We are a **vocabulary mastery** tool, not a fluency tool and not a pronunciation tool (that is ELSA's lane; see [../../notion-docs/PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md) Audio Scope-Out). We exercise passive recognition and recall — exactly what the test-prep sections test.
+We combine an accessible free tier with a low-cost, unified Premium Subscription ($4.99/mo, $24.99/yr) for individual test-takers and a bulk B2B Licensing Portal for language cram schools.
+
+We are a **vocabulary mastery** tool, not a fluency tool and not a pronunciation tool. We exercise both passive recognition and active spelling recall—matching the exact retrieval demands of high-stakes exams.
 
 ## Core Thesis
 
-ESL learners build a daily vocabulary habit on the free Foundation and Advanced tiers, then convert to paid the moment a high-stakes deadline creates urgency — a TOEFL/IELTS exam date, a GRE/GMAT application cycle, a job that demands Business English. The free tier is the funnel and the habit; the paid tier is the urgency-priced unlock.
+ESL learners build a daily vocabulary habit on the free Foundation and Advanced tiers. They convert to the unified Premium Subscription the moment a high-stakes deadline creates urgency (an upcoming TOEFL/IELTS exam date or a job hunt). 
 
-The pricing model itself is the moat. One-time purchases (not subscriptions) for content tiers convert the audience's distrust of recurring billing into a reason to choose us. Premium Pass ($29.99/yr) is the only recurring product, anchored against a category where the cheapest credible competitor (Duolingo Super) is ~$84/yr and the closest feature-competitor (Knowji) is ~$120/yr.
+Concurrently, language academies and cram schools purchase bulk Premium seat licenses on the web to onboard entire student cohorts, using the LexiTap dashboard to assign licenses and monitor progress. 
+
+The pricing model itself is the strategic differentiator:
+1. **Low-friction individual pricing:** A monthly subscription ($4.99/mo) matches the temporary, high-intensity window of test-takers, avoiding high upfront costs.
+2. **Institutional B2B licensing:** Cram schools bypass consumer-store friction entirely via direct web-purchased seat packs, providing steady, predictable revenue.
+3. **Efficacy-led pedagogy:** Integrating spelling-construction active recall ensures that learners aren't just tapping randomly, but actually building the spelling proficiency needed to pass their tests.
 
 ## What Success Looks Like
 
-| Horizon | Free users | Conversion | Paying | Revenue |
-|---------|-----------|------------|--------|---------|
-| Year 1 (conservative) | 10,000 | 3% | 300 | $3,600 |
-| Year 2 (growth) | 50,000 | 5% | 2,500 | $30,000 |
-| Year 3 (mature) | 150,000 | 5% | 7,500 | $90,000 gross / ~$67.5K net after teacher commissions |
+| Horizon | Active Users | Conversion (Subscribers + B2B Seats) | Blended Net ARPPU | Annualized Net Revenue |
+|---------|--------------|--------------------------------------|-------------------|------------------------|
+| Year 1 (conservative) | 10,000 | 1.5% Consumer + 150 B2B seats | ~$12 (blended) | ~$3,600 net |
+| Year 2 (growth) | 50,000 | 2.5% Consumer + 1,250 B2B seats | ~$12 (blended) | ~$30,000 net |
+| Year 3 (mature) | 150,000 | 3.0% Consumer + 4,500 B2B seats | ~$12 (blended) | ~$90,000 gross / ~$67.5K net |
 
-Near-term gating metrics (from [../../notion-docs/PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md) validation phases):
+*Note: B2B direct web purchases bypass the 15% App Store commission, lifting blended margin significantly.*
 
-- Phase 1 (free MVP, 50 beta testers): D1 >50%, D7 >30%, D30 >15%, avg session >3 min.
-- Phase 2 (WTP validation, no build): 5 of 20 most-engaged users say yes to $14.99 TOEFL.
-- Phase 3 (first paid module): 10 paying users in month one; 5% conversion of active free users.
-- Year-1 north star: 1,000 total users via the 21-week path (see [GO_TO_MARKET_STRATEGY.md](./GO_TO_MARKET_STRATEGY.md)).
+Near-term gating metrics:
+- **Phase 1 (Weeks 2–6, build):** App runs on iOS and Android with SpellingActiveRecall widget implemented.
+- **Phase 2 (Weeks 7–10, user validation):** D1 >50%, D7 >30%, D30 >15%; onboard 2 local cram schools for a free bulk trial.
+- **Phase 3 (Weeks 11–12, bulk monetization):** 10 paying individual subscribers + 2 paid cram-school contracts.
+- **Phase 6 (Week 19+):** 1,000 total active users (individual + B2B seats) by Week 21.
 
 ## Kill Criteria
 
-We stop or pivot — not iterate indefinitely — if any of these fire:
+We stop or pivot if any of these criteria fire:
 
-- **Core loop dead:** D7 retention <20% on the free MVP after a fair fix attempt. The habit is the product; without it, nothing downstream works.
-- **No willingness to pay:** Fewer than 3 of 20 engaged users say yes to paid TOEFL in Phase 2. Trigger: explore B2B / institutional or a teacher-bundle partnership instead of consumer IAP.
-- **Cannot acquire:** Teacher referral network plus organic channels cannot move users at a CAC the ~$144 Year-1 budget supports, and no channel shows organic pull by end of the 21-week path.
-- **Pricing model invalidated:** If 100+ paying users show that one-time pricing produces unsustainable LTV vs. a subscription peer set, the model is revisited (first repricing review is Month 3 post-launch / 100 payers — not before).
+- **Core loop dead:** D7 retention <20% on the free MVP after a fair fix attempt. The habit is the product; without it, nothing downstream converts.
+- **B2B value rejected:** Fewer than 3 of 5 pitched cram schools agree to participate in the Phase 2 bulk trials, or zero convert to paid in Phase 3. Trigger: Pivot away from institutional GTM and re-examine pure consumer ad-supported freemium.
+- **Efficacy gap:** Beta feedback reveals the "no-typing active recall" is too difficult or fails to improve test scores. Trigger: Redesign spelling/active recall mechanics.
+- **Pricing model invalidated:** Blended individual subscriber churn exceeds 25% month-over-month, suggesting students abandon the app immediately, meaning LTV fails to cover CAC.
 
 ## Out of Scope (Never Mix In)
 
-American-student vocabulary (SAT/ACT, K-12 grade-level) is a separate future product in a separate app. LexiTap serves global ESL learners only. No AI chatbot at MVP, no pronunciation training, no WordUp-scale video multimedia, no active-production (typing/speaking) testing. See [../../notion-docs/PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md) scope-out sections.
+American-student vocabulary (SAT/ACT, K-12 grade-level) is a separate product. LexiTap serves global ESL test-takers and institutions only. No AI chatbot at MVP, no pronunciation training, no high-bandwidth multimedia video streams.
 
 ## Open Questions
 
-- Will the conservative 3% Year-1 free-to-paid conversion hold, or will the urgency-driven TOEFL/IELTS audience push closer to the 15% optimistic figure? Resolved only by Phase 3 live data.
-- Does the no-typing / passive-recognition ceiling cap perceived value for fluency-seeking users enough to suppress conversion? Watch Phase 2 qualitative feedback.
+- Will B2B cram schools convert at the projected $199/yr contract size, or will they demand deeper customization? Watch Phase 2 pilot feedback.
+- Does the active-spelling recall barrier suppress D1/D7 retention for casual learners? Watch onboarding diagnostic drop-off rates.

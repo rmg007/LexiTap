@@ -9,7 +9,7 @@ tags: [database, schema, sqlite, supabase, srs, soft-delete, append-only, sync, 
 
 # Database Schema
 
-Comprehensive v2.1 schema reference. The operating summary is [../../notion-docs/DATABASE_SCHEMA.md](../../notion-docs/DATABASE_SCHEMA.md); this document expands every table with columns, indexes, invariants, and the rationale behind soft-delete, append-only logs, the two-DB ATTACH strategy, the Supabase sync mirrors, and migrations. Do not contradict the operating summary; this is its superset.
+Comprehensive v2.1 schema reference — the canonical source for the LexiTap data model. It documents every table with columns, indexes, invariants, and the rationale behind soft-delete, append-only logs, the two-DB ATTACH strategy, the Supabase sync mirrors, and migrations. The operational invariants are mirrored as the Schema Reviewer checklist in [../05-engineering-process/AGENTS_CLAUDE.md](../05-engineering-process/AGENTS_CLAUDE.md).
 
 ## Table of Contents
 
@@ -24,6 +24,7 @@ Comprehensive v2.1 schema reference. The operating summary is [../../notion-docs
   - [quiz_sessions](#quiz_sessions)
   - [quiz_attempts](#quiz_attempts-append-only)
   - [event_log](#event_log-append-only)
+  - [user_stats](#user_stats-streak--forgiveness-state)
 - [Cross-DB Queries (ATTACH)](#cross-db-queries-attach)
 - [Supabase: Sync Mirror Tables](#supabase-sync-mirror-tables)
 - [Supabase: Teacher / Referral / Promo](#supabase-teacher--referral--promo)
@@ -44,7 +45,7 @@ Comprehensive v2.1 schema reference. The operating summary is [../../notion-docs
 | Database | Mode | Owner | Tables |
 |----------|------|-------|--------|
 | `words.db` | read-only, bundled in binary | Track A content CLI | `content_tiers`, `words` |
-| `user.db` | read-write, on device | mobile app | `user_entitlements`, `user_progress`, `quiz_sessions`, `quiz_attempts`, `event_log` |
+| `user.db` | read-write, on device | mobile app | `user_entitlements`, `user_progress`, `quiz_sessions`, `quiz_attempts`, `event_log`, `user_stats` |
 | Supabase | cloud Postgres | mobile app + portal | sync mirrors + `user_accounts`, `teachers`, `referrals`, `promo_codes` |
 
 Rationale and ATTACH mechanics: [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md#two-database-strategy).
@@ -196,13 +197,34 @@ Device-only audit/replay log. Written **synchronously** in the same local transa
 ```sql
 CREATE TABLE event_log (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
-  event_type  TEXT NOT NULL,         -- review_completed|session_ended|tier_unlocked|...
+  event_type  TEXT NOT NULL,         -- open string; 'answer_recorded' emitted today, session_completed|tier_unlocked|... planned (see 07-operations-compliance/ANALYTICS_PLAN.md taxonomy)
   payload     TEXT,                  -- JSON
   occurred_at INTEGER NOT NULL
 );
 CREATE INDEX idx_event_log_occurred ON event_log(occurred_at);
 CREATE INDEX idx_event_log_type     ON event_log(event_type);
 ```
+
+### user_stats (streak + forgiveness state)
+
+A single-row local mirror of the user's streak, freeze, and lifetime totals. Streak/freeze state is **durable on-device** because the [SRS forgiveness machine](../02-product-definition/SRS_FORGIVENESS_MECHANICS.md) must evaluate streak boundaries offline; it is not recomputed from `event_log` at read time. `last_activity_local_date` is a `YYYYMMDD` integer in the user's IANA timezone (a civil date, **not** an epoch) so streak gaps are computed in local calendar days, never UTC.
+
+```sql
+CREATE TABLE user_stats (
+  id                       INTEGER PRIMARY KEY CHECK (id = 1),  -- single row
+  current_streak           INTEGER NOT NULL DEFAULT 0,
+  longest_streak           INTEGER NOT NULL DEFAULT 0,
+  last_activity_local_date INTEGER,        -- YYYYMMDD in user's IANA tz (civil date)
+  total_sessions           INTEGER NOT NULL DEFAULT 0,
+  total_words_mastered     INTEGER NOT NULL DEFAULT 0,
+  freeze_count             INTEGER NOT NULL DEFAULT 0,   -- banked streak freezes
+  freezes_granted_total    INTEGER NOT NULL DEFAULT 0,
+  last_catchup_anchor_date INTEGER,        -- YYYYMMDD; catch-up window anchor
+  last_activity_date       INTEGER          -- epoch ms; coarse last-active timestamp
+);
+```
+
+Freeze state (`freeze_count`, `freezes_granted_total`, `last_catchup_anchor_date`) is **device-only and not synced** — only the streak/totals subset is mirrored to `user_stats_sync` (see below). Freeze earning/consumption rules live in [SRS_FORGIVENESS_MECHANICS.md](../02-product-definition/SRS_FORGIVENESS_MECHANICS.md).
 
 ## Cross-DB Queries (ATTACH)
 
@@ -228,6 +250,8 @@ WHERE a.session_id = ?;
 ## Supabase: Sync Mirror Tables
 
 Cloud mirrors of `user.db` state. **Cloud is a mirror, not authority.** Last-write-wins by `last_reviewed_at`. Pushed on app close, pulled on app open.
+
+> **Implementation status:** `SupabaseSyncService` currently syncs `user_progress_sync` and `user_entitlements_sync` only. `user_stats_sync` mirrors just the streak/totals subset of the local `user_stats` table — the forgiveness freeze fields (`freeze_count`, `freezes_granted_total`, `last_catchup_anchor_date`) are deliberately device-only and never leave the device.
 
 ```sql
 CREATE TABLE user_accounts (
@@ -312,7 +336,7 @@ RLS policies for these are in [SECURITY_MODEL.md](./SECURITY_MODEL.md); the RPC 
 
 ## Soft-Delete Rationale
 
-`words.deleted_at` is a soft-delete. Hard-deleting a word would orphan `quiz_attempts` and `user_progress` rows that reference it, breaking history rendering and any future scheduler replay. Convention: learn/review queue queries filter `WHERE deleted_at IS NULL`; history/stats/replay queries do not filter so they can still render the historical word. Enforced by the Schema Reviewer checklist in [../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md](../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md).
+`words.deleted_at` is a soft-delete. Hard-deleting a word would orphan `quiz_attempts` and `user_progress` rows that reference it, breaking history rendering and any future scheduler replay. Convention: learn/review queue queries filter `WHERE deleted_at IS NULL`; history/stats/replay queries do not filter so they can still render the historical word. Enforced by the Schema Reviewer checklist in [../05-engineering-process/CODING_STANDARDS.md](../05-engineering-process/CODING_STANDARDS.md).
 
 ## Append-Only Rationale
 
@@ -348,5 +372,4 @@ Supabase-side v2 migration: `ALTER TABLE user_accounts ADD COLUMN timezone TEXT 
 
 ## Open Questions
 
-- Whether `user.db` should also keep a local mirror of `user_stats` or recompute from `event_log` on demand (currently recompute; revisit if perf demands a cached table).
 - RLS-enforced delete cascade on account deletion vs Edge Function cleanup — leaning RLS cascade.

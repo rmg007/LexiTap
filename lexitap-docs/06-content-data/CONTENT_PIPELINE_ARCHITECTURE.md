@@ -14,10 +14,10 @@ developer CLI that turns the founder's frequency-ordered word corpora into the r
 `words.db` bundled with the mobile app.
 
 This is the comprehensive (lexitap-docs) expansion of the agent-handoff spec at
-[../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md](../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md).
-The output schema is owned by [../../notion-docs/DATABASE_SCHEMA.md](../../notion-docs/DATABASE_SCHEMA.md);
+[../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md](../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md).
+The output schema is owned by [../04-technical-architecture/DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md);
 where this doc and the schema disagree, the schema wins. Strategy context lives in
-[../../notion-docs/PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md). Seed content
+[../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md). Seed content
 maps in via [./SEED_DATA_SPEC.md](./SEED_DATA_SPEC.md).
 
 This is Backlog #41 (P0, Phase-1 blocker): nothing in the mobile app's content layer can be
@@ -58,7 +58,7 @@ Not in scope:
 
 - No web scraping, no CEFR word-list licensing, no test-passage analysis. The corpora already
   exist (see next section). The tool only *enriches* what the founder provides.
-- No per-word AI image generation at MVP (curated imagery only — cost + Year 2 differentiator per `PRODUCT_STRATEGY.md`).
+- No per-word AI image generation at MVP (curated imagery only — cost + Year 2 differentiator per [../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md](../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md)).
 - No pronunciation training / scoring. Audio is reference-only.
 - The tool never ships in the app and never touches user data (`user_progress`,
   `user_entitlements`, sync tables). It produces content only.
@@ -76,12 +76,10 @@ Content sourcing is **frequency-based and already resolved**. The founder posses
 Therefore pipeline work is **enrichment only** — definitions, audio, imagery, example
 sentences, synonyms/antonyms. There is no acquisition phase.
 
-> **Supersedes the notion-docs "Word Sourcing Strategies" section.** The agent-handoff doc
-> ([../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md](../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md))
-> still contains a "Word Sourcing Strategies" section describing scraping achievethecore.org,
-> Cambridge IELTS books, Google Ngrams, COCA, etc., plus a Common-Core / SAT framing. That
-> section predates the 2026-05-23 sourcing decision and the ESL-only audience split. It is
-> **obsolete** and must not drive any build work. This doc is the current authority on sourcing.
+> **Authority note.** Any older "Word Sourcing Strategies" framing — scraping achievethecore.org,
+> Cambridge IELTS books, Google Ngrams, COCA, etc., or a Common-Core / SAT framing — predates the
+> 2026-05-23 sourcing decision and the ESL-only audience split. It is **obsolete** and must not
+> drive any build work. This doc is the current authority on sourcing.
 
 Word counts are **not pre-committed** anywhere in marketing. The `export` command writes the
 real counts it observes into `content_tiers.word_count`.
@@ -351,7 +349,7 @@ Notes:
   Validate the JSON parses before storing.
 - **Audio = reference only.** ElevenLabs for higher quality (~$50 for the TOEFL tier), Google
   Cloud TTS as the ~$10 budget fallback. Launch ships audio for TOEFL; other tiers re-evaluate
-  per ROI (`PRODUCT_STRATEGY.md` Audio Scope-Out). Not pronunciation training.
+  per ROI ([../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md](../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md) Audio Scope-Out). Not pronunciation training.
 - **Imagery is curated, not per-word AI-generated** at MVP. Unsplash free tier (or similar);
   one representative image per word, manually spot-checked. Per-word AI imagery is a Year 2
   differentiator (Backlog #34), deliberately deferred for cost.
@@ -432,7 +430,7 @@ The app uses two SQLite databases joined via `ATTACH DATABASE`:
 
 The split keeps user data safe across content updates (full `words.db` swaps never touch
 `user.db`). See the two-DB strategy in
-[../../notion-docs/DATABASE_SCHEMA.md](../../notion-docs/DATABASE_SCHEMA.md).
+[../04-technical-architecture/DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md).
 
 Bundling / install:
 

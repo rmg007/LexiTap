@@ -15,7 +15,7 @@ speakers.** This doc records that decision, its rationale, and the cheap hooks w
 paint ourselves into a corner.
 
 Related: [./SEED_DATA_SPEC.md](./SEED_DATA_SPEC.md) (plain-English content rules),
-[../../notion-docs/PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md) (ESL-only audience).
+[../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md) (ESL-only audience).
 
 ## Decision: English-Only UI and Store Listing at Launch
 

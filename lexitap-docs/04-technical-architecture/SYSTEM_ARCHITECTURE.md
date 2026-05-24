@@ -9,7 +9,7 @@ tags: [architecture, hexagonal, domain-driven, clean-architecture, layers, offli
 
 # System Architecture
 
-This is the comprehensive architecture reference for LexiTap. The operating summary lives in [../../notion-docs/ARCHITECTURE.md](../../notion-docs/ARCHITECTURE.md); this document expands it with the dependency rule, the two-database strategy, the offline-first data flow, and the app-agnostic design constraint.
+This is the comprehensive architecture reference for LexiTap: the dependency rule, the two-database strategy, the offline-first data flow, and the app-agnostic design constraint. The operating-level summary used during day-to-day coding (folder structure per layer, banned constructs) lives in [../05-engineering-process/CODING_STANDARDS.md](../05-engineering-process/CODING_STANDARDS.md).
 
 ## Table of Contents
 
@@ -56,9 +56,9 @@ Hard constraints that shape every decision: solo founder, ~$144 Year-1 budget, n
 
 **domain/** — Entities and value objects with behavior: `QuizSession`, `SpacedRepetition`, `Word`, `MasteryLevel`. Defines repository *interfaces* (ports) such as `WordRepository`. Contains no imports from `react`, `react-native`, `expo-sqlite`, or `@supabase/*`. This rule is enforceable with an ESLint `no-restricted-imports` boundary check.
 
-**application/** — Use cases that orchestrate the domain: `StartQuizUseCase`, `AnswerQuestionUseCase`, `UnlockTierUseCase`, `SyncProgressUseCase`. Depends only on domain entities and domain port interfaces — never on a concrete adapter. Paywall/entitlement decisions live here (per the Paywall Reviewer in [../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md](../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md)), not in `domain/` or `presentation/`.
+**application/** — Use cases that orchestrate the domain: `StartQuizUseCase`, `AnswerQuestionUseCase`, `UnlockTierUseCase`, `SyncProgressUseCase`. Depends only on domain entities and domain port interfaces — never on a concrete adapter. Paywall/entitlement decisions live here (per the Paywall Reviewer in [../05-engineering-process/CODING_STANDARDS.md](../05-engineering-process/CODING_STANDARDS.md)), not in `domain/` or `presentation/`.
 
-**infrastructure/** — Concrete adapters implementing domain ports: `SQLiteWordRepository`, `SupabaseSyncService`, `ExpoIapService`, `AsyncStorageAdapter`. This is the only layer allowed to import `expo-sqlite`, `@supabase/supabase-js`, and IAP libraries.
+**infrastructure/** — Concrete adapters implementing domain ports: `SQLiteWordRepository`, `SupabaseSyncService`, `StubIapService` (real IAP vendor wiring is deferred — see the IAP decision ADR), `AsyncStorageAdapter`. This is the only layer allowed to import `expo-sqlite`, `@supabase/supabase-js`, and IAP libraries.
 
 **presentation/** — React Native screens and components, `expo-router` file-based navigation, the four assessment widgets (`MultipleChoice`, `DragDrop`, `ImageMatch`, `Classification`), theme/branding. LexiTap-specific; the layer most likely to be rewritten for a sister app.
 
@@ -75,7 +75,7 @@ Dependencies point **inward only**: `presentation → application → domain` an
 
 ## Source Layout
 
-Mirrors [../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md](../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md). Imports use the `@/` absolute prefix; default exports are banned.
+Mirrors [../05-engineering-process/CODING_STANDARDS.md](../05-engineering-process/CODING_STANDARDS.md). Imports use the `@/` absolute prefix; default exports are banned.
 
 ```
 src/
@@ -92,12 +92,13 @@ src/
 ├── infrastructure/
 │   ├── db/              # SQLite repos, migrations/, ATTACH wiring
 │   ├── sync/            # Supabase push/pull
-│   ├── iap/             # expo IAP adapter, receipt validation calls
+│   ├── iap/             # IAP adapter (StubIapService at MVP), receipt validation calls
 │   └── storage/         # AsyncStorage wrapper (timezone, sync cursor)
 ├── presentation/
 │   ├── screens/         # expo-router routes (screens/quiz/ = no TextInput)
 │   ├── components/      # assessments/ = no TextInput
 │   └── theme/
+├── composition/         # container.ts — DI composition root (binds ports → adapters)
 └── config/              # tiers.ts (TIER_CONFIG), app.ts (app_id)
 ```
 
@@ -126,7 +127,7 @@ ORDER BY p.next_review_date ASC
 LIMIT ?;
 ```
 
-**Why split?** (1) Content updates ship a fresh `words.db` without touching user progress. (2) The read-only content DB can be replaced wholesale on app update while `user.db` survives. (3) Clean ownership boundary: Track A (content CLI) owns `words.db`; the app owns `user.db`. See [../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md](../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md) for how `words.db` is produced, and [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md) for the full schema.
+**Why split?** (1) Content updates ship a fresh `words.db` without touching user progress. (2) The read-only content DB can be replaced wholesale on app update while `user.db` survives. (3) Clean ownership boundary: Track A (content CLI) owns `words.db`; the app owns `user.db`. See [../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md](../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md) for how `words.db` is produced, and [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md) for the full schema.
 
 On app update with a new content DB, the launch sequence checks `PRAGMA user_version` on the bundled `words.db`, replaces the file if newer, and runs forward-only migrations on `user.db`. User data is never dropped.
 
@@ -175,7 +176,7 @@ Audience note: LexiTap targets global ESL learners (non-native English speakers)
 
 ## Dependency Injection and Composition Root
 
-Domain ports are bound to infrastructure adapters at a single composition root (e.g., `src/infrastructure/container.ts`), invoked once at app bootstrap. Use cases receive repositories via constructor injection:
+Domain ports are bound to infrastructure adapters at a single composition root (`src/composition/container.ts`), invoked once at app bootstrap. Use cases receive repositories via constructor injection:
 
 ```ts
 const wordRepo: WordRepository = new SQLiteWordRepository(db);     // prod

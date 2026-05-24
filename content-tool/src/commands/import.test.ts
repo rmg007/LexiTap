@@ -49,7 +49,6 @@ describe('importRows', () => {
     const db = openMemoryContentDb();
     const summary = importRows(db, [parsed()], {
       tier: 'foundation',
-      defaultType: 'vocabulary',
       onConflict: 'update',
       now: () => 1,
     });
@@ -64,7 +63,6 @@ describe('importRows', () => {
     const db = openMemoryContentDb();
     const opts = {
       tier: 'foundation' as const,
-      defaultType: 'vocabulary' as const,
       onConflict: 'update' as const,
       now: () => 1,
     };
@@ -81,7 +79,6 @@ describe('importRows', () => {
     const db = openMemoryContentDb();
     const base = {
       tier: 'foundation' as const,
-      defaultType: 'vocabulary' as const,
       now: () => 1,
     };
     importRows(db, [parsed()], { ...base, onConflict: 'update' });
@@ -96,7 +93,6 @@ describe('importRows', () => {
     const db = openMemoryContentDb();
     const base = {
       tier: 'foundation' as const,
-      defaultType: 'vocabulary' as const,
       now: () => 1,
     };
     importRows(db, [parsed()], { ...base, onConflict: 'update' });

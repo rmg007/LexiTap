@@ -185,7 +185,7 @@ Privacy: `{{PRIVACY_EMAIL}}` — Support: `{{SUPPORT_EMAIL}}`.
 5. **Teacher referral program.** Teachers earn tiered commissions (20–35%) on qualifying referred
    purchases, paid via PayPal subject to a minimum payout threshold. Fraudulent or self-referred
    purchases are void. Terms:
-   [../../notion-docs/WEBSITE_TEACHER_REFERRAL.md](../../notion-docs/WEBSITE_TEACHER_REFERRAL.md).
+   [../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md](../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md).
 6. **Acceptable use.** No reverse engineering, scraping content, sharing entitlements across
    accounts, or abusing promo/referral codes.
 7. **Content and IP.** Vocabulary content, audio, and imagery are licensed for personal learning
@@ -211,5 +211,5 @@ Privacy: `{{PRIVACY_EMAIL}}` — Support: `{{SUPPORT_EMAIL}}`.
 - [GDPR_COPPA_COMPLIANCE.md](./GDPR_COPPA_COMPLIANCE.md)
 - [ANALYTICS_PLAN.md](./ANALYTICS_PLAN.md)
 - [ERROR_MONITORING_PLAN.md](./ERROR_MONITORING_PLAN.md)
-- [../../notion-docs/DATABASE_SCHEMA.md](../../notion-docs/DATABASE_SCHEMA.md)
-- [../../notion-docs/PROJECT_OVERVIEW.md](../../notion-docs/PROJECT_OVERVIEW.md)
+- [../04-technical-architecture/DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md)
+- [../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md](../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md)

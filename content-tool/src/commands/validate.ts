@@ -5,12 +5,19 @@
  * command wrapper loads rows and exits non-zero on any error.
  */
 
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import type { DB } from '@/lib/db';
 import { openWorkingDb } from '@/lib/db';
-import { loadConfig, findTier, tierSlugs, type AppConfig } from '@/lib/config';
+import { loadConfig, findTier, tierSlugs, PROJECT_ROOT, type AppConfig } from '@/lib/config';
 import { normalizeWord } from '@/lib/ids';
 import { logger } from '@/lib/logger';
 import { WORD_TYPES, type WordRow } from '@/schema/types';
+
+/** Resolve a stored asset path (e.g. "assets/audio/x.mp3") under data/ and test it exists. */
+export function diskAssetExists(assetPath: string): boolean {
+  return existsSync(resolve(PROJECT_ROOT, 'data', assetPath));
+}
 
 export type IssueLevel = 'error' | 'warning';
 
@@ -181,9 +188,14 @@ export interface ValidateResult {
   warningCount: number;
 }
 
-export function runValidate(db: DB, config: AppConfig, options: ValidateOptions): ValidateResult {
+export function runValidate(
+  db: DB,
+  config: AppConfig,
+  options: ValidateOptions,
+  assetExists: (path: string) => boolean = diskAssetExists,
+): ValidateResult {
   const rows = loadRows(db, options.tier);
-  const issues = validateRows(rows, config, options);
+  const issues = validateRows(rows, config, options, assetExists);
   const errorCount = issues.filter((i) => i.level === 'error').length;
   const warningCount = issues.filter((i) => i.level === 'warning').length;
   return { rowCount: rows.length, issues, errorCount, warningCount };

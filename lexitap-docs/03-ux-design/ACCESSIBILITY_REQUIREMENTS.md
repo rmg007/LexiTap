@@ -9,7 +9,7 @@ tags: [accessibility, wcag, a11y, voiceover, talkback, contrast, dynamic-type, r
 
 # Accessibility Requirements
 
-Accessibility is a mandatory, non-negotiable requirement for LexiTap — VoiceOver and TalkBack support are locked invariants ([ARCHITECTURE.md](../../notion-docs/ARCHITECTURE.md), [SESSION_STATE.md](../../notion-docs/SESSION_STATE.md)). The target audience is adult ESL learners worldwide on a wide range of devices; accessibility is also reach. This document defines the conformance floor and the concrete per-component requirements.
+Accessibility is a mandatory, non-negotiable requirement for LexiTap — VoiceOver and TalkBack support are locked invariants ([SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md), [PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md)). The target audience is adult ESL learners worldwide on a wide range of devices; accessibility is also reach. This document defines the conformance floor and the concrete per-component requirements.
 
 Tokens referenced here are defined in [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md); screen layouts in [WIREFRAMES_MOCKUPS.md](./WIREFRAMES_MOCKUPS.md).
 
@@ -94,14 +94,14 @@ This rule is enforced in code review: no component may communicate state through
 
 ## Audio and Captions
 
-- Audio is pronunciation reference only ([PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md)) — never required to answer a question. A learner who cannot hear can complete every quiz using the written word, phonetic spelling, definition, and example.
+- Audio is pronunciation reference only ([PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md)) — never required to answer a question. A learner who cannot hear can complete every quiz using the written word, phonetic spelling, definition, and example.
 - Each audio control has a clear label ("Play pronunciation of diligent").
 - Where audio carries content (the spoken word), the written word and IPA phonetic transcription are always present as the visual equivalent — this is the caption substitute for single-word audio.
 - No audio autoplay that could surprise a screen-reader user; playback is user-initiated (confirm in [WIREFRAMES_MOCKUPS.md](./WIREFRAMES_MOCKUPS.md) Open Questions).
 
 ## Language and Reading Level
 
-The audience is non-native English speakers. UI chrome (buttons, navigation, system copy — distinct from the vocabulary content being taught) uses plain, simple English, avoids idioms in instructions, and keeps instruction sentences short. This supports comprehension for lower-CEFR users and overlaps with cognitive accessibility. (UI is English-only at launch; ASO localization deferred per [SESSION_STATE.md](../../notion-docs/SESSION_STATE.md).)
+The audience is non-native English speakers. UI chrome (buttons, navigation, system copy — distinct from the vocabulary content being taught) uses plain, simple English, avoids idioms in instructions, and keeps instruction sentences short. This supports comprehension for lower-CEFR users and overlaps with cognitive accessibility. (UI is English-only at launch; ASO localization deferred per [LOCALIZATION_I18N_STRATEGY.md](../06-content-data/LOCALIZATION_I18N_STRATEGY.md).)
 
 ## Testing and Acceptance
 

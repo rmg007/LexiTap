@@ -9,7 +9,7 @@ tags: [coding-standards, typescript, naming, hexagonal, error-handling, sql, sty
 
 # Coding Standards and Style Guide
 
-Conventions for all TypeScript in LexiTap, across both the mobile app (Track B) and the content CLI (Track A). These expand the terse Style/Banned/Preferred sections of [../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md](../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md) into rules with rationale and examples. The architecture these rules serve is described in [../../notion-docs/ARCHITECTURE.md](../../notion-docs/ARCHITECTURE.md).
+Conventions for all TypeScript in LexiTap, across both the mobile app (Track B) and the content CLI (Track A). These expand the terse hard rules in the repo-root operating doc [../../CLAUDE.md](../../CLAUDE.md) into rules with rationale and examples. The architecture these rules serve is described in [../04-technical-architecture/SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md).
 
 ## Table of Contents
 

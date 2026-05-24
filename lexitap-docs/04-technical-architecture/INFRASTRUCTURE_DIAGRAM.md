@@ -84,7 +84,7 @@ How LexiTap's components connect: the mobile app, the bundled content DB, Supaba
 | Content CLI (Track A) | dev machine | Generate/validate/enrich/export `words.db` | one-time enrichment $ |
 | Teacher referral portal | web (Supabase-backed) | Referral codes, commissions, payouts | minimal/free |
 
-Detail references: content CLI in [../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md](../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md); referral portal in [../../notion-docs/WEBSITE_TEACHER_REFERRAL.md](../../notion-docs/WEBSITE_TEACHER_REFERRAL.md); API surface in [API_CONTRACT.md](./API_CONTRACT.md).
+Detail references: content CLI in [../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md](../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md); referral portal in [../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md](../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md); API surface in [API_CONTRACT.md](./API_CONTRACT.md).
 
 ## Build and Release Pipeline
 

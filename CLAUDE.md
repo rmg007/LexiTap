@@ -8,8 +8,7 @@ LexiTap is a solo-founder, offline-first ESL vocabulary mobile app. Global ESL l
 |------|------|
 | `content-tool/` | Track A. Node + TS CLI that builds the bundled read-only `words.db`. |
 | `mobile/` | Track B. Expo + React Native app. Source of truth = local SQLite. |
-| `lexitap-docs/` | Full research/product documentation (8 categories). Canonical when it conflicts with notion-docs. |
-| `notion-docs/` | Agent-handoff operating docs. Load `SESSION_STATE.md` first. |
+| `lexitap-docs/` | Full research/product documentation (8 categories). The single canonical doc layer. |
 | `memory/ docs/ plans/` | Project memory, ADRs, and implementation plans. |
 
 ## Architecture (non-negotiable)

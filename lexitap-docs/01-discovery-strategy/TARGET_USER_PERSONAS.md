@@ -9,7 +9,7 @@ tags: [personas, users, esl-learners, toefl, ielts, business-english, gre, gmat,
 
 # Target User Personas
 
-> Personas for LexiTap's locked audience: global ESL learners (non-native English speakers). Pairs with [VISION_PROBLEM_STATEMENT.md](./VISION_PROBLEM_STATEMENT.md) and [GO_TO_MARKET_STRATEGY.md](./GO_TO_MARKET_STRATEGY.md). Pricing and tiers per [../../notion-docs/PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md).
+> Personas for LexiTap's locked audience: global ESL learners (non-native English speakers). Pairs with [VISION_PROBLEM_STATEMENT.md](./VISION_PROBLEM_STATEMENT.md) and [GO_TO_MARKET_STRATEGY.md](./GO_TO_MARKET_STRATEGY.md). Pricing and tiers per [../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md).
 
 ## Audience Boundary (Explicit Exclusion)
 

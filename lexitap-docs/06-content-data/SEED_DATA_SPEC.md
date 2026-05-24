@@ -13,7 +13,7 @@ Exact specification for the initial launch content that feeds
 [./CONTENT_PIPELINE_ARCHITECTURE.md](./CONTENT_PIPELINE_ARCHITECTURE.md). This defines what goes
 into the input CSVs *before* enrichment: the corpora, per-field rules, the theme taxonomy, and
 the quality bar. The output schema is owned by
-[../../notion-docs/DATABASE_SCHEMA.md](../../notion-docs/DATABASE_SCHEMA.md).
+[../04-technical-architecture/DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md).
 
 Audience is ESL learners (non-native English speakers) only. Every authoring rule below exists to
 serve a learner who does not yet think in English.

@@ -9,7 +9,7 @@ tags: [git, worktrees, two-track, branching, pull-requests, commits, merge]
 
 # Git Workflow
 
-LexiTap is built as two parallel tracks from Day 1, each in its own git worktree, each driven by an independent autonomous agent. This doc gives the exact setup commands, branch/PR/commit conventions, and the integration strategy between Track A (content CLI) and Track B (mobile app). It expands the Day-1 setup in [../../notion-docs/IMPLEMENTATION_ROADMAP.md](../../notion-docs/IMPLEMENTATION_ROADMAP.md) and the Commits section of [../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md](../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md).
+LexiTap is built as two parallel tracks from Day 1, each in its own git worktree, each driven by an independent autonomous agent. This doc gives the exact setup commands, branch/PR/commit conventions, and the integration strategy between Track A (content CLI) and Track B (mobile app). It expands the Day-1 setup in [../02-product-definition/ROADMAP.md](../02-product-definition/ROADMAP.md) and is the canonical source for branch, commit, and PR conventions referenced by the repo-root operating doc [../../CLAUDE.md](../../CLAUDE.md).
 
 ## Why Two Worktrees
 
@@ -104,9 +104,9 @@ The commit body, when present, explains *why*. Append `Co-Authored-By` only when
 
 The tracks are decoupled by a single artifact: `words.db`.
 
-1. **Track A produces it.** The content CLI runs `npm run build:db` to generate `data/output/words.db` (plus `assets/`). See [../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md](../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md).
+1. **Track A produces it.** The content CLI runs `npm run build:db` to generate `data/output/words.db` (plus `assets/`). See [../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md](../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md).
 2. **Hand-off across tracks.** The generated `words.db` is copied into the mobile app's bundle at `assets/words.db` (and `assets/vocab/` for audio/images). This is the only coupling point — Track B treats the DB as a read-only input it did not author.
-3. **Two-DB runtime split.** On device, the bundled `content.db` (read-only words/tiers) is kept separate from the user's `user.db` (read-write progress/entitlements); they are joined at query time via `ATTACH DATABASE`. This means a content drop can replace `content.db` without touching user progress.
+3. **Two-DB runtime split.** On device, the bundled `words.db` (read-only words/tiers) is kept separate from the user's `user.db` (read-write progress/entitlements); they are joined at query time via `ATTACH DATABASE`. This means a content drop can replace `words.db` without touching user progress.
 4. **Integration to `main`.** Track A merges to `main` first (it must ship first). Track B merges once the MVP milestone is reached. After launch, content drops flow Track A -> rebuild `words.db` -> Track B bundle update -> app release, with Premium Pass auto-unlocking new tiers.
 
 ## Open Questions

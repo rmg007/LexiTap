@@ -9,7 +9,7 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 # Product Roadmap — LexiTap
 
-The detailed product roadmap: 6 phases across 21 weeks, two parallel build tracks, deliverables and gates per phase, and the post-launch content-drop cadence. For the at-a-glance tracker see [../../ROADMAP.md](../../ROADMAP.md). This doc expands [../../notion-docs/IMPLEMENTATION_ROADMAP.md](../../notion-docs/IMPLEMENTATION_ROADMAP.md). Feature detail is in [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md); requirements in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md).
+The detailed product roadmap: 6 phases across 21 weeks, two parallel build tracks, deliverables and gates per phase, and the post-launch content-drop cadence. This doc expands the at-a-glance tracker [../../ROADMAP.md](../../ROADMAP.md). Feature detail is in [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md); requirements in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md).
 
 ## Table of Contents
 
@@ -106,6 +106,6 @@ Each drop: sourced list → example sentences → QA → (audio for premium) →
 
 Must be resolved before any Phase 1 code:
 
-- **Backlog #43 — SRS Forgiveness Mechanics design** (blocks all scheduler/SRS code). Design still open; see [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md#spaced-repetition-system-srs).
+- **Backlog #43 — SRS Forgiveness Mechanics design** (blocks all scheduler/SRS code) — resolved; design specified in [SRS_FORGIVENESS_MECHANICS.md](./SRS_FORGIVENESS_MECHANICS.md).
 - **Backlog #41 — Content Sourcing Strategy** (blocks Track A) — resolved 2026-05-23.
 - **Backlog #42 — Knowji competitive teardown** (blocks Brand Identity finalization) — research-based teardown complete; first-person hands-on still outstanding.

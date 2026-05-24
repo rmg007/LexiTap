@@ -9,7 +9,7 @@ tags: [agents, claude, conventions, ai-workflow, planning-gate, adversarial-revi
 
 # AGENTS and CLAUDE Conventions
 
-How AI coding agents operate inside the LexiTap repository. This is the comprehensive, decision-grade companion to the operating-layer handoff doc [../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md](../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md). Where that doc is the terse checklist an agent loads before every task, this one explains the *why*, the failure modes each protocol prevents, and the exact procedure to follow.
+How AI coding agents operate inside the LexiTap repository. This is the comprehensive, decision-grade companion to the repo-root operating doc [../../CLAUDE.md](../../CLAUDE.md). Where that doc is the terse checklist an agent loads before every task, this one explains the *why*, the failure modes each protocol prevents, and the exact procedure to follow.
 
 LexiTap is built by a solo founder running autonomous Claude Code agents, one per track (see [GIT_WORKFLOW.md](./GIT_WORKFLOW.md)). The agent is not a pair-programming assistant that waits for instruction at every step — it owns whole tasks end to end. These conventions exist so that an unsupervised agent produces work the founder can trust without re-reading every line.
 
@@ -46,7 +46,7 @@ Every task — feature, fix, refactor, content change — runs this sequence. It
 **During implementation:**
 
 1. Read the relevant plan file: `docs/plans/NNN_*.yaml`. The plan carries the `plan_id` your PR must reference.
-2. Read `docs/architecture.md` (and [ARCHITECTURE.md](../../notion-docs/ARCHITECTURE.md)) if you are touching new components or crossing layer boundaries.
+2. Read `docs/architecture.md` (and [SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md)) if you are touching new components or crossing layer boundaries.
 3. Check `docs/adr/` for any Architecture Decision Record that constrains this change.
 4. Run `npm run check` (lint + typecheck + test) before declaring the work complete. "Tests pass" means all three exit 0.
 5. Test on iOS Simulator AND Android Emulator if the change touches UI.
@@ -57,7 +57,7 @@ Every task — feature, fix, refactor, content change — runs this sequence. It
 
 **After marking complete:**
 
-7. **Compound Learning (mandatory).** If the task surfaced any new quirk, gotcha, pattern, or constraint, append it to [../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md](../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md) immediately. One sentence minimum. See [Compound Learning Loop](#compound-learning-loop).
+7. **Compound Learning (mandatory).** If the task surfaced any new quirk, gotcha, pattern, or constraint, append it to [CODING_STANDARDS.md](./CODING_STANDARDS.md) immediately. One sentence minimum. See [Compound Learning Loop](#compound-learning-loop).
 
 ## The Planning Gate
 
@@ -116,7 +116,7 @@ Checklist:
 
 ### 3. Content Pipeline Reviewer
 
-**Trigger:** Any change to the content CLI, word import/enrich scripts, or `words` table data. See [../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md](../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md).
+**Trigger:** Any change to the content CLI, word import/enrich scripts, or `words` table data. See [../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md](../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md).
 
 Checklist:
 
@@ -162,21 +162,21 @@ The conventions doc is a living artifact, not a tablet handed down once. Every t
 - You discovered a pattern worth standardizing.
 - You hit a constraint the docs did not yet state.
 
-**Where to write:** Append to [../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md](../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md) (the operating layer). If the lesson is research-grade or needs expansion, also note it in the relevant `lexitap-docs/` file.
+**Where to write:** Append to [CODING_STANDARDS.md](./CODING_STANDARDS.md) (the canonical standards doc). If the lesson is research-grade or needs expansion, also note it in the relevant `lexitap-docs/` file.
 
 **Rule:** Institutional knowledge belongs in the doc, not the chat log. One sentence is the floor; precision beats brevity. Chat transcripts are not searched by future agents — docs are.
 
 ## When to Load Which Doc
 
-The operating-layer docs in `notion-docs/` carry a `load_order` (N of 14). An agent does not read all of them every task — it loads on demand:
+An agent does not read every doc on every task — it loads on demand:
 
 | Situation | Load |
 |-----------|------|
-| Every coding task (always) | [AGENTS_MOBILE_CONVENTIONS.md](../../notion-docs/AGENTS_MOBILE_CONVENTIONS.md) (order 3) |
-| Touching new components or crossing layers | [ARCHITECTURE.md](../../notion-docs/ARCHITECTURE.md) (order 4) |
-| Working Track A / content CLI / enrichment | [CONTENT_PIPELINE_ARCHITECTURE.md](../../notion-docs/CONTENT_PIPELINE_ARCHITECTURE.md) (order 6) |
-| Planning phase work, timelines, infra setup | [IMPLEMENTATION_ROADMAP.md](../../notion-docs/IMPLEMENTATION_ROADMAP.md) (order 8) |
-| Writing or modifying any DB query | `DATABASE_SCHEMA.md` (operating layer) + Schema Reviewer |
+| Every coding task (always) | [CODING_STANDARDS.md](./CODING_STANDARDS.md) |
+| Touching new components or crossing layers | [SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md) |
+| Working Track A / content CLI / enrichment | [CONTENT_PIPELINE_ARCHITECTURE.md](../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md) |
+| Planning phase work, timelines, infra setup | [ROADMAP.md](../02-product-definition/ROADMAP.md) |
+| Writing or modifying any DB query | [DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md) + Schema Reviewer |
 | Before any code | the task's `docs/plans/NNN_*.yaml` |
 
 Load the minimum needed to do the task correctly. Over-loading context dilutes attention; under-loading skips a constraint.

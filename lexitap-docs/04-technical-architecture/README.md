@@ -9,7 +9,7 @@ tags: [architecture, database, api, security, infrastructure, index]
 
 # Technical Architecture — Document Index
 
-System architecture, tech stack decisions, database schema, API contract, data models, infrastructure, and security model for LexiTap. Each doc expands the operating summaries in [../../notion-docs/](../../notion-docs/) with decision-grade depth.
+System architecture, tech stack decisions, database schema, API contract, data models, infrastructure, and security model for LexiTap, at decision-grade depth.
 
 | File | Title | Priority | Status | Description |
 |------|-------|----------|--------|-------------|

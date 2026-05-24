@@ -63,8 +63,9 @@ await supabase.from('user_progress_sync').upsert(
 );
 
 await supabase.from('user_entitlements_sync').upsert(entitlements, { onConflict: 'user_id,tier_id' });
-await supabase.from('user_stats_sync').upsert({ user_id, ...stats }, { onConflict: 'user_id' });
 ```
+
+`SupabaseSyncService` currently pushes `user_progress_sync` and `user_entitlements_sync` only. `user_stats_sync` is a planned mirror of the streak/totals subset of local `user_stats`; the forgiveness freeze fields are device-only and never synced (see [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md#supabase-sync-mirror-tables)).
 
 **Request row shape (`user_progress_sync`):** `{ user_id: UUID, word_id: string, mastery_level: int, next_review_date: bigint, last_reviewed_at: bigint, consecutive_correct: int, total_attempts: int, total_correct: int, first_seen_at: bigint, synced_at: ISO }`.
 
@@ -77,8 +78,8 @@ Triggered on app open. Fetches cloud mirrors and merges into local SQLite (last-
 ```ts
 const { data: progress } = await supabase.from('user_progress_sync').select('*').eq('user_id', uid);
 const { data: ents }     = await supabase.from('user_entitlements_sync').select('*').eq('user_id', uid);
-const { data: stats }    = await supabase.from('user_stats_sync').select('*').eq('user_id', uid).single();
-// merge: for each row, overwrite local only if cloud.last_reviewed_at > local.last_reviewed_at
+// progress merges last-write-wins by last_reviewed_at; entitlements are additive.
+// user_stats_sync pull is planned (streak/totals subset) — not yet implemented.
 ```
 
 The `.eq('user_id', uid)` filter is defense-in-depth; RLS already restricts rows to the caller. Merge logic is in `SyncProgressUseCase` (application layer); the Supabase calls themselves are in the infrastructure adapter.
@@ -109,7 +110,7 @@ side-effects (server-side, transactional):
 constraints: receipt_id is UNIQUE → duplicate redemption rejected
 ```
 
-Commission rate is derived from `teachers.current_tier` (1-4) on the server; the client never sends or computes commission. See [../../notion-docs/WEBSITE_TEACHER_REFERRAL.md](../../notion-docs/WEBSITE_TEACHER_REFERRAL.md) for the referral program rules.
+Commission rate is derived from `teachers.current_tier` (1-4) on the server; the client never sends or computes commission. See [../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md](../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md) for the referral program rules.
 
 ## RPC: Promo Code Redemption
 

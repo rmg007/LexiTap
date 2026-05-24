@@ -9,7 +9,7 @@ tags: [out-of-scope, non-goals, constraints, scope-discipline]
 
 # Out of Scope — LexiTap
 
-Explicit non-goals. This document protects scope discipline: each item is something LexiTap deliberately does NOT do, with rationale and a "revisit when" condition. Some are permanent product boundaries (audience split); others are deferrals with a trigger. Cross-references: [../../notion-docs/PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md) (scope-outs), [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md), [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md).
+Explicit non-goals. This document protects scope discipline: each item is something LexiTap deliberately does NOT do, with rationale and a "revisit when" condition. Some are permanent product boundaries (audience split); others are deferrals with a trigger. Cross-references: [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md) (scope-outs and non-goals), [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md) (Won't-this-window items).
 
 ## Permanent Boundaries
 

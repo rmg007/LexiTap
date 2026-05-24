@@ -11,7 +11,7 @@ tags: [user-flows, navigation, screens, journeys, onboarding, srs, paywall, sync
 
 Step-by-step flows plus ASCII flow diagrams for every core LexiTap journey. These describe behavior and decision points; pixel layouts live in [WIREFRAMES_MOCKUPS.md](./WIREFRAMES_MOCKUPS.md), tokens in [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md), and the diagnostic detail in [ONBOARDING_FLOW_SPEC.md](./ONBOARDING_FLOW_SPEC.md).
 
-MVP screens are Home, Quiz, Progress, Settings (locked, [SESSION_STATE.md](../../notion-docs/SESSION_STATE.md)); Paywall and Onboarding/Knowledge Map are modal/first-run surfaces over that set. All quiz interaction is tap/drag/match/classify — never typing ([ARCHITECTURE.md](../../notion-docs/ARCHITECTURE.md)). Feedback is non-punitive throughout.
+MVP screens are Home, Quiz, Progress, Settings (locked, [PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md)); Paywall and Onboarding/Knowledge Map are modal/first-run surfaces over that set. All quiz interaction is tap/drag/match/classify — never typing ([SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md)). Feedback is non-punitive throughout.
 
 ## Table of Contents
 
@@ -82,7 +82,7 @@ Goal: clear today's due SRS items with gentle feedback; keep the streak alive.
 Steps:
 
 1. Home shows "N words due today" and a primary **Start review** button.
-2. Tap → Quiz screen loads due words via the review use case ([ARCHITECTURE.md](../../notion-docs/ARCHITECTURE.md): `getWordsDueForReview`), capped at the soft daily cap.
+2. Tap → Quiz screen loads due words via the review use case ([SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md): `getWordsDueForReview`), capped at the soft daily cap.
 3. For each word: present a widget (MultipleChoice or DragDrop at MVP). User taps/drags an answer.
 4. Correct → `success` confirmation + soft success haptic; SRS mastery +1, next review date pushed out.
 5. Incorrect → gentle correction (caution color + dash icon, no red X, no error haptic); correct answer shown; mastery −1, word re-queued sooner. Encouraging copy.
@@ -117,7 +117,7 @@ Edge case: tier exhausted (no new words) → suggest upgrading the tier or, for 
 
 ## 4. Hitting the Daily Cap (Forgiveness)
 
-Goal: prevent SRS-backlog-as-punishment, the documented WordUp churn driver ([PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md)). Cap + soft catch-up + no guilt is a locked decision.
+Goal: prevent SRS-backlog-as-punishment, the documented WordUp churn driver ([PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md)). Cap + soft catch-up + no guilt is a locked decision.
 
 Steps:
 
@@ -134,18 +134,18 @@ REVIEW ▶ cap reached ▶ FORGIVENESS sheet
                           └─ Keep going ─▶ continue (no penalty) ─▶ Stop anytime
 ```
 
-Anti-pattern guard: never show overdue counts as a red alarm or home-screen guilt badge ([SESSION_STATE.md](../../notion-docs/SESSION_STATE.md) anti-patterns).
+Anti-pattern guard: never show overdue counts as a red alarm or home-screen guilt badge ([SRS_FORGIVENESS_MECHANICS.md](../02-product-definition/SRS_FORGIVENESS_MECHANICS.md) anti-patterns).
 
 ## 5. Purchasing a Tier (Paywall)
 
-Goal: convert at the moment of genuine need (test prep urgency), with one-time ownership framing and zero dark patterns. Pricing in [PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md).
+Goal: convert at the moment of genuine need (test prep urgency), with one-time ownership framing and zero dark patterns. Pricing in [PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md).
 
 Steps:
 
 1. Trigger points: tier-exhaustion suggestion (flow 3), a locked tier tapped on Progress, or Settings → "Unlock content."
 2. **Paywall sheet** presents the relevant tier (e.g. TOEFL $14.99 one-time) and the Premium Pass ($29.99/yr) as the value anchor ("unlocks all paid tiers"). Honest framing: own forever, no auto-renew trap, no ads.
 3. If a referral code is active (flow 6), the discounted price is shown with the original struck through.
-4. User taps **Unlock** → native StoreKit / Google Play Billing purchase sheet (IAP adapter, [ARCHITECTURE.md](../../notion-docs/ARCHITECTURE.md)).
+4. User taps **Unlock** → native StoreKit / Google Play Billing purchase sheet (IAP adapter, [SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md)).
 5. On success → entitlement written locally (source of truth = SQLite) and synced to cloud; tier content unlocks immediately; confirmation toast. On Premium Pass, all paid tiers unlock.
 6. **Restore purchases** is always available (Settings + Paywall footer) for reinstalls/new devices.
 
@@ -160,7 +160,7 @@ Edge cases: purchase pending/deferred (family approval) → "We'll unlock as soo
 
 ## 6. Redeeming a Teacher Referral Code
 
-Goal: apply a teacher's code for the student discount and attribute the referral ([PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md) teacher network; commission tiers 20–35%).
+Goal: apply a teacher's code for the student discount and attribute the referral ([PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md) teacher network; commission tiers 20–35%).
 
 Steps:
 
@@ -180,13 +180,13 @@ Edge case: code applied before any account exists → store provisionally on dev
 
 ## 7. Switching Devices (Sync)
 
-Goal: cloud sync is free and reliable — a direct differentiator against Knowji's device-bound SRS and WordUp's sync failures ([PRODUCT_STRATEGY.md](../../notion-docs/PRODUCT_STRATEGY.md)). Offline-first: SQLite is source of truth, cloud (Supabase) is the sync layer.
+Goal: cloud sync is free and reliable — a direct differentiator against Knowji's device-bound SRS and WordUp's sync failures ([PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md)). Offline-first: SQLite is source of truth, cloud (Supabase) is the sync layer.
 
 Steps:
 
 1. On the new device, install and launch → choose **Sign in** (instead of starting fresh) on the first-run account screen.
 2. Authenticate → app pulls the cloud snapshot: SRS state, progress, entitlements, streak, settings.
-3. Local SQLite is hydrated from the snapshot; conflict resolution favors the most recent per-record update (append-only SRS history is never retroactively rewritten, per [ARCHITECTURE.md](../../notion-docs/ARCHITECTURE.md) invariants).
+3. Local SQLite is hydrated from the snapshot; conflict resolution favors the most recent per-record update (append-only SRS history is never retroactively rewritten, per [SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md) invariants).
 4. User lands on Home with full continuity — same due words, same streak, same unlocked tiers (entitlements restored without re-purchase; Restore Purchases as backstop).
 5. Ongoing: changes on any device sync in the background when online; fully usable offline between syncs.
 
@@ -199,7 +199,7 @@ Edge cases: offline at sign-in → allow read-only/cached start, complete hydrat
 
 ## 8. Maintaining and Recovering a Streak
 
-Goal: the streak answers "did you show up today?" — the non-negotiable gamification mechanic, between Duolingo's compulsion and WordUp's toothlessness, with no guilt ([SESSION_STATE.md](../../notion-docs/SESSION_STATE.md)).
+Goal: the streak answers "did you show up today?" — the non-negotiable gamification mechanic, between Duolingo's compulsion and WordUp's toothlessness, with no guilt ([SRS_FORGIVENESS_MECHANICS.md](../02-product-definition/SRS_FORGIVENESS_MECHANICS.md)).
 
 Steps:
 
