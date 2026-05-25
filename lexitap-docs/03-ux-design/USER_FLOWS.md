@@ -9,7 +9,7 @@ tags: [user-flows, navigation, screens, journeys, onboarding, srs, paywall, sync
 
 # User Flows
 
-Step-by-step flows plus ASCII flow diagrams for every core LexiTap journey. These describe behavior and decision points; pixel layouts live in [WIREFRAMES_MOCKUPS.md](./WIREFRAMES_MOCKUPS.md), tokens in [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md), and the diagnostic detail in [ONBOARDING_FLOW_SPEC.md](./ONBOARDING_FLOW_SPEC.md).
+Step-by-step flows plus ASCII flow diagrams for every core LexiTap journey. These describe behavior and decision points; per-screen layouts live in [screens/](./screens/README.md), tokens in [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md), and the diagnostic detail in [ONBOARDING_FLOW_SPEC.md](./ONBOARDING_FLOW_SPEC.md).
 
 MVP screens are Home, Quiz, Progress, Settings (locked, [PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md)); Paywall and Onboarding/Knowledge Map are modal/first-run surfaces over that set. All quiz interaction is tap/drag/match/classify — never typing ([SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md)). Feedback is non-punitive throughout.
 

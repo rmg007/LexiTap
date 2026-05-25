@@ -11,7 +11,7 @@ tags: [accessibility, wcag, a11y, voiceover, talkback, contrast, dynamic-type, r
 
 Accessibility is a mandatory, non-negotiable requirement for LexiTap — VoiceOver and TalkBack support are locked invariants ([SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md), [PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md)). The target audience is adult ESL learners worldwide on a wide range of devices; accessibility is also reach. This document defines the conformance floor and the concrete per-component requirements.
 
-Tokens referenced here are defined in [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md); screen layouts in [WIREFRAMES_MOCKUPS.md](./WIREFRAMES_MOCKUPS.md).
+Tokens referenced here are defined in [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md); screen layouts in [screens/](./screens/README.md).
 
 ## Table of Contents
 
@@ -97,7 +97,7 @@ This rule is enforced in code review: no component may communicate state through
 - Audio is pronunciation reference only ([PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md)) — never required to answer a question. A learner who cannot hear can complete every quiz using the written word, phonetic spelling, definition, and example.
 - Each audio control has a clear label ("Play pronunciation of diligent").
 - Where audio carries content (the spoken word), the written word and IPA phonetic transcription are always present as the visual equivalent — this is the caption substitute for single-word audio.
-- No audio autoplay that could surprise a screen-reader user; playback is user-initiated (confirm in [WIREFRAMES_MOCKUPS.md](./WIREFRAMES_MOCKUPS.md) Open Questions).
+- No audio autoplay that could surprise a screen-reader user; playback is user-initiated (confirm in [Quiz — MultipleChoice spec](./screens/QuizMultipleChoice.md) Open Questions).
 
 ## Language and Reading Level
 

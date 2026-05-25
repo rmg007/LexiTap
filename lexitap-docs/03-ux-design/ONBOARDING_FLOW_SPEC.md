@@ -11,7 +11,7 @@ tags: [onboarding, first-run, diagnostic, adaptive, knowledge-map, srs-seeding, 
 
 Detailed specification of LexiTap's first-run adaptive diagnostic and Knowledge Map reveal. This is the resolved approach for backlog #45 ([FEATURE_BACKLOG.md](../02-product-definition/FEATURE_BACKLOG.md)): a **simplified adaptive diagnostic** that approximates a computerized adaptive test, leverages the endowed-progress effect for D1 retention, and seeds initial SRS state — without the engineering cost of full IRT at MVP.
 
-This expands the high-level onboarding flow in [USER_FLOWS.md](./USER_FLOWS.md) flow 1 and the wireframes in [WIREFRAMES_MOCKUPS.md](./WIREFRAMES_MOCKUPS.md). Visual tokens from [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md); screen-reader handling from [ACCESSIBILITY_REQUIREMENTS.md](./ACCESSIBILITY_REQUIREMENTS.md).
+This expands the high-level onboarding flow in [USER_FLOWS.md](./USER_FLOWS.md) flow 1 and the detailed screen specs in [screens/](./screens/README.md). Visual tokens from [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md); screen-reader handling from [ACCESSIBILITY_REQUIREMENTS.md](./ACCESSIBILITY_REQUIREMENTS.md).
 
 ## Table of Contents
 
@@ -79,7 +79,7 @@ This converges on the frontier rank in roughly 8–20 items for most learners.
 
 ## Stage 3: Pseudo-Word Overclaim Detection
 
-Seed **2–3 pseudo-words** (plausible non-words, e.g. "morptive," "blantery") among the real items, presented identically (not visually flagged — see [WIREFRAMES_MOCKUPS.md](./WIREFRAMES_MOCKUPS.md)).
+Seed **2–3 pseudo-words** (plausible non-words, e.g. "morptive," "blantery") among the real items, presented identically (not visually flagged — see [Onboarding — Adaptive Yes/No spec](./screens/OnboardingAdaptiveYesNo.md)).
 
 - A pseudo-word has no real meaning, so a confident "Yes, I know it" is a **false alarm** — direct evidence of overclaiming.
 - Apply a signal-detection correction: estimated known-rank is **discounted** in proportion to the pseudo-word false-alarm rate.

@@ -11,7 +11,7 @@ tags: [design-system, brand, colors, typography, components, dark-mode, tokens, 
 
 The LexiTap design system. Dark-mode-first, typography-driven, adult-professional. Every token and component here exists to pass the brand test: "would a professional ESL learner pull this out on their commute without embarrassment?"
 
-This document is the source of truth for visual and interaction tokens and for the working brand decisions (palette, typography, aesthetic constraints), pending standalone brand-identity finalization (backlog #42, [ROADMAP.md](../02-product-definition/ROADMAP.md)). It expands those constraints into implementation-ready specs and feeds the wireframes in [WIREFRAMES_MOCKUPS.md](./WIREFRAMES_MOCKUPS.md) and the accessibility floor in [ACCESSIBILITY_REQUIREMENTS.md](./ACCESSIBILITY_REQUIREMENTS.md).
+This document is the source of truth for visual and interaction tokens and for the working brand decisions (palette, typography, aesthetic constraints), pending standalone brand-identity finalization (backlog #42, [ROADMAP.md](../02-product-definition/ROADMAP.md)). It expands those constraints into implementation-ready specs and feeds the detailed screen specs in [screens/](./screens/README.md) and the accessibility floor in [ACCESSIBILITY_REQUIREMENTS.md](./ACCESSIBILITY_REQUIREMENTS.md).
 
 ## Table of Contents
 
