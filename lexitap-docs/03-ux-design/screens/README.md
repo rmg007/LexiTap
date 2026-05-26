@@ -63,6 +63,8 @@ Status: `built` = exists in `mobile/src/presentation/screens/`, `spec` = detaile
 | [Learn Quick-Check](./LearnQuickCheck.md) | spec | todo | TBD |
 | [Progress](./Progress.md) | spec | built | `mobile/src/presentation/screens/ProgressScreen.tsx` |
 | [Settings](./Settings.md) | spec | built | `mobile/src/presentation/screens/SettingsScreen.tsx` |
+| [Word Detail Browser](./WordDetailBrowser.md) | spec | todo | TBD |
+| [Content Error Reporter](./ContentErrorReporter.md) | spec | todo | TBD |
 | [Paywall](./Paywall.md) | spec | todo | TBD |
 | [Teacher Code Redemption](./TeacherCodeRedemption.md) | spec | todo | TBD |
 | [Sign-in / Account](./SigninAccount.md) | spec | todo | TBD |

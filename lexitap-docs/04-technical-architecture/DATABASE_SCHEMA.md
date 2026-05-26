@@ -247,6 +247,46 @@ JOIN words w ON a.word_id = w.id
 WHERE a.session_id = ?;
 ```
 
+## Keyset Pagination & Performance Indexes
+
+To guarantee buttery-smooth 60fps scrolling on lower-end devices, LexiTap strictly uses keyset pagination (never high-cost `OFFSET` queries, which suffer from `O(N)` scan degradation). The following indices and SQL patterns are required:
+
+### 1. Alphabetical Keyset Pagination (words.db)
+For browsing word lists in the active tier alphabetically:
+*   **Index:**
+    ```sql
+    CREATE INDEX idx_words_alphabetical ON words(tier_id, word) WHERE deleted_at IS NULL;
+    ```
+*   **Keyset Query:**
+    ```sql
+    SELECT w.id, w.word, w.definition, COALESCE(p.mastery_level, 0) AS mastery_level
+    FROM words w
+    LEFT JOIN userdb.user_progress p ON w.id = p.word_id
+    WHERE w.tier_id = ?
+      AND w.deleted_at IS NULL
+      AND (? IS NULL OR w.word > ?)   -- keyset boundary comparison
+    ORDER BY w.word ASC
+    LIMIT 50;
+    ```
+
+### 2. Dynamic Review-Date Keyset Pagination (user.db)
+For sorting progress lists dynamically by next review date (which is volatile and can contain identical timestamps/nulls). Keyset pagination uses a compound key of `(next_review_date, word_id)` to resolve duplicates:
+*   **Index:**
+    ```sql
+    CREATE INDEX idx_progress_keyset ON user_progress(next_review_date, word_id);
+    ```
+*   **Keyset Query:**
+    ```sql
+    SELECT w.id, w.word, p.next_review_date
+    FROM userdb.user_progress p
+    JOIN words w ON p.word_id = w.id
+    WHERE w.tier_id = ?
+      AND w.deleted_at IS NULL
+      AND (? IS NULL OR (p.next_review_date > ? OR (p.next_review_date = ? AND p.word_id > ?)))
+    ORDER BY p.next_review_date ASC, p.word_id ASC
+    LIMIT 50;
+    ```
+
 ## Supabase: Sync Mirror Tables
 
 Cloud mirrors of `user.db` state. **Cloud is a mirror, not authority.** Last-write-wins by `last_reviewed_at`. Pushed on app close, pulled on app open.
@@ -258,7 +298,7 @@ CREATE TABLE user_accounts (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email         TEXT UNIQUE NOT NULL,
   display_name  TEXT,
-  auth_provider TEXT NOT NULL,          -- 'email' | 'google'
+  auth_provider TEXT NOT NULL,          -- 'email' | 'google' | 'apple'
   timezone      TEXT NOT NULL DEFAULT 'UTC',  -- IANA tz; AsyncStorage is source of truth
   created_at    TIMESTAMP DEFAULT NOW(),
   last_synced_at TIMESTAMP,
@@ -300,6 +340,17 @@ CREATE TABLE user_stats_sync (
   total_words_mastered INTEGER DEFAULT 0,
   synced_at            TIMESTAMP DEFAULT NOW()
 );
+
+CREATE TABLE content_errors (
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id        UUID REFERENCES user_accounts(id),
+  word_id        TEXT NOT NULL,
+  issue_type     TEXT NOT NULL,    -- 'wrong_definition' | 'wrong_example' | 'wrong_audio' | 'other'
+  note           TEXT,             -- nullable, max 200 chars
+  created_at     TIMESTAMP DEFAULT NOW(),
+  status         TEXT NOT NULL DEFAULT 'pending' -- 'pending' | 'resolved' | 'ignored'
+);
+CREATE INDEX idx_content_errors_word ON content_errors(word_id);
 ```
 
 Streak boundaries are evaluated in the user's IANA timezone (AsyncStorage source of truth, mirrored to `user_accounts.timezone`), never UTC or device-current tz at travel time. No retroactive re-anchoring.

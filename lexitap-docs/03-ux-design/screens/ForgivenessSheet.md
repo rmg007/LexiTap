@@ -63,15 +63,15 @@ Acknowledge the learner has done enough for today, confirm the streak is already
 |---|---|---|
 | Cap reached | review session state | soft daily cap from settings/config |
 | Streak secured boolean | streak service (IANA-tz) | showing up = maintained |
-| Remaining due count | session | used internally for soft catch-up redistribution, NOT shown as guilt |
+| Remaining due count | session | Used *only* as an internal computation input for the backend `reanchorBacklog` redistribution algorithm. **Strictly never rendered** to avoid deficit guilt triggers (see [SRS_FORGIVENESS_MECHANICS.md](../../02-product-definition/SRS_FORGIVENESS_MECHANICS.md#mechanic-2-soft-catch-up)). |
 
 ## 6. States
 
 | State | Trigger | Rendering |
 |---|---|---|
 | **Default** | Cap reached | Headline + streak-secured + Stop here (emphasis) + Keep going |
-| **Stop here** | Tap D | Roll forward remaining items; smooth backlog (redistribute overdue across upcoming days); return Home done |
-| **Keep going** | Tap E | Continue beyond cap voluntarily, no penalty either way; sheet can reappear or not per policy |
+| **Stop here** | Tap D | Triggers `reanchorBacklog(overdueWords, nowMs, tz)` via the application layer. This is the only time the forgiveness mechanic writes `next_review_date` to `user.db`. Rolls forward and redistributes overdue items per [SRS_FORGIVENESS_MECHANICS.md](../../02-product-definition/SRS_FORGIVENESS_MECHANICS.md#mechanic-2-soft-catch-up); returns Home in the done state. |
+| **Keep going** | Tap E | Continue beyond cap voluntarily, no penalty either way; sheet is suppressed for the remainder of this session. |
 | **Streak already counted** | Earlier session today | Still reassure; no double count |
 
 Anti-pattern guard: never show overdue counts as a red alarm or home-screen guilt badge.
@@ -119,5 +119,4 @@ Banned: "X words overdue", "you're behind", any red or countdown.
 
 ## 12. Open questions
 
-- Whether "Keep going" suppresses the sheet for the rest of the session or re-shows at a second threshold.
-- Exact soft-catch-up redistribution curve (owned by SRS mechanics).
+- (None. Keep going behavior is suppressed for the session; redistribution curve is linked directly to the canonical SRS spec.)

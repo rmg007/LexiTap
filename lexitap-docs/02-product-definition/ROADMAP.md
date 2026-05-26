@@ -113,4 +113,4 @@ Must be resolved before Phase 1 is treated as ready to continue:
 
 - **Backlog #43 — SRS Forgiveness Mechanics design** (blocks all scheduler/SRS code) — resolved; design specified in [SRS_FORGIVENESS_MECHANICS.md](./SRS_FORGIVENESS_MECHANICS.md).
 - **Backlog #41 — Content Sourcing Strategy** (blocks Track A) — resolved 2026-05-23.
-- **Backlog #42 — Knowji competitive teardown** (blocks Brand Identity finalization) — research-based teardown complete; first-person hands-on still outstanding.
+- **Backlog #42 — Knowji competitive teardown** (blocks Brand Identity finalization) — resolved by desk research; first-person hands-on is impossible due to store-access limitations on the deprecated competitive app. Brand identity finalization tasks are moved to a post-validation branding milestone. All Phase 1 blockers are now fully closed.

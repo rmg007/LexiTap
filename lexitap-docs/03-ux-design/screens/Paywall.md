@@ -80,9 +80,12 @@ Where applicable, a one-time **Common 3000** unlock ($1.99) may appear as an add
 | Trigger context (tier) | caller | drives title + benefits |
 | Product list + prices | IAP adapter (RevenueCat; `StubIapService` for now) | localized store prices |
 | Active teacher code/trial | redemption service | shows extended trial, no off-store steering |
-| Entitlement write | `UnlockTierUseCase` | on success: write local `user_entitlements`, sync to cloud |
+| Entitlement write | `UnlockTierUseCase` | **Local-First Verification Boundary:** On success, atomically writes to local `user_entitlements` in `user.db` (local SQLite is the offline read source of truth for verified entitlements). Subsequently triggers a sync push to the cloud mirror `user_entitlements_sync` in Supabase. Step 1 (SQLite write) *must* complete successfully before the UI unlocks the content tier. |
 
-Entitlement decisions live in `application/` (Paywall Reviewer), not in presentation. Premium Pass unlocks all current AND future paid tiers.
+**Hexagonal Architecture Boundaries:**
+- All IAP client code and vendor SDK adapter logic (RevenueCat, StoreKit, Google Play Billing) lives strictly in `infrastructure/iap/`.
+- All entitlement valuation and subscription business logic (what tier to offer, trial balance calculations, active promo checks) lives in `application/entitlements/PaywallReviewUseCase`.
+- Premium Pass unlocks all current and future paid tiers globally. No off-store steering allowed in the presentation layer.
 
 ## 6. States
 
@@ -149,5 +152,4 @@ Banned: countdown timers, fake scarcity, pre-checked upsells, "limited offer" pr
 
 ## 12. Open questions
 
-- Final benefit bullets per tier — owned by content/marketing within honest-framing constraints.
-- Whether the one-time Common 3000 unlock shows on all paywall contexts or only Foundation-adjacent triggers.
+- (None. Contextual benefit bullets are owned by the marketing/content team and will occupy a static visual placeholder block. The one-time Common 3000 unlock will render strictly on Foundation-adjacent tier entry paywalls.)

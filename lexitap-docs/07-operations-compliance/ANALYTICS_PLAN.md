@@ -62,7 +62,9 @@ Naming: `object_action`, snake_case, past-tense action. Reuse the on-device `eve
 | `session_started` | Quiz/learning session begins | `tier_id`, `quiz_mode` |
 | `session_completed` | Session finishes | `tier_id`, `total_questions`, `total_correct`, `duration_seconds` |
 | `session_abandoned` | App closed mid-session | `tier_id`, `questions_answered` |
-| `word_reviewed` | A review attempt recorded | `is_correct`, `pre_mastery_level`, `assessment_type` |
+| `answer_recorded` | A review attempt recorded (physical DB row write) | `is_correct`, `pre_mastery_level`, `assessment_type` |
+| `srs_backlog_reanchored` | Overdue backlog redistributed | `count`, `lapse_days`, `drain_days` |
+| `content_error_reported` | Word content issue flagged | `word_id`, `issue_type`, `note` |
 | `streak_incremented` | Daily streak advances | `current_streak` |
 | `streak_broken` | Streak resets to 0 | `previous_streak` |
 | `tier_unlocked` | Free or purchased tier becomes available | `tier_id`, `is_free` |

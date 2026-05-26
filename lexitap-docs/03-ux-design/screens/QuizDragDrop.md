@@ -89,6 +89,8 @@ MVP matching widget. The learner drags word chips onto their matching meaning dr
 | Chip (C) | drag start | Lift + highlight valid targets | `selection` |
 | Chip → zone (D) | release over valid zone | Snap-to + settle animation | `selection` |
 | Chip → invalid | release off-target | Return to tray | none |
+| Chip (C) | tap (a11y/no-drag) | Select chip for placement; announce "picked up {word}" | `selection` |
+| Zone (D) | tap (with selected chip) | Settle chip in zone; announce "placed {word} in {meaning}" | `selection` |
 | Check (E) | tap | Evaluate, write attempt + SRS, feedback | correct: soft success; incorrect: none |
 
 ## 8. Copy
@@ -100,8 +102,9 @@ MVP matching widget. The learner drags word chips onto their matching meaning dr
 
 ## 9. Accessibility
 
-- **Tap fallback (required):** tap a chip to "pick up" (announced "candid, selected"), then tap a drop zone to place. No drag dependency for VoiceOver/TalkBack ([ACCESSIBILITY_REQUIREMENTS.md](../ACCESSIBILITY_REQUIREMENTS.md)).
-- Drop zones labeled with their meaning text; placement state announced ("honest, direct: candid placed").
+- **Tap fallback (required):** tap a chip to "pick up" (announced "picked up {word}"), then tap a drop zone to place (announced "placed {word} in {meaning}"). No drag dependency for VoiceOver/TalkBack ([ACCESSIBILITY_REQUIREMENTS.md](../ACCESSIBILITY_REQUIREMENTS.md)).
+- Drop zones labeled with their meaning text; placement state announced ("placed {word} in {meaning}").
+- Audio: N/A (this matching widget is strictly visual and does not have an audio autoplay path).
 - Targets ≥ 48×48. Correctness conveyed by icon + copy, not color alone.
 
 ## 10. Motion

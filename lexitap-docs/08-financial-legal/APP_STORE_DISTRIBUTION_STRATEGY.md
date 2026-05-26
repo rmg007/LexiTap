@@ -71,6 +71,31 @@ Monetizing individual users while selling bulk licenses to institutions off-stor
 | **Missing Apple Login** | Apple 4.8 | iOS | Google Sign-In is offered. **Sign in with Apple is implemented in Phase 3** alongside Google Sign-In — not deferred to Phase 5. See [../02-product-definition/ROADMAP.md](../02-product-definition/ROADMAP.md#phase-3-first-paid-tier-weeks-1112) for rationale. |
 | **Subscription Terms omission** | Apple 3.1.2 | iOS | Paywall screen must clearly list the subscription terms, price, annual auto-renewal policy, and direct links to the Terms of Service & Privacy Policy. |
 
+
+---
+
+## App Store Review Battle Plan
+
+Guideline 3.1.3(c) allows enterprise/institutional users to access content previously purchased in bulk off-store, but Apple Review treats "code redemptions" inside standard consumer apps with intense scrutiny. To prevent swift rejection, LexiTap uses this **App Store Review Battle Plan**:
+
+### 1. Zero Steering in UI
+*   No purchase links, no payment pricing, no B2B advertising, and no checkout terminology ("Buy bulk licenses", "Visit our store to purchase seats") may appear in the app.
+*   The redemption text field in Settings must be labeled strictly for institutional delivery: *"Have an activation code from your teacher or school? Enter it below to unlock your seat."*
+
+### 2. Pre-Provisioned Review Notes & Demo Tokens
+In the App Store Connect **App Review Notes** box on submission, we must provide:
+*   Two pre-provisioned, active **B2B School Seats** (tokens) and step-by-step instructions showing how a student enters the code to unlock the TOEFL tier.
+*   One pre-configured **Teacher referral demo account** to show Apple how the 14-day trial behaves.
+*   A link to a private video walkthrough demonstrating a student entering the token and immediately unlocking the tier offline, proving that no payment flow occurs on the web from the device.
+
+### 3. Cite the 3.1.3(c) Script Verbatim
+In the Reviewer Comments, write:
+> *"This application operates a B2C in-app purchase model for individual consumers using standard App Store subscriptions (com.lexitap.premium.monthly/annual) and non-consumable unlocks. Additionally, in compliance with Guideline 3.1.3(c) (Enterprise/Multi-User), the app allows students of our institutional partners (registered ESL schools, universities, and cram-school academies) to activate learning seats previously purchased in bulk directly by their organization. No off-store steering, B2B price lists, or off-store payment checkout exists within the application UI."*
+
+### 4. B2B Pricing and Website Safeguards
+*   The public website (`lexitap.app`) must not feature any single-user B2C checkout that undercuts Apple IAP.
+*   The institutional landing page must feature a sales request contact form: *"For institutional bulk licensing inquiries, contact sales@lexitap.app. Minimum 10 seats."* Apple reviews websites, and presenting B2B strictly as custom organizational sales is crucial.
+
 ---
 
 ## App Store Optimization (ASO)

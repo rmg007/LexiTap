@@ -192,7 +192,7 @@ export interface UserAccount {
   id: string;                  // UUID
   email: string;
   displayName?: string;
-  authProvider: 'email' | 'google';
+  authProvider: 'email' | 'google' | 'apple';
   timezone: string;            // IANA, AsyncStorage source of truth
 }
 

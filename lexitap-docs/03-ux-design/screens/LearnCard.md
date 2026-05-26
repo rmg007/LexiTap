@@ -71,7 +71,7 @@ Introduce new vocabulary from the active tier one card at a time before any asse
 |---|---|---|
 | New-word batch | `getNewWords` use case | default 10, from active tier; filter `deleted_at IS NULL` |
 | Word fields (def, example, POS, phonetic, audio, image) | bundled `words.db` | nullable fields hidden when absent |
-| Initial mastery seed | written after Quick-Check, not here | first exposure does not yet write SRS rows |
+| Initial mastery seed | Written *only* after completing the subsequent [LearnQuickCheck.md](./LearnQuickCheck.md) diagnostic. First exposure does *not* write SRS rows to `user.db`. This boundary is strict; the transition to the Quick-Check is the atomic SRS seed boundary. |
 
 ## 6. States
 
@@ -120,7 +120,7 @@ No quiz framing — this is reading, not testing. No "memorize this" pressure co
 - [ ] Batch defaults to 10 words from the active tier, filtered `deleted_at IS NULL`.
 - [ ] Nullable fields (example, image, audio, phonetic) gracefully omitted.
 - [ ] Audio glyph only on pronunciation tiers.
-- [ ] No SRS row is written until after the Quick-Check.
+- [ ] **SRS Boundary Invariant:** Strictly no SRS row is written in this screen. The transition to the Quick-Check is the atomic seed boundary.
 - [ ] Final card routes to Learn Quick-Check.
 - [ ] Partial batch resumes at the next unseen card.
 

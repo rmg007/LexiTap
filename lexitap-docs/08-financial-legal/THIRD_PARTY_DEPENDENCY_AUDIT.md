@@ -78,6 +78,16 @@ This is the highest legal-risk dependency category and the founder's primary IP 
 - **Audio:** ElevenLabs-generated; confirm redistribution rights (above).
 - **Imagery:** Unsplash License covers app use.
 
+## Media Licensing & Provenance Registry
+
+To protect LexiTap from copyright claims and platform takedowns, the following registry documents the exact commercial rights, limits, and verification requirements for every third-party asset bundled with the mobile binary:
+
+| Asset Category | Source | License / Tier | Commercial Rights | Launch Verification Gate |
+|---|---|---|---|---|
+| **Pronunciation Audio** | ElevenLabs | Creator/Independent Publisher ($22/mo tier) | Commercial distribution permitted for downloaded/cached audio. | **Paid Tier Gate:** Confirm founder's account is in a paid tier *during the generation run*. Free tier audio does NOT permit commercial app distribution. |
+| **Word Card Imagery** | Unsplash | Unsplash License | Permitted for commercial app packaging. No attribution required. | **No Hot-Linking Gate:** Content pipeline must download and bundle images locally. Streaming/hot-linking Unsplash URLs at runtime is forbidden (violates offline-first and API limits). |
+| **Frequency Wordlists** | Open Corpus / Wikipedia | Public Domain (derived from GSL & open corpus ranks) | Permitted to order and tier learning paths. | **No-Prep-Book Gate:** Verify frequency rankings are synthesized from open corpora and do not copy proprietary TOEFL/IELTS preparatory publishers verbatim. |
+
 ## Lock-In Summary
 
 | Severity | Dependencies | Why |

@@ -141,5 +141,45 @@ Minimal — standard row press feedback (`motion.fast`). Toggle animates per pla
 
 ## 12. Open questions
 
-- Final About sub-pages (Privacy, Terms, Help) — in-app web views vs native screens.
-- Whether "Manage subscription" deep-links to the store-native management UI.
+- (None. About sub-pages are resolved to open in the system browser using `expo-web-browser` to keep the bundle size small. Manage subscription deep-links to App Store subscriptions URL `https://apps.apple.com/account/subscriptions` on iOS.)
+
+---
+
+## 13. DailyReminderSheet (Sub-spec Bottom Sheet)
+
+### 13.1 Purpose
+A bottom sheet modal containing a simple, privacy-first time picker shown when the `Daily reminder` toggle is switched on. No network calls, completely offline and private.
+
+### 13.2 Layout & Anatomy
+Renders a system-native TimePicker element or a standard two-wheel picker (Hour / Minute) centered, with a dismiss/confirm row:
+```
+┌─────────────────────────────┐
+│             ──               │  ← grabber handle
+│       Set reminder time      │  ← headline, body.lg
+│                              │
+│         [ 08 : 00 ]          │  ← wheel/system picker
+│                              │
+│    [ Cancel ]   [ Save ]     │  ← actions: secondary / primary
+└─────────────────────────────┘
+```
+
+### 13.3 Data & Scheduling Contract
+- **Persistence:** Time persists entirely in local storage. `AsyncStorage.setItem('notifications.dailyReminderTime', JSON.stringify({ hour, minute }))`. No DB writes are performed.
+- **Scheduling:** Schedules a repeating local notification via Expo:
+  ```typescript
+  Notifications.scheduleNotificationAsync({
+    content: {
+      title: "LexiTap",
+      body: "Your review words are waiting — just 2 minutes.",
+      sound: true,
+    },
+    trigger: {
+      hour: selectedHour,
+      minute: selectedMinute,
+      repeats: true,
+    },
+  });
+  ```
+- **Cancellation:** Switching the toggle off calls `Notifications.cancelAllScheduledNotificationsAsync()`.
+- **Privacy Boundary:** No network calls or off-device sync. No analytics events are emitted for reminder configuration or activation, keeping with the strict offline privacy promise.
+- **Copy Constraints:** Under no circumstances should the copy mention streak pressure, overdue words, or use guilt tactics. The tone is strictly warm and brief.

@@ -61,7 +61,7 @@ CORRECT                          GENTLE CORRECTION
 | Was-correct boolean | `AnswerQuestionUseCase` result | selects state |
 | Chosen answer + correct answer | question model | rendered in both rows |
 | Short gloss | word definition | drives teaching copy in correction |
-| Mastery delta | SRS (domain) | correct → +1; incorrect → −1, re-queue sooner |
+| Atomic SRS Write | `AnswerQuestionUseCase` → Transaction | Atomically: (1) INSERT `quiz_attempts` (append-only), (2) UPDATE `user_progress` (`mastery_level` ±1, `next_review_date` calculation, `scheduler_version = 'v1-fixed'`). Tagged with `occurred_at` in user's timezone. |
 
 No new fetch — feedback renders from the just-evaluated answer.
 
@@ -77,22 +77,26 @@ Hard rule: never render a red X, alarm color, or scolding copy. The dash icon + 
 
 ## 7. Interactions
 
-| Element | Trigger | Result | Haptic |
-|---|---|---|---|
-| Reveal (correct) | auto on Check | Show success feedback | soft success |
-| Reveal (incorrect) | auto on Check | Show gentle correction | **none** (no error haptic) |
-| Continue | tap | Advance to next item or Session Complete | none |
+| Element | Trigger | Result | Haptic | Timing / Delay |
+|---|---|---|---|---|
+| Reveal (correct) | auto on Check | Show success feedback | soft success | 0ms (immediate reveal) |
+| Reveal (incorrect) | auto on Check | Show gentle correction | **none** | 0ms (immediate reveal) |
+| Continue | tap | Advance to next item or Session Complete | none | 0ms (instant shift) |
 
 ## 8. Copy
 
-| Key | String |
-|---|---|
-| correct.affirm | "Nice — locked in." / "Got it." (rotate, all warm, no exclamation overload) |
-| correction.lead | "Close — this one means \"{gloss}\"." |
-| correction.requeue | "You'll see it again soon." |
-| btn.continue | "Continue" |
+| Key | String | Notes |
+|---|---|---|
+| correct.affirm.1 | "Nice — locked in." | Copy bank variant 1 |
+| correct.affirm.2 | "Got it." | Copy bank variant 2 |
+| correct.affirm.3 | "Excellent." | Copy bank variant 3 |
+| correct.affirm.4 | "Spot on." | Copy bank variant 4 |
+| correct.affirm.5 | "Keep it up." | Copy bank variant 5 |
+| correction.lead | "Close — this one means \"{gloss}\"." | |
+| correction.requeue | "You'll see it again soon." | |
+| btn.continue | "Continue" | |
 
-Banned: "Wrong", "Incorrect", "X", "Try again!" (scolding), any red.
+Banned: "Wrong", "Incorrect", "X", "Try again!" (scolding), any red. Copy rotates randomly from the `correct.affirm` bank to prevent fatigue.
 
 ## 9. Accessibility
 
@@ -120,4 +124,4 @@ No celebratory burst even on correct — affirmation is calm.
 
 ## 12. Open questions
 
-- Whether affirm copy rotates from a small bank or stays fixed (avoid novelty fatigue vs. predictability).
+- (None. Copy bank rotation and timing are now specified.)

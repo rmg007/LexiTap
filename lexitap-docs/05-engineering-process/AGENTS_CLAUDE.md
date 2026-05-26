@@ -181,7 +181,34 @@ An agent does not read every doc on every task — it loads on demand:
 
 Load the minimum needed to do the task correctly. Over-loading context dilutes attention; under-loading skips a constraint.
 
+## Schema Spec for Task/Plan Files
+
+All architectural, feature, and implementation plans must follow this strict schema to ensure machine-readability by autonomous agents and human clarity:
+
+```yaml
+plan_id: "PLAN-001"                         # Unique alphanumeric identifier
+date: "YYYY-MM-DD"                          # Plan creation date
+status: "planned" | "in-progress" | "approved" | "completed"
+mode: "planning" | "execution"
+affected_components:                        # List of components affected
+  - "mobile"
+  - "content-tool"
+affected_layers:                            # Hexagonal architecture boundaries
+  - "domain"
+  - "presentation"
+constraint_invariants:                      # Strict rules to obey during task
+  - "Strictly zero TextInput in quiz screen specs"
+  - "No raw SQL string interpolation in query modules"
+proposed_changes:
+  - action: "MODIFY" | "NEW" | "DELETE"
+    path: "relative/path/to/file.ts"
+    rationale: "Detailed explanation of why this change is necessary"
+verification_steps:
+  - command: "npm run test:unit"            # Command to run for automated testing
+    scope: "mobile"
+  - step: "Manual testing instruction"      # Step to perform manually
+```
+
 ## Open Questions
 
-- The exact format of `docs/plans/NNN_*.yaml` is not yet pinned. Define it before plan automation depends on machine-readable fields.
 - Whether the Compound Learning append should be auto-committed by a hook or left to the agent's discretion is undecided; leaning toward a hook to satisfy the autonomy constraint.

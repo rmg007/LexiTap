@@ -157,6 +157,12 @@ Both DBs use the schema from `DATABASE_SCHEMA.md` for the content tables (`conte
 `words`). The output DB contains **only** content tables — never user tables. The mobile app
 attaches a separate `user.db` at runtime (see [two-DB bundling](#integration-with-the-mobile-app-two-db-bundling)).
 
+`working.db` carries one **pipeline-only** column that is never exported to `words.db`:
+
+| Column | Type | Values | Purpose |
+|---|---|---|---|
+| `definition_status` | TEXT | `'pending_generation'` \| `'pending_review'` \| `'approved'` | Tracks human review state. `import` sets `pending_generation` for rows without a definition; `enrich --add-definitions` sets `pending_review` after AI drafting; `review-definitions` sets `approved` after founder sign-off. `export` aborts if any active row is not `approved`. |
+
 Stable word IDs are generated deterministically so re-imports are idempotent and diffs are stable:
 
 ```
@@ -306,6 +312,39 @@ npx lexitap-tool enrich --tier foundation --add-synonyms --provider openai --lim
 npx lexitap-tool enrich --tier toefl --add-images --provider unsplash --dry-run
 ```
 
+### review-definitions
+
+Interactive human-review step for AI-generated definitions (see [SEED_DATA_SPEC.md — Human-in-the-Loop Definition Quality Protocol](./SEED_DATA_SPEC.md#human-in-the-loop-definition-quality-protocol)). Presents each `pending_review` row to the founder in the terminal; founder approves or rewrites inline.
+
+```bash
+npx lexitap-tool review-definitions --tier <slug> [options]
+```
+
+| Flag | Description |
+|---|---|
+| `--tier <slug>` | Review only words in this tier (required to bound the session). |
+| `--limit <n>` | Cap rows reviewed this session (resume next run — already-approved rows are skipped). |
+| `--format compact\|full` | `compact` shows word + definition only; `full` adds example sentence and POS. |
+
+For each row the tool prints:
+
+```
+[1/47] WORD: catalyst  POS: noun  CEFR: B2
+DEF:  A substance that makes a chemical reaction happen faster without being used up.
+EX:   The enzyme acted as a _ in the reaction.
+(a)pprove  (e)dit  (s)kip  (q)uit
+```
+
+- **approve** → sets `definition_status = 'approved'`.
+- **edit** → opens inline editor; saves the typed text then sets `approved`.
+- **skip** → leaves row in `pending_review` (revisit later).
+- **quit** → persists progress and exits cleanly.
+
+```bash
+npx lexitap-tool review-definitions --tier toefl
+npx lexitap-tool review-definitions --tier foundation --limit 100 --format compact
+```
+
 ### export
 
 Build the immutable `words.db` from `working.db`. Always rebuilds from scratch.
@@ -379,7 +418,14 @@ npx lexitap-tool enrich --tier toefl      --add-synonyms --provider openai
 npx lexitap-tool enrich --tier toefl      --add-audio     --provider elevenlabs
 npx lexitap-tool enrich --tier foundation --add-images    --provider unsplash
 
-# 4. Export immutable words.db (+ final validation, manifest, user_version bump)
+# 4. Human review gate — approve all AI-generated definitions before export
+#    (skipped if all definitions were founder-supplied and already set to 'approved')
+npx lexitap-tool review-definitions --tier foundation
+npx lexitap-tool review-definitions --tier advanced
+npx lexitap-tool review-definitions --tier toefl
+
+# 5. Export immutable words.db (+ final validation, manifest, user_version bump)
+#    Will abort if any active row still has definition_status != 'approved'
 npx lexitap-tool export --output data/output/words.db --bump patch
 
 echo "Build complete: data/output/words.db"

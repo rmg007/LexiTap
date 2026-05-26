@@ -245,20 +245,20 @@ The streak is secured by **showing up and completing the day's first session** â
 
 All additive, forward-only, never-DROP, consistent with [../04-technical-architecture/DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md#migration-strategy). No `quiz_attempts`/`event_log` mutation; the re-anchor appends one `event_log` row.
 
-### New `user_stats` fields (local mirror + Supabase `user_stats_sync`)
+### New `user_stats` fields (local device-only for freeze state; subset mirrored to Supabase `user_stats_sync`)
 
-Streak state currently lives in `user_stats_sync` (cloud) and is recomputed locally on demand. The forgiveness machine needs durable streak/freeze state. Add to `user_stats_sync` and the local stats representation:
+Streak state subset mirrors to `user_stats_sync` (cloud) and is recomputed locally on demand. To prevent cross-device abuse (double-spending freezes) and keep sync operations low-overhead, all streak freeze balance fields are **strictly device-only** at MVP and are never synced to the cloud:
 
-| Column | Type | Default | Purpose |
-|--------|------|---------|---------|
-| `freeze_count` | INTEGER | `0` | Currently banked streak freezes (0..`MAX_BANKED_FREEZES`). |
-| `last_activity_date` | INTEGER | NULL | **Reinterpreted as local civil date `YYYYMMDD`** (was epoch BIGINT). New writes use `YYYYMMDD`; see migration note. |
-| `freezes_granted_total` | INTEGER | `0` | Audit: lifetime freezes granted (for analytics, never decremented). |
-| `last_catchup_anchor_date` | INTEGER | NULL | Local `YYYYMMDD` of the last backlog re-anchor; guards once-per-lapse idempotency. |
+| Column | Type | Default | Sync Scope | Purpose |
+|--------|------|---------|------------|---------|
+| `freeze_count` | INTEGER | `0` | **Local-Only** | Currently banked streak freezes (0..`MAX_BANKED_FREEZES`). |
+| `last_activity_date` | INTEGER | NULL | **Local + Cloud** | **Reinterpreted as local civil date `YYYYMMDD`** (was epoch BIGINT). New writes use `YYYYMMDD` (physical column `last_activity_local_date` on `user_stats_sync`). |
+| `freezes_granted_total` | INTEGER | `0` | **Local-Only** | Audit: lifetime freezes granted (for analytics, never decremented). |
+| `last_catchup_anchor_date` | INTEGER | NULL | **Local-Only** | Local `YYYYMMDD` of the last backlog re-anchor; guards once-per-lapse idempotency. |
 
-Migration note: `last_activity_date` already exists as epoch BIGINT in `user_stats_sync`. To stay forward-only, **add a new column `last_activity_local_date INTEGER`** (`YYYYMMDD`) rather than repurposing the epoch column; the epoch column is left in place (deprecated, still synced for backward compatibility) and the machine reads/writes the new local-date column. (Listed above as `last_activity_date` for the machine's logical input; physical column = `last_activity_local_date`.)
+Migration note: `last_activity_date` already exists as epoch BIGINT in `user_stats_sync`. To stay forward-only, **add a new column `last_activity_local_date INTEGER`** (`YYYYMMDD`) to `user_stats_sync` rather than repurposing the epoch column; the epoch column is left in place (deprecated, still synced for backward compatibility). The local stats database maps the local-only freeze columns separately, which never sync.
 
-Cloud migration: `ALTER TABLE user_stats_sync ADD COLUMN freeze_count INTEGER DEFAULT 0; ADD COLUMN last_activity_local_date INTEGER; ADD COLUMN freezes_granted_total INTEGER DEFAULT 0; ADD COLUMN last_catchup_anchor_date INTEGER;` Sync conflict resolution for these follows the existing last-write-wins by `last_reviewed_at`; freeze_count takes the higher of the two on merge to avoid double-spend across devices (see Open Questions).
+Cloud migration: `ALTER TABLE user_stats_sync ADD COLUMN last_activity_local_date INTEGER;` No freeze columns are added to the cloud schema. Since freeze state is local-only at MVP, there is no cross-device freeze conflict resolution logic required.
 
 ### `user_progress`
 

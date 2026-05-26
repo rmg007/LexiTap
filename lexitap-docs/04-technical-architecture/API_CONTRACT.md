@@ -30,15 +30,15 @@ LexiTap has **no custom backend server** (see [TECH_STACK_DECISIONS.md](./TECH_S
 
 All calls go through `@supabase/supabase-js`, configured with the public anon key and project URL (injected via EAS secrets / `.env`, never hardcoded). The anon key is a public identifier; data protection is RLS, not key secrecy. The Supabase client lives in `src/infrastructure/sync/` and is never imported by `domain/` or `application/`.
 
-Auth uses Supabase Auth (email + Google OAuth). An authenticated session carries a JWT whose `sub` is the `user_accounts.id` (UUID), which every RLS policy keys on via `auth.uid()`.
+Auth uses Supabase Auth (Email Magic-Link + Google OAuth + Apple Sign-In). An authenticated session carries a JWT whose `sub` is the `user_accounts.id` (UUID), which every RLS policy keys on via `auth.uid()`.
 
 ## Auth Operations
 
 | Operation | Method | Notes |
 |-----------|--------|-------|
-| Sign up (email) | `supabase.auth.signUp({ email, password })` | Creates auth user; trigger inserts `user_accounts` row |
-| Sign in (email) | `supabase.auth.signInWithPassword({ email, password })` | Returns session JWT |
+| Sign in / up (Email Magic-Link) | `supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true } })` | Sends Magic-Link email; trigger inserts `user_accounts` row on new signup |
 | Sign in (Google) | `supabase.auth.signInWithIdToken({ provider: 'google', token })` | Native Google flow |
+| Sign in (Apple) | `supabase.auth.signInWithIdToken({ provider: 'apple', token })` | Native Apple flow (mandatory on iOS if any social login offered) |
 | Sign out | `supabase.auth.signOut()` | Local data remains |
 | Get session | `supabase.auth.getSession()` | Used on launch to decide pull |
 

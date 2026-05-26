@@ -131,6 +131,23 @@ LIMIT ?;
 
 On app update with a new content DB, the launch sequence checks `PRAGMA user_version` on the bundled `words.db`, replaces the file if newer, and runs forward-only migrations on `user.db`. User data is never dropped.
 
+## Canonical Authority Model
+
+To prevent architecture drift and establish clear boundaries, LexiTap uses the following authority model. It clarifies which system owns the final "write permission" and which owns the offline "runtime source" by data class:
+
+| Data Class | Runtime Source | Grant/Write Authority | Sync / Replay Rule |
+|---|---|---|---|
+| Bundled vocabulary content | `words.db` read-only | Content pipeline / shipped bundle | Replace content DB on versioned content update; never edits user DB |
+| User progress / SRS | `user.db` | Local app domain/application logic | Cloud mirrors; last-write-wins by `last_reviewed_at`; append `quiz_attempts` for replay |
+| Quiz attempts / event log | `user.db` append-only | Local app transaction | Never update/delete; compensating inserts only |
+| Streak/freeze state | `user.db` | Local app, IANA civil date | Freeze fields are device-only per current schema/API docs; if synced later, needs explicit new decision |
+| Verified paid entitlements | `user.db` for offline reads after grant | Store/RevenueCat/server-side validation for grant/revoke | Local row mirrors verified state; unverified local state must not unlock paid content |
+| B2B/referral/promo entitlements | `user.db` for offline reads after grant | Supabase RPC / Edge Function / institutional backend | Review-sensitive; no in-app off-store steering |
+| Account/auth data | Supabase Auth + `user_accounts` | Supabase Auth | Local device caches only what app needs |
+| Analytics | `event_log` locally | Local app for functional events; off-device send obeys consent plan | Aggregate/off-device flow still needs final sink/consent decision |
+
+Establishing this clear grid ensures that we never mistake local offline convenience caches for absolute verified authorities (e.g., in paid entitlements).
+
 ## Offline-First Data Flow
 
 ```

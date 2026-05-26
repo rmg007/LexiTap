@@ -74,13 +74,14 @@ Layout: screen gutter `space.4`; vertical rhythm between stacked blocks `space.3
 
 | Data | Source (see [SYSTEM_ARCHITECTURE.md](../../04-technical-architecture/SYSTEM_ARCHITECTURE.md)) | Notes |
 |---|---|---|
-| Due words count | `getWordsDueForReview` use case | Filter `deleted_at IS NULL`; capped at soft daily cap |
-| Reviewed-today count | review-session/event log read | Drives daily-cap meter fill |
-| Streak count + state | streak read (IANA-tz evaluated) | `state ∈ {active, at-risk, frozen}`; never UTC |
+| Due words count | `getWordsDueForReview` use case | Filter `deleted_at IS NULL`; capped at the effective daily cap. |
+| Forgiveness Constants | `SRS_FORGIVENESS_MECHANICS.md` | `BASE_DAILY_CAP=40`, `CATCH_UP_BUDGET=20`, `HARD_SESSION_CEILING=200`. Effective cap = `BASE_DAILY_CAP` + active catch-up allocation. |
+| Reviewed-today count | review-session/event log read | Drives daily-cap meter fill. |
+| Streak count + state | streak read (IANA-tz evaluated) | `state ∈ {active, at-risk, frozen}`; evaluated in local civil time, never UTC. |
 | Active tier + CEFR band | entitlement / active-tier read | e.g. "Foundation · A2–B1" |
-| Tier mastery ratio | progress read for active tier | Drives ring G |
-| New words available | `getNewWords` (count only) | Controls F visibility / empty wording |
-| User first name | account (nullable) | Drives greeting fallback |
+| Tier mastery ratio | progress read for active tier | Drives ring G. |
+| New words available | `getNewWords` (count only) | Controls F visibility / empty wording. |
+| User first name | account (nullable) | Drives greeting fallback. |
 
 No network call required to render — all reads hit local SQLite. Render with last-known values while a background sync runs.
 
@@ -88,15 +89,37 @@ No network call required to render — all reads hit local SQLite. Render with l
 
 | State | Trigger | Rendering |
 |---|---|---|
-| **Default** | ≥1 word due | Due card shows count + meter; Start review enabled |
-| **Loading** | First mount before reads resolve | Skeleton on due card + tier row; streak chip hidden until known. No spinner blocking the whole screen |
-| **Zero due / caught up** | 0 words due | Due card swaps to "All caught up" state; emphasize **Learn new words**; Start review demoted/hidden |
-| **Cap reached today** | reviewed-today ≥ soft cap | Meter full; due card reads done-state copy; no overdue/guilt count anywhere |
-| **No new words (tier exhausted)** | `getNewWords` == 0 | Learn new words → upgrade/next-tier nudge (never a hard wall, links Paywall per flow 5) |
-| **Streak at-risk** | Today's session not done | Streak chip = flame outline + `caution` ring (gentle), not a countdown |
-| **Streak frozen** | A freeze was auto-consumed | Chip = snowflake glyph, `text.secondary`; warm note surfaced once |
-| **Account-less** | No account | Greeting uses fallback copy (no name); Settings still offers sign-in |
-| **Offline** | No connectivity | Fully functional from SQLite; no error banner (offline is normal) |
+| **Default** | ≥1 word due | Due card shows count + meter; Start review enabled. |
+| **Loading** | First mount before reads resolve | Shows the **Skeletal Loading Layout** below. due card content and active tier elements are represented by light gray bones (`bg.surface.sunken` masks); buttons are disabled; no blocker spinners. |
+| **Zero due / caught up** | 0 words due | Due card swaps to "All caught up" state; emphasize **Learn new words**; Start review demoted/hidden. |
+| **Cap reached today** | reviewed-today ≥ soft cap | Meter full; due card reads done-state copy; no overdue/guilt count anywhere. |
+| **No new words (tier exhausted)** | `getNewWords` == 0 | Learn new words → upgrade/next-tier nudge (never a hard wall, links Paywall per flow 5). |
+| **Streak at-risk** | Today's session not done | Streak chip = flame outline + `caution` ring (gentle), not a countdown. |
+| **Streak frozen** | A freeze was auto-consumed | **Streak Frozen Glyph Policy:** Since the design system lacks a custom snowflake token, the spec uses the Unicode character `❄` combined with the `text.secondary` color token. Renders chip with a warm inline note on return. |
+| **Account-less** | No account | Greeting uses fallback copy (no name); Settings still offers sign-in. |
+| **Offline** | No connectivity | Fully functional from SQLite; no error banner (offline is normal). |
+
+### 6.1 Skeletal Loading Layout
+
+```
+┌─────────────────────────────┐
+│ Good evening           🔥 ░ │  ← greeting placeholder + skeleton chip
+│                              │
+│ ┌─────────────────────────┐ │
+│ │  ░░░░░░░░░░░░░          │ │  ← due card title placeholder
+│ │  ░░░░░░░░░░  daily cap  │ │  ← meter placeholder
+│ │                         │ │
+│ │  [   Start review   ]   │ │  ← disabled primary
+│ └─────────────────────────┘ │
+│                              │
+│  [  Learn new words  ]       │  ← disabled secondary
+│                              │
+│  ░░░░░░░░░░░░░░░░░░░░░░   ░  │  ← active tier skeleton + mastery ring outline
+│                              │
+├─────────────────────────────┤
+│  ⌂Home   ▶Quiz  ▲Prog  ⚙Set  │
+└─────────────────────────────┘
+```
 
 Hard rule: never show overdue counts as a red alarm or home-screen guilt badge ([SRS_FORGIVENESS_MECHANICS.md](../../02-product-definition/SRS_FORGIVENESS_MECHANICS.md) anti-patterns).
 
@@ -162,6 +185,4 @@ No celebratory motion on Home — the one allowed "moment" is the onboarding Kno
 
 ## 12. Open questions
 
-- Home greeting personalization fallback copy for account-less users.
-- Whether tapping the streak chip should deep-link to Progress or open a lightweight streak detail sheet.
-- Tablet/large-layout treatment (content max-width 600) — confirm in MVP scope or deferred.
+- (None. Greeting fallback is finalized to "Good evening" for account-less users. Tapping the streak chip deep-links directly to the Progress tab's streak summary. Tablet layout max-width is capped at 600px and deferred to post-MVP.)

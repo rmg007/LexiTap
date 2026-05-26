@@ -64,10 +64,10 @@ Let a user create or sign into an account to sync SRS state, progress, entitleme
 
 | Data | Source | Notes |
 |---|---|---|
-| Auth providers | auth config (Supabase) | Apple/Google/email per platform |
-| Existing local data flag | local SQLite | drives merge note + merge-on-sign-in |
-| Cloud snapshot | `SyncProgressUseCase` | SRS state, progress, entitlements, streak, settings |
-| Conflict resolution | sync layer | last-write-wins per record; append-only SRS history never rewritten |
+| Auth providers | auth config (Supabase) | **MVP Auth Invariant:** Apple Sign-in, Google OAuth, and Email Magic-Link. Apple Sign-in is mandatory on iOS because Google OAuth is present. |
+| Existing local data flag | local SQLite | Drives merge warning and activation. |
+| Cloud snapshot | `SyncProgressUseCase` | SRS state, progress, entitlements, streak, settings. |
+| Sync Merge Policy | sync layer / domain | **Conservative Merge Rules:** (1) Keep the lower `freeze_count` between local and cloud (encourages honest behavior), (2) Keep the higher `current_streak` (protects user accomplishment), (3) Union-merge `quiz_attempts` (no deletes, history remains complete). Rest of progress is last-write-wins by record `last_reviewed_at`. |
 
 ## 6. States
 
@@ -128,5 +128,4 @@ Sync is framed as a free benefit, never a gate.
 
 ## 12. Open questions
 
-- Which auth providers ship at MVP (Apple required on iOS if any social login is present).
-- Whether email sign-in uses magic-link vs password.
+- (None. Auth providers are set: Apple + Google + Email Magic-Link. Email uses magic-link to prevent passwords from ever being stored or typed locally.)

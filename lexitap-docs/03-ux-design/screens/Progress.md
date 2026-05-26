@@ -68,11 +68,11 @@ Show the learner their momentum: streak, weekly show-up, and per-tier mastery. S
 
 | Data | Source | Notes |
 |---|---|---|
-| Streak count + state | streak service (IANA-tz) | warm framing |
-| 7-day show-up | event log read | per-day boolean, user timezone |
-| Tier list + lock state | `user_entitlements` read | which tiers unlocked |
-| Per-tier mastered/total | progress read | counts shown internally |
-| Active tier | active-tier read | may be emphasized |
+| Streak count + state | streak service (IANA-tz) | Warm growth framing. |
+| 7-day show-up query | `userdb.event_log` read | **Cross-DB Rolling 7 Show-up Query:** Evaluated in user's local timezone. Finds the distinct civil dates (`YYYYMMDD`) within the last 7 calendar days: <br> `SELECT DISTINCT strftime('%Y%m%d', occurred_at/1000, 'unixepoch', 'localtime') AS local_date FROM userdb.event_log WHERE event_type = 'session_completed' AND occurred_at >= ? ORDER BY local_date DESC LIMIT 7;` |
+| Tier list + lock state | `user_entitlements` read | Which tiers are unlocked. |
+| Per-tier mastered/total | progress read | Counts shown internally. |
+| Active tier | active-tier read | Emphasized row. |
 
 External marketing copy avoids committing word counts, but internal Progress UI may show counts ([PRODUCT_REQUIREMENTS_DOCUMENT.md](../../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md)).
 
@@ -80,12 +80,12 @@ External marketing copy avoids committing word counts, but internal Progress UI 
 
 | State | Trigger | Rendering |
 |---|---|---|
-| **Default** | Data loaded | Streak + weekly bar + tier list |
-| **Loading** | Before reads resolve | Skeleton rows; no full-screen spinner |
-| **New user** | Minimal history | Streak shows small honest number; tiers show early progress, framed as growth |
-| **Locked tier** | Tier not entitled | Lock glyph + "Unlock to start"; tap → Paywall (contextual to that tier) |
-| **Streak at-risk / frozen** | Per streak service | Mirror Home chip states (color + label) |
-| **Offline** | No connectivity | Renders from SQLite; no error |
+| **Default** | Data loaded | Streak + weekly bar + tier list. |
+| **Loading** | Before reads resolve | Skeleton rows render. **Mastery Ring Skeleton:** The mastery ring G renders as a static dashed gray outline (`bg.surface.sunken` border) while the non-trivial SQLite cross-DB ATTACH query computes total mastered words; no global blockers. |
+| **New user** | Minimal history | Streak shows small honest number; tiers show early progress, framed as growth. |
+| **Locked tier** | Tier not entitled | Lock glyph + "Unlock to start"; tap → Paywall (contextual to that tier). |
+| **Streak at-risk / frozen** | Per streak service | Mirror Home chip states (color + label). |
+| **Offline** | No connectivity | Renders from SQLite; no error. |
 
 Hard rule: never frame remaining words as a deficit; no red, no guilt counters.
 
@@ -134,5 +134,4 @@ No celebratory motion here.
 
 ## 12. Open questions
 
-- Whether tapping an unlocked tier sets it active inline or opens a tier-detail screen.
-- Weekly bar semantics: rolling 7 days vs calendar week.
+- (None. Tapping an unlocked tier sets it active. Weekly bar semantics are resolved: rolling 7 most-recent civil dates in user's timezone.)

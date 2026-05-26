@@ -112,7 +112,7 @@ No scolding language anywhere. Distractor options are neutral, never joke answer
 
 - Read order: progress → word → phonetic → audio → prompt → options (in order) → Check.
 - Options are `radio`-role within a group; selection announced.
-- Each option ≥ 48×48 (card min height 56 satisfies). Audio button labeled "Play pronunciation".
+- Each option ≥ 48×48 (card min height 56 satisfies). Audio button labeled "Play pronunciation of {word}".
 - No color-only correctness — handled in Feedback States via icon + copy.
 
 ## 10. Motion
@@ -136,5 +136,4 @@ No scolding language anywhere. Distractor options are neutral, never joke answer
 
 ## 12. Open questions
 
-- Audio autoplay-on-reveal vs strictly tap-to-play on pronunciation tiers.
 - Distractor-generation source (hand-authored vs derived) — owned by content pipeline.

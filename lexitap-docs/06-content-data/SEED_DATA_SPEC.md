@@ -215,12 +215,29 @@ Before calling a tier seed-complete and running `export`:
 3. **Warnings** (minor naturalness issues, borderline CEFR level) are documented and accepted or fixed at the founder's discretion.
 4. QA log is committed alongside the `build-manifest.json` so future content updates have a baseline.
 
+## Human-in-the-Loop Definition Quality Protocol
+
+To ensure LexiTap vocabulary definitions are highly readable for global ESL learners and fully clear of dictionary copyright infringement, the content tool uses this **Human-in-the-Loop Definition Sourcing and QA Protocol**:
+
+### 1. AI-Assisted Original Generation Prompt (OpenAI)
+If a definition is not pre-supplied by the founder's frequency files, the pipeline leverages OpenAI to draft a custom definition using this specific prompt boundary to ensure original, plain-English phrasing:
+```
+Define the English vocabulary word "{word}" as used in a {pos} grammatical part of speech.
+The definition MUST:
+1. Be written for intermediate (CEFR B1) ESL English learners.
+2. Be between 5 and 15 words in length.
+3. Be a completely original paraphrasing. DO NOT copy verbatim from Merriam-Webster, Oxford, Cambridge, or Collins.
+4. Avoid advanced metalanguage (strictly do not use "pertaining to", "denotes", "wherein", or "characterised by").
+5. Define verbs starting with "To", adjectives as direct descriptions, and nouns as plain objects or concepts.
+```
+
+### 2. Sourcing Verification Pipeline
+1.  **Import Command:** CLI parses the CSV. Any row lacking a definition is imported into `working.db` with `definition_status = 'pending_generation'`.
+2.  **Enrich Command (`--add-definitions`):** CLI processes `pending_generation` rows through OpenAI using the prompt above. Generates original definitions and sets `definition_status = 'pending_review'`.
+3.  **Human Editorial Sweep:** The founder reviews generated rows. The CLI tool exposes an interactive review command: `npx lexitap-tool review-definitions --tier <tier>`. It renders each word, the proposed definition, and the example sentence. Founder approves (sets `definition_status = 'approved'`) or types a custom definition inline.
+4.  **Export Gate:** The `validate` and `export` commands strictly require `definition_status = 'approved'` for all active content rows. Exporting unverified AI content to the final `words.db` bundle is technically blocked.
+
 ## Open Questions
 
-- **Definition sourcing.** Whether the founder hand-authors all definitions or the pipeline
-  generates drafts for human review (see architecture Open Questions). This spec assumes
-  hand-authored/owned definitions at launch.
-- **Foundation/Advanced image coverage.** Full vs subset coverage for free tiers (curation-time
-  cost, not money) — decide at content build time.
-- **Difficulty banding rule.** Whether `difficulty` is derived from frequency rank automatically
-  or assigned by hand; default of 3 is acceptable for launch if undecided.
+- **Foundation/Advanced image coverage.** Full vs subset coverage for free tiers (curation-time cost, not money) — decide at content build time.
+- **Difficulty banding rule.** Whether `difficulty` is derived from frequency rank automatically or assigned by hand; default of 3 is acceptable for launch if undecided.

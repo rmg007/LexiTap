@@ -30,7 +30,7 @@ These must be resolved before Phase 1 is treated as validated for continued buil
 
 - [x] **Backlog #43** — SRS Forgiveness Mechanics design (daily review cap + soft catch-up + streak freeze — blocks all scheduler/SRS code) — resolved; see [lexitap-docs/02-product-definition/SRS_FORGIVENESS_MECHANICS.md](lexitap-docs/02-product-definition/SRS_FORGIVENESS_MECHANICS.md)
 - [x] **Backlog #41** — Content Sourcing Strategy (blocks content tool build, Track A Week 2-3) — resolved 2026-05-23
-- [ ] **Backlog #42** — Knowji competitive teardown (~$10 + 4-6 hrs — blocks Brand Identity finalization) — research-based teardown done; first-person hands-on still outstanding
+- [x] **Backlog #42** — Knowji competitive teardown — resolved by desk research; first-person hands-on is impossible due to store-access limitations on the deprecated competitive app. Branding work moved to post-validation backlog. All Phase 1 blockers are fully closed!
 
 ---
 

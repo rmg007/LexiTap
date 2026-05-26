@@ -146,7 +146,7 @@ Steps:
 2. **Paywall sheet** presents Premium Pass monthly ($4.99/mo) and annual ($24.99/yr) options, plus the Common 3000 one-time unlock ($1.99) where applicable. Honest framing: cancel anytime, no auto-renew tricks, no ads.
 3. If a teacher advocate code is active (flow 6), the extended trial is shown without steering users to off-store discounts.
 4. User taps **Unlock** → native StoreKit / Google Play Billing purchase sheet (IAP adapter, [SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md)).
-5. On success → entitlement written locally (source of truth = SQLite) and synced to cloud; tier content unlocks immediately; confirmation toast. On Premium Pass, all current and future paid tiers unlock.
+5. On success → purchase is verified (server-side receipt validation/RevenueCat) and the entitlement is written locally to `user.db` (SQLite is the offline read source of truth for verified entitlements) and synced to cloud; tier content unlocks immediately; confirmation toast. On Premium Pass, all current and future paid tiers unlock.
 6. **Restore purchases** is always available (Settings + Paywall footer) for reinstalls/new devices.
 
 ```
