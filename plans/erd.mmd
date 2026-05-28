@@ -1,192 +1,209 @@
+---
+title: LexiTap — Entity Relationship Diagram
+---
 erDiagram
+
+    %% ══════════════════════════════════════════════════════════════════════════
+    %% PROJECT OVERVIEW
+    %% LexiTap is an offline-first ESL vocabulary mobile app (Expo + React Native).
+    %% Target users: global non-native English speakers learning everyday vocabulary.
+    %% Architecture: hexagonal/clean — domain → application → infrastructure → presentation.
+    %% SRS scheduling (v1 fixed intervals: +1/3/7/14/30d by mastery 0-5) runs on-device.
+    %% Streaks evaluated in the user's IANA timezone; never raw UTC.
+    %%
+    %% DATABASE OVERVIEW (post-2026-05 architecture review)
+    %% DB 1: words.db   — SQLite, read-only, bundled inside the app binary
+    %% DB 2: user.db    — SQLite, read-write, lives on-device (never shipped)
+    %% DB 3: Supabase   — PostgreSQL, holds auth + content-error reports only.
+    %%                    User progress is backed up to Supabase Storage as an
+    %%                    encrypted blob of user.db (no per-table sync mirror).
+    %% Entitlements are owned by RevenueCat SDK; no on-device entitlements table.
+    %% At runtime DB 1 and DB 2 are joined via SQLite ATTACH.
+    %% ══════════════════════════════════════════════════════════════════════════
+
+    %% ─── Database container entities ─────────────────────────────────────────
+    WORDS_DB {
+        TEXT engine "SQLite"
+        TEXT access "read-only"
+        TEXT delivery "bundled inside app binary"
+        TEXT tables "content_tiers, words"
+        TEXT built_by "content-tool CLI (Track A)"
+    }
+    USER_DB {
+        TEXT engine "SQLite"
+        TEXT access "read-write"
+        TEXT delivery "created on first app launch, lives on device"
+        TEXT tables "user_progress, quiz_sessions, quiz_attempts, event_log, user_stats, notification_schedule, schema_version"
+        TEXT note "source of truth; cloud is backup only"
+    }
+    SUPABASE_DB {
+        TEXT engine "PostgreSQL + Supabase Storage"
+        TEXT access "read-write"
+        TEXT delivery "Supabase cloud"
+        TEXT tables "user_accounts, content_errors (+ Storage bucket: user_db_backups)"
+        TEXT note "auth + error reports + encrypted user.db blob backups; device is always authoritative"
+    }
+
     %% ─── words.db (read-only, bundled) ───────────────────────────────────────
     content_tiers {
-        TEXT id PK
-        TEXT name
-        TEXT description
-        INTEGER is_free
-        REAL price_usd
-        TEXT sku
-        INTEGER word_count
-        INTEGER display_order
-        INTEGER is_active
+        TEXT id PK "Tier slug e.g. free / b1 / b2"
+        TEXT name "Display name e.g. Free, B1 Academic"
+        TEXT description "Marketing copy shown in upgrade UI"
+        INTEGER is_free "1 = no purchase required"
+        TEXT sku "App Store / Play Store product ID — runtime pricing resolved via RevenueCat/StoreKit/Play Billing"
+        INTEGER word_count "Total words belonging to this tier"
+        INTEGER display_order "Sort order in tier selection UI"
+        INTEGER is_active "1 = available for purchase / display"
     }
     words {
-        TEXT id PK
-        TEXT word
-        TEXT definition
-        TEXT tier_id FK
-        TEXT pos
-        TEXT cefr_level
-        INTEGER grade_level
-        TEXT word_type
-        INTEGER difficulty
-        TEXT theme
-        TEXT example_sentence
-        TEXT image_path
-        TEXT audio_path
-        TEXT synonyms
-        TEXT antonyms
-        TEXT usage_notes
-        INTEGER created_at
-        INTEGER deleted_at
+        TEXT id PK "UUID, stable word identifier"
+        TEXT word "The target English word"
+        TEXT definition "Plain-English learner-friendly definition"
+        TEXT tier_id FK "FK → content_tiers.id"
+        TEXT pos "Part of speech: noun / verb / adj / adv"
+        TEXT cefr_level "CEFR band: A1 / A2 / B1 / B2 / C1 / C2"
+        INTEGER grade_level "US school grade equivalent (1-12)"
+        TEXT word_type "academic / general / technical"
+        INTEGER difficulty "Difficulty score 1 (easy) to 10 (hard)"
+        TEXT theme "Semantic theme tag e.g. science, travel"
+        TEXT example_sentence "In-context usage example sentence"
+        TEXT image_path "Relative path to bundled image asset"
+        TEXT audio_path "Relative path to bundled audio asset"
+        TEXT synonyms "JSON array of synonym strings (requires SQLite JSON1 to query)"
+        TEXT antonyms "JSON array of antonym strings (requires SQLite JSON1 to query)"
+        TEXT usage_notes "Register, colocation, or style notes"
+        INTEGER created_at "Unix epoch: content creation date"
+        INTEGER deleted_at "Unix epoch: soft-delete timestamp; NULL = active"
     }
     content_tiers ||--o{ words : "contains"
 
     %% ─── user.db (read-write, on-device) ─────────────────────────────────────
-    user_entitlements {
-        TEXT tier_id PK
-        INTEGER purchased_at
-        INTEGER expires_at
-        TEXT receipt_token
-    }
+    %% NOTE: user_entitlements removed. Entitlement state is owned by RevenueCat
+    %% SDK (cached on-device by the SDK, source of truth in RevenueCat cloud).
     user_progress {
-        TEXT word_id PK
-        INTEGER mastery_level
-        INTEGER next_review_date
-        INTEGER last_reviewed_at
-        INTEGER consecutive_correct
-        INTEGER total_attempts
-        INTEGER total_correct
-        INTEGER first_seen_at
-        TEXT scheduler_version
+        TEXT word_id PK "PK + FK → words.db words.id"
+        INTEGER mastery_level "SRS mastery 0 (new) to 5 (mastered)"
+        INTEGER next_review_date "Unix epoch when review is next due"
+        INTEGER last_reviewed_at "Unix epoch of most recent review"
+        INTEGER consecutive_correct "Correct answers since last miss"
+        INTEGER total_attempts "Lifetime attempt count for this word"
+        INTEGER total_correct "Lifetime correct count for this word"
+        INTEGER first_seen_at "Unix epoch when word was first shown"
+        TEXT scheduler_version "SRS algorithm version tag e.g. v1"
     }
     quiz_sessions {
-        INTEGER id PK
-        TEXT tier_id
-        INTEGER started_at
-        INTEGER completed_at
-        INTEGER total_questions
-        INTEGER total_correct
-        INTEGER duration_seconds
-        TEXT quiz_mode
+        INTEGER id PK "Auto-increment session identifier"
+        TEXT tier_id FK "FK → words.db content_tiers.id (enforced at ATTACH query layer)"
+        INTEGER started_at "Unix epoch: session start time"
+        INTEGER completed_at "Unix epoch: session end; NULL if abandoned"
+        INTEGER total_questions "Number of questions served"
+        INTEGER total_correct "Number of correct answers in session"
+        INTEGER duration_seconds "Wall-clock session length in seconds"
+        TEXT quiz_mode "learn / review / cram"
     }
     quiz_attempts {
-        INTEGER id PK
-        INTEGER session_id FK
-        TEXT word_id
-        TEXT assessment_type
-        TEXT user_answer
-        TEXT correct_answer
-        INTEGER is_correct
-        INTEGER answered_at
-        INTEGER time_to_answer_ms
-        INTEGER pre_mastery_level
-        INTEGER scheduled_review_date
-        TEXT scheduler_version
+        INTEGER id PK "Auto-increment attempt identifier"
+        INTEGER session_id FK "FK → quiz_sessions.id"
+        TEXT word_id "Word being assessed; FK → words.db words.id"
+        TEXT assessment_type "tap-definition / image-match / word-match / etc."
+        TEXT user_answer "Raw answer value the user submitted"
+        TEXT correct_answer "Expected correct answer at attempt time"
+        INTEGER is_correct "1 = correct, 0 = wrong"
+        INTEGER answered_at "Unix epoch of answer submission"
+        INTEGER time_to_answer_ms "Response latency in milliseconds"
+        INTEGER pre_mastery_level "Mastery level before this attempt"
+        INTEGER scheduled_review_date "SRS due date that triggered this attempt"
+        TEXT scheduler_version "SRS version tag at time of attempt"
     }
     event_log {
-        INTEGER id PK
-        TEXT event_type
-        TEXT payload
-        INTEGER occurred_at
+        INTEGER id PK "Auto-increment event identifier"
+        TEXT event_type "Namespaced event e.g. content_error.pending, content_error.synced"
+        TEXT payload "JSON blob of event-specific data"
+        INTEGER occurred_at "Unix epoch when event occurred"
+        TEXT note "Scope: offline pending-writes buffer (e.g. content_errors awaiting sync). NOT a general analytics sink — wire to PostHog/Amplitude if analytics needed."
     }
     user_stats {
-        INTEGER id PK
-        INTEGER current_streak
-        INTEGER longest_streak
-        INTEGER last_activity_local_date
-        INTEGER total_sessions
-        INTEGER total_words_mastered
-        INTEGER freeze_count
-        INTEGER freezes_granted_total
-        INTEGER last_catchup_anchor_date
-        INTEGER last_activity_date
+        INTEGER id PK "Singleton row enforced by CHECK (id = 1)"
+        INTEGER current_streak "Days in current active streak"
+        INTEGER longest_streak "All-time longest streak in days"
+        INTEGER last_activity_local_date "YYYYMMDD in user's IANA timezone — single source of truth for streak/activity logic"
+        INTEGER total_sessions "Lifetime completed session count"
+        INTEGER total_words_mastered "Count of words at mastery level 5"
+        INTEGER freeze_count "Streak freezes currently held by user"
+        INTEGER freezes_granted_total "Lifetime freezes ever awarded"
+        INTEGER last_catchup_anchor_date "YYYYMMDD: start of current catchup window"
+        TEXT onboarding_state "JSON: tracks completion of language selection, CEFR placement, notification permissions, intro flows"
+    }
+    notification_schedule {
+        INTEGER id PK "Auto-increment schedule entry identifier"
+        INTEGER next_notify_at "Unix epoch when next notification is due"
+        TEXT type "daily-digest / streak-warning / review-due"
+        INTEGER delivered_at "Unix epoch when delivered; NULL if pending"
+        INTEGER quiet_hours_start "Local hour (0-23) start of user quiet window; NULL = none"
+        INTEGER quiet_hours_end "Local hour (0-23) end of user quiet window; NULL = none"
+        TEXT note "Anchors SRS reminder delivery; prevents one-notification-per-due-word over-notification"
+    }
+    schema_version {
+        INTEGER version PK "Current user.db schema version applied by migration runner"
+        INTEGER applied_at "Unix epoch when this version was applied"
+        TEXT note "Migration runner anchor. Required before first public release; cannot be retrofitted cleanly."
     }
     quiz_sessions ||--o{ quiz_attempts : "contains"
 
     %% ─── Cross-DB ATTACH logical joins ───────────────────────────────────────
-    content_tiers ||--o| user_entitlements : "unlocks (ATTACH)"
     content_tiers ||--o{ quiz_sessions : "scopes (ATTACH)"
     words ||--o| user_progress : "SRS state (ATTACH)"
     words ||--o{ quiz_attempts : "answered in (ATTACH)"
 
-    %% ─── Supabase cloud mirror (Postgres) ────────────────────────────────────
+    %% ─── Supabase cloud (Postgres + Storage) ─────────────────────────────────
+    %% Three sync-mirror tables (user_progress_sync, user_entitlements_sync,
+    %% user_stats_sync) removed. Three growth tables (teachers, referrals,
+    %% promo_codes) removed. Backup is now an encrypted user.db blob in
+    %% Supabase Storage, not row-level sync.
     user_accounts {
-        UUID id PK
-        TEXT email
-        TEXT display_name
-        TEXT auth_provider
-        TEXT timezone
-        TIMESTAMP created_at
-        TIMESTAMP last_synced_at
-        BOOLEAN is_active
-    }
-    user_progress_sync {
-        UUID user_id FK
-        TEXT word_id
-        INTEGER mastery_level
-        BIGINT next_review_date
-        BIGINT last_reviewed_at
-        INTEGER consecutive_correct
-        INTEGER total_attempts
-        INTEGER total_correct
-        BIGINT first_seen_at
-        TIMESTAMP synced_at
-    }
-    user_entitlements_sync {
-        UUID user_id FK
-        TEXT tier_id
-        BIGINT purchased_at
-        BIGINT expires_at
-        TEXT receipt_token
-        TIMESTAMP synced_at
-    }
-    user_stats_sync {
-        UUID user_id PK
-        INTEGER current_streak
-        INTEGER longest_streak
-        BIGINT last_activity_date
-        INTEGER total_sessions
-        INTEGER total_words_mastered
-        TIMESTAMP synced_at
+        UUID id PK "Supabase auth UUID"
+        TEXT email "User email address"
+        TEXT display_name "User-chosen display name"
+        TEXT auth_provider "google / apple / email"
+        TEXT timezone "IANA timezone string e.g. America/New_York"
+        TIMESTAMP created_at "Account creation timestamp"
+        TIMESTAMP last_backup_at "Timestamp of last successful user.db blob upload"
+        BOOLEAN is_active "False if account is deleted or banned"
     }
     content_errors {
-        UUID id PK
-        UUID user_id FK
-        TEXT word_id
-        TEXT issue_type
-        TEXT note
-        TIMESTAMP created_at
-        TEXT status
+        UUID id PK "UUID primary key"
+        UUID user_id FK "FK → user_accounts.id"
+        TEXT word_id "Word with the reported issue"
+        TEXT issue_type "wrong-definition / bad-audio / bad-image / other"
+        TEXT note "Optional free-text note from user"
+        TIMESTAMP created_at "Timestamp when report was submitted"
+        TEXT status "open / reviewed / resolved"
     }
-    teachers {
-        UUID id PK
-        TEXT name
-        TEXT email
-        TEXT referral_code
-        INTEGER total_referrals
-        INTEGER total_active_referrals
-        INTEGER reward_credits
-        INTEGER current_reward_tier
-        TIMESTAMP created_at
+    user_db_backups {
+        UUID id PK "Storage object identifier"
+        UUID user_id FK "FK → user_accounts.id"
+        TEXT storage_path "Supabase Storage path: user_db_backups/{user_id}/{timestamp}.bin"
+        BIGINT size_bytes "Encrypted blob size; typical ~500KB"
+        TIMESTAMP uploaded_at "Timestamp of this backup upload"
+        TEXT note "Not a DB table — this represents Supabase Storage objects. Keep last 3 per user for rollback. Replaces all per-table sync mirrors."
     }
-    referrals {
-        UUID id PK
-        UUID teacher_id FK
-        TEXT teacher_code
-        UUID referred_user_id FK
-        INTEGER premium_trial_days
-        TEXT reward_status
-        INTEGER reward_credits_awarded
-        INTEGER reward_tier_at_qualification
-        TIMESTAMP attributed_at
-        TEXT source_event_id
-    }
-    promo_codes {
-        UUID id PK
-        TEXT code
-        TEXT type
-        TEXT free_product_id
-        INTEGER uses_remaining
-        INTEGER uses_count
-        TIMESTAMP expires_at
-        TIMESTAMP created_at
-        BOOLEAN is_active
-    }
-    user_accounts ||--o{ user_progress_sync : "mirrors"
-    user_accounts ||--o{ user_entitlements_sync : "mirrors"
-    user_accounts ||--o| user_stats_sync : "mirrors"
     user_accounts ||--o{ content_errors : "reports"
-    teachers ||--o{ referrals : "generates"
-    user_accounts ||--o{ referrals : "referred by"
+    user_accounts ||--o{ user_db_backups : "owns"
+
+    %% ─── Database → table ownership (renders DB grouping visually) ───────────
+    WORDS_DB ||--|| content_tiers : "hosts table"
+    WORDS_DB ||--|| words : "hosts table"
+
+    USER_DB ||--|| user_progress : "hosts table"
+    USER_DB ||--|| quiz_sessions : "hosts table"
+    USER_DB ||--|| quiz_attempts : "hosts table"
+    USER_DB ||--|| event_log : "hosts table"
+    USER_DB ||--|| user_stats : "hosts table"
+    USER_DB ||--|| notification_schedule : "hosts table"
+    USER_DB ||--|| schema_version : "hosts table"
+
+    SUPABASE_DB ||--|| user_accounts : "hosts table"
+    SUPABASE_DB ||--|| content_errors : "hosts table"
+    SUPABASE_DB ||--|| user_db_backups : "hosts Storage bucket"
+
+// [MermaidChart: 6dfab1fd-f547-463a-8d8c-4f66eda00c46]

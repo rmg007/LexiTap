@@ -21,7 +21,7 @@ Hexagonal / clean. Dependencies point inward only:
 - `infrastructure/` — the ONLY place raw SQL and expo-sqlite/supabase/IAP imports live.
 - `presentation/` — RN screens + the 4 assessment widgets. LexiTap-specific.
 
-Two databases: `words.db` (read-only, bundled, built by Track A) + `user.db` (read-write, on device), joined via `ATTACH`. Cloud (Supabase) is a mirror, never authority.
+Two databases: `words.db` (read-only, bundled, built by Track A) + `user.db` (read-write, on device), joined via `ATTACH`. Cloud (Supabase) holds auth + content-error reports + encrypted `user.db` blob backups in Supabase Storage. Device is always authoritative; cloud is never queried for live state.
 
 ## Hard rules
 
@@ -30,7 +30,7 @@ Two databases: `words.db` (read-only, bundled, built by Track A) + `user.db` (re
 - No `TextInput` in `mobile/src/presentation/screens/QuizScreen.tsx`, any future `mobile/src/presentation/screens/quiz/`, or `mobile/src/presentation/components/assessments/` — passive recognition UX (tap/drag/match/classify) only.
 - Parameterized SQL only, in named query functions under `infrastructure/db/`. Never interpolate.
 - Active-word queries filter `deleted_at IS NULL`; history/replay queries deliberately do not.
-- `quiz_attempts` and `event_log` are append-only — compensating inserts, never UPDATE/DELETE.
+- `quiz_attempts` and `event_log` are append-only — compensating inserts, never UPDATE/DELETE. `event_log` is scoped to the offline pending-writes buffer (e.g. `content_errors` awaiting sync), not a general analytics sink — wire to PostHog/Amplitude if analytics is needed.
 - Every SRS write tags `scheduler_version`. SRS v1-fixed intervals: +1/3/7/14/30d by mastery 0-5.
 - Streak boundaries evaluated in the user's IANA timezone, never UTC. No `new Date()` for streak comparison.
 - Secrets: `.env` in dev, EAS secrets in prod. Never commit secrets or hardcode them.
