@@ -67,7 +67,7 @@ Let a user create or sign into an account to sync SRS state, progress, entitleme
 | Auth providers | auth config (Supabase) | **MVP Auth Invariant:** Apple Sign-in, Google OAuth, and Email Magic-Link. Apple Sign-in is mandatory on iOS because Google OAuth is present. |
 | Existing local data flag | local SQLite | Drives merge warning and activation. |
 | Cloud snapshot | `SyncProgressUseCase` | SRS state, progress, entitlements, streak, settings. |
-| Sync Merge Policy | sync layer / domain | **Conservative Merge Rules:** (1) Keep the lower `freeze_count` between local and cloud (encourages honest behavior), (2) Keep the higher `current_streak` (protects user accomplishment), (3) Union-merge `quiz_attempts` (no deletes, history remains complete). Rest of progress is last-write-wins by record `last_reviewed_at`. |
+| Sync Merge Policy | sync layer / domain | **Conservative Merge Rules:** (1) Keep the higher `current_streak` (protects user accomplishment), (2) Union-merge `quiz_attempts` (no deletes, history remains complete). Rest of progress is last-write-wins by record `last_reviewed_at`. **Freeze fields (`freeze_count`, `freeze_available`) are device-local only — they are NOT synced and have NO multi-device merge.** On sign-in with an existing account, the device retains its current freeze state; the server has no freeze data to conflict with. A coding agent must not write freeze fields to any sync or cloud table. |
 
 ## 6. States
 

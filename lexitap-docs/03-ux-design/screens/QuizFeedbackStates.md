@@ -61,7 +61,7 @@ CORRECT                          GENTLE CORRECTION
 | Was-correct boolean | `AnswerQuestionUseCase` result | selects state |
 | Chosen answer + correct answer | question model | rendered in both rows |
 | Short gloss | word definition | drives teaching copy in correction |
-| Atomic SRS Write | `AnswerQuestionUseCase` → Transaction | Atomically: (1) INSERT `quiz_attempts` (append-only), (2) UPDATE `user_progress` (`mastery_level` ±1, `next_review_date` calculation, `scheduler_version = 'v1-fixed'`). Tagged with `occurred_at` in user's timezone. |
+| Atomic SRS Write | `AnswerQuestionUseCase` → Transaction | Atomically: (1) INSERT into `quiz_attempts` (append-only — never UPDATE/DELETE), (2) UPSERT `user_progress` with new `mastery_level` and `next_review_date`, tagged `scheduler_version = 'v1-fixed'`, (3) INSERT into `event_log` (append-only audit row). All three writes are in a single SQLite transaction — all succeed or all roll back. Tagged with `occurred_at` in user's timezone. |
 
 No new fetch — feedback renders from the just-evaluated answer.
 
@@ -85,18 +85,40 @@ Hard rule: never render a red X, alarm color, or scolding copy. The dash icon + 
 
 ## 8. Copy
 
+### 8.1 Copy Bank
+
+Copy rotates randomly at runtime using `Math.random()` to select from each bank array. A coding agent MUST implement selection as `bank[Math.floor(Math.random() * bank.length)]`, never a hardcoded single string.
+
+**Correct affirmations** (rotate randomly per correct answer):
+```
+["Nice!", "Got it.", "Exactly.", "That's right.", "Correct."]
+```
+
+**Gentle corrections** (rotate randomly per incorrect answer):
+```
+["Almost.", "Not quite — here it is.", "Review this one.", "Take another look."]
+```
+
+The teaching copy (`Close — this one means "{gloss}"` and `You'll see it again soon.`) is always shown in the correction case and is NOT rotated — it is fixed scaffolding. Only the lead correction phrase rotates.
+
+### 8.2 Full Copy Table
+
 | Key | String | Notes |
 |---|---|---|
-| correct.affirm.1 | "Nice — locked in." | Copy bank variant 1 |
+| correct.affirm.1 | "Nice!" | Copy bank variant 1 |
 | correct.affirm.2 | "Got it." | Copy bank variant 2 |
-| correct.affirm.3 | "Excellent." | Copy bank variant 3 |
-| correct.affirm.4 | "Spot on." | Copy bank variant 4 |
-| correct.affirm.5 | "Keep it up." | Copy bank variant 5 |
-| correction.lead | "Close — this one means \"{gloss}\"." | |
-| correction.requeue | "You'll see it again soon." | |
+| correct.affirm.3 | "Exactly." | Copy bank variant 3 |
+| correct.affirm.4 | "That's right." | Copy bank variant 4 |
+| correct.affirm.5 | "Correct." | Copy bank variant 5 |
+| correction.lead.1 | "Almost." | Gentle correction bank variant 1 |
+| correction.lead.2 | "Not quite — here it is." | Gentle correction bank variant 2 |
+| correction.lead.3 | "Review this one." | Gentle correction bank variant 3 |
+| correction.lead.4 | "Take another look." | Gentle correction bank variant 4 |
+| correction.teach | "Close — this one means \"{gloss}\"." | Fixed scaffolding (not rotated) |
+| correction.requeue | "You'll see it again soon." | Fixed scaffolding (not rotated) |
 | btn.continue | "Continue" | |
 
-Banned: "Wrong", "Incorrect", "X", "Try again!" (scolding), any red. Copy rotates randomly from the `correct.affirm` bank to prevent fatigue.
+Banned: "Wrong", "Incorrect", "X", "Try again!" (scolding), any red. Correct affirmations and gentle correction leads rotate randomly per §8.1 Copy Bank.
 
 ## 9. Accessibility
 

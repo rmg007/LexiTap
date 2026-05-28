@@ -65,7 +65,7 @@ Distinguished from a graded quiz only by the "Quick check" label and the low-pre
 |---|---|---|
 | Check items | derived from the just-learned batch | one per new word (or sampled) |
 | Answer result | `AnswerQuestionUseCase` | feeds seeding, not punitive scoring |
-| **SRS seed write** | seeding logic ([ONBOARDING_FLOW_SPEC.md](../ONBOARDING_FLOW_SPEC.md) Stage 6 model) | writes initial `user_progress` rows: mastery + `next_review_date`, tagged `scheduler_version` |
+| **SRS seed write** | `AnswerQuestionUseCase` (this screen triggers it on answer submission) | **Atomic Triple-Write (first and only SRS write in the Learn flow):** `AnswerQuestionUseCase` performs: (1) append row to `quiz_attempts` (append-only, never UPDATE/DELETE), (2) upsert `user_progress` with `mastery_level` and `next_review_date`, tagged `scheduler_version = 'v1-fixed'`, (3) insert into `event_log`. All three writes are in a single SQLite transaction. This is the SRS seed boundary from [ONBOARDING_FLOW_SPEC.md](../ONBOARDING_FLOW_SPEC.md) Stage 6. Seeds are initial inserts, not retroactive edits to history. |
 
 Seeding rule per word: correct check → low-positive mastery + near interval; incorrect → mastery 0/1, reviewed very soon. These are **initial states**, not retroactive edits (append-only invariant holds).
 

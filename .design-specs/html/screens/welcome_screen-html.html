@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LexiTap - Welcome</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap');
+        
+        :root {
+            --bg-deep: #0E1112;
+            --accent-teal: #20B2AA;
+            --accent-amber: #F59E0B;
+            --text-primary: #FFFFFF;
+            --text-muted: #94A3B8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .editorial-title {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .iphone-frame {
+            width: 393px;
+            height: 852px;
+            background-color: var(--bg-deep);
+            position: relative;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+            overflow: hidden;
+            margin: 2rem auto;
+        }
+
+        .gradient-overlay {
+            background: linear-gradient(0deg, 
+                var(--bg-deep) 0%, 
+                rgba(14, 17, 18, 0.98) 50%, 
+                rgba(14, 17, 18, 0.4) 100%
+            );
+        }
+
+        .label-caps {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+        }
+
+        .primary-cta {
+            background: linear-gradient(135deg, var(--accent-teal) 0%, #178F88 100%);
+            box-shadow: 0 4px 20px rgba(32, 178, 170, 0.3), inset 0 1px 1px rgba(255,255,255,0.2);
+            transition: all 0.2s ease;
+        }
+
+        .primary-cta:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 10px rgba(32, 178, 170, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame flex flex-col">
+        <!-- Hero Section -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://media.screensdesign.com/gasset/5e3aae53ee1e42dcb5205f5fa1d843a3_screen_image_hero_learning_professional_e6f5ca0b01.jpg" data-media-ref="generated:107721" alt="LexiTap Welcome" class="w-full h-full object-cover">
+            <div class="absolute inset-0 gradient-overlay z-10"></div>
+        </div>
+
+        <!-- Brand Header -->
+        <header class="relative z-20 pt-16 px-8">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center shadow-xl">
+                    <iconify-icon icon="ph:hand-tap-fill" class="text-[var(--accent-teal)] text-2xl"></iconify-icon>
+                </div>
+                <span class="text-2xl font-bold tracking-tight text-white">LexiTap</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="relative z-20 flex-1 px-8 flex flex-col justify-end pb-12">
+            <div class="mb-12">
+                <h1 class="editorial-title text-[44px] text-white mb-6">
+                    Master English for your <span class="text-[var(--accent-teal)]">next step.</span>
+                </h1>
+                <p class="text-[18px] text-[var(--text-muted)] font-medium leading-relaxed max-w-[90%]">
+                    Study smarter for TOEFL and IELTS with a tool designed for professional goals.
+                </p>
+            </div>
+
+            <!-- Features Rhythm -->
+            <div class="flex gap-12 mb-12">
+                <div class="flex flex-col gap-2">
+                    <span class="label-caps">Focus</span>
+                    <span class="text-[15px] text-white font-semibold">Adaptive Learning</span>
+                </div>
+                <div class="flex flex-col gap-2 border-l border-white/10 pl-8">
+                    <span class="label-caps">Results</span>
+                    <span class="text-[15px] text-white font-semibold">Exam Ready</span>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <button class="primary-cta w-full h-[64px] rounded-xl text-white font-bold text-[18px] flex items-center justify-center gap-3">
+                Get Started
+                <iconify-icon icon="ph:arrow-right-bold" class="text-xl"></iconify-icon>
+            </button>
+        </div>
+    </div>
+</body>
+</html>

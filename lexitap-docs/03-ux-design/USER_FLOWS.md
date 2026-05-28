@@ -145,13 +145,14 @@ Steps:
 1. Trigger points: tier-exhaustion suggestion (flow 3), a locked tier tapped on Progress, or Settings → "Unlock content."
 2. **Paywall sheet** presents Premium Pass monthly ($4.99/mo) and annual ($24.99/yr) options, plus the Common 3000 one-time unlock ($1.99) where applicable. Honest framing: cancel anytime, no auto-renew tricks, no ads.
 3. If a teacher advocate code is active (flow 6), the extended trial is shown without steering users to off-store discounts.
-4. User taps **Unlock** → native StoreKit / Google Play Billing purchase sheet (IAP adapter, [SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md)).
-5. On success → purchase is verified (server-side receipt validation/RevenueCat) and the entitlement is written locally to `user.db` (SQLite is the offline read source of truth for verified entitlements) and synced to cloud; tier content unlocks immediately; confirmation toast. On Premium Pass, all current and future paid tiers unlock.
+4. User taps **Unlock** → native StoreKit / Google Play Billing purchase sheet opens (IAP adapter). Store returns one of: `cancelled` / `pending` / `error` / receipt token.
+5. Receipt token is validated server-side by RevenueCat / `validate_receipt` Supabase Edge Function. On valid receipt: Edge Function writes entitlement to `user_entitlements_sync` (service role); `UnlockTierUseCase` mirrors the verified entitlement to local `user.db`; tier content unlocks; confirmation toast. On Premium Pass, all current and future paid tiers unlock. A pending/deferred receipt (e.g. Apple "Ask to Buy") shows a "We'll unlock as soon as it's approved" state — no local entitlement is written until validation succeeds.
 6. **Restore purchases** is always available (Settings + Paywall footer) for reinstalls/new devices.
 
 ```
 trigger ▶ PAYWALL sheet ▶ Unlock ▶ native purchase
-   │                          ├─ success ─▶ entitlement saved ▶ content unlocked
+   │                          ├─ receipt ─▶ server validation ─▶ entitlement persisted ─▶ content unlocked
+   │                          ├─ pending ─▶ "We'll unlock as soon as it's approved." (no local entitlement yet)
    │                          └─ cancel/fail ─▶ back, no nag
    └─ teacher code active ─▶ extended trial shown
 ```

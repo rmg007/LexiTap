@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LexiTap - Diagnostic (Light)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap');
+        
+        :root {
+            --bg-light: #F9FBFA;
+            --card-bg-start: #FFFFFF;
+            --card-bg-end: #F5F7F6;
+            --accent-teal: #178F88;
+            --accent-amber: #D97706;
+            --text-primary: #1A1D1E;
+            --text-muted: #5F6368;
+            --border-muted: rgba(0,0,0,0.06);
+        }
+
+        body { font-family: 'Inter', sans-serif; background-color: #F1F3F4; margin: 0; }
+        .editorial-title { font-family: 'Playfair Display', serif; letter-spacing: -0.01em; }
+        .iphone-frame { width: 393px; height: 852px; background-color: var(--bg-light); position: relative; margin: 2rem auto; overflow: hidden; }
+
+        .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(0,0,0,0.06); }
+        .progress-dot.active { background: var(--accent-teal); transform: scale(1.2); box-shadow: 0 0 10px rgba(23, 143, 136, 0.3); }
+
+        .tactile-display {
+            background: linear-gradient(145deg, var(--card-bg-start), var(--card-bg-end));
+            border: 1px solid var(--border-muted);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.04);
+            position: relative;
+        }
+
+        .label-caps { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-amber); }
+        
+        .btn-check { 
+            background: linear-gradient(135deg, var(--accent-teal) 0%, #147D76 100%); 
+            box-shadow: 0 4px 20px rgba(23, 143, 136, 0.2);
+        }
+        
+        .btn-skip { 
+            background: #F8FAFB; 
+            border: 1px solid var(--border-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame flex flex-col text-[var(--text-primary)]">
+        <header class="flex-shrink-0 pt-16 px-8 pb-4">
+            <div class="flex gap-2.5 mb-10">
+                <div class="progress-dot active"></div>
+                <div class="progress-dot active"></div>
+                <div class="progress-dot active"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+            </div>
+            <div class="flex justify-between items-center">
+                <h1 class="editorial-title text-[34px] font-bold leading-tight">
+                    Quick <span class="text-[var(--accent-teal)]">word check.</span>
+                </h1>
+                <div class="flex gap-1.5">
+                    <div class="w-1.5 h-1.5 rounded-full bg-[var(--accent-teal)]"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-black/5"></div>
+                    <div class="w-1.5 h-1.5 rounded-full bg-black/5"></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 flex flex-col items-center justify-center px-8">
+            <div class="w-full aspect-[4/5] max-h-[420px] tactile-display rounded-[20px] flex flex-col items-center justify-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(23,143,136,0.03),transparent_80%)]"></div>
+                
+                <span class="label-caps mb-12 relative z-10">Vocabulary Check</span>
+                
+                <h2 class="editorial-title text-[56px] font-bold tracking-tight relative z-10 text-[var(--text-primary)]">
+                    Pragmatic
+                </h2>
+                
+                <div class="mt-8 px-5 py-2 rounded-full bg-gray-50 border border-gray-100 relative z-10">
+                    <span class="text-[17px] text-[var(--text-muted)] italic font-medium">/præɡˈmætɪk/</span>
+                </div>
+            </div>
+
+            <p class="text-center text-[15px] text-[var(--text-muted)] mt-12 px-6 leading-relaxed font-medium">
+                Tap quickly to help us find the perfect starting point for your lessons.
+            </p>
+        </div>
+
+        <footer class="p-8 pb-12 flex gap-4">
+            <button class="btn-skip flex-1 h-[72px] rounded-xl flex flex-col items-center justify-center active:scale-95 transition-all">
+                <iconify-icon icon="ph:x-bold" class="text-2xl text-[var(--text-muted)] mb-1"></iconify-icon>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-[var(--text-muted)]">I Don't Know</span>
+            </button>
+            <button class="btn-check flex-[1.4] h-[72px] rounded-xl flex flex-col items-center justify-center active:scale-95 transition-all text-white">
+                <iconify-icon icon="ph:check-bold" class="text-2xl mb-1"></iconify-icon>
+                <span class="text-[10px] font-bold uppercase tracking-widest">I Know This</span>
+            </button>
+        </footer>
+    </div>
+</body>
+</html>

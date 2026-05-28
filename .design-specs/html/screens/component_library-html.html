@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>component_library</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap');
+        :root {
+            --bg-deep: #0E1112;
+            --accent-teal: #20B2AA;
+            --accent-amber: #FFC107;
+            --muted-slate: #94A3B8;
+            --white-soft: rgba(255, 255, 255, 0.06);
+            --card-bg-start: #1A1E1F;
+            --card-bg-end: #141718;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .iphone-frame {
+            width: 393px;
+            height: 852px;
+            background-color: var(--bg-deep);
+            position: relative;
+            border-radius: 0px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin: 2rem auto;
+        }
+        .editorial-title {
+            font-family: 'Playfair Display', serif;
+        }
+        .label-caps {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+        .primary-cta {
+            background: linear-gradient(135deg, var(--accent-teal) 0%, #178F88 100%);
+            box-shadow: 0 4px 20px rgba(32, 178, 170, 0.3), inset 0 1px 1px rgba(255,255,255,0.2);
+        }
+        .tactile-card {
+            background: linear-gradient(145deg, var(--card-bg-start), var(--card-bg-end));
+            border: 1px solid var(--white-soft);
+            transition: all 0.2s ease;
+        }
+        .tactile-card-active {
+            background: linear-gradient(145deg, rgba(32, 178, 170, 0.12), rgba(32, 178, 170, 0.04));
+            border: 1px solid var(--accent-teal);
+            box-shadow: inset 0 0 15px rgba(32, 178, 170, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame flex flex-col text-white">
+        <!-- #header_101 -->
+        <header class="flex-shrink-0 pt-16 px-8 pb-6 border-b border-white/[0.04]">
+            <div class="flex items-center gap-2 text-[var(--accent-teal)] mb-4">
+                <iconify-icon icon="ph:stack-bold" class="text-xl"></iconify-icon>
+                <span class="label-caps">Assets</span>
+            </div>
+            <h1 class="editorial-title text-[34px] font-bold leading-tight">
+                Component Library
+            </h1>
+        </header>
+        <!-- /#header_101 -->
+
+        <!-- #scroll-content_102 -->
+        <div class="flex-1 overflow-y-auto px-8 py-8 space-y-12">
+            <!-- #buttons_103 -->
+            <section class="space-y-6">
+                <h2 class="label-caps text-[var(--accent-teal)] mb-4">Primary Buttons</h2>
+                <div class="space-y-4">
+                    <div class="space-y-2">
+                        <span class="text-[10px] text-[var(--muted-slate)] font-bold uppercase">Default</span>
+                        <button class="primary-cta w-full h-[64px] rounded-xl text-white font-bold text-[18px]">Get Started</button>
+                    </div>
+                    <div class="space-y-2">
+                        <span class="text-[10px] text-[var(--muted-slate)] font-bold uppercase">Pressed</span>
+                        <button class="primary-cta w-full h-[64px] rounded-xl text-white font-bold text-[18px] scale-95 opacity-90">Continue</button>
+                    </div>
+                    <div class="space-y-2">
+                        <span class="text-[10px] text-[var(--muted-slate)] font-bold uppercase">Disabled</span>
+                        <button class="primary-cta w-full h-[64px] rounded-xl text-white font-bold text-[18px] opacity-30 grayscale">Continue</button>
+                    </div>
+                </div>
+            </section>
+            <!-- /#buttons_103 -->
+
+            <!-- #cards_104 -->
+            <section class="space-y-6">
+                <h2 class="label-caps text-[var(--accent-teal)] mb-4">Tactile Cards</h2>
+                <div class="space-y-4">
+                    <!-- Default -->
+                    <div class="tactile-card rounded-xl p-6 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                                <iconify-icon icon="ph:briefcase-light" class="text-2xl text-[var(--accent-teal)]"></iconify-icon>
+                            </div>
+                            <span class="font-bold">Default State</span>
+                        </div>
+                        <iconify-icon icon="ph:circle-light" class="text-xl text-white/20"></iconify-icon>
+                    </div>
+                    <!-- Selected -->
+                    <div class="tactile-card tactile-card-active rounded-xl p-6 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-[var(--accent-teal)]/10 border border-[var(--accent-teal)]/20 flex items-center justify-center">
+                                <iconify-icon icon="ph:briefcase-fill" class="text-2xl text-[var(--accent-teal)]"></iconify-icon>
+                            </div>
+                            <span class="font-bold">Selected State</span>
+                        </div>
+                        <div class="w-5 h-5 rounded-full bg-[var(--accent-teal)] flex items-center justify-center">
+                            <iconify-icon icon="ph:check-bold" class="text-[10px] text-white"></iconify-icon>
+                        </div>
+                    </div>
+                    <!-- Disabled -->
+                    <div class="tactile-card rounded-xl p-6 flex items-center justify-between opacity-40">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">
+                                <iconify-icon icon="ph:briefcase-light" class="text-2xl"></iconify-icon>
+                            </div>
+                            <span class="font-bold">Disabled State</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- /#cards_104 -->
+
+            <!-- #iconography_105 -->
+            <section class="space-y-6">
+                <h2 class="label-caps text-[var(--accent-teal)] mb-4">Iconography (1.75px Stroke)</h2>
+                <div class="grid grid-cols-5 gap-4 bg-white/[0.02] p-6 rounded-xl">
+                    <iconify-icon icon="ph:graduation-cap-light" class="text-3xl text-[var(--accent-teal)]"></iconify-icon>
+                    <iconify-icon icon="ph:certificate-light" class="text-3xl text-[var(--accent-teal)]"></iconify-icon>
+                    <iconify-icon icon="ph:briefcase-light" class="text-3xl text-[var(--accent-teal)]"></iconify-icon>
+                    <iconify-icon icon="ph:map-pin-light" class="text-3xl text-[var(--accent-teal)]"></iconify-icon>
+                    <iconify-icon icon="ph:timer-light" class="text-3xl text-[var(--accent-teal)]"></iconify-icon>
+                </div>
+            </section>
+            <!-- /#iconography_105 -->
+
+            <!-- #inputs_106 -->
+            <section class="space-y-6">
+                <h2 class="label-caps text-[var(--accent-teal)] mb-4">Input Affordances</h2>
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-5 h-5 rounded-full border-2 border-white/20"></div>
+                            <span class="text-sm text-[var(--muted-slate)]">Unselected</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-5 h-5 rounded-full border-2 border-[var(--accent-teal)] flex items-center justify-center">
+                                <div class="w-2.5 h-2.5 rounded-full bg-[var(--accent-teal)]"></div>
+                            </div>
+                            <span class="text-sm">Selected</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-5 h-5 rounded-md border-2 border-white/20"></div>
+                            <span class="text-sm text-[var(--muted-slate)]">Checkbox</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-5 h-5 rounded-md bg-[var(--accent-teal)] flex items-center justify-center">
+                                <iconify-icon icon="ph:check-bold" class="text-xs text-white"></iconify-icon>
+                            </div>
+                            <span class="text-sm">Checked</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- /#inputs_106 -->
+        </div>
+        <!-- /#scroll-content_102 -->
+    </div>
+</body>
+</html>

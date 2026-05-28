@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>review_complete</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap');
+        :root {
+            --bg-deep: #0E1112;
+            --accent-teal: #20B2AA;
+            --accent-amber: #FFC107;
+            --muted-slate: #94A3B8;
+            --white-soft: rgba(255, 255, 255, 0.06);
+        }
+        .iphone-frame {
+            width: 393px;
+            height: 852px;
+            background-color: var(--bg-deep);
+            position: relative;
+            border-radius: 0px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin: 2rem auto;
+        }
+        .editorial-title {
+            font-family: 'Playfair Display', serif;
+        }
+        .label-caps {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+        .primary-cta {
+            background: linear-gradient(135deg, var(--accent-teal) 0%, #178F88 100%);
+            box-shadow: 0 4px 20px rgba(32, 178, 170, 0.3), inset 0 1px 1px rgba(255,255,255,0.2);
+        }
+        .tactile-card {
+            background: linear-gradient(145deg, #1A1E1F, #141718);
+            border: 1px solid var(--white-soft);
+        }
+        .amber-glow {
+            filter: drop-shadow(0 0 15px rgba(255, 193, 7, 0.4));
+        }
+    </style>
+</head>
+<body class="bg-neutral-900 font-['Inter']">
+    <div class="iphone-frame flex flex-col text-white">
+        <!-- #scroll-content_301 -->
+        <div class="flex-1 flex flex-col items-center justify-center px-10 text-center pt-20">
+            <div class="mb-8 amber-glow">
+                <iconify-icon icon="ph:seal-check-fill" class="text-[120px] text-[var(--accent-amber)]"></iconify-icon>
+            </div>
+
+            <span class="label-caps text-[var(--accent-amber)] mb-3">Achievement Unlocked</span>
+            <h1 class="editorial-title text-[42px] font-bold leading-tight mb-12">
+                Daily Goal Met!
+            </h1>
+
+            <!-- #stats-grid_302 -->
+            <div class="grid grid-cols-1 w-full gap-4 mb-12">
+                <div class="tactile-card p-6 rounded-2xl flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-[var(--accent-teal)]/10 border border-[var(--accent-teal)]/20 flex items-center justify-center">
+                            <iconify-icon icon="ph:book-open-light" class="text-2xl text-[var(--accent-teal)]"></iconify-icon>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-2xl font-bold leading-none mb-1">12</p>
+                            <p class="text-xs text-[var(--muted-slate)] font-bold uppercase tracking-wider">Words Mastered</p>
+                        </div>
+                    </div>
+                    <iconify-icon icon="ph:trend-up-bold" class="text-xl text-[var(--accent-teal)]"></iconify-icon>
+                </div>
+
+                <div class="tactile-card p-6 rounded-2xl flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center">
+                            <iconify-icon icon="ph:fire-light" class="text-2xl text-[var(--accent-amber)]"></iconify-icon>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-2xl font-bold leading-none mb-1">04</p>
+                            <p class="text-xs text-[var(--muted-slate)] font-bold uppercase tracking-wider">Day Streak</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-1">
+                        <div class="w-1.5 h-1.5 rounded-full bg-[var(--accent-amber)]"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-[var(--accent-amber)]"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-[var(--accent-amber)]"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-[var(--accent-amber)]"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-white/10"></div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-[var(--muted-slate)] text-sm leading-relaxed px-4">
+                You're in the top 15% of professionals learning English this week. Maintain this momentum.
+            </p>
+        </div>
+        <!-- /#scroll-content_301 -->
+
+        <!-- #footer_303 -->
+        <footer class="flex-shrink-0 p-8 pb-12">
+            <button class="primary-cta w-full h-[64px] rounded-xl text-white font-bold text-[18px] active:scale-[0.98] transition-all">
+                See you tomorrow
+            </button>
+        </footer>
+        <!-- /#footer_303 -->
+    </div>
+</body>
+</html>

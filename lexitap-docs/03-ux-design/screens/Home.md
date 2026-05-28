@@ -60,7 +60,7 @@ Home is a root tab — no back affordance.
 | Ref | Region | Component | Tokens | Content source |
 |---|---|---|---|---|
 | A | Greeting | Text, `headline` | `text.primary` | Time-of-day + first name (account) / fallback copy |
-| B | Streak chip | Streak indicator pill, `radius.full`, `mono` tabular | `streak` color (active) | `streak.currentCount`, `streak.state` |
+| B | Streak chip | Streak indicator pill, `radius.full`, `mono` tabular | Color token per state (see §6) | `streak.currentCount`, `streak.state` — **Three states, three channels each:** `active`: Lucide `Flame` + "{N} day streak" + `streak` color; `at-risk`: Lucide `Flame` (opacity 0.5) + "Keep your streak!" + `caution` color; `frozen`: Lucide `Snowflake` + "Frozen" + `text.secondary` color. Never color-only. |
 | C | Due count | Card → Text `body.lg` | `bg.surface`, `border.subtle`, `text.primary` | `getWordsDueForReview().length` (capped at soft daily cap) |
 | D | Daily-cap meter | Progress bar | fill `accent` on `border.subtle` track | reviewed-today / soft cap |
 | E | Start review | Primary button, min height 48 | `accent`, label `#062826` | static |
@@ -94,8 +94,8 @@ No network call required to render — all reads hit local SQLite. Render with l
 | **Zero due / caught up** | 0 words due | Due card swaps to "All caught up" state; emphasize **Learn new words**; Start review demoted/hidden. |
 | **Cap reached today** | reviewed-today ≥ soft cap | Meter full; due card reads done-state copy; no overdue/guilt count anywhere. |
 | **No new words (tier exhausted)** | `getNewWords` == 0 | Learn new words → upgrade/next-tier nudge (never a hard wall, links Paywall per flow 5). |
-| **Streak at-risk** | Today's session not done | Streak chip = flame outline + `caution` ring (gentle), not a countdown. |
-| **Streak frozen** | A freeze was auto-consumed | **Streak Frozen Glyph Policy:** Since the design system lacks a custom snowflake token, the spec uses the Unicode character `❄` combined with the `text.secondary` color token. Renders chip with a warm inline note on return. |
+| **Streak at-risk** | Today's session not done | **Triple-channel:** Lucide `Flame` icon at reduced opacity (0.5) + label text "Keep your streak!" + `caution` color token. Chip border changes to `caution` ring (gentle). Not a countdown; no alarm framing. |
+| **Streak frozen** | A freeze was auto-consumed | **Triple-channel:** Lucide `Snowflake` icon + label text "Frozen" + `text.secondary` color token. Renders chip with a warm inline note on return. No `❄` Unicode character — use the `Snowflake` component from `lucide-react-native`. |
 | **Account-less** | No account | Greeting uses fallback copy (no name); Settings still offers sign-in. |
 | **Offline** | No connectivity | Fully functional from SQLite; no error banner (offline is normal). |
 

@@ -80,10 +80,21 @@ Where applicable, a one-time **Common 3000** unlock ($1.99) may appear as an add
 | Trigger context (tier) | caller | drives title + benefits |
 | Product list + prices | IAP adapter (RevenueCat; `StubIapService` for now) | localized store prices |
 | Active teacher code/trial | redemption service | shows extended trial, no off-store steering |
-| Entitlement write | `UnlockTierUseCase` | **Local-First Verification Boundary:** On success, atomically writes to local `user_entitlements` in `user.db` (local SQLite is the offline read source of truth for verified entitlements). Subsequently triggers a sync push to the cloud mirror `user_entitlements_sync` in Supabase. Step 1 (SQLite write) *must* complete successfully before the UI unlocks the content tier. |
+| Entitlement write | `UnlockTierUseCase` | **Verified-Entitlement Persistence:** Called only after server-side receipt validation (RevenueCat / `validate_receipt` Supabase Edge Function confirms the receipt). Persists the verified entitlement to local `user_entitlements` in `user.db`. SQLite is the offline **read** source for verified entitlements; it is not the grant authority. An unverified local write must never unlock paid content. After persistence, the verified entitlement syncs to the cloud mirror `user_entitlements_sync`. `UnlockTierUseCase` does not perform receipt validation — that is infrastructure/external responsibility. |
+
+**Purchase State Machine (IAP → entitlement):**
+
+1. User taps Choose/Unlock → native StoreKit / Google Play Billing sheet opens (IAP adapter: `StubIapService` at MVP, `RevenueCatIapService` in Phase 3).
+2. Store returns one of: `cancelled` / `pending` / `error` / receipt token.
+3. Receipt token is sent to the `validate_receipt` Supabase Edge Function (server-side trusted write; client cannot self-grant).
+4. On valid receipt: Edge Function writes entitlement to `user_entitlements_sync` (service role). `UnlockTierUseCase` then mirrors the verified entitlement to local `user.db`.
+5. Local entitlement enables offline-first access to verified paid content. Content unlocks.
+6. Revocation/refund: local entitlement is expired or deleted on the next validation/sync cycle.
+
+Pending/deferred receipts (e.g. Apple "Ask to Buy") must not write a local entitlement; show the pending state only.
 
 **Hexagonal Architecture Boundaries:**
-- All IAP client code and vendor SDK adapter logic (RevenueCat, StoreKit, Google Play Billing) lives strictly in `infrastructure/iap/`.
+- The IAP adapter (`StubIapService` at MVP, `RevenueCatIapService` at Phase 3) lives strictly in `infrastructure/iap/`. **The Paywall screen (presentation layer) calls the application layer only and must never import from `infrastructure/` directly.**
 - All entitlement valuation and subscription business logic (what tier to offer, trial balance calculations, active promo checks) lives in `application/entitlements/PaywallReviewUseCase`.
 - Premium Pass unlocks all current and future paid tiers globally. No off-store steering allowed in the presentation layer.
 
@@ -94,8 +105,8 @@ Where applicable, a one-time **Common 3000** unlock ($1.99) may appear as an add
 | **Default** | Opened | Title, benefits, options, restore |
 | **Teacher code active** | Code applied | Show extended trial line (F); no discount steering |
 | **Purchasing** | Choose tapped | Hand off to native StoreKit/Play sheet; show pending affordance |
-| **Success** | Purchase complete | Entitlement saved locally + synced; content unlocks immediately; confirmation toast; dismiss |
-| **Pending/deferred** | Family approval | "We'll unlock as soon as it's approved." |
+| **Success** | Receipt validated (server-side) | Verified entitlement persisted locally + synced; content unlocks; confirmation toast; dismiss |
+| **Pending/deferred** | Store returns `pending` (e.g. Ask to Buy / family approval) | "We'll unlock as soon as it's approved." No local entitlement written until validation succeeds. |
 | **Cancel/fail** | User cancels native sheet | Return to Paywall, no nag, no penalty |
 | **Offline** | No connectivity at purchase | Block gracefully: "connect to complete purchase"; never lose a granted entitlement |
 
@@ -145,7 +156,7 @@ Banned: countdown timers, fake scarcity, pre-checked upsells, "limited offer" pr
 - [ ] Honest framing: cancel-anytime, no ads, no auto-renew dark patterns, no fake scarcity.
 - [ ] Monthly ($4.99) and annual Premium Pass ($24.99, unlocks all paid tiers) both present; one-time Common 3000 ($1.99) where applicable.
 - [ ] Restore purchases always available (here + Settings).
-- [ ] On success, entitlement is written to local SQLite first, then synced to cloud.
+- [ ] Entitlement is persisted to local SQLite only after server-side receipt validation (RevenueCat / Edge Function); unverified local writes must not unlock paid content. Pending/deferred receipts show the pending state — no local entitlement write until validated.
 - [ ] Entitlement/unlock decisions resolved in `application/`, not presentation.
 - [ ] Teacher code shows an extended trial, never off-store discount steering.
 - [ ] Pending/deferred and offline cases handled gracefully without losing granted entitlements.

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>style_guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap');
+        :root {
+            --bg-deep: #0E1112;
+            --accent-teal: #20B2AA;
+            --accent-amber: #FFC107;
+            --muted-slate: #94A3B8;
+            --white-soft: rgba(255, 255, 255, 0.06);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .iphone-frame {
+            width: 393px;
+            height: 852px;
+            background-color: var(--bg-deep);
+            position: relative;
+            border-radius: 0px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin: 2rem auto;
+        }
+        .editorial-title {
+            font-family: 'Playfair Display', serif;
+            letter-spacing: -0.01em;
+        }
+        .label-caps {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+        .token-swatch {
+            height: 80px;
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--white-soft);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 8px 12px;
+        }
+        .tactile-depth {
+            background: linear-gradient(145deg, #1A1E1F, #141718);
+            border: 1px solid var(--white-soft);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.02);
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame flex flex-col text-white">
+        <!-- #header_001 -->
+        <header class="flex-shrink-0 pt-16 px-8 pb-6 border-b border-white/[0.04]">
+            <div class="flex items-center gap-2 text-[var(--accent-teal)] mb-4">
+                <iconify-icon icon="ph:swatches-bold" class="text-xl"></iconify-icon>
+                <span class="label-caps">Design System</span>
+            </div>
+            <h1 class="editorial-title text-[34px] font-bold leading-tight">
+                Style Guide
+            </h1>
+        </header>
+        <!-- /#header_001 -->
+
+        <!-- #scroll-content_002 -->
+        <div class="flex-1 overflow-y-auto px-8 py-8 space-y-12">
+            <!-- #color-tokens_003 -->
+            <section>
+                <h2 class="label-caps text-[var(--accent-teal)] mb-6">Color Tokens</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-2">
+                        <div class="token-swatch bg-[#20B2AA]">
+                            <span class="text-[10px] font-bold text-black/60">WCAG AA</span>
+                        </div>
+                        <span class="text-sm font-semibold">Teal</span>
+                        <span class="text-xs text-[var(--muted-slate)] uppercase">#20B2AA</span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div class="token-swatch bg-[#FFC107]">
+                            <span class="text-[10px] font-bold text-black/60">WCAG AAA</span>
+                        </div>
+                        <span class="text-sm font-semibold">Amber</span>
+                        <span class="text-xs text-[var(--muted-slate)] uppercase">#FFC107</span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div class="token-swatch bg-[#0E1112]">
+                            <span class="text-[10px] font-bold text-white/40">N/A</span>
+                        </div>
+                        <span class="text-sm font-semibold">Deep Charcoal</span>
+                        <span class="text-xs text-[var(--muted-slate)] uppercase">#0E1112</span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <div class="token-swatch bg-[#94A3B8]">
+                            <span class="text-[10px] font-bold text-black/60">WCAG AA</span>
+                        </div>
+                        <span class="text-sm font-semibold">Muted Slate</span>
+                        <span class="text-xs text-[var(--muted-slate)] uppercase">#94A3B8</span>
+                    </div>
+                </div>
+            </section>
+            <!-- /#color-tokens_003 -->
+
+            <!-- #typography_004 -->
+            <section class="space-y-6">
+                <h2 class="label-caps text-[var(--accent-teal)] mb-6">Typography Scale</h2>
+                <div class="space-y-8">
+                    <div class="space-y-1">
+                        <p class="text-[var(--muted-slate)] text-[10px] font-bold uppercase tracking-widest">H1 Display (44/1.1)</p>
+                        <h1 class="editorial-title text-[44px] font-bold">LexiTap</h1>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-[var(--muted-slate)] text-[10px] font-bold uppercase tracking-widest">H2 Editorial (34/1.1)</p>
+                        <h2 class="editorial-title text-[34px] font-bold">Master English</h2>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-[var(--muted-slate)] text-[10px] font-bold uppercase tracking-widest">H3 Section (18/1.2)</p>
+                        <h3 class="text-[18px] font-bold">Academic Success</h3>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-[var(--muted-slate)] text-[10px] font-bold uppercase tracking-widest">Body Standard (15/1.6)</p>
+                        <p class="text-[15px] text-[var(--muted-slate)] leading-relaxed">Adaptive algorithms designed for high-stakes results.</p>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-[var(--muted-slate)] text-[10px] font-bold uppercase tracking-widest">Small-Caps Branded (11/0.15em)</p>
+                        <p class="label-caps">Helpful Fact</p>
+                    </div>
+                </div>
+            </section>
+            <!-- /#typography_004 -->
+
+            <!-- #depth_005 -->
+            <section>
+                <h2 class="label-caps text-[var(--accent-teal)] mb-6">Surface Depth</h2>
+                <div class="space-y-4">
+                    <div class="tactile-depth p-6 rounded-xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-[15px] font-semibold">Standard Surface</span>
+                            <div class="w-4 h-4 rounded-full border border-white/20"></div>
+                        </div>
+                        <p class="text-[13px] text-[var(--muted-slate)]">8px radius, 1px border (#FFFFFF 0.06), 145° Gradient</p>
+                    </div>
+                </div>
+            </section>
+            <!-- /#depth_005 -->
+
+            <!-- #grid_006 -->
+            <section>
+                <h2 class="label-caps text-[var(--accent-teal)] mb-6">Spacing & Grid</h2>
+                <div class="relative h-32 bg-white/[0.02] border border-dashed border-white/10 rounded-lg overflow-hidden flex items-center justify-center">
+                    <div class="absolute inset-0 grid grid-cols-12 gap-2 opacity-20">
+                        <div class="h-full bg-[var(--accent-teal)]"></div>
+                        <div class="h-full bg-[var(--accent-teal)]"></div>
+                        <div class="h-full bg-[var(--accent-teal)]"></div>
+                        <div class="h-full bg-[var(--accent-teal)]"></div>
+                        <div class="h-full bg-[var(--accent-teal)]"></div>
+                        <div class="h-full bg-[var(--accent-teal)]"></div>
+                        <div class="h-full bg-[var(--accent-teal)]"></div>
+                        <div class="h-full bg-[var(--accent-teal)]"></div>
+                        <div class="h-full bg-[var(--accent-teal)]"></div>
+                        <div class="h-full bg-[var(--accent-teal)]"></div>
+                        <div class="h-full bg-[var(--accent-teal)]"></div>
+                        <div class="h-full bg-[var(--accent-teal)]"></div>
+                    </div>
+                    <span class="relative z-10 text-xs font-bold bg-black px-2 py-1 rounded">8pt Baseline System</span>
+                </div>
+            </section>
+            <!-- /#grid_006 -->
+        </div>
+        <!-- /#scroll-content_002 -->
+
+        <!-- #footer_007 -->
+        <footer class="flex-shrink-0 p-8 pt-4 pb-12 border-t border-white/[0.04]">
+            <p class="text-[10px] text-center text-[var(--muted-slate)] font-bold uppercase tracking-[0.2em]">
+                v1.0.4 • LexiTap Brand Guidelines
+            </p>
+        </footer>
+        <!-- /#footer_007 -->
+    </div>
+</body>
+</html>

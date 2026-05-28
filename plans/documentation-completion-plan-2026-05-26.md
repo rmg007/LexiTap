@@ -1,10 +1,24 @@
 # Plan: Documentation Completion and Canonical Consistency
 
 **Date:** 2026-05-26  
-**Status:** Planned, deep-audit revision  
+**Status:** Partially complete — P0-01 and P0-02 resolved 2026-05-27. P0-03, P0-04, P1-02, P1-03, P1-04, P1-05 remain pending.  
 **Mode:** Planning only  
 **Scope:** Documentation only (`lexitap-docs/`, root planning docs, and `plans/`)  
 **Constraint invariant:** Do not implement React Native, SQLite, content-tool, Supabase, native auth, IAP, or build-system code while executing this plan.
+
+## Completion Log
+
+| Item | Status | Date | Notes |
+|------|--------|------|-------|
+| P0-01: Entitlement authority conflict | ✅ Done | 2026-05-27 | Patched `Paywall.md`, `USER_FLOWS.md`, `SECURITY_MODEL.md`, `API_CONTRACT.md`, `SYSTEM_ARCHITECTURE.md`, `MONETIZATION_COMPLIANCE.md` |
+| P0-02: SRS forgiveness freeze-field sync conflict | ✅ Done | 2026-05-27 | Patched `SRS_FORGIVENESS_MECHANICS.md`, `DATABASE_SCHEMA.md`, `API_CONTRACT.md` |
+| P0-03: Auth provider alignment | ⏳ Pending | — | Multi-file: DATA_MODELS, TECH_STACK_DECISIONS, INFRASTRUCTURE_DIAGRAM, env/privacy docs |
+| P0-04: B2B entitlement and teacher-code authority | ⏳ Pending | — | Entitlement-grant matrix not yet written across docs; `TeacherCodeRedemption.md` provisional-storage gap was addressed via screen-spec pass |
+| P1-01: Screen-spec implementation readiness | ✅ Done (Phase A) | 2026-05-27 | All 13 screen spec retrofits completed; see `screens-improvement-plan.md` |
+| P1-02: Analytics/event taxonomy alignment | ⏳ Pending | — | `ANALYTICS_PLAN.md`, `DATABASE_SCHEMA.md`, `DATA_MODELS.md` not yet aligned |
+| P1-03: Phase and implementation-status accuracy | ⏳ Pending | — | Screen README, PRD, FEATURE_BACKLOG status labels not yet updated |
+| P1-04: Canonical source map | ⏳ Pending | — | `lexitap-docs/README.md` "which doc wins" map not yet written |
+| P1-05: Open questions triage | ⏳ Pending | — | Stale open-question labels not yet audited across all files |
 
 ## 1. Goal
 
@@ -50,7 +64,7 @@ This table should eventually live in `lexitap-docs/README.md` or `SYSTEM_ARCHITE
 
 ## 4. P0 Reconciliation Work
 
-### P0-01: Entitlement authority vs offline runtime source
+### P0-01: Entitlement authority vs offline runtime source — ✅ RESOLVED 2026-05-27
 
 **Conflict found:**
 
@@ -91,7 +105,7 @@ Recommended purchase state machine:
 - The phrase "SQLite source of truth" is scoped to offline runtime state and learning progress.
 - `UnlockTierUseCase` is documented as "persist verified entitlement," not "perform purchase validation."
 
-### P0-02: SRS forgiveness sync model vs current schema/API model
+### P0-02: SRS forgiveness sync model vs current schema/API model — ✅ RESOLVED 2026-05-27
 
 **Conflict found:**
 
@@ -125,7 +139,7 @@ Use the current schema/API model unless product intentionally changes it:
 - Sign-in docs do not promise cross-device freeze continuity unless the sync model supports it.
 - Streak continuity language distinguishes streak/totals sync from local freeze balance.
 
-### P0-03: Auth provider alignment
+### P0-03: Auth provider alignment — ⏳ PENDING
 
 **Conflict found:**
 
@@ -161,7 +175,7 @@ If Google remains in Phase 3, then Apple is also Phase 3. Email/password remains
 - Magic-link vs password remains open only if intentionally undecided.
 - No install/dependency doc implies `expo-apple-authentication` is installed before it is actually added.
 
-### P0-04: B2B entitlement and teacher-code authority
+### P0-04: B2B entitlement and teacher-code authority — ⏳ PENDING (partial)
 
 **Conflict / incompleteness found:**
 

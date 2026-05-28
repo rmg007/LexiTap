@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>settings_shell</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap');
+        :root {
+            --bg-deep: #0E1112;
+            --accent-teal: #20B2AA;
+            --muted-slate: #94A3B8;
+            --white-soft: rgba(255, 255, 255, 0.06);
+        }
+        .iphone-frame {
+            width: 393px;
+            height: 852px;
+            background-color: var(--bg-deep);
+            position: relative;
+            border-radius: 0px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin: 2rem auto;
+        }
+        .label-caps {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+        .tactile-card {
+            background: linear-gradient(145deg, #1A1E1F, #141718);
+            border: 1px solid var(--white-soft);
+        }
+        .toggle-bg {
+            width: 44px;
+            height: 24px;
+            background: #1f2324;
+            border-radius: 12px;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        .toggle-bg-active {
+            background: var(--accent-teal);
+        }
+        .toggle-knob {
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: all 0.2s ease;
+        }
+        .toggle-knob-active {
+            left: 23px;
+        }
+    </style>
+</head>
+<body class="bg-neutral-900 font-['Inter']">
+    <div class="iphone-frame flex flex-col text-white">
+        <!-- #header_201 -->
+        <header class="flex-shrink-0 pt-16 px-8 pb-6">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-[34px] font-bold tracking-tight">Settings</h1>
+                <button class="w-10 h-10 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center active:opacity-60">
+                    <iconify-icon icon="ph:x-bold" class="text-xl"></iconify-icon>
+                </button>
+            </div>
+        </header>
+        <!-- /#header_201 -->
+
+        <!-- #scroll-content_202 -->
+        <div class="flex-1 overflow-y-auto px-8 space-y-8 pb-12">
+            <!-- #account-section_203 -->
+            <section class="space-y-4">
+                <h2 class="label-caps text-[var(--accent-teal)] opacity-80 pl-1">Account</h2>
+                <div class="tactile-card rounded-[8px] divide-y divide-white/[0.04]">
+                    <div class="p-5 flex items-center justify-between active:bg-white/[0.02]">
+                        <div class="flex items-center gap-4">
+                            <iconify-icon icon="ph:user-circle-light" class="text-2xl text-[var(--accent-teal)]"></iconify-icon>
+                            <span class="font-medium">Personal Details</span>
+                        </div>
+                        <iconify-icon icon="ph:caret-right-bold" class="text-[var(--muted-slate)] opacity-40"></iconify-icon>
+                    </div>
+                    <div class="p-5 flex items-center justify-between active:bg-white/[0.02]">
+                        <div class="flex items-center gap-4">
+                            <iconify-icon icon="ph:shield-check-light" class="text-2xl text-[var(--accent-teal)]"></iconify-icon>
+                            <span class="font-medium">Security & Password</span>
+                        </div>
+                        <iconify-icon icon="ph:caret-right-bold" class="text-[var(--muted-slate)] opacity-40"></iconify-icon>
+                    </div>
+                    <div class="p-5 flex items-center justify-between active:bg-white/[0.02]">
+                        <div class="flex items-center gap-4">
+                            <iconify-icon icon="ph:crown-light" class="text-2xl text-[var(--accent-teal)]"></iconify-icon>
+                            <span class="font-medium">Premium Subscription</span>
+                        </div>
+                        <span class="text-xs font-bold text-[var(--accent-teal)] px-2 py-1 bg-[var(--accent-teal)]/10 rounded">ACTIVE</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- #goals-section_204 -->
+            <section class="space-y-4">
+                <h2 class="label-caps text-[var(--accent-teal)] opacity-80 pl-1">Study Goals</h2>
+                <div class="tactile-card rounded-[8px] divide-y divide-white/[0.04]">
+                    <div class="p-5 flex items-center justify-between active:bg-white/[0.02]">
+                        <div class="flex items-center gap-4">
+                            <iconify-icon icon="ph:target-light" class="text-2xl text-[var(--accent-teal)]"></iconify-icon>
+                            <span class="font-medium">Daily Target</span>
+                        </div>
+                        <span class="text-sm text-[var(--muted-slate)]">15 Words</span>
+                    </div>
+                    <div class="p-5 flex items-center justify-between active:bg-white/[0.02]">
+                        <div class="flex items-center gap-4">
+                            <iconify-icon icon="ph:calendar-light" class="text-2xl text-[var(--accent-teal)]"></iconify-icon>
+                            <span class="font-medium">Reminder Schedule</span>
+                        </div>
+                        <iconify-icon icon="ph:caret-right-bold" class="text-[var(--muted-slate)] opacity-40"></iconify-icon>
+                    </div>
+                </div>
+            </section>
+
+            <!-- #notifications-section_205 -->
+            <section class="space-y-4">
+                <h2 class="label-caps text-[var(--accent-teal)] opacity-80 pl-1">Notifications</h2>
+                <div class="tactile-card rounded-[8px] divide-y divide-white/[0.04]">
+                    <div class="p-5 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <iconify-icon icon="ph:bell-light" class="text-2xl text-[var(--accent-teal)]"></iconify-icon>
+                            <span class="font-medium">Smart Reminders</span>
+                        </div>
+                        <div class="toggle-bg toggle-bg-active">
+                            <div class="toggle-knob toggle-knob-active"></div>
+                        </div>
+                    </div>
+                    <div class="p-5 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <iconify-icon icon="ph:lightning-light" class="text-2xl text-[var(--accent-teal)]"></iconify-icon>
+                            <span class="font-medium">Weekly Reports</span>
+                        </div>
+                        <div class="toggle-bg">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <!-- /#scroll-content_202 -->
+    </div>
+</body>
+</html>

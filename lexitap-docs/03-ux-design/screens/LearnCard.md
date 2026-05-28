@@ -71,7 +71,7 @@ Introduce new vocabulary from the active tier one card at a time before any asse
 |---|---|---|
 | New-word batch | `getNewWords` use case | default 10, from active tier; filter `deleted_at IS NULL` |
 | Word fields (def, example, POS, phonetic, audio, image) | bundled `words.db` | nullable fields hidden when absent |
-| Initial mastery seed | Written *only* after completing the subsequent [LearnQuickCheck.md](./LearnQuickCheck.md) diagnostic. First exposure does *not* write SRS rows to `user.db`. This boundary is strict; the transition to the Quick-Check is the atomic SRS seed boundary. |
+| Initial mastery seed | Written *only* after completing the subsequent [LearnQuickCheck.md](./LearnQuickCheck.md) diagnostic. First exposure does *not* write SRS rows to `user.db`. This boundary is strict; the transition to the Quick-Check is the atomic SRS seed boundary. **No SRS write occurs on the LearnCard itself.** The atomic SRS write (upsert `user_progress`, append `quiz_attempts`, insert `event_log`) happens at the completion of `LearnQuickCheck` via `AnswerQuestionUseCase`. The LearnCard is presentation-only; SRS state is unchanged until the user answers the quick check. |
 
 ## 6. States
 

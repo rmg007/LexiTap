@@ -95,6 +95,8 @@ The MVP recognition widget. Present one word under study and 2–4 meaning optio
 |---|---|---|---|
 | Option card (G) | tap | Select (single-select); previously selected deselects | `selection` |
 | Audio (E) | tap | Play pronunciation | none |
+
+> **Audio autoplay rule (resolved):** Audio playback is strictly user-initiated via tap on the audio button (E). Audio MUST NOT autoplay on question reveal, on option selection, or on answer feedback. This is a hard invariant per [ACCESSIBILITY_REQUIREMENTS.md](../ACCESSIBILITY_REQUIREMENTS.md) §Audio: "No audio autoplay that could surprise a screen-reader user; playback is user-initiated." An AI coding agent must never add autoplay behavior to this component.
 | Check (H) | tap | Evaluate, write attempt + SRS, reveal feedback | success: soft success; incorrect: **none** (no error haptic) |
 | Back (A) | tap | If mid-session, confirm discard; else return | none |
 

@@ -1,0 +1,107 @@
+{
+  "name": "Language Learning",
+  "exportedAt": "2026-05-27T18:14:32.600Z",
+  "screenCount": 20,
+  "screens": [
+    {
+      "id": "generate-welcome_screen",
+      "name": "welcome_screen.html",
+      "file": "screens/welcome_screen-html.html"
+    },
+    {
+      "id": "generate-goal_selection",
+      "name": "goal_selection.html",
+      "file": "screens/goal_selection-html.html"
+    },
+    {
+      "id": "generate-level_assessment",
+      "name": "level_assessment.html",
+      "file": "screens/level_assessment-html.html"
+    },
+    {
+      "id": "generate-study_commitment",
+      "name": "study_commitment.html",
+      "file": "screens/study_commitment-html.html"
+    },
+    {
+      "id": "generate-benefits_education",
+      "name": "benefits_education.html",
+      "file": "screens/benefits_education-html.html"
+    },
+    {
+      "id": "generate-paywall_premium",
+      "name": "paywall_premium.html",
+      "file": "screens/paywall_premium-html.html"
+    },
+    {
+      "id": "generate-welcome_screen_light",
+      "name": "welcome_screen_light.html",
+      "file": "screens/welcome_screen_light-html.html"
+    },
+    {
+      "id": "generate-goal_selection_light",
+      "name": "goal_selection_light.html",
+      "file": "screens/goal_selection_light-html.html"
+    },
+    {
+      "id": "generate-level_assessment_light",
+      "name": "level_assessment_light.html",
+      "file": "screens/level_assessment_light-html.html"
+    },
+    {
+      "id": "generate-vocabulary_diagnostic_light",
+      "name": "vocabulary_diagnostic_light.html",
+      "file": "screens/vocabulary_diagnostic_light-html.html"
+    },
+    {
+      "id": "generate-benefits_education_light",
+      "name": "benefits_education_light.html",
+      "file": "screens/benefits_education_light-html.html"
+    },
+    {
+      "id": "generate-paywall_premium_light",
+      "name": "paywall_premium_light.html",
+      "file": "screens/paywall_premium_light-html.html"
+    },
+    {
+      "id": "generate-knowledge_map_reveal",
+      "name": "knowledge_map_reveal.html",
+      "file": "screens/knowledge_map_reveal-html.html"
+    },
+    {
+      "id": "generate-knowledge_map_reveal_light",
+      "name": "knowledge_map_reveal_light.html",
+      "file": "screens/knowledge_map_reveal_light-html.html"
+    },
+    {
+      "id": "recovered-111270-1779904954956",
+      "name": "style_guide.html",
+      "file": "screens/style_guide-html.html"
+    },
+    {
+      "id": "recovered-111271-1779904954957",
+      "name": "component_library.html",
+      "file": "screens/component_library-html.html"
+    },
+    {
+      "id": "recovered-111272-1779904954957",
+      "name": "study_session.html",
+      "file": "screens/study_session-html.html"
+    },
+    {
+      "id": "recovered-111273-1779904954957",
+      "name": "empty_state.html",
+      "file": "screens/empty_state-html.html"
+    },
+    {
+      "id": "recovered-111274-1779904954958",
+      "name": "settings_shell.html",
+      "file": "screens/settings_shell-html.html"
+    },
+    {
+      "id": "recovered-111275-1779904954958",
+      "name": "review_complete.html",
+      "file": "screens/review_complete-html.html"
+    }
+  ]
+}

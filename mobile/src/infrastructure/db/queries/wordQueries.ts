@@ -83,8 +83,29 @@ export function selectWordsByTier(db: DatabaseHandle, tierId: string): Promise<W
     `SELECT ${WORD_COLUMNS}
      FROM contentdb.words w
      WHERE w.tier_id = ? AND w.deleted_at IS NULL
-     ORDER BY w.created_at ASC`,
+     ORDER BY w.word ASC`,
     [tierId],
+  );
+}
+
+// Keyset-paginated alphabetical word browse for a tier. Pass null afterWord for
+// the first page; subsequent pages pass the last `word` value received.
+// Uses idx_words_alphabetical — O(log n) regardless of page depth.
+export function selectWordsByTierAlphabeticalPage(
+  db: DatabaseHandle,
+  tierId: string,
+  afterWord: string | null,
+  limit: number,
+): Promise<WordRow[]> {
+  return db.all<WordRow>(
+    `SELECT ${WORD_COLUMNS}
+     FROM contentdb.words w
+     WHERE w.tier_id = ?
+       AND w.deleted_at IS NULL
+       AND (? IS NULL OR w.word > ?)
+     ORDER BY w.word ASC
+     LIMIT ?`,
+    [tierId, afterWord, afterWord, limit],
   );
 }
 

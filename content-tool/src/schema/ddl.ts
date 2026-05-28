@@ -48,9 +48,11 @@ CREATE TABLE words (
 `.trim();
 
 export const CREATE_WORDS_INDEXES = [
-  `CREATE INDEX idx_words_tier   ON words(tier_id);`,
-  `CREATE INDEX idx_words_cefr   ON words(cefr_level);`,
-  `CREATE INDEX idx_words_active ON words(deleted_at) WHERE deleted_at IS NULL;`,
+  `CREATE INDEX idx_words_tier          ON words(tier_id);`,
+  `CREATE INDEX idx_words_cefr          ON words(cefr_level);`,
+  `CREATE INDEX idx_words_active        ON words(deleted_at) WHERE deleted_at IS NULL;`,
+  // Keyset pagination for alphabetical tier browsing (DATABASE_SCHEMA.md §Keyset Pagination).
+  `CREATE INDEX idx_words_alphabetical  ON words(tier_id, word) WHERE deleted_at IS NULL;`,
 ];
 
 /** Full ordered DDL for building a fresh content DB (tiers, words, indexes). */

@@ -53,7 +53,7 @@ export const darkColors: ColorTokens = {
 export const lightColors: ColorTokens = {
   bgBase: '#FBFCFC',
   bgSurface: '#FFFFFF',
-  bgSurfaceRaised: '#FFFFFF',
+  bgSurfaceRaised: '#F7F9F9',
   bgSurfaceSunken: '#F1F3F4',
   borderSubtle: '#E6E9EA',
   borderStrong: '#C4CBCE',
@@ -96,22 +96,47 @@ export const radii = {
 
 export type Radii = typeof radii;
 
-// Modular 1.2 type scale (React Native logical units).
+// Type scale. fontFamily names reference expo-google-fonts packages that must
+// be loaded by the root layout before screens render (see expo-font).
+// Localization: React Native applies RTL mirroring automatically; font metrics
+// scale correctly for all supported locales including CJK and Arabic.
 export interface TypeStyle {
   readonly fontSize: number;
   readonly lineHeight: number;
   readonly fontWeight: '400' | '500' | '600' | '700';
+  // Font family name as loaded by expo-font. Omit to inherit system default.
+  readonly fontFamily?: string;
+  // Uppercase + letter-spacing label pattern (Small-Caps Branded).
+  readonly letterSpacing?: number;
+  readonly textTransform?: 'uppercase' | 'lowercase' | 'capitalize' | 'none';
 }
 
 export const typography = {
-  display: { fontSize: 34, lineHeight: 40, fontWeight: '700' },
-  title: { fontSize: 28, lineHeight: 34, fontWeight: '700' },
-  headline: { fontSize: 22, lineHeight: 28, fontWeight: '600' },
-  bodyLg: { fontSize: 18, lineHeight: 26, fontWeight: '400' },
-  body: { fontSize: 16, lineHeight: 24, fontWeight: '400' },
-  label: { fontSize: 14, lineHeight: 20, fontWeight: '600' },
-  caption: { fontSize: 13, lineHeight: 18, fontWeight: '400' },
-  mono: { fontSize: 14, lineHeight: 20, fontWeight: '500' },
+  // ── Design-spec canonical levels (style_guide.png) ─────────────────────
+  // H1 Display  44/1.1  — Playfair Display Bold
+  h1: { fontSize: 44, lineHeight: 48, fontWeight: '700', fontFamily: 'PlayfairDisplay_700Bold' },
+  // H2 Editorial 34/1.1 — Playfair Display Bold
+  display: { fontSize: 34, lineHeight: 38, fontWeight: '700', fontFamily: 'PlayfairDisplay_700Bold' },
+  // H3 Section   18/1.2 — Inter Bold
+  headline: { fontSize: 18, lineHeight: 22, fontWeight: '700', fontFamily: 'Inter_700Bold' },
+  // Body Standard 15/1.6 — Inter Regular
+  body: { fontSize: 15, lineHeight: 24, fontWeight: '400', fontFamily: 'Inter_400Regular' },
+  // Small-Caps Branded 11/0.15em — Inter Bold
+  smallCaps: {
+    fontSize: 11,
+    lineHeight: 16,
+    fontWeight: '700',
+    fontFamily: 'Inter_700Bold',
+    letterSpacing: 1.65, // 11 * 0.15 = 1.65
+    textTransform: 'uppercase' as const,
+  },
+
+  // ── Extended scale (intermediate UI density steps) ─────────────────────
+  title: { fontSize: 28, lineHeight: 34, fontWeight: '700', fontFamily: 'Inter_700Bold' },
+  bodyLg: { fontSize: 18, lineHeight: 26, fontWeight: '400', fontFamily: 'Inter_400Regular' },
+  label: { fontSize: 14, lineHeight: 20, fontWeight: '600', fontFamily: 'Inter_600SemiBold' },
+  caption: { fontSize: 13, lineHeight: 18, fontWeight: '400', fontFamily: 'Inter_400Regular' },
+  mono: { fontSize: 14, lineHeight: 20, fontWeight: '500', fontFamily: 'Inter_500Medium' },
 } as const satisfies Record<string, TypeStyle>;
 
 export type Typography = typeof typography;

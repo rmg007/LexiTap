@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 import { useColorScheme } from 'react-native';
+import { PaperProvider } from 'react-native-paper';
 import { type ColorScheme, type Theme, themeForScheme } from '@/presentation/theme/tokens';
+import { darkPaperTheme, lightPaperTheme } from '@/presentation/theme/paperTheme';
 
 // Theme context. Dark-mode-first: dark is the fallback when the OS appearance
 // is unavailable (DESIGN_SYSTEM.md). A manual override (Settings) takes
@@ -36,7 +38,13 @@ export function ThemeProvider({
     return { theme: themeForScheme(resolved), preference, setPreference };
   }, [preference, osScheme]);
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  const paperTheme = value.theme.scheme === 'dark' ? darkPaperTheme : lightPaperTheme;
+
+  return (
+    <ThemeContext.Provider value={value}>
+      <PaperProvider theme={paperTheme}>{children}</PaperProvider>
+    </ThemeContext.Provider>
+  );
 }
 
 /** Active theme tokens. Throws if used outside a ThemeProvider. */

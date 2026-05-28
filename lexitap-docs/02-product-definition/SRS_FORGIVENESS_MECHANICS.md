@@ -245,9 +245,9 @@ The streak is secured by **showing up and completing the day's first session** �
 
 All additive, forward-only, never-DROP, consistent with [../04-technical-architecture/DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md#migration-strategy). No `quiz_attempts`/`event_log` mutation; the re-anchor appends one `event_log` row.
 
-### New `user_stats` fields (local device-only for freeze state; subset mirrored to Supabase `user_stats_sync`)
+### New `user_stats` fields (freeze state device-only; streak/totals subset synced to Supabase `user_stats_sync`)
 
-Streak state subset mirrors to `user_stats_sync` (cloud) and is recomputed locally on demand. To prevent cross-device abuse (double-spending freezes) and keep sync operations low-overhead, all streak freeze balance fields are **strictly device-only** at MVP and are never synced to the cloud:
+Only the streak/totals subset (`current_streak`, `longest_streak`, `last_activity_date`, `total_sessions`, `total_words_mastered`) mirrors to `user_stats_sync` (cloud). Freeze fields (`freeze_count`, `freezes_granted_total`) are **NOT** included in `user_stats_sync` and are **never** synced to the cloud — they are strictly device-local state. This is a deliberate design decision: streak freezes are personal device state, not an account-level entitlement, so no cross-device sync or merge is needed.
 
 | Column | Type | Default | Sync Scope | Purpose |
 |--------|------|---------|------------|---------|
@@ -399,12 +399,11 @@ Contract notes for the implementer:
 - **Backlog larger than `perDay * drainDays`:** overflow clamps into the final bucket and continues draining via the daily cap on subsequent days; no overwhelming session, pile strictly shrinks each day the user shows up.
 - **Re-anchor would push a word later than already scheduled:** never — re-anchor only pulls dates inward (`min` guard), it cannot delay a word past its existing `next_review_date`.
 - **Multi-day offline streak of completions impossible:** completions only happen on days the app is opened; lazy freeze consumption handles all skipped days at next completion.
-- **Two devices, concurrent freeze spend:** last-write-wins per record could double-spend a freeze; merge rule keeps the *lower* `freeze_count` on conflict (conservative, never grants free streaks) — flagged in Open Questions for the sync implementer.
+- **Device switch:** Freeze state is device-local and not synced — a user on a new device begins with default freeze state (`freeze_count = 0`, `INITIAL_FREEZES_GRANTED` applied at onboarding). This is acceptable: streak freezes are a local forgiveness mechanism, not an account-level entitlement. There is no multi-device merge for `freeze_count`; the question is moot.
 - **Clock rolled backward / negative gap:** treated as `noop` to prevent streak/freeze inflation.
 
 ## Open Questions
 
-- **Freeze sync merge rule under conflict:** proposed conservative "keep lower freeze_count, keep higher current_streak" — needs validation against the device-switch test (Phase 2) to ensure it never double-spends nor double-grants. Owner: sync implementer.
 - **Parameter tuning post-launch:** `BASE_DAILY_CAP=40`, `CATCH_UP_BUDGET=20`, `CATCH_UP_DRAIN_DAYS=5`, `FREEZE_EARN_EVERY_N_STREAK_DAYS=7` are sensible defaults; revisit against D7/D30 retention data (success metrics, [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md)). `forgiveness.config.version` exists to make this a data/config change, not a redesign.
 - **Should new-word learning pause during heavy catch-up?** Currently new words remain available (separate budget). Possible refinement: suppress the "Learn new words" suggestion while a large backlog is draining to avoid pile-on. Deferred.
 - **Surfacing freeze balance in UI:** whether to show "freezes: 2" on Home or keep it invisible until consumed (flow 8 implies warm post-hoc notification). UX decision deferred to [../03-ux-design/USER_FLOWS.md](../03-ux-design/USER_FLOWS.md) owner.

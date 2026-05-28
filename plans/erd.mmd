@@ -1,0 +1,192 @@
+erDiagram
+    %% ─── words.db (read-only, bundled) ───────────────────────────────────────
+    content_tiers {
+        TEXT id PK
+        TEXT name
+        TEXT description
+        INTEGER is_free
+        REAL price_usd
+        TEXT sku
+        INTEGER word_count
+        INTEGER display_order
+        INTEGER is_active
+    }
+    words {
+        TEXT id PK
+        TEXT word
+        TEXT definition
+        TEXT tier_id FK
+        TEXT pos
+        TEXT cefr_level
+        INTEGER grade_level
+        TEXT word_type
+        INTEGER difficulty
+        TEXT theme
+        TEXT example_sentence
+        TEXT image_path
+        TEXT audio_path
+        TEXT synonyms
+        TEXT antonyms
+        TEXT usage_notes
+        INTEGER created_at
+        INTEGER deleted_at
+    }
+    content_tiers ||--o{ words : "contains"
+
+    %% ─── user.db (read-write, on-device) ─────────────────────────────────────
+    user_entitlements {
+        TEXT tier_id PK
+        INTEGER purchased_at
+        INTEGER expires_at
+        TEXT receipt_token
+    }
+    user_progress {
+        TEXT word_id PK
+        INTEGER mastery_level
+        INTEGER next_review_date
+        INTEGER last_reviewed_at
+        INTEGER consecutive_correct
+        INTEGER total_attempts
+        INTEGER total_correct
+        INTEGER first_seen_at
+        TEXT scheduler_version
+    }
+    quiz_sessions {
+        INTEGER id PK
+        TEXT tier_id
+        INTEGER started_at
+        INTEGER completed_at
+        INTEGER total_questions
+        INTEGER total_correct
+        INTEGER duration_seconds
+        TEXT quiz_mode
+    }
+    quiz_attempts {
+        INTEGER id PK
+        INTEGER session_id FK
+        TEXT word_id
+        TEXT assessment_type
+        TEXT user_answer
+        TEXT correct_answer
+        INTEGER is_correct
+        INTEGER answered_at
+        INTEGER time_to_answer_ms
+        INTEGER pre_mastery_level
+        INTEGER scheduled_review_date
+        TEXT scheduler_version
+    }
+    event_log {
+        INTEGER id PK
+        TEXT event_type
+        TEXT payload
+        INTEGER occurred_at
+    }
+    user_stats {
+        INTEGER id PK
+        INTEGER current_streak
+        INTEGER longest_streak
+        INTEGER last_activity_local_date
+        INTEGER total_sessions
+        INTEGER total_words_mastered
+        INTEGER freeze_count
+        INTEGER freezes_granted_total
+        INTEGER last_catchup_anchor_date
+        INTEGER last_activity_date
+    }
+    quiz_sessions ||--o{ quiz_attempts : "contains"
+
+    %% ─── Cross-DB ATTACH logical joins ───────────────────────────────────────
+    content_tiers ||--o| user_entitlements : "unlocks (ATTACH)"
+    content_tiers ||--o{ quiz_sessions : "scopes (ATTACH)"
+    words ||--o| user_progress : "SRS state (ATTACH)"
+    words ||--o{ quiz_attempts : "answered in (ATTACH)"
+
+    %% ─── Supabase cloud mirror (Postgres) ────────────────────────────────────
+    user_accounts {
+        UUID id PK
+        TEXT email
+        TEXT display_name
+        TEXT auth_provider
+        TEXT timezone
+        TIMESTAMP created_at
+        TIMESTAMP last_synced_at
+        BOOLEAN is_active
+    }
+    user_progress_sync {
+        UUID user_id FK
+        TEXT word_id
+        INTEGER mastery_level
+        BIGINT next_review_date
+        BIGINT last_reviewed_at
+        INTEGER consecutive_correct
+        INTEGER total_attempts
+        INTEGER total_correct
+        BIGINT first_seen_at
+        TIMESTAMP synced_at
+    }
+    user_entitlements_sync {
+        UUID user_id FK
+        TEXT tier_id
+        BIGINT purchased_at
+        BIGINT expires_at
+        TEXT receipt_token
+        TIMESTAMP synced_at
+    }
+    user_stats_sync {
+        UUID user_id PK
+        INTEGER current_streak
+        INTEGER longest_streak
+        BIGINT last_activity_date
+        INTEGER total_sessions
+        INTEGER total_words_mastered
+        TIMESTAMP synced_at
+    }
+    content_errors {
+        UUID id PK
+        UUID user_id FK
+        TEXT word_id
+        TEXT issue_type
+        TEXT note
+        TIMESTAMP created_at
+        TEXT status
+    }
+    teachers {
+        UUID id PK
+        TEXT name
+        TEXT email
+        TEXT referral_code
+        INTEGER total_referrals
+        INTEGER total_active_referrals
+        INTEGER reward_credits
+        INTEGER current_reward_tier
+        TIMESTAMP created_at
+    }
+    referrals {
+        UUID id PK
+        UUID teacher_id FK
+        TEXT teacher_code
+        UUID referred_user_id FK
+        INTEGER premium_trial_days
+        TEXT reward_status
+        INTEGER reward_credits_awarded
+        INTEGER reward_tier_at_qualification
+        TIMESTAMP attributed_at
+        TEXT source_event_id
+    }
+    promo_codes {
+        UUID id PK
+        TEXT code
+        TEXT type
+        TEXT free_product_id
+        INTEGER uses_remaining
+        INTEGER uses_count
+        TIMESTAMP expires_at
+        TIMESTAMP created_at
+        BOOLEAN is_active
+    }
+    user_accounts ||--o{ user_progress_sync : "mirrors"
+    user_accounts ||--o{ user_entitlements_sync : "mirrors"
+    user_accounts ||--o| user_stats_sync : "mirrors"
+    user_accounts ||--o{ content_errors : "reports"
+    teachers ||--o{ referrals : "generates"
+    user_accounts ||--o{ referrals : "referred by"

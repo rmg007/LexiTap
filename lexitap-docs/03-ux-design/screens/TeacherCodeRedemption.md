@@ -65,7 +65,7 @@ Let a learner apply a teacher advocate code (e.g. `TEACHER_MARIA`) to unlock an 
 | Code value | deep link param or picker | prefilled when arriving via link |
 | Validation result | redemption service (online check) | cached for offline reuse once validated |
 | Trial + attribution | redemption service | extended trial attaches; teacher attributed |
-| Account binding | **Provisional AsyncStorage Boundary:** If no account exists yet, the code is saved in `AsyncStorage` under key `pending_teacher_code` with a unique `source_event_id` UUID. Upon subsequent account creation or sign-in, the application layer reads this key and triggers the Supabase RPC `redeem_teacher_code` server-side to atomically bind the trial and attribution to the new account, cleaning up the storage key. |
+| Account binding | **Provisional AsyncStorage Boundary:** If no account exists yet, the code and a freshly-generated `source_event_id` UUID are saved together in `AsyncStorage` under the key `lexitap.pendingTeacherCode`. The UUID is generated at provisional storage time and is reused on every RPC retry — this ensures the code is redeemed at most once even if the network call is retried. Upon subsequent account creation or sign-in, the application layer reads `lexitap.pendingTeacherCode`, calls the Supabase RPC `redeem_teacher_code` with the stored `source_event_id`, and cleans up the storage key on success. |
 
 ## 6. States
 
@@ -76,7 +76,7 @@ Let a learner apply a teacher advocate code (e.g. `TEACHER_MARIA`) to unlock an 
 | **Validating** | Apply tapped | Inline progress on button |
 | **Valid** | Server confirms | Confirmation: trial + teacher attribution; route to Paywall reflecting trial |
 | **Invalid/expired** | Server rejects | Gentle inline message, no penalty, "try another" |
-| **No account yet** | Code applied pre-account | Saved to AsyncStorage as `pending_teacher_code`; toast: "Trial applied! We'll link it when you sign in." |
+| **No account yet** | Code applied pre-account | Saved to AsyncStorage as `lexitap.pendingTeacherCode`; toast: "Trial applied! We'll link it when you sign in." |
 | **Offline** | No connectivity | If previously validated, reuse cached; else "connect to validate" |
 
 ## 7. Interactions
@@ -120,7 +120,7 @@ No penalty language on failure.
 - [ ] Deep link prefills the code.
 - [ ] Validation is an online check, cached for offline reuse once validated.
 - [ ] Valid code attaches an extended 14-day trial and attributes the teacher; reflected at the Paywall.
-- [ ] Code applied before an account exists is stored in AsyncStorage (`pending_teacher_code`) and bound on subsequent auth via Supabase RPC with `source_event_id` deduplication.
+- [ ] Code applied before an account exists is stored in AsyncStorage under key `lexitap.pendingTeacherCode` (with a `source_event_id` UUID generated at storage time) and bound on subsequent auth via Supabase RPC with `source_event_id` deduplication — at most once, even on retry.
 - [ ] Invalid/expired codes show a gentle, no-penalty message.
 - [ ] Never steers users to off-store discounts.
 

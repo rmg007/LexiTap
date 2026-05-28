@@ -56,9 +56,9 @@ Hard constraints that shape every decision: solo founder, ~$194 realistic Year-1
 
 **domain/** — Entities and value objects with behavior: `QuizSession`, `SpacedRepetition`, `Word`, `MasteryLevel`. Defines repository *interfaces* (ports) such as `WordRepository`. Contains no imports from `react`, `react-native`, `expo-sqlite`, or `@supabase/*`. This rule is enforceable with an ESLint `no-restricted-imports` boundary check.
 
-**application/** — Use cases that orchestrate the domain: `StartQuizUseCase`, `AnswerQuestionUseCase`, `UnlockTierUseCase`, `SyncProgressUseCase`. Depends only on domain entities and domain port interfaces — never on a concrete adapter. Paywall/entitlement decisions live here (per the Paywall Reviewer in [../05-engineering-process/CODING_STANDARDS.md](../05-engineering-process/CODING_STANDARDS.md)), not in `domain/` or `presentation/`.
+**application/** — Use cases that orchestrate the domain: `StartQuizUseCase`, `AnswerQuestionUseCase`, `UnlockTierUseCase`, `SyncProgressUseCase`. Depends only on domain entities and domain port interfaces — never on a concrete adapter. Paywall/entitlement decisions live here (per the Paywall Reviewer in [../05-engineering-process/CODING_STANDARDS.md](../05-engineering-process/CODING_STANDARDS.md)), not in `domain/` or `presentation/`. `UnlockTierUseCase` persists a **verified** entitlement; it does not perform receipt validation. It is called only after the IAP adapter/server confirms the receipt — receipt validation is infrastructure/external responsibility.
 
-**infrastructure/** — Concrete adapters implementing domain ports: `SQLiteWordRepository`, `SupabaseSyncService`, `StubIapService` (real IAP vendor wiring is deferred — see the IAP decision ADR), `AsyncStorageAdapter`. This is the only layer allowed to import `expo-sqlite`, `@supabase/supabase-js`, and IAP libraries.
+**infrastructure/** — Concrete adapters implementing domain ports: `SQLiteWordRepository`, `SupabaseSyncService`, `StubIapService` (real IAP vendor wiring is deferred — see the IAP decision ADR), `AsyncStorageAdapter`. This is the only layer allowed to import `expo-sqlite`, `@supabase/supabase-js`, and IAP libraries. IAP adapters (`StubIapService` at MVP, `RevenueCatIapService` in Phase 3) live in `infrastructure/iap/`; receipt validation calls to RevenueCat/server originate here. The application layer calls `UnlockTierUseCase` only after the IAP adapter reports a validated receipt.
 
 **presentation/** — React Native screens and components, `expo-router` file-based navigation, the four assessment widgets (`MultipleChoice`, `DragDrop`, `ImageMatch`, `Classification`), theme/branding. LexiTap-specific; the layer most likely to be rewritten for a sister app.
 
@@ -212,6 +212,7 @@ This is what lets domain tests run as pure unit tests and lets a future cloud-ba
 5. `quiz_attempts` and `event_log` are append-only — insert compensating rows, never UPDATE/DELETE.
 6. SRS state changes are version-tagged (`scheduler_version`) for safe future FSRS migration via replay.
 7. Domain layer has zero React/SQLite/network imports (enforce via ESLint import boundaries).
+8. The domain and application layers never perform receipt validation; that is infrastructure/external responsibility. `UnlockTierUseCase` is called only after the IAP adapter/server confirms the receipt; unverified local writes must not unlock paid content.
 
 ## Open Questions
 

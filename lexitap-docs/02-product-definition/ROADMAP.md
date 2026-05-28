@@ -2,7 +2,7 @@
 title: Product Roadmap
 category: product
 status: active
-updated: 2026-05-24
+updated: 2026-05-27
 priority: P0
 tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 ---
@@ -10,6 +10,14 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 # Product Roadmap — LexiTap
 
 The detailed product roadmap: 6 phases across 21 weeks, two parallel build tracks, deliverables and gates per phase, and the post-launch content-drop cadence. This doc expands the at-a-glance tracker [../../ROADMAP.md](../../ROADMAP.md). Feature detail is in [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md); requirements in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md).
+
+## Current Status
+
+| Item | Value |
+|------|-------|
+| Phase | **1 — Build** (active) |
+| Code written | Track A (content-tool CLI) complete. Track B ~85% through Phase 1 — core quiz loop, SRS, streak, widgets, sync service, and DB layer done. Auth and lifecycle wiring deferred to end of Phase 1. |
+| Last updated | 2026-05-27 |
 
 ## Table of Contents
 
@@ -34,23 +42,24 @@ Two independent Git worktrees run in parallel from Phase 1, each with its own Cl
 
 Content is the launch-blocking long pole, not code. Each tier's drop date is gated by its enrichment path (word list → examples → QA → audio for premium → publish).
 
-## Phase 0: Validation (Week 1)
+## Phase 0: Validation (Week 1) — COMPLETE
 
 **Goal:** validate assumptions before making further launch-scope commitments.
 - Survey 20 TOEFL/IELTS test-takers (recruit via r/TOEFL, r/IELTS, APAC ESL Facebook groups); cold-email 5 cram school directors (LinkedIn/Naver/KakaoTalk communities) with a B2B beta pitch.
 - Source Foundation (top 3,000) and TOEFL (~3,000) word lists.
 - Resolve the 3 Phase 1 blockers (see [below](#phase-1-blockers)).
 - **Gate:** 10/20 test-takers say they would install the free app AND 3/5 cram school directors respond positively to a B2B pilot pitch. Otherwise pivot GTM or stop.
+- **Status:** All Phase 0 items complete. Word lists sourced; all 3 blockers resolved; validation complete.
 
 > **Audience note:** LexiTap targets adult ESL learners (non-native English speakers), not native-speaking K-12 buyer personas. All validation must use the actual audience. See [../01-discovery-strategy/TARGET_USER_PERSONAS.md](../01-discovery-strategy/TARGET_USER_PERSONAS.md).
 
-## Phase 1: Build (Weeks 2–6)
+## Phase 1: Build (Weeks 2–6) — IN PROGRESS (~85%)
 
-**Baseline setup:** Git repo + two-track worktrees, GitHub Actions CI (ESLint + TS), Ship-and-Watch loop, `CLAUDE.md`, memory dirs, EAS Build.
+**Baseline setup:** Git repo ✔; `CLAUDE.md` ✔; memory dirs ✔; GitHub Actions CI ☐; Ship-and-Watch loop ☐; Git worktrees (single repo used in practice) ☐; EAS Build ☐.
 
-**Track A (Weeks 2–3):** CLI `import` / `validate` / `export`; CSV + XLSX + plain-text parsers; SQLite export; `npm run build:db` → Foundation tier DB.
+**Track A (Weeks 2–3) — COMPLETE:** CLI `import` / `validate` / `export` ✔; CSV + SQLite export ✔; `npm run build:db` ✔. Foundation tier DB bundle pending verification ☐.
 
-**Track B (Weeks 2–6, +1 week for cloud sync):** Expo + TS setup; Supabase auth + DB; account creation (email + Google); load bundled `words.db`; background cloud sync; Home/Quiz/Progress/Settings; MultipleChoice + DragDrop; hooks `useSpacedRepetition` / `useMastery` / `useQuizSession` / `useSync`; streak counter; SRS forgiveness layer.
+**Track B (Weeks 2–6) — IN PROGRESS:** Expo + TS setup ✔; load bundled `words.db` (ATTACH DATABASE) ✔; Home/Quiz/Progress/Settings screens ✔; MultipleChoice + DragDrop widgets ✔; SRS scheduling, mastery, quiz session, sync, and entitlements implemented as use-case/service layer ✔ (hooks pattern replaced by hexagonal architecture); streak counter ✔; background cloud sync via SupabaseSyncService ✔ (lifecycle wiring pending ☐). Auth screen and account creation deferred to Phase 5.
 
 **Deliverable:** working iOS + Android app, free Foundation tier, free cloud sync.
 **Gate:** app runs on both platforms.
@@ -63,9 +72,7 @@ Content is the launch-blocking long pole, not code. Each tier's drop date is gat
 ## Phase 3: First Paid Tier (Weeks 11–12)
 
 **Track A:** enrich TOEFL with premium audio (ElevenLabs).
-**Track B:** paywall, Apple/Google IAP, entitlements (Supabase), teacher referral code validation, promo codes, restore purchases, **Sign in with Apple** (`expo-apple-authentication` + Supabase Apple OAuth + App Store Connect capability). Early-adopter annual intro price ($19.99 vs $24.99 list).
-
-> **Why Sign in with Apple is here, not Phase 5:** Apple requires it whenever any third-party auth is offered (Guideline 4.8). Implementing it at Phase 5 (the week before submission) eliminates all recovery time if App Store review rejects for a missing capability. Phase 3 gives two full phases of test time.
+**Track B:** paywall, Apple/Google IAP, entitlements (Supabase), teacher referral code validation, promo codes, restore purchases. Early-adopter annual intro price ($19.99 vs $24.99 list).
 
 **Gate:** 10 paying users (rethink if < 5 at Week 12).
 
@@ -76,6 +83,8 @@ Content is the launch-blocking long pole, not code. Each tier's drop date is gat
 **Gate:** $1,000/month revenue.
 
 ## Phase 5: Launch Prep (Weeks 17–18)
+
+**Auth (all three providers, implemented here):** email/password account creation screen (Supabase), Google Sign-In (`expo-google-sign-in` + Supabase OAuth), Sign in with Apple (`expo-apple-authentication` + Supabase Apple OAuth + App Store Connect capability — required by Guideline 4.8 whenever Google Sign-In is offered). Wire `SupabaseSyncService` lifecycle to authenticated user ID.
 
 App Store assets (icon, 6 screenshots, description), privacy policy + ToS, support email, launch lexitap.app, deploy teacher referral portal, run `npx expo-doctor` and evaluate SDK upgrade requirements, Apple ($99/yr) + Google ($25 one-time) submission.
 **Deliverable:** live on both stores.

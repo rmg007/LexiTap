@@ -92,3 +92,33 @@ export function countDueInTier(
     [tierId, now],
   );
 }
+
+// Keyset-paginated progress list sorted by review date (for the Progress
+// screen). Compound key (next_review_date, word_id) breaks ties on identical
+// review dates. Pass null cursors for the first page.
+// Uses idx_progress_keyset — O(log n) regardless of page depth.
+export interface ProgressPageRow {
+  word_id: string;
+  mastery_level: number;
+  next_review_date: number;
+}
+
+export function selectProgressPage(
+  db: DatabaseHandle,
+  tierId: string,
+  afterReviewDate: number | null,
+  afterWordId: string | null,
+  limit: number,
+): Promise<ProgressPageRow[]> {
+  return db.all<ProgressPageRow>(
+    `SELECT p.word_id, p.mastery_level, p.next_review_date
+     FROM user_progress p
+     JOIN contentdb.words w ON p.word_id = w.id
+     WHERE w.tier_id = ?
+       AND w.deleted_at IS NULL
+       AND (? IS NULL OR (p.next_review_date > ? OR (p.next_review_date = ? AND p.word_id > ?)))
+     ORDER BY p.next_review_date ASC, p.word_id ASC
+     LIMIT ?`,
+    [tierId, afterReviewDate, afterReviewDate, afterReviewDate, afterWordId, limit],
+  );
+}

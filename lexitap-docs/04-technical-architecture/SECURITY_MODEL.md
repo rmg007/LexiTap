@@ -89,11 +89,17 @@ Teacher/referral/promo tables are **not** client-writable. `referrals` and `prom
 
 Entitlements are money. They are **never** trusted from the client.
 
+**Core invariants:**
+- An unverified local write to `user_entitlements` must **never** unlock paid content.
+- The local SQLite `user_entitlements` row is an offline read mirror of server-verified state — it is not the grant authority.
+- `UnlockTierUseCase` is called only after server-side validation confirms the receipt (step 3 below). It persists a verified entitlement; it does not perform receipt validation. Receipt validation is infrastructure/external responsibility.
+- On revocation or refund: the local entitlement row is expired or deleted on the next validation/sync cycle (step 5 below).
+
 1. On purchase, the app sends the store receipt to the `validate_receipt` Edge Function ([API_CONTRACT.md](./API_CONTRACT.md#rpc-receipt-validation)).
 2. The function validates against Apple/Google using server-held credentials.
 3. On success, the function (service role) writes the entitlement to `user_entitlements_sync`; RLS blocks the client from doing this itself.
-4. The client mirrors the now-verified entitlement into local `user_entitlements`.
-5. On launch, invalid/refunded entitlements are re-validated and removed.
+4. The client mirrors the now-verified entitlement into local `user_entitlements` via `UnlockTierUseCase`.
+5. On launch, invalid/refunded entitlements are re-validated and removed; the local row is expired or deleted.
 
 Referral and promo redemptions follow the same pattern: server-side, transactional, idempotent via unique keys (`receipt_id`) and decrement guards.
 

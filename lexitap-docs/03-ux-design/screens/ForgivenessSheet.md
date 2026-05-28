@@ -63,14 +63,14 @@ Acknowledge the learner has done enough for today, confirm the streak is already
 |---|---|---|
 | Cap reached | review session state | soft daily cap from settings/config |
 | Streak secured boolean | streak service (IANA-tz) | showing up = maintained |
-| Remaining due count | session | Used *only* as an internal computation input for the backend `reanchorBacklog` redistribution algorithm. **Strictly never rendered** to avoid deficit guilt triggers (see [SRS_FORGIVENESS_MECHANICS.md](../../02-product-definition/SRS_FORGIVENESS_MECHANICS.md#mechanic-2-soft-catch-up)). |
+| Remaining due count | session | **Trigger and computation input only — NEVER displayed.** This count is used solely to: (1) determine whether to show the ForgivenessSheet at all (trigger condition: `totalOverdue > BASE_DAILY_CAP`, where `BASE_DAILY_CAP = 40` from `domain/srs/forgiveness.ts`), and (2) supply the `overdueWords` argument to `reanchorBacklog()`. It is NEVER rendered to the user in any form — no number, no bar, no percentage, no indirect hint. Rendering it would create the deficit guilt the spec exists to prevent. |
 
 ## 6. States
 
 | State | Trigger | Rendering |
 |---|---|---|
 | **Default** | Cap reached | Headline + streak-secured + Stop here (emphasis) + Keep going |
-| **Stop here** | Tap D | Triggers `reanchorBacklog(overdueWords, nowMs, tz)` via the application layer. This is the only time the forgiveness mechanic writes `next_review_date` to `user.db`. Rolls forward and redistributes overdue items per [SRS_FORGIVENESS_MECHANICS.md](../../02-product-definition/SRS_FORGIVENESS_MECHANICS.md#mechanic-2-soft-catch-up); returns Home in the done state. |
+| **Stop here** | Tap D | Triggers `reanchorBacklog(overdueWords, nowMs, tz)` from `domain/srs/forgiveness.ts` via the application layer. **Reanchor algorithm:** redistributes overdue items by writing new `next_review_at` dates to `user_progress`, spreading the backlog across upcoming days. Each future day absorbs up to `CATCH_UP_BUDGET = 20` additional items above the `BASE_DAILY_CAP = 40` base (constants from `domain/srs/forgiveness.ts` `FORGIVENESS` object). Items beyond that capacity roll to the following day. Only `next_review_at` is touched; mastery levels are never modified by this algorithm. This is the only time the forgiveness mechanic writes `next_review_at` to `user.db`. Returns Home in the done state. |
 | **Keep going** | Tap E | Continue beyond cap voluntarily, no penalty either way; sheet is suppressed for the remainder of this session. |
 | **Streak already counted** | Earlier session today | Still reassure; no double count |
 

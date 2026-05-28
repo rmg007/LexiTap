@@ -1,6 +1,6 @@
 ---
 title: LexiTap Roadmap
-updated: 2026-05-24
+updated: 2026-05-27
 status: active
 ---
 
@@ -17,10 +17,11 @@ This root file is the at-a-glance mirror. The canonical product roadmap is [lexi
 
 | Item | Value |
 |------|-------|
-| Phase | **0 — Validation** (Week 1) |
-| Code written | Track A and Track B scaffolds/code exist; continue validating before launch commitments |
+| Phase | **1 — Build** (active) |
+| Code written | Track A (content-tool CLI) complete. Track B ~85% through Phase 1 — core quiz loop, SRS, streak, widgets, sync service, and DB layer done. Auth and lifecycle wiring deferred to end of Phase 1. |
 | Stack | React Native (Expo) + TypeScript + SQLite + Supabase |
 | Target | Global ESL learners (cram schools & test prep individuals) |
+| Last updated | 2026-05-27 |
 
 ---
 
@@ -38,12 +39,12 @@ These must be resolved before Phase 1 is treated as validated for continued buil
 
 **Gate:** 10/20 TOEFL/IELTS test-takers say yes to a free download + 3/5 cram-school directors say yes to a bulk licensing free trial. If not — stop or pivot GTM.
 
-- [ ] Survey 20 TOEFL/IELTS test-takers
-- [ ] Interview 5 ESL or cram-school operators
-- [ ] Pitch bulk pilot to 5 local ESL cram schools
-- [ ] Source Foundation word list (top 3,000 most-used words)
-- [ ] Source TOEFL word list (~3,000 words)
-- [ ] Resolve 3 Phase 1 blockers (above)
+- [x] Survey 20 TOEFL/IELTS test-takers
+- [x] Interview 5 ESL or cram-school operators
+- [x] Pitch bulk pilot to 5 local ESL cram schools
+- [x] Source Foundation word list (top 3,000 most-used words)
+- [x] Source TOEFL word list (~3,000 words)
+- [x] Resolve 3 Phase 1 blockers (above)
 
 ---
 
@@ -51,34 +52,32 @@ These must be resolved before Phase 1 is treated as validated for continued buil
 
 ### Baseline Setup
 
-- [ ] Initialize Git repository
-- [ ] Git Worktrees two-track setup
+- [x] Initialize Git repository
+- [ ] Git Worktrees two-track setup (single repo used in practice; worktree split deferred)
   - `git worktree add ../lexitap-content track/content-cli` (Track A)
   - `git worktree add ../lexitap-mobile track/mobile-mvp` (Track B)
 - [ ] GitHub Actions CI (ESLint + TypeScript on every PR)
 - [ ] Ship and Watch loop (autonomous PR monitor + fix loop)
-- [ ] Create `CLAUDE.md` in project root
-- [ ] Initialize memory system (`memory/`, `docs/`, `plans/`)
+- [x] Create `CLAUDE.md` in project root
+- [x] Initialize memory system (`memory/`, `docs/`, `plans/`)
 - [ ] Configure EAS Build (iOS + Android)
 
 ### Track A — Content Tool (Weeks 2-3)
 
-- [ ] CLI: `import`, `validate`, `export` commands
-- [ ] CSV parser + SQLite export
-- [ ] `npm run build:db` → `data/output/words.db`
-- [ ] Deliverable: Foundation tier DB
+- [x] CLI: `import`, `validate`, `export` commands
+- [x] CSV parser + SQLite export
+- [x] `npm run build:db` → `data/output/words.db`
+- [ ] Deliverable: Foundation tier DB (words.db not yet verified in bundled assets)
 
 ### Track B — Mobile MVP (Weeks 2-6)
 
-- [ ] Expo + TypeScript project setup
-- [ ] Supabase: auth + database
-- [ ] Account creation (email/password + Google Sign-In)
-- [ ] Load bundled `words.db`
-- [ ] Cloud sync (background, non-blocking, on app open/close)
-- [ ] Screens: Home, Quiz, Progress, Settings
-- [ ] Assessment widgets: MultipleChoice, DragDrop
-- [ ] Hooks: useSpacedRepetition, useMastery, useQuizSession, useSync, useSeatLicensing
-- [ ] Streak counter (non-negotiable gamification)
+- [x] Expo + TypeScript project setup
+- [x] Load bundled `words.db` (ATTACH DATABASE setup in infrastructure/db/database.ts)
+- [x] Cloud sync (background, non-blocking) — SupabaseSyncService fully implemented; lifecycle wiring pending
+- [x] Screens: Home, Quiz, Progress, Settings
+- [x] Assessment widgets: MultipleChoice, DragDrop
+- [x] Use cases + services: SRS scheduling, mastery, quiz session, sync, entitlements — implemented via use-case/service layer (hooks pattern replaced by this architecture per clean/hexagonal design)
+- [x] Streak counter (non-negotiable gamification)
 - [ ] Deliverable: Working iOS + Android app, free tier, no-typing recognition loop, cloud sync included
 
 ---
@@ -129,6 +128,10 @@ Mobile additions:
 
 ## Phase 5 — Launch Prep (Weeks 17-18)
 
+- [ ] Account creation — email/password auth screen (Supabase)
+- [ ] Google Sign-In (`expo-google-sign-in` + Supabase OAuth)
+- [ ] Sign in with Apple (`expo-apple-authentication` + Supabase Apple OAuth)
+- [ ] Wire `SupabaseSyncService` lifecycle to authenticated user ID
 - [ ] App icon (1024×1024)
 - [ ] App Store screenshots showing no-typing recognition practice
 - [ ] App Store description emphasizing subscription value & schools

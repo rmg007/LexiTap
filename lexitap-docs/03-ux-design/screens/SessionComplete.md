@@ -84,6 +84,8 @@ Close a review or learn-check session: confirm the day's work is done, increment
 | Done (E) | tap | Navigate Home (done state) | none |
 | Keep practicing (F) | tap | Load more items, no penalty | none |
 
+> **Haptic implementation note:** The `impactMedium` haptic fires **on screen mount** (in a `useEffect` with no deps / `componentDidMount`), conditioned on `streakIncremented === true` in the session result passed to this screen. It does NOT fire on Done button tap — the Done button has no haptic because it is a plain navigation action. An AI coding agent must not attach haptic feedback to the Done button press handler.
+
 ## 8. Copy
 
 | Key | String |

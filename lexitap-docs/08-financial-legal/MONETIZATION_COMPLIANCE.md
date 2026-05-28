@@ -74,8 +74,8 @@ Premium monthly ($4.99) and annual ($24.99) subscriptions are processed in-app u
 Required by Apple Guideline 3.1.1. 
 - A prominent **Restore Purchases** button is located in the Settings screen.
 - On tap, the client invokes RevenueCat `syncPurchases()` or standard restore rails to validate previous receipt transactions against store servers.
-- Entitlements are updated in the local SQLite database and synchronized back to Supabase.
-- Entitlement checks are secure and server-side, driven by RevenueCat's receipt validation API; unvalidated local client states are never trusted.
+- On valid receipts, RevenueCat / the `validate_receipt` Edge Function writes the verified entitlement to `user_entitlements_sync` server-side (service role). `UnlockTierUseCase` then mirrors the verified entitlement to local SQLite. Entitlements are **not** written locally first and synchronized to Supabase; the write direction is server → local mirror only.
+- Entitlement checks are server-verified, driven by RevenueCat's receipt validation API; unverified local client state must never unlock paid content.
 
 ---
 

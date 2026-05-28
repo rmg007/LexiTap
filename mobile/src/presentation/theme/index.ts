@@ -5,3 +5,4 @@ export {
   useThemePreference,
   type ThemePreference,
 } from '@/presentation/theme/ThemeProvider';
+export { darkPaperTheme, lightPaperTheme } from '@/presentation/theme/paperTheme';

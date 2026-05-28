@@ -30,6 +30,11 @@ export function Text({
     lineHeight: t.lineHeight,
     fontWeight: t.fontWeight,
     color: theme.colors[color],
+    // Apply font family from token (loaded by expo-font in root layout).
+    // Falls back to system font if the font isn't loaded yet.
+    ...(t.fontFamily ? { fontFamily: t.fontFamily } : {}),
+    ...(t.letterSpacing ? { letterSpacing: t.letterSpacing } : {}),
+    ...(t.textTransform ? { textTransform: t.textTransform } : {}),
   };
   if (tabularNums || variant === 'mono') {
     base.fontVariant = ['tabular-nums'];

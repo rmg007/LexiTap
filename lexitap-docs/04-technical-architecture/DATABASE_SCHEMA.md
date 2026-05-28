@@ -332,6 +332,7 @@ CREATE TABLE user_entitlements_sync (
 );
 
 CREATE TABLE user_stats_sync (
+  -- Freeze fields (freeze_count, freeze_available) are deliberately excluded — device-local state, never synced.
   user_id              UUID PRIMARY KEY REFERENCES user_accounts(id),
   current_streak       INTEGER DEFAULT 0,
   longest_streak       INTEGER DEFAULT 0,

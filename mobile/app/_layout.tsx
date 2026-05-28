@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/presentation/theme';
 import { ServicesProvider, type Services } from '@/presentation/services';
 import { createContainer } from '@/composition/container';
 import { logger } from '@/lib/logger';
+import '../global.css';
 
 // Root layout. Opens the database and wires the composition root, then provides
 // the resulting `Services` to the tree. The quiz/review path is offline-first,

@@ -1,9 +1,17 @@
 # Plan: UX and Screen Documentation Expansion
 
 **Date:** May 26, 2026  
-**Status:** Planned (v3 — Full Cross-Document Deep Dive)  
+**Status:** Phase A complete (2026-05-27). Phase B (new screen drafts) and Phase C (index updates) pending.  
 **Track:** Track B (UX & Documentation only)  
 **Constraint Invariant:** **Strictly documentation-only.** Do not implement any React Native or SQLite code in `mobile/` or `content-tool/` during the execution of this plan.
+
+## Completion Log
+
+| Phase | Status | Date | Files changed |
+|-------|--------|------|---------------|
+| Phase A: Retrofit 8 existing screens | ✅ Done | 2026-05-27 | 13 screen specs patched (see §4 for full list) |
+| Phase B: Draft 3 new screen specs | ⏳ Pending | — | `WordDetailBrowser.md`, `ContentErrorReporter.md`, `Settings.md` DailyReminderSheet |
+| Phase C: Index and link integrity | ⏳ Pending | — | `screens/README.md` inventory table not yet updated |
 
 ---
 
@@ -129,49 +137,23 @@ Based on deep document analysis, the 5 new screens must be re-scoped to accurate
 
 ## 4. Corrected Scope of Work
 
-### Phase A: Retrofit Existing Screen Docs (8 files)
+### Phase A: Retrofit Existing Screen Docs — ✅ COMPLETE 2026-05-27
 
-These retrofits inject missing detail discovered by cross-document analysis. Each is focused and minimal — add what's missing, don't rewrite what's good.
+All 13 screen specs below were patched (original plan listed 8; 5 additional specs were addressed in the same pass).
 
-1. **`Home.md`**
-   - Add forgiveness constants to §5 Data Requirements: `BASE_DAILY_CAP=40`, `CATCH_UP_BUDGET=20`, effective cap formula.
-   - Add skeleton loading layout (ASCII) and §6 Loading state detail: which regions show skeletons vs hide entirely.
-   - Clarify the `frozen` streak chip: the snowflake glyph is described but the Design System has no snowflake token — spec must reference `text.secondary` + a snowflake character, not a token that doesn't exist.
-   - Close Home's §12 open questions where resolved.
-
-2. **`Progress.md`**
-   - Add the cross-DB query for 7-day show-up bar (reading `event_log` session_completed events filtered to last 7 local civil dates using `YYYYMMDD` arithmetic).
-   - Add skeleton placeholders for the mastery ring (needed because the ring is driven by a non-trivial ATTACH query).
-   - Resolve "rolling 7 days vs calendar week" to: rolling 7 most-recent calendar days in the user's IANA timezone.
-
-3. **`QuizFeedbackStates.md`**
-   - Add the full SRS write path to §5 Data Requirements: `AnswerQuestionUseCase` → `quiz_attempts` INSERT (append-only) + `user_progress` UPDATE (mastery ±1 + next_review_date) tagged with `scheduler_version = 'v1-fixed'`, all in one transaction.
-   - Define the affirm copy bank (4–6 variants) inline in §8 Copy so the open question is resolved.
-   - Add micro-interaction timing table: reveal delay after Check tap (0ms — immediate), haptic on correct fires concurrently with reveal, no haptic on incorrect.
-
-4. **`QuizDragDrop.md`**
-   - Normalize tap-to-place announce strings to match `ACCESSIBILITY_REQUIREMENTS.md` exactly.
-   - Add tap-to-place fallback as an explicit row in §7 Interactions.
-   - Close audio autoplay open question (N/A — DragDrop has no audio).
-
-5. **`QuizMultipleChoice.md`**
-   - Close the audio autoplay open question: **tap-to-play only** (per `ACCESSIBILITY_REQUIREMENTS.md §Audio`).
-   - Add note: audio glyph label must read "Play pronunciation of {word}" not just "Play pronunciation" (per `ACCESSIBILITY_REQUIREMENTS.md §Audio`).
-
-6. **`ForgivenessSheet.md`**
-   - Link to `SRS_FORGIVENESS_MECHANICS.md §Mechanic 2` for the exact reanchorBacklog algorithm.
-   - Clarify "Remaining due count" in §5 is an internal computation input to `reanchorBacklog`, never rendered.
-   - Specify: "Stop here" triggers `reanchorBacklog(overdueWords, nowMs, tz)` via the application layer; this is the only time forgiveness writes `next_review_date`.
-
-7. **`Paywall.md`**
-   - Clarify the entitlement write path in §5: `UnlockTierUseCase` → (1) INSERT `user_entitlements` in `user.db` (local SQLite, source of truth), (2) PUSH to `user_entitlements_sync` in Supabase. Step 1 must complete before content unlocks.
-   - Add hexagonal boundary note: IAP adapter lives in `infrastructure/iap/`; paywall business logic (which tiers to offer, whether teacher trial is active) lives in `application/entitlements/PaywallReviewUseCase`.
-   - Resolve "Final benefit bullets per tier" open question as: owned by content/marketing; spec leaves a placeholder table.
-
-8. **`SigninAccount.md`**
-   - Add the conservative merge rules from `SRS_FORGIVENESS_MECHANICS.md §Edge Cases`: keep lower `freeze_count`, keep higher `current_streak`, union-merge `quiz_attempts`.
-   - Resolve auth providers question: Apple Sign-in + Google + Email at MVP (Apple required by App Store policy when any social login is offered on iOS).
-   - Resolve email sign-in question: magic-link preferred (no password stored on device, aligns with secrets management philosophy).
+1. **`Home.md`** ✅ — Triple-channel streak chip states (Lucide icons named); FORGIVENESS constants cited; skeleton loading state added.
+2. **`Progress.md`** ✅ — 7-day show-up query defined (user.db only, `toLocalCivilDate()`); mastery ring skeleton state confirmed present.
+3. **`QuizFeedbackStates.md`** ✅ — Copy bank defined (5 correct + 5 correction variants); atomic SRS write path documented; `quiz_attempts` append-only invariant explicit.
+4. **`QuizDragDrop.md`** ✅ — Tap-to-place added to interactions table; ARIA announce strings normalized to canonical format.
+5. **`QuizMultipleChoice.md`** ✅ — Audio autoplay open question closed (tap-to-play only, per ACCESSIBILITY_REQUIREMENTS.md).
+6. **`ForgivenessSheet.md`** ✅ — `reanchorBacklog()` algorithm linked; hidden due-count usage clarified; display prohibition made explicit.
+7. **`Paywall.md`** ✅ — Purchase state machine verified-entitlement path documented; IAP adapter location in `infrastructure/iap/` named.
+8. **`SigninAccount.md`** ✅ — Freeze-count merge rule removed (device-local; no multi-device merge); Apple Sign-In confirmed present.
+9. **`SessionComplete.md`** ✅ — `impactMedium` haptic fires on mount when `streakIncremented`, not on Done button.
+10. **`LearnCard.md`** ✅ — SRS write boundary documented: no write on LearnCard; atomic write happens at LearnQuickCheck completion.
+11. **`LearnQuickCheck.md`** ✅ — Atomic triple-write (`quiz_attempts` + `user_progress` + `event_log`) documented as first/only SRS write in Learn flow.
+12. **`OnboardingAdaptiveYesNo.md`** ✅ — Pseudo-word visual parity rule added: same styling as real words, no visual differentiation.
+13. **`TeacherCodeRedemption.md`** ✅ — Provisional storage defined: `AsyncStorage` key `lexitap.pendingTeacherCode`; UUID generated at storage time for `source_event_id` idempotency.
 
 ### Phase B: Draft 3 New Screen Specs (corrected scope)
 

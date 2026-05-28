@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LexiTap - How it Works (Light)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap');
+        
+        :root {
+            --bg-light: #F9FBFA;
+            --card-bg-start: #FFFFFF;
+            --card-bg-end: #F5F7F6;
+            --accent-teal: #178F88;
+            --accent-amber: #D97706;
+            --text-primary: #1A1D1E;
+            --text-muted: #5F6368;
+            --border-muted: rgba(0,0,0,0.06);
+        }
+
+        body { font-family: 'Inter', sans-serif; background-color: #F1F3F4; margin: 0; }
+        .editorial-title { font-family: 'Playfair Display', serif; letter-spacing: -0.01em; }
+        .iphone-frame { width: 393px; height: 852px; background-color: var(--bg-light); position: relative; margin: 2rem auto; overflow: hidden; }
+
+        .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(0,0,0,0.06); }
+        .progress-dot.active { background: var(--accent-teal); transform: scale(1.2); box-shadow: 0 0 10px rgba(23, 143, 136, 0.3); }
+
+        .tactile-card {
+            background: linear-gradient(145deg, var(--card-bg-start), var(--card-bg-end));
+            border: 1px solid var(--border-muted);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+        }
+
+        .label-caps { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-amber); }
+        .primary-cta { background: linear-gradient(135deg, var(--accent-teal) 0%, #147D76 100%); box-shadow: 0 4px 20px rgba(23, 143, 136, 0.2); }
+
+        .icon-accent {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(23, 143, 136, 0.05);
+            border: 1px solid rgba(23, 143, 136, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .icon-accent::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-teal);
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame flex flex-col text-[var(--text-primary)]">
+        <header class="flex-shrink-0 pt-16 px-8 pb-8">
+            <div class="flex gap-2.5 mb-10">
+                <div class="progress-dot active"></div>
+                <div class="progress-dot active"></div>
+                <div class="progress-dot active"></div>
+                <div class="progress-dot active"></div>
+                <div class="progress-dot active"></div>
+            </div>
+            <h1 class="editorial-title text-[34px] font-bold leading-tight mb-3">
+                How LexiTap helps you <br/><span class="text-[var(--accent-teal)]">remember.</span>
+            </h1>
+            <p class="text-[17px] text-[var(--text-muted)] font-medium">Designed for long-term mastery.</p>
+        </header>
+
+        <div class="flex-1 overflow-y-auto px-8 space-y-4">
+            <div class="tactile-card rounded-2xl p-6 flex gap-5">
+                <div class="icon-accent">
+                    <iconify-icon icon="ph:timer-duotone" class="text-2xl text-[var(--accent-teal)]"></iconify-icon>
+                </div>
+                <div>
+                    <h4 class="font-bold text-[17px] mb-1">Smart Review</h4>
+                    <p class="text-[14px] text-[var(--text-muted)] leading-relaxed font-medium">Perfectly timed intervals so you never forget what you've learned.</p>
+                </div>
+            </div>
+
+            <div class="tactile-card rounded-2xl p-6 flex gap-5">
+                <div class="icon-accent">
+                    <iconify-icon icon="ph:hand-tap-duotone" class="text-2xl text-[var(--accent-teal)]"></iconify-icon>
+                </div>
+                <div>
+                    <h4 class="font-bold text-[17px] mb-1">No typing needed</h4>
+                    <p class="text-[14px] text-[var(--text-muted)] leading-relaxed font-medium">Master words through simple tap and drag actions — zero friction.</p>
+                </div>
+            </div>
+
+            <div class="tactile-card rounded-2xl p-6 flex gap-5">
+                <div class="icon-accent">
+                    <iconify-icon icon="ph:map-trifold-duotone" class="text-2xl text-[var(--accent-teal)]"></iconify-icon>
+                </div>
+                <div>
+                    <h4 class="font-bold text-[17px] mb-1">Knowledge Map</h4>
+                    <p class="text-[14px] text-[var(--text-muted)] leading-relaxed font-medium">See exactly which words you know and where your next frontier is.</p>
+                </div>
+            </div>
+
+            <div class="tactile-card rounded-2xl p-6 flex gap-5">
+                <div class="icon-accent">
+                    <iconify-icon icon="ph:cloud-slash-duotone" class="text-2xl text-[var(--accent-teal)]"></iconify-icon>
+                </div>
+                <div>
+                    <h4 class="font-bold text-[17px] mb-1">Offline Study</h4>
+                    <p class="text-[14px] text-[var(--text-muted)] leading-relaxed font-medium">Study anywhere, even without internet. Your progress syncs instantly.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="p-8 pb-12">
+            <button class="primary-cta w-full h-[64px] rounded-xl text-white font-bold text-[18px] flex items-center justify-center">
+                Explore the Map
+            </button>
+        </footer>
+    </div>
+</body>
+</html>

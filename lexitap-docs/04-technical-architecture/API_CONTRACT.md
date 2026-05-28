@@ -61,11 +61,9 @@ await supabase.from('user_progress_sync').upsert(
   changedRows.map(r => ({ user_id, ...r, synced_at: new Date().toISOString() })),
   { onConflict: 'user_id,word_id' }
 );
-
-await supabase.from('user_entitlements_sync').upsert(entitlements, { onConflict: 'user_id,tier_id' });
 ```
 
-`SupabaseSyncService` currently pushes `user_progress_sync` and `user_entitlements_sync` only. `user_stats_sync` is a planned mirror of the streak/totals subset of local `user_stats`; the forgiveness freeze fields are device-only and never synced (see [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md#supabase-sync-mirror-tables)).
+`SupabaseSyncService` currently pushes `user_progress_sync` only. `user_entitlements_sync` is **not** pushed by the client — RLS permits only service-role writes to that table (entitlements are written server-side by the `validate_receipt` Edge Function after receipt validation; see [RPC: Receipt Validation](#rpc-receipt-validation)). The client pulls entitlements on sync but never pushes them. `user_stats_sync` is a planned mirror of the streak/totals subset of local `user_stats`; **freeze fields are device-local and excluded from the sync protocol** — they are never included in any push or pull payload (see [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md#supabase-sync-mirror-tables)).
 
 **Request row shape (`user_progress_sync`):** `{ user_id: UUID, word_id: string, mastery_level: int, next_review_date: bigint, last_reviewed_at: bigint, consecutive_correct: int, total_attempts: int, total_correct: int, first_seen_at: bigint, synced_at: ISO }`.
 
@@ -78,7 +76,7 @@ Triggered on app open. Fetches cloud mirrors and merges into local SQLite (last-
 ```ts
 const { data: progress } = await supabase.from('user_progress_sync').select('*').eq('user_id', uid);
 const { data: ents }     = await supabase.from('user_entitlements_sync').select('*').eq('user_id', uid);
-// progress merges last-write-wins by last_reviewed_at; entitlements are additive.
+// progress merges last-write-wins by last_reviewed_at; entitlements are additive (pull-only — server-written after validation).
 // user_stats_sync pull is planned (streak/totals subset) — not yet implemented.
 ```
 
@@ -94,7 +92,7 @@ body:   { platform: 'ios'|'android', product_id: string, receipt: string }
 returns:{ valid: boolean, tier_id: string, expires_at: bigint | null }
 ```
 
-On `valid: true` the function writes the verified entitlement to `user_entitlements_sync` server-side (the client cannot self-grant entitlements; RLS denies client writes that don't originate from a validated receipt). The client then mirrors the granted entitlement into local `user_entitlements`.
+On `valid: true` the function writes the verified entitlement to `user_entitlements_sync` server-side (the client cannot self-grant entitlements; RLS denies client writes to `user_entitlements_sync`). `UnlockTierUseCase` in the application layer is then called to mirror the verified entitlement into local `user_entitlements`. The local SQLite row is the offline read source for verified entitlements; it is not the grant authority.
 
 ## RPC: Teacher Advocate Redemption
 

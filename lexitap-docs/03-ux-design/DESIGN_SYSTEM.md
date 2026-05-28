@@ -69,6 +69,7 @@ There is intentionally **no `error.red` token in the assessment path.** A destru
 |-------|-----|
 | `bg.base` | `#FBFCFC` |
 | `bg.surface` | `#FFFFFF` |
+| `bg.surface.raised` | `#F7F9F9` |
 | `border.subtle` | `#E6E9EA` |
 | `text.primary` | `#1A1D1E` |
 | `text.secondary` | `#52595C` |
@@ -153,7 +154,7 @@ Feedback states for all widgets use the success/caution token pair plus an icon 
 
 ### Streak indicator
 
-Pill (`radius.full`) with the `streak` flame glyph + integer in `mono` tabular figures. Lives top-right on Home. States: active (warm flame, `streak` color), at-risk (flame outline + `caution` ring when today's session is not yet done), frozen (snowflake glyph, `text.secondary`, when a streak-freeze is consumed). The streak answers "did you show up today?" — never displays time or word-count targets (locked decision in [SRS_FORGIVENESS_MECHANICS.md](../02-product-definition/SRS_FORGIVENESS_MECHANICS.md)). No red, no guilt, no shrinking-heart animation.
+Pill (`radius.full`) with the `streak` flame glyph + integer in `mono` tabular figures. Lives top-right on Home. States: active (warm flame, `streak` color), at-risk (flame outline + `caution` ring when today's session is not yet done), frozen (snowflake glyph, `text.secondary`, when a streak-freeze is consumed — use the `Snowflake` icon from `lucide-react-native`, 24×24, colored `text.secondary`; the frozen state communicates via three independent channels: snowflake icon + "Frozen" label text + `text.secondary` color, satisfying the color-independence rule). The streak answers "did you show up today?" — never displays time or word-count targets (locked decision in [SRS_FORGIVENESS_MECHANICS.md](../02-product-definition/SRS_FORGIVENESS_MECHANICS.md)). No red, no guilt, no shrinking-heart animation.
 
 ### Progress rings and bars
 
@@ -191,6 +192,8 @@ Haptics confirm; they never punish. There is no error haptic on a wrong answer.
 
 ## Open Questions
 
-- **Background/text token reconciliation:** the brand's marketing palette (white background / dark-gray text) describes the marketing/light context. The product UI is dark-mode-first, so this doc treats dark as canonical and light as derived. Confirm at brand-identity finalization (backlog #42, [ROADMAP.md](../02-product-definition/ROADMAP.md)) that the marketing palette is understood as marketing-surface guidance, not a product-UI override.
-- **Icon family license:** Lucide proposed for permissive licensing; confirm before adoption.
-- **DM Sans vs Inter split:** proposal is Inter for UI, DM Sans for marketing/logo. Confirm we are not shipping two faces inside the app.
+All open questions from the initial draft have been resolved.
+
+- **Background/text token reconciliation — RESOLVED.** The marketing palette (white background / dark-gray text) applies to lexitap.app and App Store listing surfaces only. The product UI is dark-mode-first and these tokens are the source of truth for mobile. The two contexts are separate; there is no conflict.
+- **Icon family license — RESOLVED.** Lucide confirmed. Apache 2.0 license, permissive for commercial use. All UI icons, including the frozen-streak `Snowflake`, are sourced from `lucide-react-native`.
+- **DM Sans vs Inter split — RESOLVED.** Inter variable font only inside the app bundle. DM Sans is for marketing surfaces (lexitap.app, App Store screenshots, brand collateral) and is never shipped inside the mobile app.

@@ -1,4 +1,5 @@
 import { MIGRATION_001_INITIAL_SCHEMA } from '@/infrastructure/db/migrations/001_initial_schema';
+import { MIGRATION_002_KEYSET_INDEXES } from '@/infrastructure/db/migrations/002_keyset_indexes';
 
 // Forward-only migration ledger for user.db. Each entry's `version` is written
 // to PRAGMA user_version after its `sql` is applied. Migrations MUST be ordered
@@ -13,6 +14,7 @@ export interface Migration {
 
 export const MIGRATIONS: readonly Migration[] = [
   { version: 1, name: '001_initial_schema', sql: MIGRATION_001_INITIAL_SCHEMA },
+  { version: 2, name: '002_keyset_indexes', sql: MIGRATION_002_KEYSET_INDEXES },
 ];
 
 // The schema version the app expects after all migrations are applied. Equal to

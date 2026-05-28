@@ -13,6 +13,16 @@ Follow-up patch pass completed on 2026-05-24:
 - P2 budget, path, metadata, frontmatter, stale-pricing, and duplicate-source cleanup was completed.
 - Final hygiene passed after remediation: 55 Markdown files checked, 0 broken relative links; targeted stale-term scans clean; `git diff --check` clean.
 
+Second-pass remediation completed on 2026-05-27 (via `documentation-completion-plan-2026-05-26.md` and `screens-improvement-plan.md`):
+
+- **Entitlement authority** (P0-01): Corrected purchase state machine across `Paywall.md`, `USER_FLOWS.md`, `SECURITY_MODEL.md`, `API_CONTRACT.md`, `SYSTEM_ARCHITECTURE.md`, `MONETIZATION_COMPLIANCE.md`. No doc now implies an unverified local write unlocks paid content.
+- **SRS forgiveness freeze-field sync conflict** (P0-02): Resolved contradictions in `SRS_FORGIVENESS_MECHANICS.md`, `DATABASE_SCHEMA.md`, `API_CONTRACT.md`. Freeze fields are consistently documented as device-local only, excluded from `user_stats_sync`, with no multi-device merge rule.
+- **ROADMAP accuracy**: Both `ROADMAP.md` (root) and `lexitap-docs/02-product-definition/ROADMAP.md` updated to reflect Phase 1 active, Track A complete, Track B ~85% built.
+- **Design system open questions**: All 3 resolved in `DESIGN_SYSTEM.md`. Light-mode `bgSurfaceRaised` token fixed in `mobile/src/presentation/theme/tokens.ts` (`#FFFFFF` → `#F7F9F9`).
+- **Screen spec gaps** (P1-01 Phase A): 13 screen specs patched — triple-channel streak states, forgiveness constants, SRS write paths, ARIA strings, copy banks, haptic timing, SRS seed boundaries, pseudo-word rules, provisional teacher-code storage. See `screens-improvement-plan.md` for full list.
+
+Remaining open from 2026-05-27 audit: P0-03 (auth provider alignment), P0-04 (B2B entitlement matrix), Phase B new screen drafts, analytics event taxonomy alignment, canonical source map.
+
 ## Executive Summary
 
 The documentation set is structurally healthy: the canonical `lexitap-docs/` layer is complete, indexed, and has no broken relative Markdown links. The main issue is conceptual drift. Several older docs still define LexiTap around active spelling / spelling-assembly recall, while the current `AGENTS.md` hard rule says quiz and assessment UX must be passive recognition only: tap, drag, match, classify, with no `TextInput`.
