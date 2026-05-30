@@ -17,7 +17,8 @@ The security posture for LexiTap: a solo-founder, offline-first ESL app with no 
 - [Secrets Management](#secrets-management)
 - [Authentication](#authentication)
 - [Row-Level Security Policies](#row-level-security-policies)
-- [Receipt and Entitlement Validation](#receipt-and-entitlement-validation)
+- [Entitlement-Grant Authority Matrix](#entitlement-grant-authority-matrix)
+- [Receipt Validation](#receipt-validation)
 - [Data at Rest and in Transit](#data-at-rest-and-in-transit)
 - [Threat Model](#threat-model)
 - [What We Deliberately Do Not Do](#what-we-deliberately-do-not-do)
@@ -37,7 +38,7 @@ The security posture for LexiTap: a solo-founder, offline-first ESL app with no 
                           RLS + Edge Functions are the trust boundary
 ```
 
-Core principle: **the client is untrusted.** Anything that grants an entitlement, records a teacher advocate reward, or decrements a promo code is decided server-side. The client can read/write only its own rows, and only through RLS-enforced policies.
+Core principle: **the client is untrusted.** Anything that affects billing (IAP receipts) or content-error reports is validated server-side. The client can read/write only its own rows, enforced by RLS.
 
 ## Secrets Management
 
@@ -61,52 +62,53 @@ What is and is not a secret:
 RLS is **enabled on every Supabase table**. Default-deny; explicit policies grant the minimum. Representative policies:
 
 ```sql
--- Users may read/write ONLY their own sync rows
-ALTER TABLE user_progress_sync ENABLE ROW LEVEL SECURITY;
-CREATE POLICY own_progress ON user_progress_sync
-  USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
-
-ALTER TABLE user_entitlements_sync ENABLE ROW LEVEL SECURITY;
--- Clients may READ their entitlements but NOT self-grant:
-CREATE POLICY read_own_entitlements ON user_entitlements_sync
-  FOR SELECT USING (user_id = auth.uid());
--- INSERT/UPDATE only via service role (Edge Function after receipt validation)
-CREATE POLICY service_writes_entitlements ON user_entitlements_sync
-  FOR ALL TO service_role USING (true) WITH CHECK (true);
-
-ALTER TABLE user_stats_sync ENABLE ROW LEVEL SECURITY;
-CREATE POLICY own_stats ON user_stats_sync
-  USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
-
+-- Users may read/write ONLY their own account row
 ALTER TABLE user_accounts ENABLE ROW LEVEL SECURITY;
 CREATE POLICY own_account ON user_accounts
   USING (id = auth.uid()) WITH CHECK (id = auth.uid());
+
+-- Supabase Storage: user_db_backups bucket
+-- Each user's backup object lives at path: {user_id}/user.db.enc
+-- Bucket policy restricts reads and writes to objects whose path prefix matches auth.uid()::text.
+-- Server-side encryption key is per-user (stored in Vault); the client sends the encrypted blob.
+-- content_errors is service-role-write only (written by the Edge Function after deduplication).
 ```
 
-Teacher/referral/promo tables are **not** client-writable. `referrals` and `promo_codes` decrements happen only in Edge Functions (service role); clients get read-only or no direct access. This prevents a tampered client from minting advocate rewards or infinite promo redemptions.
+Per-table sync mirror tables (`user_progress_sync`, `user_entitlements_sync`, `user_stats_sync`) were removed in v3.0. Cloud state is a single encrypted blob backup of `user.db` in Supabase Storage — no per-row RLS is needed for sync data.
 
-## Receipt and Entitlement Validation
+Teacher/referral/promo tables are deferred to Phase 3. When implemented, they will not be client-writable; decrements happen only in Edge Functions (service role).
+
+## Entitlement-Grant Authority Matrix
+
+All paths that grant paid access must go through server-side validation. The client can never self-grant.
+
+| Grant source | User-facing entry | Validation authority | Local persistence |
+|---|---|---|---|
+| Store subscription / one-time IAP | Paywall / Restore Purchases | RevenueCat SDK (server-side) | Memory only; re-queried each session. Never written to `user.db`. |
+| B2B institutional seat token | Seat-token activation | Supabase Edge Function (service-role token validation) | Local flag in `user.db` after accepted (Phase 3+) |
+| Teacher advocate trial | Teacher code redemption | Supabase RPC `redeem_teacher_code` with `source_event_id` idempotency | After accepted (Phase 3+) |
+| Promo code | Promo screen | Supabase RPC `redeem_promo` with server-side decrement guard | After accepted (Phase 3+) |
+
+**Core invariant:** entitlement state is never derived from local `user.db` alone. RevenueCat is re-queried on session start; the result is memory-cached. Local `user.db` must never be the grant authority.
+
+## Receipt Validation
 
 Entitlements are money. They are **never** trusted from the client.
 
 **Core invariants:**
-- An unverified local write to `user_entitlements` must **never** unlock paid content.
-- The local SQLite `user_entitlements` row is an offline read mirror of server-verified state — it is not the grant authority.
-- `UnlockTierUseCase` is called only after server-side validation confirms the receipt (step 3 below). It persists a verified entitlement; it does not perform receipt validation. Receipt validation is infrastructure/external responsibility.
-- On revocation or refund: the local entitlement row is expired or deleted on the next validation/sync cycle (step 5 below).
+- Entitlement state is **never** persisted to `user.db`. RevenueCat is the source of truth for access control.
+- The app queries RevenueCat at session start and caches the result in memory only.
+- On purchase: RevenueCat validates the receipt server-side and returns a `CustomerInfo` object; the app gates content on that result only.
 
 1. On purchase, the app sends the store receipt to the `validate_receipt` Edge Function ([API_CONTRACT.md](./API_CONTRACT.md#rpc-receipt-validation)).
 2. The function validates against Apple/Google using server-held credentials.
-3. On success, the function (service role) writes the entitlement to `user_entitlements_sync`; RLS blocks the client from doing this itself.
-4. The client mirrors the now-verified entitlement into local `user_entitlements` via `UnlockTierUseCase`.
-5. On launch, invalid/refunded entitlements are re-validated and removed; the local row is expired or deleted.
-
-Referral and promo redemptions follow the same pattern: server-side, transactional, idempotent via unique keys (`receipt_id`) and decrement guards.
+3. On success, RevenueCat returns a verified `CustomerInfo`; the app unlocks content in memory.
+4. On launch, the app re-queries RevenueCat to refresh the cached entitlement state.
 
 ## Data at Rest and in Transit
 
 - **In transit:** all Supabase traffic is TLS (HTTPS). No plaintext network paths.
-- **At rest (device):** `user.db` holds only the user's own learning progress and entitlement records — low sensitivity. No passwords are stored on device (Supabase Auth manages credentials). We rely on OS-level app sandboxing and full-disk encryption (default on modern iOS/Android). We do **not** add app-level DB encryption (e.g., SQLCipher) at MVP — the asset value doesn't justify the complexity/cost; revisit if we ever store sensitive PII locally.
+- **At rest (device):** `user.db` holds only the user's own learning progress — low sensitivity. No entitlement data is persisted locally. No passwords are stored on device (Supabase Auth manages credentials). We rely on OS-level app sandboxing and full-disk encryption (default on modern iOS/Android). We do **not** add app-level DB encryption (e.g., SQLCipher) at MVP — the asset value doesn't justify the complexity/cost; revisit if we ever store sensitive PII locally.
 - **At rest (cloud):** Supabase-managed Postgres encryption at rest. We store minimal PII: email, display name, timezone. No payment card data ever touches our systems (handled by the app stores).
 - **Content DB (`words.db`):** public, non-sensitive vocabulary content — no protection needed beyond not shipping copyrighted material (a content-pipeline concern).
 
@@ -116,15 +118,15 @@ Sized for a ~$194 solo app whose primary asset is paid vocabulary content and no
 
 | Threat | Likelihood | Mitigation |
 |--------|-----------|------------|
-| Cracked client self-grants entitlements | medium | Server-side receipt validation; RLS blocks client entitlement writes |
-| Forged/replayed referral to mint advocate rewards | low-medium | Server-side `redeem_teacher_code`; `source_event_id` UNIQUE; rewards computed server-side |
+| Cracked client self-grants entitlements | medium | RevenueCat server-side receipt validation; app never persists entitlements locally |
+| Forged referral/promo (Phase 3) | low-medium | Edge Function server-side; `source_event_id` UNIQUE; rewards computed server-side |
 | Promo code brute force / over-redemption | low-medium | Server-side decrement + active/expiry checks in one transaction |
 | User reads another user's progress | low | RLS `user_id = auth.uid()` on all sync tables |
 | Stolen anon key | n/a | Anon key is public by design; RLS is the real control |
 | Leaked service-role key / store secret | low/high-impact | Kept only in Edge Function env; never in repo or binary; rotate if leaked |
 | Pirated content extraction from binary | medium/low-impact | Accepted: free tiers are free anyway; paid content piracy is low-value to chase for a solo app |
 | Account takeover | low | Delegated to Supabase Auth (hashing, OAuth); no custom auth code to get wrong |
-| Local DB tampering | low | Only affects the tamperer's own device/progress; cloud re-validates entitlements |
+| Local DB tampering | low | Only affects the tamperer's own device/progress; RevenueCat re-validates on next launch |
 
 ## What We Deliberately Do Not Do
 
@@ -137,6 +139,6 @@ Sized for a ~$194 solo app whose primary asset is paid vocabulary content and no
 
 ## Open Questions
 
-- Whether to enforce email verification before enabling sync (leaning yes for abuse resistance, but it adds friction).
-- Rate-limiting strategy for `redeem_promo` / `redeem_teacher_code` Edge Functions (Supabase-native limits vs in-function counters).
-- Account-deletion data flow: RLS cascade delete vs an Edge Function sweep (see [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md)).
+- `requires-product-decision` — Whether to enforce email verification before enabling sync (leaning yes for abuse resistance, but adds friction).
+- `deferred` — Rate-limiting strategy for `redeem_promo` / `redeem_teacher_code` Edge Functions (Phase 3+).
+- `unresolved` — Account-deletion data flow: RLS cascade delete vs Edge Function sweep (see [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md)).

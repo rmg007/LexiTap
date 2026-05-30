@@ -112,6 +112,6 @@ The audience is non-native English speakers. UI chrome (buttons, navigation, sys
 
 ## Open Questions
 
-- **Device test matrix:** which specific iOS/Android versions and screen sizes form the required manual-test set for launch.
-- **Automated a11y tooling:** confirm the chosen RN accessibility scanner/CI integration.
-- **IPA for all words:** confirm phonetic transcription is available for every word in content (it is the caption equivalent for audio); flag any tier lacking it.
+- `requires-product-decision` — **Device test matrix:** which specific iOS/Android versions and screen sizes form the required manual-test set for launch.
+- `unresolved` — **Automated a11y tooling:** confirm the chosen RN accessibility scanner/CI integration.
+- `requires-implementation-spike` — **IPA for all words:** confirm phonetic transcription is available for every word in content (it is the caption equivalent for audio); flag any tier lacking it.

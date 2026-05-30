@@ -181,5 +181,5 @@ A green `npm run check` plus a booting app on at least one simulator confirms th
 
 ## Open Questions
 
-- The device `user.db` schema exists; keep the exact Supabase mirror table migrations aligned with `DATABASE_SCHEMA.md` as Track B sync evolves.
-- Whether the Track A -> Track B `words.db` copy is a manual `cp`, an npm script, or a CI artifact download is tied to the open question in [GIT_WORKFLOW.md](./GIT_WORKFLOW.md).
+- `resolved-elsewhere` — Supabase mirror tables: per-table sync removed in v3.0; blob backup is Phase 3+. `DATABASE_SCHEMA.md` is source of truth.
+- `unresolved` — Track A → Track B `words.db` delivery (manual `cp` vs npm script vs CI artifact). Linked to [GIT_WORKFLOW.md](./GIT_WORKFLOW.md) open question; resolve before first content build.

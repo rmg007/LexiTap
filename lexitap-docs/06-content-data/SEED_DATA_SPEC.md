@@ -181,7 +181,7 @@ This checklist exists because LexiTap makes explicit exam-preparation claims. An
 | `toefl` | ETS Official Guide to the TOEFL Test (sample vocabulary); Academic Word List (AWL, Coxhead 2000 — 570 word families that account for ~10% of TOEFL academic text); Oxford Phrasal Academic Lexicon (OPAL) |
 | `ielts` | Official Cambridge Guide to IELTS; Cambridge English Vocabulary Profile (EVP — maps words to CEFR bands B1–C2); Collins COBUILD Advanced Learner's Dictionary |
 | `business` | Longman Business English Dictionary; Cambridge Business English Dictionary |
-| `gre` / `gmat` | Merriam-Webster's Collegiate Dictionary (GRE uses Merriam-Webster definitions verbatim); ETS GRE Vocabulary in Context materials |
+| `gre` / `gmat` | Merriam-Webster's Collegiate Dictionary and ETS GRE Vocabulary in Context materials used as **reference authorities only** — definitions must be independently authored, never copied verbatim (see content QA gate below). |
 | `idioms` / `phrasal_verbs` | Macmillan Phrasal Verbs Plus; Cambridge Idioms Dictionary; COCA (corpus.byu.edu) for frequency confirmation |
 
 ### Per-Word QA Checks
@@ -239,5 +239,5 @@ The definition MUST:
 
 ## Open Questions
 
-- **Foundation/Advanced image coverage.** Full vs subset coverage for free tiers (curation-time cost, not money) — decide at content build time.
-- **Difficulty banding rule.** Whether `difficulty` is derived from frequency rank automatically or assigned by hand; default of 3 is acceptable for launch if undecided.
+- `requires-product-decision` — **Foundation/Advanced image coverage.** Full vs subset coverage for free tiers (curation-time cost, not money) — decide at content build time.
+- `requires-product-decision` — **Difficulty banding rule.** Whether `difficulty` is derived from frequency rank automatically or assigned by hand; default of 3 is acceptable for launch if undecided.

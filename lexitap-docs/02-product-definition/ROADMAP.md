@@ -59,7 +59,7 @@ Content is the launch-blocking long pole, not code. Each tier's drop date is gat
 
 **Track A (Weeks 2–3) — COMPLETE:** CLI `import` / `validate` / `export` ✔; CSV + SQLite export ✔; `npm run build:db` ✔. Foundation tier DB bundle pending verification ☐.
 
-**Track B (Weeks 2–6) — IN PROGRESS:** Expo + TS setup ✔; load bundled `words.db` (ATTACH DATABASE) ✔; Home/Quiz/Progress/Settings screens ✔; MultipleChoice + DragDrop widgets ✔; SRS scheduling, mastery, quiz session, sync, and entitlements implemented as use-case/service layer ✔ (hooks pattern replaced by hexagonal architecture); streak counter ✔; background cloud sync via SupabaseSyncService ✔ (lifecycle wiring pending ☐). Auth screen and account creation deferred to Phase 5.
+**Track B (Weeks 2–6) — IN PROGRESS:** Expo + TS setup ✔; load bundled `words.db` (ATTACH DATABASE) ✔; Home/Quiz/Progress/Settings screens ✔; MultipleChoice + DragDrop widgets ✔; SRS scheduling, mastery, quiz session implemented as use-case/service layer ✔ (hexagonal architecture); streak counter ✔. Per-table cloud sync removed; encrypted blob backup deferred to Phase 3+. Auth screen and account creation deferred to Phase 5.
 
 **Deliverable:** working iOS + Android app, free Foundation tier, free cloud sync.
 **Gate:** app runs on both platforms.
@@ -72,7 +72,7 @@ Content is the launch-blocking long pole, not code. Each tier's drop date is gat
 ## Phase 3: First Paid Tier (Weeks 11–12)
 
 **Track A:** enrich TOEFL with premium audio (ElevenLabs).
-**Track B:** paywall, Apple/Google IAP, entitlements (Supabase), teacher referral code validation, promo codes, restore purchases. Early-adopter annual intro price ($19.99 vs $24.99 list).
+**Track B:** paywall, Apple/Google IAP via RevenueCat, restore purchases, Supabase auth. Early-adopter annual intro price ($19.99 vs $24.99 list). Teacher referral codes and promo codes deferred to Phase 3+.
 
 **Gate:** 10 paying users (rethink if < 5 at Week 12).
 
@@ -84,9 +84,9 @@ Content is the launch-blocking long pole, not code. Each tier's drop date is gat
 
 ## Phase 5: Launch Prep (Weeks 17–18)
 
-**Auth (all three providers, implemented here):** email/password account creation screen (Supabase), Google Sign-In (`expo-google-sign-in` + Supabase OAuth), Sign in with Apple (`expo-apple-authentication` + Supabase Apple OAuth + App Store Connect capability — required by Guideline 4.8 whenever Google Sign-In is offered). Wire `SupabaseSyncService` lifecycle to authenticated user ID.
+**Auth (all three providers, implemented here):** email/password account creation screen (Supabase), Google Sign-In (`expo-google-sign-in` + Supabase OAuth), Sign in with Apple (`expo-apple-authentication` + Supabase Apple OAuth + App Store Connect capability — required by Guideline 4.8 whenever Google Sign-In is offered). Wire encrypted blob backup lifecycle to authenticated user ID (Phase 3+).
 
-App Store assets (icon, 6 screenshots, description), privacy policy + ToS, support email, launch lexitap.app, deploy teacher referral portal, run `npx expo-doctor` and evaluate SDK upgrade requirements, Apple ($99/yr) + Google ($25 one-time) submission.
+App Store assets (icon, 6 screenshots, description), privacy policy + ToS, support email, launch lexitap.app, run `npx expo-doctor` and evaluate SDK upgrade requirements, Apple ($99/yr) + Google ($25 one-time) submission. Teacher referral portal deferred to Phase 3+.
 **Deliverable:** live on both stores.
 
 ## Phase 6: Growth and Content Drops (Week 19+)

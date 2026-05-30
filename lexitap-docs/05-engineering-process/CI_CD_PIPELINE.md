@@ -162,5 +162,5 @@ eas secret:create --name SUPABASE_ANON_KEY --value "..."
 
 ## Open Questions
 
-- Whether `words.db` is built in CI and attached as an artifact or committed to the repo affects whether the Track A build needs its own CI job. Tracked as an open question in [GIT_WORKFLOW.md](./GIT_WORKFLOW.md); resolve before the first content build.
-- Adding the Jest suite to the required PR check is gated on the suite existing; flip `npm test --if-present` to a hard `npm test` once Track B has tests.
+- `unresolved` — `words.db` artifact vs committed binary. See [GIT_WORKFLOW.md](./GIT_WORKFLOW.md); resolve before the first content build.
+- `unresolved` — Jest required PR check: flip `npm test --if-present` to a hard `npm test` once the Track B test suite is complete.

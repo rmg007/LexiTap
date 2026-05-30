@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Pressable, View, type ViewStyle } from 'react-native';
 import { useTheme } from '@/presentation/theme';
+import { hapticsSelect, hapticsCorrect, hapticsCorrection } from '@/presentation/services/haptics';
 import { Text } from '@/presentation/components/Text';
 import { Button } from '@/presentation/components/Button';
 import type { AnswerCallback } from '@/presentation/components/assessments/types';
@@ -76,6 +77,11 @@ export function Classification({
   function handleSubmit(): void {
     if (selected === null || revealed) return;
     setInternalRevealed(true);
+    if (selected === correctValue) {
+      hapticsCorrect();
+    } else {
+      hapticsCorrection();
+    }
     onAnswer({ value: selected, assessmentType: 'classification' });
   }
 
@@ -92,7 +98,10 @@ export function Classification({
             accessibilityLabel={`Sort into ${bucket.label}`}
             accessibilityState={{ selected: selected === bucket.id, disabled: revealed }}
             disabled={revealed}
-            onPress={() => setSelected(bucket.id)}
+            onPress={() => {
+              hapticsSelect();
+              setSelected(bucket.id);
+            }}
             style={bucketStyle(theme, selected === bucket.id, revealed, bucket.id === correctValue)}
           >
             <Text variant="label" color="textPrimary">
@@ -105,8 +114,12 @@ export function Classification({
         <Button label="Submit" variant="primary" fullWidth disabled={selected === null} onPress={handleSubmit} />
       )}
       {revealed && (
-        <Text variant="body" color={correct ? 'success' : 'caution'}>
-          {correct ? 'Nice — sorted correctly.' : 'Not quite — review and keep going.'}
+        <Text
+          variant="body"
+          color={correct ? 'success' : 'caution'}
+          accessibilityLiveRegion="polite"
+        >
+          {correct ? 'Nice \u2014 sorted correctly.' : 'Not quite \u2014 review and keep going.'}
         </Text>
       )}
     </View>

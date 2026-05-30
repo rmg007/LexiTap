@@ -15,11 +15,11 @@ LexiTap has **no custom backend server** (see [TECH_STACK_DECISIONS.md](./TECH_S
 
 - [Client and Transport](#client-and-transport)
 - [Auth Operations](#auth-operations)
-- [Sync: Push](#sync-push)
-- [Sync: Pull](#sync-pull)
+- [Backup: Upload](#backup-upload)
+- [Backup: Restore](#backup-restore)
 - [RPC: Receipt Validation](#rpc-receipt-validation)
-- [RPC: Teacher Advocate Redemption](#rpc-teacher-advocate-redemption)
-- [RPC: Promo Code Redemption](#rpc-promo-code-redemption)
+- [RPC: Teacher Advocate Redemption](#rpc-teacher-advocate-redemption) *(Phase 3+)*
+- [RPC: Promo Code Redemption](#rpc-promo-code-redemption) *(Phase 3+)*
 - [Error Model](#error-model)
 - [Retry Semantics](#retry-semantics)
 - [Open Questions](#open-questions)
@@ -51,50 +51,35 @@ On first successful sign-in the client writes the device's IANA timezone (AsyncS
 { data: { user: null, session: null }, error: { name, message, status } }
 ```
 
-## Sync: Push
+## Backup: Upload
 
-Triggered on app close (and opportunistically). Upserts changed local rows into the cloud mirrors. Idempotent — safe to retry.
-
-```ts
-// PUSH user_progress (only rows changed since last sync cursor)
-await supabase.from('user_progress_sync').upsert(
-  changedRows.map(r => ({ user_id, ...r, synced_at: new Date().toISOString() })),
-  { onConflict: 'user_id,word_id' }
-);
-```
-
-`SupabaseSyncService` currently pushes `user_progress_sync` only. `user_entitlements_sync` is **not** pushed by the client — RLS permits only service-role writes to that table (entitlements are written server-side by the `validate_receipt` Edge Function after receipt validation; see [RPC: Receipt Validation](#rpc-receipt-validation)). The client pulls entitlements on sync but never pushes them. `user_stats_sync` is a planned mirror of the streak/totals subset of local `user_stats`; **freeze fields are device-local and excluded from the sync protocol** — they are never included in any push or pull payload (see [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md#supabase-sync-mirror-tables)).
-
-**Request row shape (`user_progress_sync`):** `{ user_id: UUID, word_id: string, mastery_level: int, next_review_date: bigint, last_reviewed_at: bigint, consecutive_correct: int, total_attempts: int, total_correct: int, first_seen_at: bigint, synced_at: ISO }`.
-
-The local sync cursor (last successful push timestamp) lives in AsyncStorage; only rows with `last_reviewed_at > cursor` are pushed. Conflict policy is last-write-wins by `last_reviewed_at` — resolved client-side on pull, so the cloud upsert is a blind overwrite of the user's own rows (RLS guarantees you can only write your own).
-
-## Sync: Pull
-
-Triggered on app open. Fetches cloud mirrors and merges into local SQLite (last-write-wins by `last_reviewed_at`; cloud wins only if newer).
+Triggered opportunistically (on app background / account sign-in). The entire `user.db` is AES-256 encrypted with a per-user key stored in Supabase Vault, then uploaded as an object to the `user_db_backups` Storage bucket at path `{user_id}/user.db.enc`. The operation is idempotent — safe to retry; overwrites the single backup object. The device is always the authority; the cloud blob is a restore aid, not a live mirror.
 
 ```ts
-const { data: progress } = await supabase.from('user_progress_sync').select('*').eq('user_id', uid);
-const { data: ents }     = await supabase.from('user_entitlements_sync').select('*').eq('user_id', uid);
-// progress merges last-write-wins by last_reviewed_at; entitlements are additive (pull-only — server-written after validation).
-// user_stats_sync pull is planned (streak/totals subset) — not yet implemented.
+// Pseudocode — actual implementation in infrastructure/sync/BackupService.ts (Phase 3)
+const encrypted = await encryptWithVaultKey(userId, await readLocalDb());
+await supabase.storage.from('user_db_backups').upload(`${userId}/user.db.enc`, encrypted, { upsert: true });
 ```
 
-The `.eq('user_id', uid)` filter is defense-in-depth; RLS already restricts rows to the caller. Merge logic is in `SyncProgressUseCase` (application layer); the Supabase calls themselves are in the infrastructure adapter.
+Per-table sync mirror tables (`user_progress_sync`, `user_entitlements_sync`, `user_stats_sync`) were removed in v3.0. There is no row-level push/pull.
+
+## Backup: Restore
+
+Triggered when a signed-in user installs on a new device and has no local `user.db`. Downloads the blob, decrypts it, and initialises the local database from it. Falls back to empty schema + onboarding if no backup exists.
 
 ## RPC: Receipt Validation
 
-Store receipt validation requires a trusted secret (App Store / Play credentials) that must never ship in the app. Runs as a **Supabase Edge Function**, not table access.
+RevenueCat handles store receipt validation server-side. The app never calls App Store / Play Store receipt endpoints directly. On purchase:
 
-```
-POST  rpc: validate_receipt
-body:   { platform: 'ios'|'android', product_id: string, receipt: string }
-returns:{ valid: boolean, tier_id: string, expires_at: bigint | null }
-```
+1. RevenueCat SDK validates the receipt and returns a `CustomerInfo` object.
+2. The app reads entitlement state directly from `CustomerInfo` — **never** writes it to `user.db`.
+3. Entitlement state is cached in memory only; re-fetched on each session start.
 
-On `valid: true` the function writes the verified entitlement to `user_entitlements_sync` server-side (the client cannot self-grant entitlements; RLS denies client writes to `user_entitlements_sync`). `UnlockTierUseCase` in the application layer is then called to mirror the verified entitlement into local `user_entitlements`. The local SQLite row is the offline read source for verified entitlements; it is not the grant authority.
+The `validate_receipt` Edge Function described in earlier versions was superseded by RevenueCat in v3.0. No server-side entitlement write to `user_entitlements_sync` occurs.
 
 ## RPC: Teacher Advocate Redemption
+
+> **STATUS: Phase 3+ (not implemented in v1).** Teacher referral and advocate reward mechanics are deferred. See `plans/full-cleanup-2026-05-28.md`.
 
 Recording a teacher-code redemption and reward eligibility must be server-authoritative to prevent client tampering. Postgres RPC / Edge Function:
 
@@ -113,6 +98,8 @@ Reward eligibility is derived from server-side teacher and learner activity stat
 
 ## RPC: Promo Code Redemption
 
+> **STATUS: Phase 3+ (not implemented in v1).** Promo code mechanics are deferred. v1 uses App Store IAP via RevenueCat only.
+
 ```
 POST  rpc: redeem_promo
 body:   { code: string }
@@ -120,7 +107,7 @@ returns:{ accepted: boolean, type: 'free_module'|'free_premium', free_product_id
 side-effects (server-side, transactional):
   - check is_active AND uses_remaining > 0 AND (expires_at IS NULL OR expires_at > now())
   - UPDATE promo_codes SET uses_remaining -= 1, uses_count += 1
-  - grant entitlement to user_entitlements_sync
+  - grant entitlement via RevenueCat (user_entitlements_sync removed in v3.0)
 ```
 
 All validation (active, not expired, uses remaining) happens server-side in one transaction to prevent race-condition over-redemption.
@@ -153,5 +140,5 @@ type SyncResult =
 
 ## Open Questions
 
-- Whether receipt validation and referral/promo run as Postgres RPC (security definer) functions or Edge Functions — leaning Edge Functions for the ones holding store secrets, RPC for pure-DB logic.
-- Exact JWT refresh window and whether to pre-emptively refresh on launch.
+- `requires-implementation-spike` — Whether receipt validation and referral/promo RPCs run as Postgres RPC (security definer) functions or Edge Functions — leaning Edge Functions for the ones holding store secrets, RPC for pure-DB logic.
+- `requires-product-decision` — Exact JWT refresh window and whether to pre-emptively refresh on launch.

@@ -22,8 +22,8 @@ export type PurchaseStatus = 'purchased' | 'cancelled' | 'pending' | 'error';
 export interface PurchaseResult {
   readonly sku: string;
   readonly status: PurchaseStatus;
-  // Opaque store receipt token, persisted to user_entitlements.receipt_token
-  // and re-validated server-side. Absent when the purchase did not complete.
+  // Opaque store receipt token. Passed to RevenueCat for server-side
+  // validation. Absent when the purchase did not complete.
   readonly receiptToken?: string;
 }
 

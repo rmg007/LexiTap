@@ -15,5 +15,4 @@ export { SQLiteContentTierRepository } from '@/infrastructure/db/repositories/SQ
 export { SQLiteUserProgressRepository } from '@/infrastructure/db/repositories/SQLiteUserProgressRepository';
 export { SQLiteQuizSessionRepository } from '@/infrastructure/db/repositories/SQLiteQuizSessionRepository';
 export { SQLiteQuizAttemptRepository } from '@/infrastructure/db/repositories/SQLiteQuizAttemptRepository';
-export { SQLiteEntitlementRepository } from '@/infrastructure/db/repositories/SQLiteEntitlementRepository';
 export { SQLiteUserStatsRepository } from '@/infrastructure/db/repositories/SQLiteUserStatsRepository';

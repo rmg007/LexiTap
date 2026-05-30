@@ -26,7 +26,7 @@ Free Foundation tier only. Validates the core loop before any monetization.
 | Streak counter | Must | Non-negotiable gamification. |
 | Quiz session orchestration | Must | `useQuizSession`. |
 | Home / Quiz / Progress / Settings screens | Must | Four screens only. |
-| Account creation (email + Google) | Must | Required for sync. |
+| Account creation (email + Google + Apple) | Must | Required for sync. Email = Magic-Link (no password stored); Google + Apple = OAuth (Phase 3). |
 | Free cloud sync (background) | Must | `useSync`; locked free-for-all. |
 | Simplified adaptive diagnostic onboarding | Must | Self-segment → Yes/No → pseudo-words → SE exit → Knowledge Map (backlog #45). |
 | Progress / mastery visualization | Should | Knowledge Map reveal. |

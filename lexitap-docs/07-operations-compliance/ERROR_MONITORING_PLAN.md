@@ -110,8 +110,6 @@ and money/sync errors paging in real time.
 
 ## Open Questions
 
-- Sentry free-tier event quota vs. expected volume at 1,000 users — confirm headroom; add sampling
-  if needed.
-- Whether to enable Sentry session replay (likely no — extra privacy surface, low value for a
-  no-typing tap UI).
-- Personal push alerting channel (email-only vs. a free push relay).
+- `requires-external-validation` — Sentry free-tier event quota vs. expected 1,000-user volume — confirm headroom; add sampling if needed.
+- `resolved-elsewhere` — Sentry session replay: no — extra privacy surface, low value for a no-typing tap UI.
+- `unresolved` — Personal push alerting channel: email-only vs. a free push relay.

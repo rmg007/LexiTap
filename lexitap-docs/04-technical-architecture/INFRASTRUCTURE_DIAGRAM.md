@@ -60,11 +60,11 @@ How LexiTap's components connect: the mobile app, the bundled content DB, Supaba
                       ▼             ▼
    ┌──────────────────────────────────────────────────────────────────┐
    │  SUPABASE (managed — no custom server)                             │
-   │   Auth (email + Google) │ Postgres (sync mirrors + teacher data)   │
-   │   RLS policies          │ Edge Functions (receipt/referral/promo)  │
+   │   Auth (email + Google) │ Postgres (content_errors, user_db_backups) │
+   │   RLS policies          │ Edge Functions (receipt validation Phase 3) │
    │   Storage (optional, post-launch assets)                           │
    └───────────────────────────────┬──────────────────────────────────┘
-                                    │ reads teachers/referrals
+
                                     ▼
    ┌──────────────────────────────────────────────────────────────────┐
    │  Teacher Advocate Portal (web)  → Supabase Postgres                │
@@ -78,8 +78,8 @@ How LexiTap's components connect: the mobile app, the bundled content DB, Supaba
 |-----------|---------|------|------|
 | Mobile app | user device | Offline-first ESL app; SQLite source of truth | included in dev cost |
 | `words.db` | bundled in binary | Read-only content (tiers, words, assets) | $0 runtime |
-| `user.db` | user device | Read-write progress, entitlements, logs | $0 |
-| Supabase | managed cloud | Auth, Postgres sync mirrors, teacher backend, Edge Functions | free tier (target) |
+| `user.db` | user device | Read-write progress, SRS state, logs | $0 |
+| Supabase | managed cloud | Auth, content_errors, user_db_backups (Phase 3), Edge Functions | free tier (target) |
 | EAS Build/Submit | Expo cloud | Build + submit signed binaries | free/low tier |
 | Content CLI (Track A) | dev machine | Generate/validate/enrich/export `words.db` | one-time enrichment $ |
 | Teacher advocate portal | web (Supabase-backed) | Referral codes, non-cash reward credits, Premium-seat grants | minimal/free |
@@ -115,7 +115,7 @@ data/input/*.csv|json ─▶ import ─▶ working SQLite
 2. Learn/review: all local; writes go to `quiz_attempts` (append), `user_progress` (update), `event_log` (append) in one transaction.
 3. App open: pull cloud mirrors (best-effort, non-blocking).
 4. App close: push changed rows (idempotent upsert).
-5. Purchase/referral/promo: Edge Function validates server-side, then mirrors entitlement to local.
+5. Purchase (Phase 3): RevenueCat validates receipt server-side; app caches entitlement in memory.
 
 ## Budget Constraints
 
@@ -131,5 +131,5 @@ If usage exceeds the Supabase free tier, the first paid step (Supabase Pro) is t
 
 ## Open Questions
 
-- Whether the teacher referral portal is a standalone static site hitting Supabase directly or a minimal hosted page — leaning static + Supabase JS client with RLS.
-- Whether to use Supabase Storage for post-launch audio drops vs continuing to bundle — bundling preferred while binary size allows.
+- `deferred` — Teacher referral portal design (Phase 3+) — leaning static site + Supabase JS client with RLS.
+- `unresolved` — Whether to use Supabase Storage for post-launch audio drops vs continuing to bundle — bundling preferred while binary size allows.

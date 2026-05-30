@@ -70,9 +70,9 @@ on-device data is intact unless overwritten by a newer sync.
 
 Entitlements restore via Apple/Google receipt re-validation. Steps: have the user tap "Restore
 Purchases" while signed into the same store account that bought it; confirm they are on the same app
-account for cloud entitlement mirror. If still locked, request the store order id and check
+account. If still locked, request the store order id and check RevenueCat dashboard for the
 server-side receipt validation logs. Note Premium Pass unlocks all paid tiers via a single
-entitlement row.
+purchase record.
 
 ### Streak disputes / "I lost my streak unfairly"
 
@@ -84,7 +84,7 @@ log it. Do not promise routine streak restoration.
 ### Refund requests
 
 Apple/Google are merchant of record — refunds are requested through the store, not us. Provide the
-store refund link/instructions. A store-issued refund revokes the entitlement on next receipt
+store refund link/instructions. A store-issued refund revokes access on next RevenueCat
 re-validation (expected). We do not process payments directly, so we cannot issue refunds ourselves;
 say so clearly and point to the right store flow.
 
@@ -104,7 +104,7 @@ Teachers receive non-cash Premium seats or credits while the advocate loop stays
 [../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md](../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md)).
 Dispute playbook:
 
-1. Pull the teacher's `referrals` rows (code, referred account, reward status, qualifying activity,
+1. (Phase 3) Pull the teacher's `referrals` rows (code, referred account, reward status, qualifying activity,
    and source event id) and reconcile against the dashboard total.
 2. Common cause: a referred account never completed the qualifying trial/activity threshold or was
    later flagged as fraudulent/self-referred; explain with the source event id.
@@ -131,6 +131,6 @@ playbook above to keep response time low.
 
 ## Open Questions
 
-- Build a public FAQ/help page on the website for top-five deflections before launch?
-- Threshold (tickets/day) at which a help-desk tool becomes worth the setup cost.
-- Exact qualifying threshold and cadence for issuing teacher Premium-seat rewards.
+- `requires-product-decision` — Public FAQ/help page on the website before launch? Recommended; scope TBD.
+- `deferred` — Help-desk tool threshold (tickets/day). Revisit at launch.
+- `deferred` — Teacher Premium-seat reward threshold and cadence (Phase 3+).

@@ -73,5 +73,5 @@ American-student vocabulary (SAT/ACT, K-12 grade-level) is a separate product. L
 
 ## Open Questions
 
-- Will B2B cram schools convert at the projected $199/yr contract size, or will they demand deeper customization? Watch Phase 2 pilot feedback.
-- Does the no-typing recognition loop feel challenging enough for test-prep learners without suppressing D1/D7 retention? Watch onboarding diagnostic drop-off and review-session completion rates.
+- `requires-external-validation` — B2B cram school conversion at $199/yr. Watch Phase 2 pilot feedback.
+- `requires-external-validation` — Does the no-typing recognition loop retain test-prep learners? Watch onboarding diagnostic drop-off and D7/D30 retention data.

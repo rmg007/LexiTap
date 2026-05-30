@@ -26,9 +26,8 @@ import {
 import { createHash } from 'node:crypto';
 import { resolve, dirname } from 'node:path';
 import type { DB } from '@/lib/db';
-import { openWorkingDb, createFreshOutputDb, WORKING_DB_PATH } from '@/lib/db';
+import { openWorkingDb, createFreshOutputDb, WORKING_DB_PATH, OUTPUT_DB_PATH } from '@/lib/db';
 import { loadConfig, type AppConfig, type TierConfig, PROJECT_ROOT } from '@/lib/config';
-import { resolveAppPaths } from '@/lib/paths';
 import { buildWordIndex } from '@/lib/fingerprint';
 import { validateRows } from '@/commands/validate';
 import { importRows } from '@/commands/import';
@@ -41,9 +40,9 @@ import type { TierRow, WordRow } from '@/schema/types';
 
 const INSERT_TIER = `
 INSERT INTO content_tiers (
-  id, name, description, is_free, price_usd, sku, word_count, display_order, is_active
+  id, name, description, is_free, sku, word_count, display_order, is_active
 ) VALUES (
-  @id, @name, @description, @is_free, @price_usd, @sku, @word_count, @display_order, @is_active
+  @id, @name, @description, @is_free, @sku, @word_count, @display_order, @is_active
 )
 `.trim();
 
@@ -69,7 +68,6 @@ function tierConfigToRow(tier: TierConfig, wordCount: number): TierRow {
     name: tier.name,
     description: tier.description,
     is_free: tier.is_free ? 1 : 0,
-    price_usd: tier.price_usd,
     sku: tier.sku,
     word_count: wordCount,
     display_order: tier.display_order,

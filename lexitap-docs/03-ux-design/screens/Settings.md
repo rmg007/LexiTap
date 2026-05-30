@@ -7,13 +7,13 @@ updated: 2026-05-24
 priority: P1
 tab: Settings
 target_file: mobile/src/presentation/screens/SettingsScreen.tsx
-related_flows: [purchasing-premium, redeeming-teacher-code, switching-devices-sync]
+related_flows: [purchasing-premium, switching-devices-sync]
 tags: [screen, settings, account, sync, content, study, about]
 ---
 
 # Settings Screen
 
-> AI-buildable spec. Tokens from [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md). Grouped list of account, content, study, and about controls. No ads, no tracking toggles to apologize for (privacy promise). Entry point to sync, Paywall, and teacher-code redemption.
+> AI-buildable spec. Tokens from [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md). Grouped list of account, content, study, and about controls. No ads, no tracking toggles to apologize for (privacy promise). Entry point to Paywall and sync.
 
 ## 1. Purpose
 
@@ -26,7 +26,6 @@ Central hub for account/sync, content unlocks, study preferences, and legal/help
 | Enter | Tab bar | Tap `⚙ Settings` |
 | Exit | Sign-in / Account | "Sign in / sync" |
 | Exit | Paywall | "Unlock content" |
-| Exit | Teacher Code Redemption | "Have a teacher code?" |
 | Exit | Restore purchases (IAP) | "Restore purchases" |
 | Exit | Web (Privacy/Terms/Help) | About rows — open via in-app browser/links |
 
@@ -39,7 +38,6 @@ Central hub for account/sync, content unlocks, study preferences, and legal/help
 │ ACCOUNT                      │  ← group header (B)
 │  Sign in / sync          ›   │  ← row (C) cloud sync (free)
 │  Restore purchases       ›   │
-│  Have a teacher code?    ›   │
 │                              │
 │ CONTENT                      │
 │  Unlock content          ›   │  → Paywall
@@ -71,7 +69,7 @@ Central hub for account/sync, content unlocks, study preferences, and legal/help
 |---|---|---|
 | Auth/sync state | account/sync service | "Sign in" vs "Signed in as …" |
 | Active tier | active-tier read | shown inline |
-| Entitlement summary | `user_entitlements` | informs "Unlock content" wording |
+| Entitlement summary | RevenueCat `CustomerInfo` | informs "Unlock content" wording |
 | Reminder opt-in | local settings | single daily reminder only |
 | Appearance pref | local settings | System (default) / Dark / Light |
 | Teacher code state | redemption service | shows applied code/trial if active |
@@ -96,7 +94,6 @@ Privacy promise: no ads settings, no tracking-consent apology toggles.
 |---|---|---|---|
 | Sign in / sync | tap | → Sign-in / Account ([SigninAccount.md](./SigninAccount.md)) | none |
 | Restore purchases | tap | Trigger IAP restore (StoreKit/Play) | none |
-| Have a teacher code? | tap | → Teacher Code Redemption | none |
 | Unlock content | tap | → Paywall | none |
 | Active tier | tap | Tier picker / Progress | `selection` |
 | Daily reminder (D) | toggle | Schedule/cancel single reminder | `selection` |
@@ -112,7 +109,6 @@ Destructive actions (delete account / reset progress), if present, are the ONLY 
 | title | "Settings" |
 | account.signin | "Sign in / sync" |
 | account.restore | "Restore purchases" |
-| account.teacher | "Have a teacher code?" |
 | content.unlock | "Unlock content" |
 | content.activeTier | "Active tier: {tier}" |
 | study.reminder | "Daily reminder" |
@@ -131,7 +127,7 @@ Minimal — standard row press feedback (`motion.fast`). Toggle animates per pla
 
 ## 11. Acceptance criteria
 
-- [ ] Sync is presented as free; entitlements/restore reachable here.
+- [ ] Restore Purchases reachable here via RevenueCat.
 - [ ] Single opt-in daily reminder only — no aggressive notification options.
 - [ ] Appearance defaults to System with Dark fallback.
 - [ ] No ads or tracking-consent toggles.

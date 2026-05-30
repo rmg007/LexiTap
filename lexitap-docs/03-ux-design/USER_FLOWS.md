@@ -21,7 +21,6 @@ MVP screens are Home, Quiz, Progress, Settings (locked, [PRODUCT_REQUIREMENTS_DO
 - [3. Learning New Words](#3-learning-new-words)
 - [4. Hitting the Daily Cap (Forgiveness)](#4-hitting-the-daily-cap-forgiveness)
 - [5. Purchasing Premium (Paywall)](#5-purchasing-premium-paywall)
-- [6. Redeeming a Teacher Referral Code](#6-redeeming-a-teacher-referral-code)
 - [7. Switching Devices (Sync)](#7-switching-devices-sync)
 - [8. Maintaining and Recovering a Streak](#8-maintaining-and-recovering-a-streak)
 - [Open Questions](#open-questions)
@@ -144,81 +143,15 @@ Steps:
 
 1. Trigger points: tier-exhaustion suggestion (flow 3), a locked tier tapped on Progress, or Settings → "Unlock content."
 2. **Paywall sheet** presents Premium Pass monthly ($4.99/mo) and annual ($24.99/yr) options, plus the Common 3000 one-time unlock ($1.99) where applicable. Honest framing: cancel anytime, no auto-renew tricks, no ads.
-3. If a teacher advocate code is active (flow 6), the extended trial is shown without steering users to off-store discounts.
 4. User taps **Unlock** → native StoreKit / Google Play Billing purchase sheet opens (IAP adapter). Store returns one of: `cancelled` / `pending` / `error` / receipt token.
-5. Receipt token is validated server-side by RevenueCat / `validate_receipt` Supabase Edge Function. On valid receipt: Edge Function writes entitlement to `user_entitlements_sync` (service role); `UnlockTierUseCase` mirrors the verified entitlement to local `user.db`; tier content unlocks; confirmation toast. On Premium Pass, all current and future paid tiers unlock. A pending/deferred receipt (e.g. Apple "Ask to Buy") shows a "We'll unlock as soon as it's approved" state — no local entitlement is written until validation succeeds.
+5. Receipt token is validated server-side by RevenueCat. On valid receipt: RevenueCat returns verified `CustomerInfo`; app unlocks content in memory; confirmation toast. On Premium Pass, all current and future paid tiers unlock. A pending/deferred receipt (e.g. Apple "Ask to Buy") shows a "We'll unlock as soon as it's approved" state.
 6. **Restore purchases** is always available (Settings + Paywall footer) for reinstalls/new devices.
 
 ```
 trigger ▶ PAYWALL sheet ▶ Unlock ▶ native purchase
-   │                          ├─ receipt ─▶ server validation ─▶ entitlement persisted ─▶ content unlocked
-   │                          ├─ pending ─▶ "We'll unlock as soon as it's approved." (no local entitlement yet)
+   │                          ├─ receipt ─▶ RevenueCat validation ─▶ CustomerInfo cached ─▶ content unlocked
+   │                          ├─ pending ─▶ "We'll unlock as soon as it's approved."
    │                          └─ cancel/fail ─▶ back, no nag
-   └─ teacher code active ─▶ extended trial shown
 ```
 
-Edge cases: purchase pending/deferred (family approval) → "We'll unlock as soon as it's approved." Offline at purchase time → block gracefully with "connect to complete purchase," never lose entitlement once granted.
-
-## 6. Redeeming a Teacher Referral Code
-
-Goal: apply a teacher's code for an extended Premium trial and attribute the referral for non-cash advocate rewards ([PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md) teacher network).
-
-Steps:
-
-1. Entry: Settings → "Have a teacher code?" or a deep-link from the teacher's shared message (e.g. code `TEACHER_MARIA`).
-2. User selects the code from a list (or it is prefilled from the deep link) — selection-based, no free typing where avoidable; if manual entry is unavoidable it uses a constrained code picker, not a free-text quiz input (the no-typing rule governs quiz flows specifically).
-3. App validates the code (online check; cached for offline reuse once validated).
-4. Valid → extended trial attaches to the account and is reflected at the Paywall (flow 5). A confirmation shows the trial and the teacher attribution.
-5. Invalid/expired → gentle inline message, no penalty, option to try another.
-
-```
-Settings/deep-link ▶ select code ▶ validate
-                                     ├─ valid ─▶ trial attached ▶ shown at Paywall
-                                     └─ invalid ─▶ gentle retry
-```
-
-Edge case: code applied before any account exists → store provisionally on device, bind to account on creation/sign-in so attribution survives sync.
-
-## 7. Switching Devices (Sync)
-
-Goal: cloud sync is free and reliable — a direct differentiator against Knowji's device-bound SRS and WordUp's sync failures ([PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md)). Offline-first: SQLite is source of truth, cloud (Supabase) is the sync layer.
-
-Steps:
-
-1. On the new device, install and launch → choose **Sign in** (instead of starting fresh) on the first-run account screen.
-2. Authenticate → app pulls the cloud snapshot: SRS state, progress, entitlements, streak, settings.
-3. Local SQLite is hydrated from the snapshot; conflict resolution favors the most recent per-record update (append-only SRS history is never retroactively rewritten, per [SYSTEM_ARCHITECTURE.md](../04-technical-architecture/SYSTEM_ARCHITECTURE.md) invariants).
-4. User lands on Home with full continuity — same due words, same streak, same unlocked tiers (entitlements restored without re-purchase; Restore Purchases as backstop).
-5. Ongoing: changes on any device sync in the background when online; fully usable offline between syncs.
-
-```
-NEW DEVICE ▶ Sign in ▶ pull cloud snapshot ▶ hydrate SQLite ▶ HOME (full continuity)
-old device edits ─▶ cloud ─▶ background sync ─▶ new device (and vice versa)
-```
-
-Edge cases: offline at sign-in → allow read-only/cached start, complete hydration when online. Two devices edit concurrently → last-write-wins per record; SRS review events merge (append-only), they do not overwrite.
-
-## 8. Maintaining and Recovering a Streak
-
-Goal: the streak answers "did you show up today?" — the non-negotiable gamification mechanic, between Duolingo's compulsion and WordUp's toothlessness, with no guilt ([SRS_FORGIVENESS_MECHANICS.md](../02-product-definition/SRS_FORGIVENESS_MECHANICS.md)).
-
-Steps:
-
-1. Completing the day's first review session (or learn check) increments the streak by 1. Streak chip on Home updates with a single medium haptic. Showing up = maintained; there is no time-on-task or word-count target.
-2. **At-risk state:** if the user opens the app and today's session is not yet done, the streak chip shows the at-risk treatment (flame outline + caution ring) as a gentle nudge — not a countdown of doom.
-3. **Streak freeze (recovery):** a missed day consumes an available streak-freeze automatically (earned/granted per the freeze design in Backlog #43), preserving the streak silently. The user is informed warmly afterward ("A freeze kept your streak — welcome back"), never shamed.
-4. If no freeze is available and a day is missed, the streak resets to 0 with a soft, encouraging re-start message — no red, no guilt badge, no shrinking-heart drama.
-5. Notifications (optional, opt-in) are a single gentle daily reminder, not aggressive re-engagement spam.
-
-```
-day complete ─▶ streak +1
-app open, not done ─▶ AT-RISK chip (gentle)
-missed day ─┬─ freeze available ─▶ auto-consume ─▶ streak preserved (warm note)
-            └─ no freeze ─▶ reset to 0 ─▶ encouraging restart
-```
-
-## Open Questions
-
-- **Referral code entry vs no-typing rule:** the no-typing rule is scoped to quiz flows; a constrained code entry/picker for referral codes is proposed. Confirm whether manual code typing is acceptable in Settings, or whether deep-link/scan-only is required.
-- **Streak freeze accrual:** exact earn/grant cadence for freezes is owned by Backlog #43 (SRS Forgiveness design) and is referenced here, not decided.
-- **Account-optional onboarding:** confirm whether cloud sync requires account at first run or can be deferred (this doc assumes deferred/skippable).
+Edge cases: purchase pending/deferred (family approval) → "We'll unlock as soon as it's approved." Offline at purchase time → block gracefully with "connect to complete purchase."

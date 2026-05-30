@@ -56,26 +56,28 @@ Naming: `object_action`, snake_case, past-tense action. Reuse the on-device `eve
 (`event_type`, `payload`, `occurred_at`) defined in
 [../04-technical-architecture/DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md).
 
-| Event | When | Key properties |
-|-------|------|----------------|
-| `app_opened` | App foregrounded | `is_first_open`, `days_since_install` |
-| `session_started` | Quiz/learning session begins | `tier_id`, `quiz_mode` |
-| `session_completed` | Session finishes | `tier_id`, `total_questions`, `total_correct`, `duration_seconds` |
-| `session_abandoned` | App closed mid-session | `tier_id`, `questions_answered` |
-| `answer_recorded` | A review attempt recorded (physical DB row write) | `is_correct`, `pre_mastery_level`, `assessment_type` |
-| `srs_backlog_reanchored` | Overdue backlog redistributed | `count`, `lapse_days`, `drain_days` |
-| `content_error_reported` | Word content issue flagged | `word_id`, `issue_type`, `note` |
-| `streak_incremented` | Daily streak advances | `current_streak` |
-| `streak_broken` | Streak resets to 0 | `previous_streak` |
-| `tier_unlocked` | Free or purchased tier becomes available | `tier_id`, `is_free` |
-| `paywall_viewed` | Paywall screen shown | `tier_id`, `entry_point` |
-| `teacher_code_applied` | Valid teacher code entered | `tier_id` (code hashed/omitted) |
-| `purchase_started` | IAP flow initiated | `tier_id`, `price_usd` |
-| `purchase_completed` | IAP succeeds + receipt validated | `tier_id`, `price_usd`, `had_teacher_code` |
-| `purchase_failed` | IAP cancelled/failed | `tier_id`, `reason` |
-| `account_created` | Signup completes | `auth_provider` |
-| `sync_completed` | Cloud sync round-trip succeeds | `direction` |
-| `analytics_opt_out` | User toggles analytics off | — |
+**Status key:** `implemented-local` = written to on-device `event_log` today; `planned-local` = planned `event_log` write, not yet emitted; `planned-off-device` = intended for PostHog/Amplitude when opted-in; `phase3+` = deferred with feature.
+
+| Event | When | Key properties | Status |
+|-------|------|----------------|--------|
+| `app_opened` | App foregrounded | `is_first_open`, `days_since_install` | `planned-off-device` |
+| `session_started` | Quiz/learning session begins | `tier_id`, `quiz_mode` | `planned-local` |
+| `session_completed` | Session finishes | `tier_id`, `total_questions`, `total_correct`, `duration_seconds` | `planned-local` |
+| `session_abandoned` | App closed mid-session | `tier_id`, `questions_answered` | `planned-off-device` |
+| `answer_recorded` | A review attempt recorded (physical DB row write) | `is_correct`, `pre_mastery_level`, `assessment_type` | `implemented-local` |
+| `srs_backlog_reanchored` | Overdue backlog redistributed | `count`, `lapse_days`, `drain_days` | `planned-local` |
+| `content_error_reported` | Word content issue flagged | `word_id`, `issue_type`, `note` | `planned-local` (requires `content_errors` table + off-device sync) |
+| `streak_incremented` | Daily streak advances | `current_streak` | `planned-local` |
+| `streak_broken` | Streak resets to 0 | `previous_streak` | `planned-local` |
+| `tier_unlocked` | Free or purchased tier becomes available | `tier_id`, `is_free` | `planned-local` |
+| `paywall_viewed` | Paywall screen shown | `tier_id`, `entry_point` | `planned-off-device` |
+| `teacher_code_applied` | Valid teacher code entered | `tier_id` (code hashed/omitted) | `phase3+` |
+| `purchase_started` | IAP flow initiated | `tier_id` | `planned-off-device` |
+| `purchase_completed` | IAP succeeds (RevenueCat callback) | `tier_id` | `planned-off-device` |
+| `purchase_failed` | IAP cancelled/failed | `tier_id`, `reason` | `planned-off-device` |
+| `account_created` | Signup completes | `auth_provider` | `planned-off-device` |
+| `backup_completed` | Cloud backup upload succeeds | — | `phase3+` |
+| `analytics_opt_out` | User toggles analytics off | — | `planned-local` |
 
 ## Event Schema
 
@@ -88,9 +90,7 @@ Naming: `object_action`, snake_case, past-tense action. Reuse the on-device `eve
     "session_id": "uuid-v4",
     "app_version": "1.0.0",
     "platform": "ios",
-    "tier_id": "toefl",
-    "price_usd": 14.99,
-    "had_teacher_code": true
+    "tier_id": "toefl"
   }
 }
 ```
@@ -139,8 +139,6 @@ and no raw teacher/promo codes; properties are a flat, typed key set per event.
 
 ## Open Questions
 
-- PostHog vs. pure Supabase-rollup for v1 — lean PostHog for funnels, but confirm free-tier event
-  volume headroom at 1,000 users.
-- Consent gating: analytics-on by default with opt-out (legitimate interest) vs. opt-in in GDPR
-  regions — align final call with [GDPR_COPPA_COMPLIANCE.md](./GDPR_COPPA_COMPLIANCE.md).
-- Retention-cohort computation location: in-tool vs. SQL rollup.
+- `unresolved` — PostHog vs. pure Supabase-rollup for v1. Lean PostHog for funnels; confirm free-tier event volume headroom at 1,000 users before wiring.
+- `requires-external-validation` — Consent gating: opt-out (legitimate interest) vs. opt-in in GDPR regions. Align with [GDPR_COPPA_COMPLIANCE.md](./GDPR_COPPA_COMPLIANCE.md) and counsel.
+- `deferred` — Retention-cohort computation: in-tool vs. SQL rollup. Decide when analytics sink is chosen.

@@ -245,20 +245,18 @@ The streak is secured by **showing up and completing the day's first session** �
 
 All additive, forward-only, never-DROP, consistent with [../04-technical-architecture/DATABASE_SCHEMA.md](../04-technical-architecture/DATABASE_SCHEMA.md#migration-strategy). No `quiz_attempts`/`event_log` mutation; the re-anchor appends one `event_log` row.
 
-### New `user_stats` fields (freeze state device-only; streak/totals subset synced to Supabase `user_stats_sync`)
+### New `user_stats` fields (all device-local)
 
-Only the streak/totals subset (`current_streak`, `longest_streak`, `last_activity_date`, `total_sessions`, `total_words_mastered`) mirrors to `user_stats_sync` (cloud). Freeze fields (`freeze_count`, `freezes_granted_total`) are **NOT** included in `user_stats_sync` and are **never** synced to the cloud — they are strictly device-local state. This is a deliberate design decision: streak freezes are personal device state, not an account-level entitlement, so no cross-device sync or merge is needed.
+All `user_stats` columns are device-local. Per-table cloud sync mirrors (`user_stats_sync`) were removed in v3.0; cloud backup is a single encrypted `user.db` blob (Phase 3+). Freeze state is strictly device-local by design — streak freezes are personal device state, not an account-level entitlement, so no cross-device merge is needed.
 
-| Column | Type | Default | Sync Scope | Purpose |
-|--------|------|---------|------------|---------|
-| `freeze_count` | INTEGER | `0` | **Local-Only** | Currently banked streak freezes (0..`MAX_BANKED_FREEZES`). |
-| `last_activity_date` | INTEGER | NULL | **Local + Cloud** | **Reinterpreted as local civil date `YYYYMMDD`** (was epoch BIGINT). New writes use `YYYYMMDD` (physical column `last_activity_local_date` on `user_stats_sync`). |
-| `freezes_granted_total` | INTEGER | `0` | **Local-Only** | Audit: lifetime freezes granted (for analytics, never decremented). |
-| `last_catchup_anchor_date` | INTEGER | NULL | **Local-Only** | Local `YYYYMMDD` of the last backlog re-anchor; guards once-per-lapse idempotency. |
+| Column | Type | Default | Purpose |
+|--------|------|---------|---------|
+| `freeze_count` | INTEGER | `0` | Currently banked streak freezes (0..`MAX_BANKED_FREEZES`). |
+| `last_activity_date` | INTEGER | NULL | Local civil date `YYYYMMDD` (user's IANA timezone). Used for streak-day math. |
+| `freezes_granted_total` | INTEGER | `0` | Audit: lifetime freezes granted (for analytics, never decremented). |
+| `last_catchup_anchor_date` | INTEGER | NULL | Local `YYYYMMDD` of the last backlog re-anchor; guards once-per-lapse idempotency. |
 
-Migration note: `last_activity_date` already exists as epoch BIGINT in `user_stats_sync`. To stay forward-only, **add a new column `last_activity_local_date INTEGER`** (`YYYYMMDD`) to `user_stats_sync` rather than repurposing the epoch column; the epoch column is left in place (deprecated, still synced for backward compatibility). The local stats database maps the local-only freeze columns separately, which never sync.
-
-Cloud migration: `ALTER TABLE user_stats_sync ADD COLUMN last_activity_local_date INTEGER;` No freeze columns are added to the cloud schema. Since freeze state is local-only at MVP, there is no cross-device freeze conflict resolution logic required.
+`last_activity_date` stores the local civil date as `YYYYMMDD` integer (e.g. `20260524`), computed at the moment of the qualifying session in the user's IANA timezone. This is device-only; the cloud blob backup preserves it as part of the full `user.db` snapshot.
 
 ### `user_progress`
 
@@ -404,6 +402,6 @@ Contract notes for the implementer:
 
 ## Open Questions
 
-- **Parameter tuning post-launch:** `BASE_DAILY_CAP=40`, `CATCH_UP_BUDGET=20`, `CATCH_UP_DRAIN_DAYS=5`, `FREEZE_EARN_EVERY_N_STREAK_DAYS=7` are sensible defaults; revisit against D7/D30 retention data (success metrics, [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md)). `forgiveness.config.version` exists to make this a data/config change, not a redesign.
-- **Should new-word learning pause during heavy catch-up?** Currently new words remain available (separate budget). Possible refinement: suppress the "Learn new words" suggestion while a large backlog is draining to avoid pile-on. Deferred.
-- **Surfacing freeze balance in UI:** whether to show "freezes: 2" on Home or keep it invisible until consumed (flow 8 implies warm post-hoc notification). UX decision deferred to [../03-ux-design/USER_FLOWS.md](../03-ux-design/USER_FLOWS.md) owner.
+- `deferred` — **Parameter tuning:** `BASE_DAILY_CAP`, `CATCH_UP_BUDGET`, `CATCH_UP_DRAIN_DAYS`, `FREEZE_EARN_EVERY_N_STREAK_DAYS` are reasoned defaults; revisit against D7/D30 retention data post-launch. `forgiveness.config.version` makes this a config change, not a redesign.
+- `deferred` — **New-word pause during heavy catch-up.** Currently new words remain available (separate budget). Possible refinement deferred until beta data.
+- `requires-product-decision` — **Surfacing freeze balance in UI:** show on Home vs. invisible-until-consumed. See USER_FLOWS.md flow 8 (warm post-hoc notification model).

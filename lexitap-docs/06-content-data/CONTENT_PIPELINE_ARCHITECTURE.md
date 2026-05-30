@@ -61,7 +61,7 @@ Not in scope:
 - No per-word AI image generation at MVP (curated imagery only — cost + Year 2 differentiator per [../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md](../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md)).
 - No pronunciation training / scoring. Audio is reference-only.
 - The tool never ships in the app and never touches user data (`user_progress`,
-  `user_entitlements`, sync tables). It produces content only.
+  user data tables). It produces content only.
 
 ## Sourcing Model (Resolved 2026-05-23)
 
@@ -449,9 +449,9 @@ not Phase-1 scope — LexiTap is the only `app_id` we build now.
 {
   "app_id": "lexitap",
   "tiers": [
-    { "slug": "foundation", "name": "LexiTap Foundation (CEFR A2-B1)", "is_free": true,  "price_usd": null,  "sku": null,                "display_order": 1, "requires_theme": true,  "audio": false },
-    { "slug": "advanced",   "name": "LexiTap Advanced (CEFR B2-C1)",   "is_free": true,  "price_usd": null,  "sku": null,                "display_order": 2, "requires_theme": true,  "audio": false },
-    { "slug": "toefl",      "name": "TOEFL Vocabulary",                "is_free": false, "price_usd": null,  "sku": null,                "display_order": 3, "requires_theme": false, "audio": true  }
+    { "slug": "foundation", "name": "LexiTap Foundation (CEFR A2-B1)", "is_free": true,  "sku": null,                "display_order": 1, "requires_theme": true,  "audio": false },
+    { "slug": "advanced",   "name": "LexiTap Advanced (CEFR B2-C1)",   "is_free": true,  "sku": null,                "display_order": 2, "requires_theme": true,  "audio": false },
+    { "slug": "toefl",      "name": "TOEFL Vocabulary",                "is_free": false, "sku": null,                "display_order": 3, "requires_theme": false, "audio": true  }
   ]
 }
 ```
@@ -472,7 +472,7 @@ The app uses two SQLite databases joined via `ATTACH DATABASE`:
 | DB           | Source                | Mode        | Contents |
 |--------------|-----------------------|-------------|----------|
 | `content.db` | this tool (`words.db`)| read-only   | `content_tiers`, `words` |
-| `user.db`    | created on device     | read-write  | `user_progress`, `user_entitlements`, `quiz_*`, `event_log` |
+| `user.db`    | created on device     | read-write  | `user_progress`, `quiz_*`, `event_log`, `user_stats` |
 
 The split keeps user data safe across content updates (full `words.db` swaps never touch
 `user.db`). See the two-DB strategy in
@@ -528,13 +528,7 @@ Content update (an app store update ships a new `words.db`):
 
 ## Open Questions
 
-- **Definition authoring source.** The founder has *word lists*; it is not yet confirmed whether
-  definitions ship in the source CSVs or are partly generated/cleaned by OpenAI during enrich. If
-  generated, add an `--add-definitions` enrich flag with mandatory human review before export.
-  (Synonyms/antonyms generation is confirmed; definitions are TBD.)
-- **Image licensing at scale.** Unsplash free tier is the MVP plan, but attribution/redistribution
-  terms for bundling images offline need a legal check before TOEFL paid launch.
-- **Audio voice selection.** ElevenLabs voice/accent (US vs UK) for TOEFL not yet chosen; TOEFL is
-  US-admissions-oriented, suggesting a US voice, but confirm.
-- **Free-tier imagery coverage.** Whether Foundation/Advanced get full image coverage or a subset
-  (cost is $0 on Unsplash free tier but curation time is not) — pending content-time decision.
+- `unresolved` — **Definition authoring source.** Not confirmed whether definitions ship in source CSVs or are partly generated/cleaned by OpenAI during enrich. If generated, add `--add-definitions` enrich flag with mandatory human review. (Synonyms/antonyms confirmed; definitions TBD.) Resolve before first content export.
+- `requires-external-validation` — **Image licensing at scale.** Unsplash free tier is MVP plan. Attribution/redistribution terms for bundling images offline need a legal check before TOEFL paid launch.
+- `requires-product-decision` — **Audio voice selection.** ElevenLabs voice/accent for TOEFL (US vs UK) not yet chosen. TOEFL is US-admissions-oriented; US voice recommended — confirm.
+- `requires-product-decision` — **Free-tier imagery coverage.** Full image coverage vs. subset for Foundation/Advanced. Curation-time cost, not money. Decide at content-build time.

@@ -1,9 +1,6 @@
 import React, { createContext, useContext, type ReactNode } from 'react';
 import type { StartQuizUseCase } from '@/application/quiz/StartQuizUseCase';
 import type { AnswerQuestionUseCase } from '@/application/quiz/AnswerQuestionUseCase';
-import type { CheckAccessUseCase } from '@/application/tier/CheckAccessUseCase';
-import type { UnlockTierUseCase } from '@/application/tier/UnlockTierUseCase';
-import type { SyncProgressUseCase } from '@/application/user/SyncProgressUseCase';
 import type { RunDiagnosticUseCase } from '@/application/onboarding/RunDiagnosticUseCase';
 import type { TierId } from '@/domain/index';
 import type { UserStats } from '@/domain/index';
@@ -30,11 +27,6 @@ export interface Services {
   // Quiz flow.
   readonly startQuiz: StartQuizUseCase;
   readonly answerQuestion: AnswerQuestionUseCase;
-  // Entitlements / paywall.
-  readonly checkAccess: CheckAccessUseCase;
-  readonly unlockTier: UnlockTierUseCase;
-  // Offline-tolerant sync (a failure is a silent no-op).
-  readonly syncProgress: SyncProgressUseCase;
   // First-run onboarding diagnostic (samples words, seeds initial mastery).
   readonly runDiagnostic: RunDiagnosticUseCase;
   // First-run gate flag, backed by device storage (not learning data).

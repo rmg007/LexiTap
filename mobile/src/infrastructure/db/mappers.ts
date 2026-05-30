@@ -3,7 +3,6 @@ import { asWordId, asTierId } from '@/domain/vocabulary/ids';
 import type { UserProgress, MasteryLevel } from '@/domain/user/UserProgress';
 import type { QuizAttempt, AssessmentType } from '@/domain/quiz/types';
 import { asSessionId } from '@/domain/vocabulary/ids';
-import type { Entitlement } from '@/domain/user/Entitlement';
 import type { UserStats } from '@/domain/user/UserStats';
 import type { StreakState } from '@/domain/gamification/streak';
 import type {
@@ -11,7 +10,6 @@ import type {
   ContentTierRow,
   UserProgressRow,
   QuizAttemptRow,
-  EntitlementRow,
   UserStatsRow,
 } from '@/infrastructure/db/rows';
 
@@ -83,7 +81,6 @@ export function mapContentTierRow(row: ContentTierRow): ContentTier {
     name: row.name,
     description: row.description ?? undefined,
     isFree: row.is_free === 1,
-    priceUsd: row.price_usd,
     sku: row.sku,
     wordCount: row.word_count,
     displayOrder: row.display_order,
@@ -136,14 +133,6 @@ export function mapQuizAttemptRow(row: QuizAttemptRow): QuizAttempt {
   };
 }
 
-export function mapEntitlementRow(row: EntitlementRow): Entitlement {
-  return {
-    tierId: asTierId(row.tier_id),
-    purchasedAt: row.purchased_at,
-    expiresAt: row.expires_at,
-    receiptToken: row.receipt_token ?? undefined,
-  };
-}
 
 export function mapUserStatsRow(row: UserStatsRow): UserStats {
   const streak: StreakState = {

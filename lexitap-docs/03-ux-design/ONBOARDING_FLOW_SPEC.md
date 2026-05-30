@@ -137,6 +137,6 @@ Learner selects "I get by" (start ~rank 1,500). Staircase: knows 1,500 → up to
 
 ## Open Questions
 
-- **Pseudo-word library:** need a small vetted set of plausible non-words that are not real words in major L1s of the audience (to avoid false "known" hits); owned by content pipeline.
-- **Exact thresholds:** starting ranks, step sizes, SE/bracket threshold, and seed mastery values above are reasoned defaults; tune against beta data.
-- **Confirm-on-Yes check load:** the meaning-check on every Yes adds items; confirm this is acceptable vs. sampling only some Yes claims for the check to keep the diagnostic short.
+- `requires-implementation-spike` — **Pseudo-word library:** vetted set of plausible non-words not real in major L1s of the audience. Owned by content pipeline; required before onboarding ships.
+- `deferred` — **Exact thresholds:** starting ranks, step sizes, SE bracket, and seed mastery values are reasoned defaults; tune against beta data post-launch.
+- `requires-product-decision` — **Confirm-on-Yes check load:** meaning-check on every Yes vs. sampling only some — decide before onboarding is built.

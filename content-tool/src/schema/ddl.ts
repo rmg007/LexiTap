@@ -15,7 +15,6 @@ CREATE TABLE content_tiers (
   name          TEXT NOT NULL,
   description   TEXT,
   is_free       INTEGER NOT NULL,
-  price_usd     REAL,
   sku           TEXT,
   word_count    INTEGER NOT NULL,
   display_order INTEGER NOT NULL,

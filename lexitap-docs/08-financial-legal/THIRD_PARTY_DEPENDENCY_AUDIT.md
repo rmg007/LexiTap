@@ -110,8 +110,25 @@ Checked on 2026-05-24:
 - RevenueCat pricing: <https://www.revenuecat.com/pricing>
 - Expo SDK reference: <https://docs.expo.dev/versions/latest/>
 
+---
+
+## Compliance Currentness Registry
+
+External sources that are time-sensitive and must be re-verified before launch (and at each major platform/SDK update).
+
+| External Source | Docs Depending On It | Last Verified | Next Verification Trigger | Pre-Launch Required? |
+|----------------|---------------------|---------------|--------------------------|----------------------|
+| Apple App Review Guidelines | `APP_STORE_DISTRIBUTION_STRATEGY.md`, `REVENUE_MODEL_PRICING.md` | 2026-05-24 | App Review rejection; every major iOS release | Yes — re-check before submission |
+| Google Play Payments Policy | `APP_STORE_DISTRIBUTION_STRATEGY.md`, `REVENUE_MODEL_PRICING.md` | 2026-05-24 | Policy update email from Google; before Android submission | Yes |
+| RevenueCat pricing ($2.5k MTR free tier) | `THIRD_PARTY_DEPENDENCY_AUDIT.md`, root `ROADMAP.md` | 2026-05-24 | Any RevenueCat pricing-page change | Yes — verify free-tier limit still applies at launch |
+| Supabase free-tier quotas (auth MAU, DB size, egress, storage, Edge Functions) | `THIRD_PARTY_DEPENDENCY_AUDIT.md` | 2026-05-24 | Supabase billing announcement; Year 2 cost modelling | Yes — confirm headroom before Phase 3 |
+| Expo SDK version (currently 52) | `ENVIRONMENT_SETUP.md`, `TECH_STACK_DECISIONS.md` | 2026-05-24 | SDK deprecation notice; next major Expo release | Yes — pin to latest stable before submission |
+| ElevenLabs redistribution rights | `CONTENT_PIPELINE_ARCHITECTURE.md`, `THIRD_PARTY_DEPENDENCY_AUDIT.md` | not yet | Before generating any commercial audio | **Launch gate** — must be confirmed before TOEFL/paid audio ships |
+| Unsplash API terms (offline redistribution) | `CONTENT_PIPELINE_ARCHITECTURE.md` | not yet | Before bundling any images in a paid build | **Launch gate** — must be confirmed before paid tiers ship |
+| GDPR/UK GDPR regulatory guidance (age thresholds, consent requirements) | `GDPR_COPPA_COMPLIANCE.md`, `PRIVACY_POLICY_TERMS_OF_SERVICE.md` | 2026-05-24 | Any material ICO/DPC guidance update | Yes — review before EU launch |
+
 ## Open Questions
 
-- **ElevenLabs license:** verify the plan tier permits redistributing generated audio inside a paid commercial app.
-- **Word-list provenance:** document the exact source and license of each sourced corpus (P0 backlog #41 content sourcing).
-- **Supabase paid-tier trigger:** model the paid plan into the Year 2 cost base when auth MAU, database size, egress, storage, Edge Function usage, or production reliability needs exceed the free tier.
+- `requires-external-validation` — **ElevenLabs license:** verify plan tier permits redistributing generated audio in a paid commercial app (launch gate for audio tiers).
+- `unresolved` — **Word-list provenance:** document the exact source and license of each sourced corpus (P0 backlog #41 content sourcing — required before shipping Foundation/Advanced).
+- `deferred` — **Supabase paid-tier trigger:** model paid plan into Year 2 cost base when free-tier limits are approached.

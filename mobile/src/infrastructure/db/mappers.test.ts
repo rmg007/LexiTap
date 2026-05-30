@@ -3,7 +3,6 @@ import {
   mapContentTierRow,
   mapUserProgressRow,
   mapQuizAttemptRow,
-  mapEntitlementRow,
   mapUserStatsRow,
 } from '@/infrastructure/db/mappers';
 import type {
@@ -11,7 +10,6 @@ import type {
   ContentTierRow,
   UserProgressRow,
   QuizAttemptRow,
-  EntitlementRow,
   UserStatsRow,
 } from '@/infrastructure/db/rows';
 
@@ -78,7 +76,6 @@ describe('mapContentTierRow', () => {
       name: 'Foundation',
       description: null,
       is_free: 1,
-      price_usd: null,
       sku: null,
       word_count: 500,
       display_order: 0,
@@ -87,7 +84,6 @@ describe('mapContentTierRow', () => {
     const t = mapContentTierRow(row);
     expect(t.isFree).toBe(true);
     expect(t.isActive).toBe(true);
-    expect(t.priceUsd).toBeNull();
     expect(t.sku).toBeNull();
   });
 
@@ -97,7 +93,6 @@ describe('mapContentTierRow', () => {
       name: 'GRE',
       description: 'desc',
       is_free: 0,
-      price_usd: 14.99,
       sku: 'com.lexitap.gre',
       word_count: 1000,
       display_order: 5,
@@ -105,7 +100,6 @@ describe('mapContentTierRow', () => {
     });
     expect(t.isFree).toBe(false);
     expect(t.isActive).toBe(false);
-    expect(t.priceUsd).toBe(14.99);
   });
 });
 
@@ -192,19 +186,6 @@ describe('mapQuizAttemptRow', () => {
   });
 });
 
-describe('mapEntitlementRow', () => {
-  it('maps null expires_at (one-time) and missing receipt', () => {
-    const row: EntitlementRow = {
-      tier_id: 'toefl',
-      purchased_at: 500,
-      expires_at: null,
-      receipt_token: null,
-    };
-    const e = mapEntitlementRow(row);
-    expect(e.expiresAt).toBeNull();
-    expect(e.receiptToken).toBeUndefined();
-  });
-});
 
 describe('mapUserStatsRow', () => {
   it('composes StreakState with totals', () => {
@@ -218,7 +199,7 @@ describe('mapUserStatsRow', () => {
       freeze_count: 2,
       freezes_granted_total: 4,
       last_catchup_anchor_date: null,
-      last_activity_date: null,
+      onboarding_state: null,
     };
     const s = mapUserStatsRow(row);
     expect(s.streak.currentStreak).toBe(5);

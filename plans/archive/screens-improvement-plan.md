@@ -48,11 +48,11 @@ After reading every file across all 8 documentation categories, the following ga
 | `LearnQuickCheck.md` (not yet read) | Unknown — need to read to assess. |  |
 | `ForgivenessSheet.md` | References "soft catch-up redistributes overdue items across upcoming days" but the reanchorBacklog algorithm from SRS_FORGIVENESS_MECHANICS is not linked. An AI builder won't know the exact redistribution rule. | `SRS_FORGIVENESS_MECHANICS.md §Mechanic 2` |
 | `ForgivenessSheet.md` | The `Remaining due count` is listed as a data requirement but noted as "NOT shown as guilt." This creates an implementation ambiguity — the builder needs to know what this number is *used for* (soft catch-up trigger) and *why it is never displayed*. | `SRS_FORGIVENESS_MECHANICS.md §Anti-patterns` |
-| `Paywall.md` | `target_file: TBD` and `code status: todo`. Entitlement write path: RevenueCat SDK validates receipt and returns `CustomerInfo`; the app never writes entitlement state to SQLite. An AI builder following only this spec won't know that entitlement state is memory-only (RevenueCat cache), not persisted. | `API_CONTRACT.md §RPC: Receipt Validation`, `SYSTEM_ARCHITECTURE.md` |
+| `Paywall.md` | `target_file: TBD` and `code status: todo`. The `UnlockTierUseCase` is referenced but the entitlement write path — local-first, then sync to Supabase via `user_entitlements_sync` — is not spelled out. An AI builder following only this spec won't know to write SQLite first, then sync. | `DATABASE_SCHEMA.md §user_entitlements`, `API_CONTRACT.md §Sync: Push` |
 | `Paywall.md` | The RevenueCat / `StubIapService` delegation pattern is named but the `application/` boundary (PaywallReviewer) is not defined in any spec. This boundary decision exists only as a comment. Needs a clear note that the IAP adapter lives in `infrastructure/iap/` per hexagonal rules. | `SYSTEM_ARCHITECTURE.md` (inferred from AGENTS.md) |
 | `SigninAccount.md` | Merge semantics on sign-in with existing local data are defined as "last-write-wins per record; SRS events merge append-only." But the specific conflict resolution for `freeze_count` (keep lower) and `current_streak` (keep higher) from `SRS_FORGIVENESS_MECHANICS.md §Edge Cases` is not referenced here. These rules exist nowhere in the screen specs. | `SRS_FORGIVENESS_MECHANICS.md §Edge Cases §Two devices` |
 | `OnboardingAdaptiveYesNo.md` (not yet read) | Known gap: pseudo-word presentation (they must not be visually flagged). | `ONBOARDING_FLOW_SPEC.md §Stage 3` |
-| ~~`TeacherCodeRedemption.md`~~ | **DELETED 2026-05-28 (Phase 3+).** Teacher referral and advocate mechanics are deferred. The screen spec and all related RPCs were removed from v1. | — |
+| `TeacherCodeRedemption.md` | §6 states "No account yet → store provisionally on device; bind on account creation/sign-in." But no detail on *how* this provisional storage works. Is it AsyncStorage? A `pending_codes` table? The `API_CONTRACT.md §RPC: Teacher Advocate Redemption` requires a `source_event_id` (UNIQUE) — this provisional binding strategy must honor that deduplication. | `API_CONTRACT.md §RPC: Teacher Advocate Redemption`, `DATABASE_SCHEMA.md §event_log` |
 
 ### 2.2 Open Questions Resolved by Cross-Document Reading
 
@@ -83,7 +83,7 @@ Cross-referencing `USER_FLOWS.md` against the `screens/README.md` inventory:
 | Flow 3 | `LearnQuickCheck.md` | spec exists ✓ |
 | Flow 4 (Cap) | `ForgivenessSheet.md` | spec exists ✓ |
 | Flow 5 (Paywall) | `Paywall.md` | spec exists ✓ |
-| Flow 6 (Teacher Code) | ~~`TeacherCodeRedemption.md`~~ | **DELETED 2026-05-28 (Phase 3+)** |
+| Flow 6 (Teacher Code) | `TeacherCodeRedemption.md` | spec exists ✓ |
 | Flow 7 (Sync) | `SigninAccount.md` | spec exists ✓ |
 | Flow 8 (Streak) | Streak state on `Home.md` | covered inline ✓ |
 | **Not in a flow** | Word Detail Browser | **MISSING** — no spec, no flow |
@@ -153,7 +153,7 @@ All 13 screen specs below were patched (original plan listed 8; 5 additional spe
 10. **`LearnCard.md`** ✅ — SRS write boundary documented: no write on LearnCard; atomic write happens at LearnQuickCheck completion.
 11. **`LearnQuickCheck.md`** ✅ — Atomic triple-write (`quiz_attempts` + `user_progress` + `event_log`) documented as first/only SRS write in Learn flow.
 12. **`OnboardingAdaptiveYesNo.md`** ✅ — Pseudo-word visual parity rule added: same styling as real words, no visual differentiation.
-13. ~~**`TeacherCodeRedemption.md`**~~ — **DELETED 2026-05-28 (Phase 3+).** File removed; teacher referral mechanics deferred.
+13. **`TeacherCodeRedemption.md`** ✅ — Provisional storage defined: `AsyncStorage` key `lexitap.pendingTeacherCode`; UUID generated at storage time for `source_event_id` idempotency.
 
 ### Phase B: Draft 3 New Screen Specs (corrected scope)
 

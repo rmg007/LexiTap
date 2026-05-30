@@ -111,4 +111,4 @@ The tracks are decoupled by a single artifact: `words.db`.
 
 ## Open Questions
 
-- Whether `words.db` is committed to the repo (binary in git) or produced fresh in CI and attached as a build artifact is undecided. Leaning toward CI-produced artifact to keep the repo lean, but a committed DB simplifies the Track B bundle step. Resolve before the first content build.
+- `unresolved` — Whether `words.db` is committed to the repo (binary in git) or produced in CI as an artifact. Leaning CI-produced to keep the repo lean, but committed simplifies Track B bundle step. Resolve before the first content build.

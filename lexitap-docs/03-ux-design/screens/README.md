@@ -48,7 +48,7 @@ Frames are layout/behavior intent, not pixel comps. Annotations follow each fram
 
 ## Inventory
 
-Status: `built` = exists in `mobile/src/presentation/screens/`, `spec` = detailed spec written, `todo` = stub only.
+Status: `built` = exists in `mobile/src/presentation/screens/` or `components/assessments/`; `built (phase4)` = implemented but deferred from MVP scope; `spec` = detailed spec written, implementation pending; `todo` = spec stub only.
 
 | Screen | Spec | Code status | Target file |
 |---|---|---|---|
@@ -66,7 +66,6 @@ Status: `built` = exists in `mobile/src/presentation/screens/`, `spec` = detaile
 | [Word Detail Browser](./WordDetailBrowser.md) | spec | todo | TBD |
 | [Content Error Reporter](./ContentErrorReporter.md) | spec | todo | TBD |
 | [Paywall](./Paywall.md) | spec | todo | TBD |
-| [Teacher Code Redemption](./TeacherCodeRedemption.md) | spec | todo | TBD |
 | [Sign-in / Account](./SigninAccount.md) | spec | todo | TBD |
 | [Forgiveness Sheet](./ForgivenessSheet.md) | spec | todo | TBD |
 | [Onboarding — Splash](./OnboardingSplash.md) | spec | todo | TBD |

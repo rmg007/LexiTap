@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Pressable, View, type ViewStyle } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useTheme } from '@/presentation/theme';
+import { useMotion } from '@/presentation/theme/useMotion';
 import { Text } from '@/presentation/components/Text';
 import { Button } from '@/presentation/components/Button';
+import { hapticsSelect, hapticsCorrect, hapticsCorrection } from '@/presentation/services/haptics';
 import {
   isAnswerCorrect,
   type AnswerCallback,
@@ -78,6 +81,66 @@ function chipStyle(theme: Theme, selected: boolean, disabled: boolean): ViewStyl
   };
 }
 
+// Per-chip component so Reanimated hooks are called unconditionally per item.
+interface ChipProps {
+  option: AssessmentOption;
+  selected: boolean;
+  disabled: boolean;
+  otherPlaced: boolean;
+  theme: Theme;
+  onPress: (option: AssessmentOption) => void;
+}
+
+function Chip({ option, selected, disabled, otherPlaced, theme, onPress }: ChipProps): React.JSX.Element {
+  const { spring } = useMotion();
+
+  const scale = useSharedValue(1);
+  const translateY = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }, { translateY: translateY.value }],
+  }));
+
+  const handlePressIn = useCallback(() => {
+    if (disabled) return;
+    // Chip lifts: scale up + float up slightly (3pt)
+    scale.value = withSpring(1.04, spring('snap'));
+    translateY.value = withSpring(-3, spring('snap'));
+    hapticsSelect();
+  }, [disabled, scale, translateY, spring]);
+
+  const handlePressOut = useCallback(() => {
+    // Settle back down with physical feel
+    scale.value = withSpring(1.0, spring('settle'));
+    translateY.value = withSpring(0, spring('settle'));
+  }, [scale, translateY, spring]);
+
+  const handlePress = useCallback(() => {
+    if (disabled) return;
+    onPress(option);
+  }, [disabled, option, onPress]);
+
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={selected ? `Remove ${option.label} from blank` : `Place ${option.label} in blank`}
+      accessibilityHint="Double tap to place this word"
+      accessibilityState={{ selected, disabled }}
+      disabled={disabled}
+      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      onPress={handlePress}
+    >
+      <Animated.View style={[chipStyle(theme, selected, otherPlaced), animatedStyle]}>
+        <Text variant="label" color="textPrimary">
+          {option.label}
+        </Text>
+      </Animated.View>
+    </Pressable>
+  );
+}
+
 export function DragDrop({
   sentence,
   options,
@@ -96,8 +159,18 @@ export function DragDrop({
   function handleSubmit(): void {
     if (placed === null || revealed) return;
     setInternalRevealed(true);
+    const isCorrect = isAnswerCorrect(placed.value, correctValue);
+    if (isCorrect) {
+      hapticsCorrect();
+    } else {
+      hapticsCorrection();
+    }
     onAnswer({ value: placed.value, assessmentType: 'drag_drop' });
   }
+
+  const handleChipPress = useCallback((option: AssessmentOption) => {
+    setPlaced((current) => (current?.id === option.id ? null : option));
+  }, []);
 
   return (
     <View style={{ gap: spacing.s5 }}>
@@ -129,19 +202,15 @@ export function DragDrop({
         {options.map((option) => {
           const selected = placed?.id === option.id;
           return (
-            <Pressable
+            <Chip
               key={option.id}
-              accessibilityRole="button"
-              accessibilityLabel={`Place ${option.label}`}
-              accessibilityState={{ selected, disabled: revealed }}
+              option={option}
+              selected={selected}
               disabled={revealed}
-              onPress={() => setPlaced(selected ? null : option)}
-              style={chipStyle(theme, selected, placed !== null)}
-            >
-              <Text variant="label" color="textPrimary">
-                {option.label}
-              </Text>
-            </Pressable>
+              otherPlaced={placed !== null && !selected}
+              theme={theme}
+              onPress={handleChipPress}
+            />
           );
         })}
       </View>
@@ -156,8 +225,12 @@ export function DragDrop({
         />
       )}
       {revealed && (
-        <Text variant="body" color={correct ? 'success' : 'caution'}>
-          {correct ? 'Nice — that fits.' : 'Not quite — review and keep going.'}
+        <Text
+          variant="body"
+          color={correct ? 'success' : 'caution'}
+          accessibilityLiveRegion="polite"
+        >
+          {correct ? 'Nice \u2014 that fits.' : 'Not quite \u2014 review and keep going.'}
         </Text>
       )}
     </View>

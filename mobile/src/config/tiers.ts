@@ -10,7 +10,7 @@ import { APP_ID } from '@/config/app';
 // ever sees the TierMeta port shape, so it stays reusable across sister apps.
 
 // The "unlock everything" Premium Pass SKU. Holding its entitlement grants
-// access to every paid tier (see CheckAccessUseCase).
+// access to every paid tier (RevenueCat is the entitlement authority at runtime).
 export const PREMIUM_PASS_SKU = 'lexitap.premium_pass';
 
 // Presentation-facing tier metadata. Extends the application TierMeta port with

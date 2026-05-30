@@ -5,7 +5,6 @@ export * from '@/domain/vocabulary/Word';
 export * from '@/domain/vocabulary/WordRepository';
 export * from '@/domain/user/UserProgress';
 export * from '@/domain/user/UserProgressRepository';
-export * from '@/domain/user/Entitlement';
 export * from '@/domain/user/UserStats';
 export * from '@/domain/quiz/types';
 export * from '@/domain/quiz/errors';

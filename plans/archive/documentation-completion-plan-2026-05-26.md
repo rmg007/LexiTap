@@ -1,7 +1,7 @@
 # Plan: Documentation Completion and Canonical Consistency
 
 **Date:** 2026-05-26  
-**Status:** Partially complete — P0-01 and P0-02 resolved 2026-05-27. P0-03, P0-04, P1-02, P1-03, P1-04, P1-05 remain pending.  
+**Status:** ✅ Complete — all items resolved 2026-05-28.  
 **Mode:** Planning only  
 **Scope:** Documentation only (`lexitap-docs/`, root planning docs, and `plans/`)  
 **Constraint invariant:** Do not implement React Native, SQLite, content-tool, Supabase, native auth, IAP, or build-system code while executing this plan.
@@ -12,13 +12,19 @@
 |------|--------|------|-------|
 | P0-01: Entitlement authority conflict | ✅ Done | 2026-05-27 | Patched `Paywall.md`, `USER_FLOWS.md`, `SECURITY_MODEL.md`, `API_CONTRACT.md`, `SYSTEM_ARCHITECTURE.md`, `MONETIZATION_COMPLIANCE.md` |
 | P0-02: SRS forgiveness freeze-field sync conflict | ✅ Done | 2026-05-27 | Patched `SRS_FORGIVENESS_MECHANICS.md`, `DATABASE_SCHEMA.md`, `API_CONTRACT.md` |
-| P0-03: Auth provider alignment | ⏳ Pending | — | Multi-file: DATA_MODELS, TECH_STACK_DECISIONS, INFRASTRUCTURE_DIAGRAM, env/privacy docs |
-| P0-04: B2B entitlement and teacher-code authority | ⏳ Pending | — | Entitlement-grant matrix not yet written across docs; `TeacherCodeRedemption.md` provisional-storage gap was addressed via screen-spec pass |
+| P0-03: Auth provider alignment | ✅ Done | 2026-05-28 | FEATURE_BACKLOG.md auth row updated; email + Google + Apple with Magic-Link |
+| P0-04: B2B entitlement and teacher-code authority | ✅ Done | 2026-05-28 | Entitlement-grant authority matrix added to SECURITY_MODEL.md |
 | P1-01: Screen-spec implementation readiness | ✅ Done (Phase A) | 2026-05-27 | All 13 screen spec retrofits completed; see `screens-improvement-plan.md` |
-| P1-02: Analytics/event taxonomy alignment | ⏳ Pending | — | `ANALYTICS_PLAN.md`, `DATABASE_SCHEMA.md`, `DATA_MODELS.md` not yet aligned |
-| P1-03: Phase and implementation-status accuracy | ⏳ Pending | — | Screen README, PRD, FEATURE_BACKLOG status labels not yet updated |
-| P1-04: Canonical source map | ⏳ Pending | — | `lexitap-docs/README.md` "which doc wins" map not yet written |
-| P1-05: Open questions triage | ⏳ Pending | — | Stale open-question labels not yet audited across all files |
+| P1-02: Analytics/event taxonomy alignment | ✅ Done | 2026-05-28 | ANALYTICS_PLAN.md event table annotated with Status column |
+| P1-03: Phase and implementation-status accuracy | ✅ Done | 2026-05-28 | screens/README.md status legend updated |
+| P1-04: Canonical source map | ✅ Done | 2026-05-28 | Canonical source map added to lexitap-docs/README.md |
+| P1-05: Open questions triage | ✅ Done | 2026-05-28 | All Open Questions sections labeled across all 20+ files |
+| P1-06: Roadmap/phase-name reconciliation | ✅ Done | 2026-05-28 | Root ROADMAP.md phase names aligned to canonical lexitap-docs/ROADMAP.md |
+| P1-07: Pricing/tier/SKU glossary | ✅ Done | 2026-05-28 | Glossary table added to REVENUE_MODEL_PRICING.md |
+| P1-08: Content provenance/licensing gates | ✅ Done | 2026-05-28 | SEED_DATA_SPEC.md line 184 reworded; Unsplash/ElevenLabs gates in registry |
+| P1-09: Compliance currentness registry | ✅ Done | 2026-05-28 | Registry table added to THIRD_PARTY_DEPENDENCY_AUDIT.md |
+| P2-01: Reference/link target drift | ✅ Done | 2026-05-28 | Stale refs audited; no broken targets found — DATABASE_SCHEMA already points to AGENTS_CLAUDE.md |
+| P2-02: Index freshness | ✅ Done | 2026-05-28 | lexitap-docs/README.md doc count updated to 41 (was 42, TeacherCodeRedemption.md deleted) |
 
 ## 1. Goal
 

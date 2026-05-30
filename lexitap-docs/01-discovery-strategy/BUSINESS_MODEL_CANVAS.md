@@ -9,6 +9,8 @@ tags: [business-model, canvas, revenue, value-proposition, cost-structure, budge
 
 # Business Model Canvas
 
+> **⚠️ Status Note (2026-05-28):** Teacher/cram-school GTM channels and B2B licensing are deferred to Phase 3+. Core consumer IAP launch (Phase 1) is the current focus. This document reflects the full vision; sections marked Phase 3+ are not yet implemented.
+
 > Full nine-block canvas for LexiTap. Numbers reconcile with [../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md) (pricing, revenue) and [VISION_PROBLEM_STATEMENT.md](./VISION_PROBLEM_STATEMENT.md) (projections, success metrics). Personas referenced from [TARGET_USER_PERSONAS.md](./TARGET_USER_PERSONAS.md).
 
 ## 1. Customer Segments

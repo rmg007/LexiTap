@@ -83,5 +83,5 @@ The market skews APAC and toward the 18–24 cohort (48% engagement, the highest
 
 ## Open Questions
 
-- Which paid tier converts first in real data — TOEFL (assumed primary) or IELTS — given APAC vs. immigration-market channel strength? Resolves in Phase 3.
-- Does Aisha (no-deadline professional) convert at meaningful rates without exam urgency, or is the deadline-driven segment the only reliable WTP? Watch Business English conversion vs. test-prep tiers.
+- `requires-external-validation` — TOEFL vs IELTS first-converter question. Resolves from Phase 3 real conversion data.
+- `requires-external-validation` — Aisha (no-deadline professional) conversion. Watch Business English conversion vs. test-prep tiers.

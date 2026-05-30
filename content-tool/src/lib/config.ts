@@ -13,7 +13,6 @@ export interface TierConfig {
   name: string;
   description: string | null;
   is_free: boolean;
-  price_usd: number | null;
   sku: string | null;
   display_order: number;
   requires_theme: boolean;

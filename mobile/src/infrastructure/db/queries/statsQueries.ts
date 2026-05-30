@@ -10,7 +10,7 @@ const STATS_ID = 1;
 const STATS_COLUMNS = `
   id, current_streak, longest_streak, last_activity_local_date, total_sessions,
   total_words_mastered, freeze_count, freezes_granted_total,
-  last_catchup_anchor_date, last_activity_date
+  last_catchup_anchor_date, onboarding_state
 `;
 
 export function selectStats(db: DatabaseHandle): Promise<UserStatsRow | null> {
@@ -32,9 +32,8 @@ export function upsertStats(
     freezesGrantedTotal: number;
   },
 ): Promise<{ lastInsertRowId: number; changes: number }> {
-  // last_catchup_anchor_date and last_activity_date (deprecated epoch mirror)
-  // are owned by other write paths (re-anchor / sync) and are left untouched on
-  // an UPDATE so this write never clobbers them.
+  // last_catchup_anchor_date is owned by the re-anchor write path and is left
+  // untouched on an UPDATE so this write never clobbers it.
   return db.run(
     `INSERT INTO user_stats (
        id, current_streak, longest_streak, last_activity_local_date,

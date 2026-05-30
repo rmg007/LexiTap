@@ -9,6 +9,8 @@ tags: [gtm, cram-schools, B2B-sales, bulk-licenses, non-cash-referrals, launch-s
 
 # Go-to-Market Strategy
 
+> **⚠️ Status Note (2026-05-28):** Teacher/cram-school GTM channels and B2B licensing are deferred to Phase 3+. Core consumer IAP launch (Phase 1) is the current focus. This document reflects the full vision; sections marked Phase 3+ are not yet implemented.
+
 > Comprehensive GTM playbook. A condensed summary lives in [../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md) (Go-to-Market section). Personas in [TARGET_USER_PERSONAS.md](./TARGET_USER_PERSONAS.md); economics in [BUSINESS_MODEL_CANVAS.md](./BUSINESS_MODEL_CANVAS.md).
 
 ## Strategy in One Line
@@ -85,5 +87,5 @@ Aligned to the canonical phases in [../02-product-definition/ROADMAP.md](../02-p
 
 ## Open Questions
 
-- **B2B Contract Signing Rails:** Do we need structured enterprise contracts for larger schools, or will self-serve terms of service suffice? Revisit at 10+ cram school sign-ups.
-- **Localization of B2B landing pages:** Should the B2B licensing portal landing page be localized into Korean, Japanese, and Mandarin immediately, or is English sufficient? English for Phase 3; localize in Year 2.
+- `requires-external-validation` — **B2B Contract Signing Rails:** Structured enterprise vs self-serve ToS. Revisit at 10+ cram school sign-ups (Phase 3+).
+- `deferred` — **Localization of B2B landing pages:** English for Phase 3; localize in Year 2.

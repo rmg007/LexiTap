@@ -110,7 +110,7 @@ export function selectWordsByTierAlphabeticalPage(
 }
 
 const TIER_COLUMNS = `
-  id, name, description, is_free, price_usd, sku, word_count, display_order, is_active
+  id, name, description, is_free, sku, word_count, display_order, is_active
 `;
 
 export function selectAllTiers(db: DatabaseHandle): Promise<ContentTierRow[]> {

@@ -56,9 +56,9 @@ Hard constraints that shape every decision: solo founder, ~$194 realistic Year-1
 
 **domain/** — Entities and value objects with behavior: `QuizSession`, `SpacedRepetition`, `Word`, `MasteryLevel`. Defines repository *interfaces* (ports) such as `WordRepository`. Contains no imports from `react`, `react-native`, `expo-sqlite`, or `@supabase/*`. This rule is enforceable with an ESLint `no-restricted-imports` boundary check.
 
-**application/** — Use cases that orchestrate the domain: `StartQuizUseCase`, `AnswerQuestionUseCase`, `UnlockTierUseCase`, `SyncProgressUseCase`. Depends only on domain entities and domain port interfaces — never on a concrete adapter. Paywall/entitlement decisions live here (per the Paywall Reviewer in [../05-engineering-process/CODING_STANDARDS.md](../05-engineering-process/CODING_STANDARDS.md)), not in `domain/` or `presentation/`. `UnlockTierUseCase` persists a **verified** entitlement; it does not perform receipt validation. It is called only after the IAP adapter/server confirms the receipt — receipt validation is infrastructure/external responsibility.
+**application/** — Use cases that orchestrate the domain: `StartQuizUseCase`, `AnswerQuestionUseCase`, `RunDiagnosticUseCase`. Depends only on domain entities and domain port interfaces — never on a concrete adapter. Paywall logic is deferred to Phase 3 (RevenueCat). The application layer never persists entitlement state.
 
-**infrastructure/** — Concrete adapters implementing domain ports: `SQLiteWordRepository`, `SupabaseSyncService`, `StubIapService` (real IAP vendor wiring is deferred — see the IAP decision ADR), `AsyncStorageAdapter`. This is the only layer allowed to import `expo-sqlite`, `@supabase/supabase-js`, and IAP libraries. IAP adapters (`StubIapService` at MVP, `RevenueCatIapService` in Phase 3) live in `infrastructure/iap/`; receipt validation calls to RevenueCat/server originate here. The application layer calls `UnlockTierUseCase` only after the IAP adapter reports a validated receipt.
+**infrastructure/** — Concrete adapters implementing domain ports: `SQLiteWordRepository`, `StubIapService` (real IAP wiring deferred to Phase 3), `AsyncStorageAdapter`, `supabaseClient` (auth + content-error reports + encrypted blob backup). This is the only layer allowed to import `expo-sqlite`, `@supabase/supabase-js`, and IAP libraries. Per-table sync (`SupabaseSyncService`) was removed in v3.0; cloud writes are limited to auth, content errors, and encrypted `user.db` blob backups.
 
 **presentation/** — React Native screens and components, `expo-router` file-based navigation, the four assessment widgets (`MultipleChoice`, `DragDrop`, `ImageMatch`, `Classification`), theme/branding. LexiTap-specific; the layer most likely to be rewritten for a sister app.
 
@@ -87,8 +87,7 @@ src/
 │   └── gamification/    # Streak, mastery aggregation
 ├── application/
 │   ├── quiz/            # StartQuizUseCase, AnswerQuestionUseCase
-│   ├── tier/            # UnlockTierUseCase, CheckAccessUseCase
-│   └── user/            # SyncProgressUseCase
+│   └── onboarding/      # RunDiagnosticUseCase
 ├── infrastructure/
 │   ├── db/              # SQLite repos, migrations/, ATTACH wiring
 │   ├── sync/            # Supabase push/pull
@@ -109,7 +108,7 @@ LexiTap ships **two physically separate SQLite databases** opened via `expo-sqli
 | DB | Mode | Contents | Source |
 |----|------|----------|--------|
 | `words.db` | read-only, bundled | `content_tiers`, `words` (immutable content) | built by content CLI (Track A), shipped in app binary |
-| `user.db` | read-write, on device | `user_progress`, `user_entitlements`, `quiz_sessions`, `quiz_attempts`, `event_log` | created/migrated on first launch |
+| `user.db` | read-write, on device | `user_progress`, `quiz_sessions`, `quiz_attempts`, `event_log`, `user_stats`, `notification_schedule`, `schema_version` | created/migrated on first launch |
 
 Cross-database joins use `ATTACH DATABASE`:
 
@@ -141,12 +140,11 @@ To prevent architecture drift and establish clear boundaries, LexiTap uses the f
 | User progress / SRS | `user.db` | Local app domain/application logic | Cloud mirrors; last-write-wins by `last_reviewed_at`; append `quiz_attempts` for replay |
 | Quiz attempts / event log | `user.db` append-only | Local app transaction | Never update/delete; compensating inserts only |
 | Streak/freeze state | `user.db` | Local app, IANA civil date | Freeze fields are device-only per current schema/API docs; if synced later, needs explicit new decision |
-| Verified paid entitlements | `user.db` for offline reads after grant | Store/RevenueCat/server-side validation for grant/revoke | Local row mirrors verified state; unverified local state must not unlock paid content |
-| B2B/referral/promo entitlements | `user.db` for offline reads after grant | Supabase RPC / Edge Function / institutional backend | Review-sensitive; no in-app off-store steering |
+| Paid entitlements | RevenueCat SDK (in-memory cache) | RevenueCat / App Store / Play Store | Never persisted to `user.db`; queried from RevenueCat at session start |
 | Account/auth data | Supabase Auth + `user_accounts` | Supabase Auth | Local device caches only what app needs |
 | Analytics | `event_log` locally | Local app for functional events; off-device send obeys consent plan | Aggregate/off-device flow still needs final sink/consent decision |
 
-Establishing this clear grid ensures that we never mistake local offline convenience caches for absolute verified authorities (e.g., in paid entitlements).
+Establishing this clear grid ensures that we never mistake local offline caches for absolute verified authorities.
 
 ## Offline-First Data Flow
 
@@ -165,12 +163,11 @@ Establishing this clear grid ensures that we never mistake local offline conveni
           UPDATE user_progress (mastery, next_review_date)
           INSERT event_log (synchronous, same transaction)
                                          │
-   On app open  ── pull ────────────────▼── Supabase user_progress_sync
-   On app close ── push ─────────────────── (last-write-wins by last_reviewed_at)
-                                            cloud is a MIRROR, not authority
+   On app background ── backup ───────────▼── Supabase Storage user_db_backups/{uid}/user.db.enc
+   On new device     ── restore ────────────── (encrypted blob; device is always authority)
 ```
 
-The quiz/review path is 100% local. Sync runs opportunistically on app open (pull) and close (push), is transactional (all-or-nothing), and retries on next open if it fails. A user can be offline for weeks; progress accumulates locally and upserts cleanly on the next sync. Full sync semantics are in [API_CONTRACT.md](./API_CONTRACT.md) and [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md).
+The quiz/review path is 100% local. Cloud backup runs opportunistically on app background (upload encrypted `user.db` blob) and on new-device install (download + decrypt to seed local DB). A user can be offline for weeks; all progress accumulates locally. Full backup semantics are in [API_CONTRACT.md](./API_CONTRACT.md) and [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md).
 
 ## App-Agnostic Design
 
@@ -212,9 +209,9 @@ This is what lets domain tests run as pure unit tests and lets a future cloud-ba
 5. `quiz_attempts` and `event_log` are append-only — insert compensating rows, never UPDATE/DELETE.
 6. SRS state changes are version-tagged (`scheduler_version`) for safe future FSRS migration via replay.
 7. Domain layer has zero React/SQLite/network imports (enforce via ESLint import boundaries).
-8. The domain and application layers never perform receipt validation; that is infrastructure/external responsibility. `UnlockTierUseCase` is called only after the IAP adapter/server confirms the receipt; unverified local writes must not unlock paid content.
+8. Entitlement state is never persisted to `user.db`. RevenueCat is the source of truth for access control; the app queries it at session start and caches in memory.
 
 ## Open Questions
 
-- Exact ESLint rule set for enforcing layer import boundaries (candidate: `eslint-plugin-boundaries`) — not yet selected.
-- Whether the composition root is hand-rolled or a lightweight DI lib — leaning hand-rolled to avoid a dependency at the current budget.
+- `unresolved` — ESLint rule set for enforcing layer import boundaries (candidate: `eslint-plugin-boundaries`). See also [TECH_STACK_DECISIONS.md](./TECH_STACK_DECISIONS.md).
+- `unresolved` — Composition root: hand-rolled vs. lightweight DI lib. Leaning hand-rolled to avoid a dependency at the current scale.

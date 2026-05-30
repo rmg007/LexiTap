@@ -150,6 +150,33 @@ export const motion = {
 
 export type Motion = typeof motion;
 
+// Reanimated spring presets. Pass directly to withSpring() config.
+// snap   — fast snappy response for button/chip taps.
+// settle — physical settle for drag-and-drop chip release.
+// sheet  — relaxed entry for modals and bottom sheets.
+export const springs = {
+  snap: { stiffness: 400, damping: 25, mass: 0.8 },
+  settle: { stiffness: 200, damping: 18, mass: 1.0 },
+  sheet: { stiffness: 280, damping: 28, mass: 1.0 },
+} as const;
+
+export type Springs = typeof springs;
+
+// Per-token max font-scale multiplier for clamped Dynamic Type support.
+// Counters (mono) never scale — badge layout must stay fixed.
+export const fontScaleMax: Record<keyof Typography, number> = {
+  h1: 1.2,
+  display: 1.2,
+  headline: 1.4,
+  body: 1.8,
+  bodyLg: 1.8,
+  label: 1.6,
+  caption: 1.8,
+  smallCaps: 1.4,
+  title: 1.3,
+  mono: 1.0,
+} as const;
+
 // Layout constants.
 export const layout = {
   screenGutter: spacing.s4,
@@ -169,6 +196,7 @@ export interface Theme {
   readonly radii: Radii;
   readonly typography: Typography;
   readonly motion: Motion;
+  readonly springs: Springs;
   readonly layout: Layout;
 }
 
@@ -179,6 +207,7 @@ export const darkTheme: Theme = {
   radii,
   typography,
   motion,
+  springs,
   layout,
 };
 
@@ -189,6 +218,7 @@ export const lightTheme: Theme = {
   radii,
   typography,
   motion,
+  springs,
   layout,
 };
 

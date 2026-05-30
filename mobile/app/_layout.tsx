@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Stack, router } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -51,19 +52,21 @@ export default function RootLayout(): React.JSX.Element {
   }, [services]);
 
   return (
-    <SafeAreaProvider>
-      <ThemeProvider>
-        <StatusBar style="light" />
-        {services === null ? (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <ActivityIndicator />
-          </View>
-        ) : (
-          <ServicesProvider value={services}>
-            <Stack screenOptions={{ headerShown: false }} />
-          </ServicesProvider>
-        )}
-      </ThemeProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <ThemeProvider>
+          <StatusBar style="light" />
+          {services === null ? (
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+              <ActivityIndicator />
+            </View>
+          ) : (
+            <ServicesProvider value={services}>
+              <Stack screenOptions={{ headerShown: false }} />
+            </ServicesProvider>
+          )}
+        </ThemeProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

@@ -34,7 +34,9 @@ export function ProgressBar({
 
   return (
     <View
+      accessibilityRole="progressbar"
       accessibilityLabel={label}
+      accessibilityValue={{ min: 0, max: 1, now: value }}
       style={{
         height,
         borderRadius: radii.full,

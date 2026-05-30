@@ -74,7 +74,7 @@ Premium monthly ($4.99) and annual ($24.99) subscriptions are processed in-app u
 Required by Apple Guideline 3.1.1. 
 - A prominent **Restore Purchases** button is located in the Settings screen.
 - On tap, the client invokes RevenueCat `syncPurchases()` or standard restore rails to validate previous receipt transactions against store servers.
-- On valid receipts, RevenueCat / the `validate_receipt` Edge Function writes the verified entitlement to `user_entitlements_sync` server-side (service role). `UnlockTierUseCase` then mirrors the verified entitlement to local SQLite. Entitlements are **not** written locally first and synchronized to Supabase; the write direction is server → local mirror only.
+- On valid receipts, RevenueCat validates server-side and returns verified `CustomerInfo`. The app caches this in memory only — entitlements are **never** persisted to `user.db`.
 - Entitlement checks are server-verified, driven by RevenueCat's receipt validation API; unverified local client state must never unlock paid content.
 
 ---
@@ -84,7 +84,7 @@ Required by Apple Guideline 3.1.1.
 - Refund requests are processed directly by Apple/Google platform systems. The founder does not have direct access to process IAP refunds.
 - LexiTap must handle refund and revocation signals:
   - We listen for Server Notifications (App Store Server Notifications v2 and Google Real-time Developer Notifications).
-  - On notification, we call a Supabase edge function to update the user's entitlement state, removing Premium access and logging the change.
+  - On notification, RevenueCat updates `CustomerInfo`; the app removes Premium access on next session start.
 
 ---
 

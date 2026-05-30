@@ -46,10 +46,10 @@ Guiding principles: data minimization, purpose limitation, on-device-first, and 
 | D2 | Display name | Account | Yes (low) | Supabase + device | Controller; Supabase processor | Until deletion |
 | D3 | Auth provider / OAuth token / password hash | Auth | Yes | Supabase Auth | Supabase processor | Until deletion |
 | D4 | Timezone (IANA) | Account | No (low) | Device (source) + Supabase | Controller | Until deletion |
-| D5 | SRS progress / mastery / review dates | Learning | Pseudonymous | Device + `user_progress_sync` | Controller | Until deletion |
+| D5 | SRS progress / mastery / review dates | Learning | Pseudonymous | Device SQLite (encrypted blob backup to Supabase Storage, Phase 3+) | Controller | Until deletion |
 | D6 | Quiz attempt log | Learning | Pseudonymous | Device (`quiz_attempts`) | Controller (on-device) | Until uninstall |
-| D7 | Entitlements + receipt tokens | Commercial | Yes (linked) | Device + `user_entitlements_sync` | Controller; Apple/Google | Tax-record term |
-| D8 | Streak / gamification stats | Learning | Pseudonymous | Device + `user_stats_sync` | Controller | Until deletion |
+| D7 | Purchase receipts | Commercial | Yes (linked) | RevenueCat (external) | Processor; Apple/Google | Tax-record term |
+| D8 | Streak / gamification stats | Learning | Pseudonymous | Device SQLite (encrypted blob backup to Supabase Storage, Phase 3+) | Controller | Until deletion |
 | D9 | Usage analytics events | Analytics | Pseudonymous | Device `event_log`; aggregates only leave | Controller | Aggregates only |
 | D10 | Crash / error diagnostics | Diagnostics | Pseudonymous | Error provider | Controller; provider processor | ~90 days |
 | D11 | Teacher email + display name | Teacher | Yes (low) | Supabase `teachers` | Controller; Supabase processor | Until account deletion |
@@ -57,11 +57,11 @@ Guiding principles: data minimization, purpose limitation, on-device-first, and 
 
 ## Data Flow
 
-1. **On-device (default):** SQLite holds words, progress, attempts, entitlements, stats, and the
+1. **On-device (default):** SQLite holds words, progress, attempts, stats, and the
    append-only `event_log`. Fully functional offline and pre-auth.
 2. **Auth + sync:** On sign-in, Supabase Auth authenticates; sync pushes/pulls the mirror tables.
    Cloud is mirror, not authority. Row-Level Security scopes each user to their own rows.
-3. **Purchases:** IAP via Apple/Google; receipts validated server-side; entitlement written locally
+3. **Purchases:** IAP via Apple/Google; receipts validated server-side by RevenueCat; entitlement cached in memory only
    and mirrored.
 4. **Teacher portal (separate surface):** Teacher signup writes `teachers`; referred purchases write
    `referrals`; teacher advocates receive in-app Premium credits only — no cash payout, no third-party payment processor.
@@ -73,7 +73,7 @@ Guiding principles: data minimization, purpose limitation, on-device-first, and 
 | Data | Purpose | Lawful basis |
 |------|---------|--------------|
 | D1–D4 | Account + sync (deliver the service) | Contract (6(1)(b)) |
-| D5–D8 | Progress, entitlements, gamification | Contract (6(1)(b)) |
+| D5–D8 | Progress, gamification | Contract (6(1)(b)) |
 | D7 | Tax/accounting retention | Legal obligation (6(1)(c)) |
 | D9 | Aggregate product analytics | Legitimate interests (6(1)(f)); consent where required |
 | D10 | Crash diagnostics, security | Legitimate interests (6(1)(f)) |
@@ -153,9 +153,7 @@ Transparency prompt is needed because we do not track.
 
 ## Open Questions
 
-- Per-region age thresholds: hard-code a conservative single threshold (e.g. 16) or vary by detected
-  region? Simpler-but-stricter vs. accurate-but-complex.
-- Supabase storage region selection (EU vs. US) and its transfer implications.
-- Whether to consent-gate analytics globally or only in GDPR/UK regions.
-- CCPA/CPRA "Do Not Sell/Share" — we do not sell/share, so likely just a confirming disclosure;
-  confirm with counsel.
+- `requires-product-decision` — Per-region age thresholds: hard-code 16 (simpler/stricter) or vary by detected region (accurate/complex). Lean 16 for MVP.
+- `requires-external-validation` — Supabase storage region (EU vs. US) and data-transfer implications. Decide before Phase 3 backup feature.
+- `requires-external-validation` — Analytics consent gating: global opt-out vs. GDPR/UK only. Align with counsel and [ANALYTICS_PLAN.md](./ANALYTICS_PLAN.md).
+- `requires-external-validation` — CCPA/CPRA "Do Not Sell/Share" confirming disclosure — confirm with counsel.

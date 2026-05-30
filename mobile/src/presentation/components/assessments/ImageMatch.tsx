@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Image, Pressable, View, type ViewStyle } from 'react-native';
+import { Pressable, View, type ViewStyle } from 'react-native';
+import { Image } from 'expo-image';
 import { useTheme } from '@/presentation/theme';
 import { Text } from '@/presentation/components/Text';
 import { Button } from '@/presentation/components/Button';
+import { hapticsSelect, hapticsCorrect, hapticsCorrection } from '@/presentation/services/haptics';
 import {
   optionFeedback,
   type AnswerCallback,
@@ -69,6 +71,11 @@ export function ImageMatch({
   function handleSubmit(): void {
     if (selected === null || revealed) return;
     setInternalRevealed(true);
+    if (selected === correctValue) {
+      hapticsCorrect();
+    } else {
+      hapticsCorrection();
+    }
     onAnswer({ value: selected, assessmentType: 'image_match' });
   }
 
@@ -92,14 +99,18 @@ export function ImageMatch({
               accessibilityLabel={option.label}
               accessibilityState={{ selected: state === 'selected', disabled: revealed }}
               disabled={revealed}
-              onPress={() => setSelected(option.value)}
+              onPress={() => {
+                hapticsSelect();
+                setSelected(option.value);
+              }}
               style={tileStyle(state, theme)}
             >
               <Image
                 source={{ uri: option.imageUri }}
-                accessibilityIgnoresInvertColors
+                accessibilityLabel={option.label}
+                contentFit="cover"
+                transition={150}
                 style={{ width: '100%', height: '100%' }}
-                resizeMode="cover"
               />
             </Pressable>
           );
@@ -109,8 +120,12 @@ export function ImageMatch({
         <Button label="Submit" variant="primary" fullWidth disabled={selected === null} onPress={handleSubmit} />
       )}
       {revealed && (
-        <Text variant="body" color={selected === correctValue ? 'success' : 'caution'}>
-          {selected === correctValue ? 'Nice — that’s the one.' : 'Not quite — review and keep going.'}
+        <Text
+          variant="body"
+          color={selected === correctValue ? 'success' : 'caution'}
+          accessibilityLiveRegion="polite"
+        >
+          {selected === correctValue ? 'Nice \u2014 that\u2019s the one.' : 'Not quite \u2014 review and keep going.'}
         </Text>
       )}
     </View>

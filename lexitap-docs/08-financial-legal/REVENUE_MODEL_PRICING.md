@@ -155,7 +155,21 @@ Checked on 2026-05-24:
 
 ---
 
+## Pricing and Entitlement Glossary
+
+| Term | Definition |
+|------|------------|
+| **content tier** | A named set of words in `words.db` (e.g., `foundation`, `advanced`, `toefl`). Identified by `tier_id` in the `content_tiers` table. Read-only; bundled at build time by Track A. |
+| **store product** | An App Store / Google Play in-app purchase SKU (e.g., `com.lexitap.common3k`). Managed via RevenueCat. One product can unlock one or more content tiers. |
+| **entitlement** | The verified right to access a content tier, granted by RevenueCat after purchase validation. Stored in memory only — never written to `user.db`. |
+| **Foundation** | Free content tier: the top 3,000 most-frequent English words (ranks 1–3,000). Always unlocked; no purchase required. |
+| **Common 3000** | Separate paid content tier (ranks 3,001–6,000). Unlocked by the `com.lexitap.common3k` one-time purchase ($1.99). Distinct from Foundation — it is not a "premium view" of the same words. |
+| **Premium Pass** | A RevenueCat entitlement granted by `com.lexitap.premium.monthly` or `com.lexitap.premium.annual`. Unlocks all paid content tiers: TOEFL, IELTS, Business English, GRE, GMAT, Phrasal Verbs, and Idioms. Does **not** include Common 3000 (separate SKU). |
+| **Advanced** | Free content tier: curated advanced vocabulary (academic, literary) not constrained by frequency rank. Always unlocked. |
+
+---
+
 ## Open Questions
 
-- **Regional Pricing Adjustments:** Will we offer custom localized subscription tiers for emerging market individual learners? (Currently deferred to post-launch).
-- **International Card Sensitivity:** Which percentage of B2B contracts will use international cards or currency conversion, and should regional school contracts require local payment methods to protect margin?
+- `deferred` — **Regional Pricing Adjustments:** Custom localized subscription tiers for emerging market individual learners. Deferred to post-launch.
+- `deferred` — **International Card Sensitivity:** International card/currency handling for B2B regional contracts. Deferred to post-launch.

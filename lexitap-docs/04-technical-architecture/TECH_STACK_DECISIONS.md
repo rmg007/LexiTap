@@ -42,9 +42,9 @@ Each technology choice for LexiTap recorded as a decision record: the choice, th
 
 **Decision:** TypeScript 5.x, `strict: true`. `any` is banned (use `unknown` + type guards). Named exports only.
 
-**Rationale:** The domain layer (SRS, mastery, entitlements) carries the app's correctness-critical logic. Strict typing + the [DATA_MODELS.md](./DATA_MODELS.md) domain types catch row-to-entity mapping errors at compile time. `tsc --noEmit` is part of `npm run check`.
+**Rationale:** The domain layer (SRS, mastery) carries the app's correctness-critical logic. Strict typing + the [DATA_MODELS.md](./DATA_MODELS.md) domain types catch row-to-entity mapping errors at compile time. `tsc --noEmit` is part of `npm run check`.
 
-**Alternatives rejected:** Plain JS (no compile-time safety for money/entitlement logic); loose TS (defeats the purpose).
+**Alternatives rejected:** Plain JS (no compile-time safety for SRS/payment logic); loose TS (defeats the purpose).
 
 **Consequences:** Slightly more upfront typing effort; large payoff in refactor safety, critical for a one-person team.
 
@@ -63,12 +63,12 @@ Each technology choice for LexiTap recorded as a decision record: the choice, th
 
 ## TSD-004 Supabase over Firebase
 
-**Decision:** **Supabase** (Postgres + Auth + Storage + RPC) for cloud sync, auth, and the teacher/referral backend. Cloud sync is FREE for all users.
+**Decision:** **Supabase** (Postgres + Auth + Storage + RPC) for auth, content-error reports, and encrypted `user.db` blob backups (Phase 3+).
 
-**Rationale:** Postgres + Row-Level Security maps cleanly to our per-user mirror tables (`user_progress_sync`, `user_entitlements_sync`, `user_stats_sync`) and the teacher/referral/promo relational data. Supabase Auth handles email + Google OAuth and password hashing. RLS lets us enforce "users see only their rows" without a server. The free tier fits the Year-1 budget while usage stays inside auth MAU, database, egress, storage, Edge Function, and inactivity constraints. SQL backend means no second query dialect to learn.
+**Rationale:** Supabase Auth handles email + Google OAuth and password hashing. RLS lets us enforce "users see only their rows" without a server. Postgres will hold `content_errors` and `user_db_backups` metadata; per-table sync mirrors were removed in v3.0 (device is always authoritative). The free tier fits the Year-1 budget. SQL backend means no second query dialect to learn.
 
 **Alternatives rejected:**
-- *Firebase/Firestore* — NoSQL document model is a poor fit for relational referral/reward data; vendor lock-in; RLS-equivalent (security rules) is harder to reason about for entitlement flows. Rejected.
+- *Firebase/Firestore* — NoSQL document model; vendor lock-in; RLS-equivalent harder to reason about. Rejected.
 - *Self-hosted Postgres + custom API* — operational burden a solo founder cannot carry. Rejected (see TSD-005).
 - *AWS Amplify* — heavier, more services to wire, easier to overspend. Rejected for budget.
 
@@ -78,7 +78,7 @@ Each technology choice for LexiTap recorded as a decision record: the choice, th
 
 **Decision:** **No custom backend server** at MVP. All cloud logic runs on Supabase managed services: Postgres, Auth, RLS policies, and Postgres RPC functions / Edge Functions only where strictly needed (e.g., receipt validation, entitlement updates, referral/promo writes).
 
-**Rationale:** A solo founder with a realistic ~$194 first-year cash outlay cannot run, secure, patch, and monitor a server. The app is offline-first; the cloud's job is sync + auth + teacher backend, all of which Supabase covers declaratively. Pushing logic to RLS + RPC keeps the trust boundary inside Supabase.
+**Rationale:** A solo founder with a realistic ~$194 first-year cash outlay cannot run, secure, patch, and monitor a server. The app is offline-first; the cloud's job is auth + content-error reports + encrypted blob backup, all of which Supabase covers declaratively.
 
 **Alternatives rejected:** Node/Express on a VPS or serverless platform — unnecessary operational and cost surface for MVP. Revisit only if a feature genuinely cannot be expressed as RLS + RPC.
 
@@ -129,5 +129,5 @@ Each technology choice for LexiTap recorded as a decision record: the choice, th
 
 ## Open Questions
 
-- Final TTS provider for TOEFL audio (Google Cloud TTS vs ElevenLabs) — decided at enrichment time.
-- Whether to adopt `eslint-plugin-boundaries` to mechanically enforce the dependency rule (see [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md)).
+- `deferred` — Final TTS provider for TOEFL audio (Google Cloud TTS vs ElevenLabs). Decided at enrichment time; ElevenLabs leads per content pipeline doc.
+- `unresolved` — `eslint-plugin-boundaries` adoption to mechanically enforce layer import boundaries. See also [SYSTEM_ARCHITECTURE.md](./SYSTEM_ARCHITECTURE.md).

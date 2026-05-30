@@ -6,6 +6,7 @@ import { Text, Button, ProgressBar } from '@/presentation/components';
 import { MultipleChoice, DragDrop } from '@/presentation/components/assessments';
 import type { AssessmentAnswer } from '@/presentation/components/assessments/types';
 import { useServices } from '@/presentation/services';
+import { hapticsSessionComplete, hapticsStreakIncrement } from '@/presentation/services/haptics';
 import { buildQuestion } from '@/presentation/screens/quizQuestion';
 import {
   currentWord,
@@ -90,10 +91,8 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
         });
         questionKey.current += 1;
         if (out.result.isSessionComplete) {
-          // Best-effort sync at session end; failure is a silent no-op.
-          void services.syncProgress
-            .execute({ userId: 'me', sinceCursor: 0 })
-            .catch(() => undefined);
+          hapticsSessionComplete();
+          hapticsStreakIncrement();
           setPhase({
             kind: 'complete',
             correct: out.result.totalCorrect,

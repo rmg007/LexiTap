@@ -31,7 +31,6 @@ export interface ContentTier {
   name: string;
   description?: string;
   isFree: boolean;
-  priceUsd: number | null;
   sku: string | null; // IAP product id
   wordCount: number;
   displayOrder: number;

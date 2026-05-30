@@ -211,4 +211,4 @@ verification_steps:
 
 ## Open Questions
 
-- Whether the Compound Learning append should be auto-committed by a hook or left to the agent's discretion is undecided; leaning toward a hook to satisfy the autonomy constraint.
+- `unresolved` — Whether the Compound Learning append should be auto-committed by a hook or left to the agent's discretion; leaning toward a hook to satisfy the autonomy constraint.

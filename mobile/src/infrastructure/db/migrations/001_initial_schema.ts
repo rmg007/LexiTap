@@ -13,13 +13,6 @@
 // execAsync. This is the only place these DDL statements live.
 
 export const MIGRATION_001_INITIAL_SCHEMA = `
-CREATE TABLE IF NOT EXISTS user_entitlements (
-  tier_id       TEXT PRIMARY KEY,
-  purchased_at  INTEGER NOT NULL,
-  expires_at    INTEGER,
-  receipt_token TEXT
-);
-
 CREATE TABLE IF NOT EXISTS user_progress (
   word_id             TEXT PRIMARY KEY,
   mastery_level       INTEGER NOT NULL DEFAULT 0,
@@ -76,7 +69,9 @@ CREATE INDEX IF NOT EXISTS idx_event_log_type     ON event_log(event_type);
 -- Local mirror of user_stats. Streak/freeze state is durable here (the
 -- forgiveness machine needs it offline). last_activity_local_date is YYYYMMDD
 -- in the user's IANA tz (NOT epoch) per SRS_FORGIVENESS_MECHANICS.md; a single
--- row keyed by a constant id.
+-- row keyed by a constant id. onboarding_state is a JSON blob tracking
+-- completion of language selection, CEFR placement, notification permissions,
+-- and intro flows.
 CREATE TABLE IF NOT EXISTS user_stats (
   id                       INTEGER PRIMARY KEY CHECK (id = 1),
   current_streak           INTEGER NOT NULL DEFAULT 0,
@@ -87,6 +82,22 @@ CREATE TABLE IF NOT EXISTS user_stats (
   freeze_count             INTEGER NOT NULL DEFAULT 0,
   freezes_granted_total    INTEGER NOT NULL DEFAULT 0,
   last_catchup_anchor_date INTEGER,
-  last_activity_date       INTEGER
+  onboarding_state         TEXT
 );
-`;
+
+-- Anchors SRS reminder delivery. Prevents per-due-word notification flooding.
+CREATE TABLE IF NOT EXISTS notification_schedule (
+  id                 INTEGER PRIMARY KEY AUTOINCREMENT,
+  next_notify_at     INTEGER NOT NULL,
+  type               TEXT NOT NULL,
+  delivered_at       INTEGER,
+  quiet_hours_start  INTEGER,
+  quiet_hours_end    INTEGER
+);
+
+-- Migration runner anchor. Required before first public release.
+CREATE TABLE IF NOT EXISTS schema_version (
+  version    INTEGER PRIMARY KEY,
+  applied_at INTEGER NOT NULL
+);
+`;;

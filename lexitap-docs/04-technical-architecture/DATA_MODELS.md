@@ -276,5 +276,5 @@ Each table gets a `*Mapper.ts` with `toDomain` (and `toRow` for writable tables)
 
 ## Open Questions
 
-- Whether to model `MasteryLevel` as a value object with behavior or keep it a numeric literal union (currently union; scheduler holds the transition logic).
-- Branded ID types add ergonomic friction in tests; may relax to plain `string` if it proves noisy.
+- `unresolved` — `MasteryLevel` as value object vs. numeric literal union. Currently union; scheduler holds transition logic. Revisit if domain rules accumulate around mastery transitions.
+- `unresolved` — Branded ID types vs. plain `string`. Currently branded; relax if test ergonomic friction is significant.

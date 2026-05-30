@@ -1,8 +1,15 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Pressable, View, type ViewStyle } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import { useTheme } from '@/presentation/theme';
+import { useMotion } from '@/presentation/theme/useMotion';
 import { Text } from '@/presentation/components/Text';
 import { Button } from '@/presentation/components/Button';
+import { hapticsSelect, hapticsCorrect, hapticsCorrection } from '@/presentation/services/haptics';
 import {
   optionFeedback,
   type AnswerCallback,
@@ -12,24 +19,22 @@ import {
 import type { ColorTokens, Theme } from '@/presentation/theme';
 
 // MultipleChoice (MVP). Tap one of 2-4 option cards, then submit. NO TextInput.
-// Selected option gets an accent border; on submit, chosen-correct fills
-// success.subtle with a check, chosen-incorrect fills caution.subtle with a
-// gentle dash (never a red X) and the correct option highlights. Feedback uses
-// color + icon + copy (three redundant channels). Presentational only.
+// Selected option gets an accent border with spring animation; on submit,
+// chosen-correct fills success.subtle with a check, chosen-incorrect fills
+// caution.subtle with a gentle dash (never a red X) and the correct option
+// highlights. Feedback uses color + icon + copy (three redundant channels).
+// Haptics confirm selection, correct answer, and gentle correction.
+// Presentational only.
 
 export interface MultipleChoiceProps {
-  prompt: string; // word under study (rendered in `display`)
-  // The sentence/definition context (one-line). Optional.
+  prompt: string;
   context?: string;
   options: readonly AssessmentOption[];
   correctValue: string;
   onAnswer: AnswerCallback;
-  // Controlled-reveal seam: when true the widget shows feedback immediately
-  // (e.g. for replay). Defaults to uncontrolled (select -> submit).
   revealed?: boolean;
 }
 
-// Icon glyphs are paired with copy + color so meaning is never color-only.
 const FEEDBACK_ICON: Record<OptionFeedback, string> = {
   idle: '',
   selected: '',
@@ -38,9 +43,9 @@ const FEEDBACK_ICON: Record<OptionFeedback, string> = {
   reveal_correct: '✓',
 };
 
-function optionStyle(state: OptionFeedback, theme: Theme): ViewStyle {
+function baseOptionStyle(theme: Theme): ViewStyle {
   const { colors, radii, spacing, layout } = theme;
-  const base: ViewStyle = {
+  return {
     minHeight: 56,
     borderRadius: radii.md,
     borderWidth: 1,
@@ -51,23 +56,108 @@ function optionStyle(state: OptionFeedback, theme: Theme): ViewStyle {
     justifyContent: 'center',
     minWidth: layout.minTouchTarget,
   };
+}
+
+function stateBackgroundColor(state: OptionFeedback, colors: Theme['colors']): string {
   switch (state) {
-    case 'selected':
-      return { ...base, borderColor: colors.accent };
     case 'correct':
     case 'reveal_correct':
-      return { ...base, borderColor: colors.success, backgroundColor: colors.successSubtle };
+      return colors.successSubtle;
     case 'incorrect':
-      return { ...base, borderColor: colors.caution, backgroundColor: colors.cautionSubtle };
-    case 'idle':
+      return colors.cautionSubtle;
     default:
-      return base;
+      return colors.bgSurface;
+  }
+}
+
+function stateBorderColor(state: OptionFeedback, colors: Theme['colors']): string {
+  switch (state) {
+    case 'selected':
+      return colors.accent;
+    case 'correct':
+    case 'reveal_correct':
+      return colors.success;
+    case 'incorrect':
+      return colors.caution;
+    default:
+      return colors.borderSubtle;
   }
 }
 
 function iconColor(state: OptionFeedback): keyof ColorTokens {
   if (state === 'incorrect') return 'caution';
   return 'success';
+}
+
+// Per-card component so Reanimated hooks are called unconditionally per item.
+interface OptionCardProps {
+  option: AssessmentOption;
+  state: OptionFeedback;
+  theme: Theme;
+  revealed: boolean;
+  onSelect: (value: string) => void;
+}
+
+function OptionCard({ option, state, theme, revealed, onSelect }: OptionCardProps): React.JSX.Element {
+  const { spacing } = theme;
+  const { spring } = useMotion();
+
+  const scale = useSharedValue(1);
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePressIn = useCallback(() => {
+    if (revealed) return;
+    scale.value = withSpring(0.97, spring('snap'));
+  }, [revealed, scale, spring]);
+
+  const handlePressOut = useCallback(() => {
+    scale.value = withSpring(1.0, spring('snap'));
+  }, [scale, spring]);
+
+  const handlePress = useCallback(() => {
+    if (revealed) return;
+    hapticsSelect();
+    onSelect(option.value);
+  }, [revealed, option.value, onSelect]);
+
+  const bg = stateBackgroundColor(state, theme.colors);
+  const border = stateBorderColor(state, theme.colors);
+  const base = baseOptionStyle(theme);
+  const icon = FEEDBACK_ICON[state];
+
+  return (
+    <Pressable
+      accessibilityRole="radio"
+      accessibilityLabel={option.label}
+      accessibilityHint={revealed ? undefined : 'Double tap to select this answer'}
+      accessibilityState={{ selected: state === 'selected' || state === 'correct' || state === 'reveal_correct', disabled: revealed }}
+      disabled={revealed}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      onPress={handlePress}
+    >
+      <Animated.View
+        style={[
+          base,
+          animatedStyle,
+          { backgroundColor: bg, borderColor: border },
+        ]}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.s2 }}>
+          {icon !== '' && (
+            <Text variant="label" color={iconColor(state)} accessibilityElementsHidden>
+              {icon}
+            </Text>
+          )}
+          <Text variant="bodyLg" color="textPrimary" style={{ flexShrink: 1 }}>
+            {option.label}
+          </Text>
+        </View>
+      </Animated.View>
+    </Pressable>
+  );
 }
 
 export function MultipleChoice({
@@ -87,11 +177,20 @@ export function MultipleChoice({
   function handleSubmit(): void {
     if (selected === null || revealed) return;
     setInternalRevealed(true);
+    if (selected === correctValue) {
+      hapticsCorrect();
+    } else {
+      hapticsCorrection();
+    }
     onAnswer({ value: selected, assessmentType: 'multiple_choice' });
   }
 
   return (
-    <View style={{ gap: spacing.s5 }}>
+    <View
+      style={{ gap: spacing.s5 }}
+      accessibilityRole="radiogroup"
+      accessibilityLabel={`Question: ${prompt}`}
+    >
       <View style={{ gap: spacing.s2 }}>
         <Text variant="display" color="textPrimary" accessibilityRole="header">
           {prompt}
@@ -111,28 +210,15 @@ export function MultipleChoice({
             correctValue,
             revealed,
           });
-          const icon = FEEDBACK_ICON[state];
           return (
-            <Pressable
+            <OptionCard
               key={option.id}
-              accessibilityRole="button"
-              accessibilityLabel={option.label}
-              accessibilityState={{ selected: state === 'selected', disabled: revealed }}
-              disabled={revealed}
-              onPress={() => setSelected(option.value)}
-              style={optionStyle(state, theme)}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.s2 }}>
-                {icon !== '' && (
-                  <Text variant="label" color={iconColor(state)} accessibilityElementsHidden>
-                    {icon}
-                  </Text>
-                )}
-                <Text variant="bodyLg" color="textPrimary" style={{ flexShrink: 1 }}>
-                  {option.label}
-                </Text>
-              </View>
-            </Pressable>
+              option={option}
+              state={state}
+              theme={theme}
+              revealed={revealed}
+              onSelect={setSelected}
+            />
           );
         })}
       </View>
@@ -150,10 +236,12 @@ export function MultipleChoice({
         <Text
           variant="body"
           color={selected === correctValue ? 'success' : 'caution'}
+          accessibilityLiveRegion="polite"
         >
-          {selected === correctValue ? 'Nice — that’s right.' : 'Not quite — review and keep going.'}
+          {selected === correctValue ? 'Nice — that\u2019s right.' : 'Not quite \u2014 review and keep going.'}
         </Text>
       )}
     </View>
   );
 }
+

@@ -19,7 +19,6 @@ export interface TierRow {
   name: string;
   description: string | null;
   is_free: number;
-  price_usd: number | null;
   sku: string | null;
   word_count: number;
   display_order: number;

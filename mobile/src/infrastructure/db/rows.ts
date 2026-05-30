@@ -30,7 +30,6 @@ export interface ContentTierRow {
   name: string;
   description: string | null;
   is_free: number; // 0/1
-  price_usd: number | null;
   sku: string | null;
   word_count: number;
   display_order: number;
@@ -64,13 +63,6 @@ export interface QuizAttemptRow {
   scheduler_version: string | null;
 }
 
-export interface EntitlementRow {
-  tier_id: string;
-  purchased_at: number;
-  expires_at: number | null;
-  receipt_token: string | null;
-}
-
 export interface UserStatsRow {
   id: number;
   current_streak: number;
@@ -81,5 +73,19 @@ export interface UserStatsRow {
   freeze_count: number;
   freezes_granted_total: number;
   last_catchup_anchor_date: number | null;
-  last_activity_date: number | null;
+  onboarding_state: string | null; // JSON blob
+}
+
+export interface NotificationScheduleRow {
+  id: number;
+  next_notify_at: number;
+  type: string;
+  delivered_at: number | null;
+  quiet_hours_start: number | null;
+  quiet_hours_end: number | null;
+}
+
+export interface SchemaVersionRow {
+  version: number;
+  applied_at: number;
 }

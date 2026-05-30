@@ -132,7 +132,8 @@ Free vocab app as a lead generator for $149+ premium prep courses. Vocab is not 
 
 ## Open Questions
 
-- WordUp's multimedia "wow factor" gap: LexiTap's lighter audio + imagery + curated sentences captures dual-coding cheaply but feels less spectacular at launch. Does positioning on reliability/price/ownership fully compensate? Watch beta qualitative.
-- Per-word AI mnemonic imagery (Knowji's own named threat) is a Year 2 differentiator (Backlog #34) — when does conversion data justify the content-pipeline cost?
-- Knowji teardown (Backlog #42) completed 2026-05-24 via desk research; note Knowji closed in 2025 so a first-person hands-on of the live app may no longer be possible. First-person hands-on teardown of WordUp (Backlog #44) is still pending; that profile remains research-based.
-- Knowji's per-app paid-up-front model is a useful willingness-to-pay precedent (alongside Anki), but its closure raises the question: is focused vocabulary durable as a standalone business without subscriptions, B2B seats, and retention loops? Watch against LexiTap's own LTV data (first repricing review Month 3 / 100 payers).
+- `requires-external-validation` — WordUp positioning compensation. Watch beta qualitative after launch.
+- `deferred` — AI mnemonic imagery (Backlog #34). Year 2 — justify via conversion data.
+- `resolved-elsewhere` — Knowji teardown (Backlog #42): completed via desk research 2026-05-24; first-person impossible (app closed 2025). Branding work moved to post-validation backlog.
+- `resolved-elsewhere` — WordUp hands-on teardown (Backlog #44): pending hands-on; current profile is research-based.
+- `requires-external-validation` — Vocabulary-only LTV durability. Watch own LTV data; first repricing review Month 3 / 100 payers.

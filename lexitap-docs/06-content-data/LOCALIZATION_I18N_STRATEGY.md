@@ -86,9 +86,5 @@ rewrite:
 
 ## Open Questions
 
-- **First localization target (if any).** No locale is prioritized. If post-launch analytics show a
-  dominant non-English-speaking market, that locale becomes the candidate for ASO-first localization
-  (listing before UI, since ASO has higher acquisition ROI).
-- **L1 definition glosses as a feature.** Whether offering native-language translations of
-  definitions is a future free feature, a premium add-on, or never — undecided; the additive-column
-  hook keeps the option open.
+- `deferred` — **First localization target.** No locale prioritized for MVP. If post-launch analytics show a dominant non-English-speaking market, that locale becomes the ASO-first candidate.
+- `deferred` — **L1 definition glosses.** Future free feature, premium add-on, or out-of-scope — undecided. The additive-column hook keeps the option open without blocking v1.

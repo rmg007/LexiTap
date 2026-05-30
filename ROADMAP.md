@@ -7,7 +7,7 @@ status: active
 # LexiTap Roadmap
 
 **21 weeks from validation to 1,000 active users (including B2B cram-school seats).**
-Solo founder. $194 Year 1 budget. B2B Cram School licensing + non-cash teacher referrals as primary GTM.
+Solo founder. $194 Year 1 budget. Consumer IAP (RevenueCat) as primary revenue. Teacher referrals and B2B licensing deferred to Phase 3+.
 
 This root file is the at-a-glance mirror. The canonical product roadmap is [lexitap-docs/02-product-definition/ROADMAP.md](lexitap-docs/02-product-definition/ROADMAP.md).
 
@@ -73,7 +73,7 @@ These must be resolved before Phase 1 is treated as validated for continued buil
 
 - [x] Expo + TypeScript project setup
 - [x] Load bundled `words.db` (ATTACH DATABASE setup in infrastructure/db/database.ts)
-- [x] Cloud sync (background, non-blocking) — SupabaseSyncService fully implemented; lifecycle wiring pending
+- [ ] Cloud sync — encrypted `user.db` blob backup via Supabase Storage (Phase 3+; per-table sync removed)
 - [x] Screens: Home, Quiz, Progress, Settings
 - [x] Assessment widgets: MultipleChoice, DragDrop
 - [x] Use cases + services: SRS scheduling, mastery, quiz session, sync, entitlements — implemented via use-case/service layer (hooks pattern replaced by this architecture per clean/hexagonal design)
@@ -82,7 +82,7 @@ These must be resolved before Phase 1 is treated as validated for continued buil
 
 ---
 
-## Phase 2 — Validation (Weeks 7-10)
+## Phase 2 — User Validation (Weeks 7-10)
 
 **Gate:** D7 retention >30% + 2 cram schools onboarded for free beta trials. If not — stop.
 
@@ -97,7 +97,7 @@ These must be resolved before Phase 1 is treated as validated for continued buil
 
 ---
 
-## Phase 3 — Subscription & Bulk Beta (Weeks 11-12)
+## Phase 3 — First Paid Tier (Weeks 11-12)
 
 - [ ] Source TOEFL audio (ElevenLabs, ~$50)
 - [ ] Content tool: enrich TOEFL tier with audio
@@ -109,7 +109,7 @@ These must be resolved before Phase 1 is treated as validated for continued buil
 
 ---
 
-## Phase 4 — Launch Wave Content Drops (Weeks 12-16)
+## Phase 4 — Launch Wave Tiers (Weeks 12-16)
 
 Content tool additions:
 - [ ] Source + import IELTS word list
@@ -131,7 +131,7 @@ Mobile additions:
 - [ ] Account creation — email/password auth screen (Supabase)
 - [ ] Google Sign-In (`expo-google-sign-in` + Supabase OAuth)
 - [ ] Sign in with Apple (`expo-apple-authentication` + Supabase Apple OAuth)
-- [ ] Wire `SupabaseSyncService` lifecycle to authenticated user ID
+- [ ] Wire encrypted blob backup to authenticated user ID (Phase 3+)
 - [ ] App icon (1024×1024)
 - [ ] App Store screenshots showing no-typing recognition practice
 - [ ] App Store description emphasizing subscription value & schools
@@ -144,11 +144,11 @@ Mobile additions:
 
 ---
 
-## Phase 6 — Growth + Content Drops (Week 19+)
+## Phase 6 — Growth and Content Drops (Week 19+)
 
 Growth:
 - [ ] Scale cram-school institutional sales outreach
-- [ ] Activate non-cash teacher referral program (in-app rewards / free unlocks)
+- [ ] Activate teacher referral program (Phase 3+)
 - [ ] Reddit presence (r/TOEFL, r/ESL, r/languagelearning)
 - [ ] App Store Optimization for "TOEFL vocabulary", "IELTS vocabulary", and "offline vocabulary"
 - [ ] Content marketing (blog, TikTok/YouTube Shorts)
