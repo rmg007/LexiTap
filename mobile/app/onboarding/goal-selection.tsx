@@ -49,7 +49,7 @@ export default function GoalSelectionRoute(): React.JSX.Element {
           onPress={() => {
             if (selected) {
               router.push({
-                pathname: '/onboarding/proficiency-assessment',
+                pathname: '/onboarding/diagnostic',
                 params: { goal: selected },
               });
             }

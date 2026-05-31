@@ -47,7 +47,7 @@ One scannable list. Each phase has an ordered task set and a single measurable e
 - ✅ C0 words.db delivery (code) · ✅ A1 tiers model · ✅ C2 tier activation · ✅ test harness green
 - ◐ **Prove C0 on a physical device** — ✅ proven on iOS **simulator** (after fixing dual-React + bare-name-ATTACH bugs); physical iOS + low-end Android still pending (fresh EAS build in flight)
 - ☐ Foundation content to 3,000 words: C3 source → C4 OpenAI enrich adapter → C5 sampled QA → C6 synonyms → C7 validate → C8 release pipeline *(the long pole — runs continuously)*
-- ◐ Real onboarding + Home: **H-1 Home progress ✅ → O-1 persist `onboarding_state` ✅** → O-2 goal → O-3 proficiency(confirm/cut) → O-4 diagnostic (DIAG-B) → O-5 knowledge map; P-1 empty states; P-2 a11y
+- ◐ Real onboarding + Home: **H-1 Home progress ✅ → O-1 persist `onboarding_state` ✅ → O-2 goal ✅** → O-4 diagnostic (DIAG-B) → O-5 knowledge map; P-1 empty states; P-2 a11y *(O-3 proficiency screen cut)*
 - ◐ Instrumentation: A1–A5 PostHog + `event_log` flush; **B1 Sentry ✅ + B2 scrub ✅** (B2 enrichment tags pending A2) *(without this P2's gate is unmeasurable)*
 - ☐ Build infra: eas init, `app.json→app.config.ts`, eas.json profiles, CI two-job, signing (build-infra #1–14) · **start Apple+Google enrollment day 1**
 
@@ -134,7 +134,7 @@ The chain that determines the ship date (everything else parallelizes around it)
 ```
 C0 (fix words.db delivery, prove on device)         ← URGENT, gates the whole app
    └─> C3→C4→C5→C6→C7→C8 (Foundation content: source→AI-enrich→sampled QA→export)   ← LONG POLE
-H-1, O-1→O-2→O-3→O-4(D1)→O-5 (Home + onboarding real)                ← gates P2 beta credibility
+H-1, O-1→O-2✅→O-4(D1)→O-5 (Home + onboarding real)                ← gates P2 beta credibility *(O-3 cut)*
    └─> A1→A2→A3→A4→A5 + B1→B2 (instrumentation)      ← gates P2 measurability
         └─> [P2 beta: ≥1 week data] → D7 gate
 A0 (leave Expo Go / EAS dev client)                  ← gates ALL of P3 monetization+auth
@@ -208,8 +208,8 @@ Scope: onboarding screens, Home daily-progress, Settings, ImageMatch/Classificat
 
 - ✅ **H-1 · Wire HomeScreen real daily progress** — **DONE** (on `master`, commit `5808079`; unit-tested in `dailyProgressQueries.test.ts`). "Ready for today" bar reflects `reviewsCompletedToday / effectiveDailyCap`; "Learn new words" shows remaining new-word budget vs `FORGIVENESS.NEW_WORDS_PER_DAY`; no hardcoded `0`. `getDailyProgress(tierId, nowMs, tz)` lives in `queries/dailyProgressQueries.ts`; `container.ts` injects `now`/`tz` and exposes a `getDailyProgress(tierId)` over `ServicesContext`. Offline failure → zero-state, never an error. *Touched:* `HomeScreen.tsx`, `ServicesContext.tsx`, `container.ts`, `queries/dailyProgressQueries.ts` (+test), `mockServices.ts`.
 - ✅ **O-1 · Persist onboarding_state** — **DONE** (on `master`, commit `5808079`). Typed `OnboardingState` (goal, band, optional frontier, required `completedAt`) written to `user_stats.onboarding_state` JSON and read back; `SaveOnboardingProfileUseCase` + `upsertOnboardingState` (touches only that column); `parseOnboardingState` reads defensively (corrupt → no profile, never throws — 8 mapper + 3 use-case cases). *Touched:* `domain/onboarding/OnboardingState.ts`, `domain/user/UserStats.ts`, `statsQueries.ts`, `mappers.ts`, `SQLiteUserStatsRepository.ts`, `application/onboarding/SaveOnboardingProfileUseCase.ts`, `ServicesContext.tsx`, `container.ts`. **Unblocks O-2/3/4.** Production currently writes only `{completedAt}` — `goal`/`band`/`frontierRank` stay empty until O-2/O-4 ship the screens that fill them.
-- **O-2 · Goal-selection screen (real)** — M. SelectionCard grid per `OnboardingSelfSegment.md`; selection sets starting band + persists before routing. 44pt targets, `accessibilityState.selected`. *Deps:* O-1.
-- **O-3 · Proficiency screen — confirm vs cut** — S/M. The spec only defines self-segment as Stage 1, so a separate proficiency screen may be **redundant**. Decide: repurpose as the self-segment screen or cut. *Deps:* O-1.
+- ✅ **O-2 · Goal-selection screen (real)** — **DONE** (commit TBD). Thread goal from goal-selection → diagnostic. Add goal→CEFR-band default (`goalToStartingBand` in diagnostic.tsx); band persisted with goal + completedAt to `onboarding_state`. SelectionCard a11y verified (accessibilityRole=radio, accessibilityState.selected, 72pt touch target). All 159 tests green. *Deps:* O-1.
+- ✂️ **O-3 · Proficiency screen — cut** — DECISION: **cut** per D1. Spec calls for self-segment (frequency rank), not CEFR proficiency. Proficiency screen was off-spec and redundant. Route goal → diagnostic directly. *Deps:* O-1.
 - **O-4 · Diagnostic** — per D1: **DIAG-B (M, recommended)** = feed stride sampler the self-segment band, compute a crude known-count for the map. DIAG-A (L) = full adaptive engine, hard-blocked on a pseudo-word library + per-word frequency rank. *Deps:* O-2. **Decide before O-5.**
 - **O-5 · Knowledge-map-reveal (real)** — M. Segmented Known/Learning/New bar from the estimated known-count, endowed-progress copy, celebratory motion degrading to static under Reduce Motion, CTA → paywall. *Deps:* O-4. **Gate it on a real estimate — don't ship fake numbers.**
 - **P-1 · Presentation states** — M. Quiz/Progress/Home handle resolving services, `NoWordsAvailableError` → friendly empty state, read failures → zero-state, never assume network. *Deps:* none.
