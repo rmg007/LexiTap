@@ -16,6 +16,7 @@ import type { TierId } from '@/domain/vocabulary/ids';
 import { StartQuizUseCase } from '@/application/quiz/StartQuizUseCase';
 import { AnswerQuestionUseCase } from '@/application/quiz/AnswerQuestionUseCase';
 import { RunDiagnosticUseCase } from '@/application/onboarding/RunDiagnosticUseCase';
+import { SaveOnboardingProfileUseCase } from '@/application/onboarding/SaveOnboardingProfileUseCase';
 
 import type { Services, ReadQueries } from '@/presentation/services';
 import { logger } from '@/lib/logger';
@@ -85,6 +86,7 @@ export async function createContainer(): Promise<Container> {
     startQuiz: new StartQuizUseCase(words, progress, sessions),
     answerQuestion: new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler),
     runDiagnostic: new RunDiagnosticUseCase(words, progress, v1FixedScheduler),
+    saveOnboardingProfile: new SaveOnboardingProfileUseCase(stats),
     onboarding: {
       isComplete: () => storage.isOnboardingComplete(),
       markComplete: () => storage.setOnboardingComplete(),

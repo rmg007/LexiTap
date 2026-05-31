@@ -20,6 +20,17 @@ export function selectStats(db: DatabaseHandle): Promise<UserStatsRow | null> {
   );
 }
 
+export function upsertOnboardingState(
+  db: DatabaseHandle,
+  serializedState: string,
+): Promise<{ lastInsertRowId: number; changes: number }> {
+  return db.run(
+    `INSERT INTO user_stats (id, onboarding_state) VALUES (?, ?)
+     ON CONFLICT(id) DO UPDATE SET onboarding_state = excluded.onboarding_state`,
+    [STATS_ID, serializedState],
+  );
+}
+
 export function upsertStats(
   db: DatabaseHandle,
   params: {

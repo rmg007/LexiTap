@@ -2,6 +2,7 @@ import React, { createContext, useContext, type ReactNode } from 'react';
 import type { StartQuizUseCase } from '@/application/quiz/StartQuizUseCase';
 import type { AnswerQuestionUseCase } from '@/application/quiz/AnswerQuestionUseCase';
 import type { RunDiagnosticUseCase } from '@/application/onboarding/RunDiagnosticUseCase';
+import type { SaveOnboardingProfileUseCase } from '@/application/onboarding/SaveOnboardingProfileUseCase';
 import type { TierId } from '@/domain/index';
 import type { UserStats } from '@/domain/index';
 
@@ -29,6 +30,8 @@ export interface Services {
   readonly answerQuestion: AnswerQuestionUseCase;
   // First-run onboarding diagnostic (samples words, seeds initial mastery).
   readonly runDiagnostic: RunDiagnosticUseCase;
+  // Persists goal / band / frontier rank after the onboarding flow completes.
+  readonly saveOnboardingProfile: SaveOnboardingProfileUseCase;
   // First-run gate flag, backed by device storage (not learning data).
   readonly onboarding: {
     isComplete(): Promise<boolean>;

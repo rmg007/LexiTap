@@ -188,24 +188,93 @@ describe('mapQuizAttemptRow', () => {
 
 
 describe('mapUserStatsRow', () => {
+  const baseRow: UserStatsRow = {
+    id: 1,
+    current_streak: 5,
+    longest_streak: 9,
+    last_activity_local_date: 20260524,
+    total_sessions: 12,
+    total_words_mastered: 30,
+    freeze_count: 2,
+    freezes_granted_total: 4,
+    last_catchup_anchor_date: null,
+    onboarding_state: null,
+  };
+
   it('composes StreakState with totals', () => {
-    const row: UserStatsRow = {
-      id: 1,
-      current_streak: 5,
-      longest_streak: 9,
-      last_activity_local_date: 20260524,
-      total_sessions: 12,
-      total_words_mastered: 30,
-      freeze_count: 2,
-      freezes_granted_total: 4,
-      last_catchup_anchor_date: null,
-      onboarding_state: null,
-    };
-    const s = mapUserStatsRow(row);
+    const s = mapUserStatsRow(baseRow);
     expect(s.streak.currentStreak).toBe(5);
     expect(s.streak.freezeCount).toBe(2);
     expect(s.streak.lastActivityLocalDate).toBe(20260524);
     expect(s.totalSessions).toBe(12);
     expect(s.totalWordsMastered).toBe(30);
+  });
+
+  describe('onboarding_state parsing', () => {
+    it('returns undefined when the blob is NULL', () => {
+      expect(mapUserStatsRow({ ...baseRow, onboarding_state: null }).onboardingState).toBeUndefined();
+    });
+
+    it('returns undefined when the blob is empty/whitespace', () => {
+      expect(mapUserStatsRow({ ...baseRow, onboarding_state: '   ' }).onboardingState).toBeUndefined();
+    });
+
+    it('parses a full, valid profile', () => {
+      const json = JSON.stringify({
+        goal: 'exam',
+        band: 'B2',
+        frontierRank: 3000,
+        completedAt: 1717200000000,
+      });
+      const profile = mapUserStatsRow({ ...baseRow, onboarding_state: json }).onboardingState;
+      expect(profile).toEqual({
+        goal: 'exam',
+        band: 'B2',
+        frontierRank: 3000,
+        completedAt: 1717200000000,
+      });
+    });
+
+    it('does NOT throw and returns undefined on malformed JSON (corrupt blob)', () => {
+      const row = { ...baseRow, onboarding_state: '{not valid json,,,' };
+      expect(() => mapUserStatsRow(row)).not.toThrow();
+      expect(mapUserStatsRow(row).onboardingState).toBeUndefined();
+    });
+
+    it('returns undefined when the JSON is valid but not an object', () => {
+      expect(mapUserStatsRow({ ...baseRow, onboarding_state: '42' }).onboardingState).toBeUndefined();
+      expect(mapUserStatsRow({ ...baseRow, onboarding_state: '"x"' }).onboardingState).toBeUndefined();
+      expect(mapUserStatsRow({ ...baseRow, onboarding_state: '[]' }).onboardingState).toBeUndefined();
+      expect(mapUserStatsRow({ ...baseRow, onboarding_state: 'null' }).onboardingState).toBeUndefined();
+    });
+
+    it('returns undefined when the required completedAt is missing or non-numeric', () => {
+      expect(
+        mapUserStatsRow({ ...baseRow, onboarding_state: JSON.stringify({ goal: 'exam' }) })
+          .onboardingState,
+      ).toBeUndefined();
+      expect(
+        mapUserStatsRow({ ...baseRow, onboarding_state: JSON.stringify({ completedAt: 'soon' }) })
+          .onboardingState,
+      ).toBeUndefined();
+    });
+
+    it('drops invalid enum values but keeps a valid completedAt', () => {
+      const json = JSON.stringify({ goal: 'bogus', band: 'Z9', completedAt: 123 });
+      const profile = mapUserStatsRow({ ...baseRow, onboarding_state: json }).onboardingState;
+      expect(profile).toEqual({
+        completedAt: 123,
+        goal: undefined,
+        band: undefined,
+        frontierRank: undefined,
+      });
+    });
+
+    it('ignores unknown extra fields', () => {
+      const json = JSON.stringify({ completedAt: 1, band: 'C1', injected: 'x' });
+      const profile = mapUserStatsRow({ ...baseRow, onboarding_state: json }).onboardingState;
+      expect(profile?.band).toBe('C1');
+      expect(profile).not.toHaveProperty('injected');
+    });
   });
 });

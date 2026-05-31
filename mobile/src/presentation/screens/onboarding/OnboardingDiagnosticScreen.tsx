@@ -36,7 +36,7 @@ export function OnboardingDiagnosticScreen({
   onComplete,
 }: OnboardingDiagnosticScreenProps): React.JSX.Element {
   const { spacing } = useTheme();
-  const { runDiagnostic } = useServices();
+  const { runDiagnostic, saveOnboardingProfile } = useServices();
 
   const [phase, setPhase] = useState<Phase>({ kind: 'loading' });
   // Re-mount the widget per question so internal selection state resets.
@@ -50,10 +50,17 @@ export function OnboardingDiagnosticScreen({
       } catch {
         // Offline-first: never block first-run on a seed write failure.
       }
+      try {
+        // Persist the onboarding completion timestamp. goal / band / frontierRank
+        // are added by later onboarding steps (goal picker, Knowledge Map reveal).
+        await saveOnboardingProfile.execute({ completedAt: Date.now() });
+      } catch {
+        // Non-blocking: profile save failure must not trap the user on first run.
+      }
       setPhase({ kind: 'done' });
       onComplete();
     },
-    [runDiagnostic, onComplete],
+    [runDiagnostic, saveOnboardingProfile, onComplete],
   );
 
   const load = useCallback(async () => {

@@ -1,6 +1,6 @@
 import type { Services } from '@/presentation/services/ServicesContext';
 import type { AnswerQuestionOutput } from '@/application/quiz/AnswerQuestionUseCase';
-import type { QuizSession, UserStats } from '@/domain/index';
+import type { QuizSession, UserStats, OnboardingState } from '@/domain/index';
 
 // Typed mock factory for tests / Storybook. The real use-case classes hold
 // private repository fields, so we build structurally-shaped stubs and assert
@@ -12,6 +12,7 @@ import type { QuizSession, UserStats } from '@/domain/index';
 export interface MockServiceHandlers {
   startQuiz?: (...args: never[]) => Promise<QuizSession>;
   answerQuestion?: (...args: never[]) => Promise<AnswerQuestionOutput>;
+  saveOnboardingProfile?: (state: OnboardingState) => Promise<void>;
   getUserStats?: () => Promise<UserStats | null>;
   getMasteryLevels?: () => Promise<readonly number[]>;
 }
@@ -26,6 +27,9 @@ export function createMockServices(handlers: MockServiceHandlers = {}): Services
   const services = {
     startQuiz: { execute: handlers.startQuiz ?? notImplemented('startQuiz') },
     answerQuestion: { execute: handlers.answerQuestion ?? notImplemented('answerQuestion') },
+    saveOnboardingProfile: {
+      execute: handlers.saveOnboardingProfile ?? (async () => undefined),
+    },
     queries: {
       getUserStats: handlers.getUserStats ?? (async () => null),
       getMasteryLevels: handlers.getMasteryLevels ?? (async () => []),

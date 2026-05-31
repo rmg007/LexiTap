@@ -4,6 +4,7 @@ import type { UserProgress, MasteryLevel } from '@/domain/user/UserProgress';
 import type { QuizAttempt, AssessmentType } from '@/domain/quiz/types';
 import { asSessionId } from '@/domain/vocabulary/ids';
 import type { UserStats } from '@/domain/user/UserStats';
+import type { OnboardingState, LearningGoal, ProficiencyBand } from '@/domain/onboarding/OnboardingState';
 import type { StreakState } from '@/domain/gamification/streak';
 import type {
   WordRow,
@@ -136,6 +137,35 @@ export function mapQuizAttemptRow(row: QuizAttemptRow): QuizAttempt {
 }
 
 
+const LEARNING_GOALS: ReadonlySet<string> = new Set(['exam', 'general', 'professional', 'academic']);
+const PROFICIENCY_BANDS: ReadonlySet<string> = new Set(['A2', 'B1', 'B2', 'C1', 'C2']);
+
+// Parse the onboarding_state JSON blob defensively. Corrupt or missing data →
+// undefined; never throws. A bad blob must not crash Home or any other consumer.
+function parseOnboardingState(raw: string | null): OnboardingState | undefined {
+  if (raw === null || raw.trim() === '') return undefined;
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (typeof parsed !== 'object' || parsed === null) return undefined;
+    const obj = parsed as Record<string, unknown>;
+    const completedAt = typeof obj['completedAt'] === 'number' ? obj['completedAt'] : undefined;
+    if (completedAt === undefined) return undefined; // required field missing
+    const goal =
+      typeof obj['goal'] === 'string' && LEARNING_GOALS.has(obj['goal'])
+        ? (obj['goal'] as LearningGoal)
+        : undefined;
+    const band =
+      typeof obj['band'] === 'string' && PROFICIENCY_BANDS.has(obj['band'])
+        ? (obj['band'] as ProficiencyBand)
+        : undefined;
+    const frontierRank =
+      typeof obj['frontierRank'] === 'number' ? obj['frontierRank'] : undefined;
+    return { completedAt, goal, band, frontierRank };
+  } catch {
+    return undefined;
+  }
+}
+
 export function mapUserStatsRow(row: UserStatsRow): UserStats {
   const streak: StreakState = {
     currentStreak: row.current_streak,
@@ -148,5 +178,6 @@ export function mapUserStatsRow(row: UserStatsRow): UserStats {
     streak,
     totalSessions: row.total_sessions,
     totalWordsMastered: row.total_words_mastered,
+    onboardingState: parseOnboardingState(row.onboarding_state),
   };
 }
