@@ -8,9 +8,10 @@
 // SDK install is deferred to Phase 3; until then we deliberately ship a no-op
 // stub (StubIapService) and add NO real IAP dependency.
 
-// A purchasable product (a paid content tier), surfaced on the paywall.
+// A purchasable product (a one-time exam pack or the All-Exams bundle), surfaced
+// on the paywall.
 export interface IapProduct {
-  // Store product id, matching content_tiers.sku (e.g. 'com.lexitap.toefl').
+  // Store product id, matching content_tiers.sku (e.g. 'com.lexitap.exam.toefl').
   readonly sku: string;
   readonly priceString: string; // localized, store-formatted (e.g. "$14.99")
   readonly title: string;
@@ -29,7 +30,7 @@ export interface PurchaseResult {
 
 export interface ReceiptValidation {
   readonly isValid: boolean;
-  // SKUs the receipt entitles (a Premium Pass receipt may entitle many).
+  // SKUs the receipt entitles (an All-Exams bundle receipt entitles many).
   readonly entitledSkus: readonly string[];
 }
 

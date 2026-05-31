@@ -6,7 +6,7 @@ import {
   isJsonStringArray,
 } from '@/commands/validate';
 import type { AppConfig } from '@/lib/config';
-import type { WordRow } from '@/schema/types';
+import type { WordRow, WordTierRow } from '@/schema/types';
 
 const config: AppConfig = {
   app_id: 'lexitap',
@@ -19,14 +19,14 @@ const config: AppConfig = {
       sku: null,
       display_order: 1,
       requires_theme: true,
-      audio: false,
+      audio: true,
     },
     {
       slug: 'toefl',
       name: 'TOEFL',
       description: null,
       is_free: false,
-      sku: 'com.lexitap.toefl',
+      sku: 'com.lexitap.exam.toefl',
       display_order: 2,
       requires_theme: false,
       audio: true,
@@ -36,10 +36,9 @@ const config: AppConfig = {
 
 function row(overrides: Partial<WordRow> = {}): WordRow {
   return {
-    id: 'word_foundation_abc12345',
+    id: 'word_borrow0001',
     word: 'borrow',
     definition: 'To take and return later',
-    tier_id: 'foundation',
     pos: 'verb',
     cefr_level: 'A2',
     grade_level: null,
@@ -58,8 +57,12 @@ function row(overrides: Partial<WordRow> = {}): WordRow {
   };
 }
 
-function errors(rows: WordRow[], strict = false) {
-  return validateRows(rows, config, { strict }).filter((i) => i.level === 'error');
+const mem = (word_id: string, tier_id: string): WordTierRow => ({ word_id, tier_id });
+// Default: every word is tagged into `foundation` unless a test overrides.
+const inFoundation = (words: WordRow[]): WordTierRow[] => words.map((w) => mem(w.id, 'foundation'));
+
+function errors(words: WordRow[], memberships: WordTierRow[] = inFoundation(words), strict = false) {
+  return validateRows(words, memberships, config, { strict }).filter((i) => i.level === 'error');
 }
 
 describe('helper functions', () => {
@@ -95,6 +98,11 @@ describe('validateRows', () => {
     expect(e.some((i) => i.field === 'word')).toBe(true);
   });
 
+  it('rule #1: a word with no category membership is an error', () => {
+    const e = errors([row()], []);
+    expect(e.some((i) => i.field === 'membership')).toBe(true);
+  });
+
   it('rule #2: zero blanks', () => {
     const e = errors([row({ example_sentence: 'no blank' })]);
     expect(e.some((i) => i.field === 'example_sentence' && /found 0/.test(i.message))).toBe(true);
@@ -105,25 +113,21 @@ describe('validateRows', () => {
     expect(e.some((i) => i.field === 'example_sentence' && /found 2/.test(i.message))).toBe(true);
   });
 
-  it('rule #3: duplicate surface form within a tier', () => {
-    const e = errors([
-      row({ id: 'a', word: 'Borrow' }),
-      row({ id: 'b', word: 'borrow' }),
-    ]);
-    expect(e.some((i) => i.field === 'word' && /duplicate/.test(i.message))).toBe(true);
+  it('many-to-many: one word tagged into two categories validates clean', () => {
+    const w = row();
+    const e = errors([w], [mem(w.id, 'foundation'), mem(w.id, 'toefl')]);
+    expect(e).toHaveLength(0);
   });
 
-  it('rule #3: same word across different tiers is NOT a duplicate', () => {
-    const e = errors([
-      row({ id: 'a', word: 'analyze', tier_id: 'foundation' }),
-      row({ id: 'b', word: 'analyze', tier_id: 'toefl', theme: null }),
-    ]);
-    expect(e.some((i) => /duplicate/.test(i.message))).toBe(false);
-  });
-
-  it('rule #4: unknown tier', () => {
-    const e = errors([row({ tier_id: 'nope' })]);
+  it('rule #4: membership referencing an unknown tier', () => {
+    const w = row();
+    const e = errors([w], [mem(w.id, 'nope')]);
     expect(e.some((i) => i.field === 'tier_id' && /unknown tier/.test(i.message))).toBe(true);
+  });
+
+  it('rule #4: membership referencing an unknown word', () => {
+    const e = errors([row()], [mem('word_ghost', 'foundation'), mem('word_borrow0001', 'foundation')]);
+    expect(e.some((i) => i.field === 'word_id' && /unknown word/.test(i.message))).toBe(true);
   });
 
   it('rule #5: theme required for foundation', () => {
@@ -131,9 +135,16 @@ describe('validateRows', () => {
     expect(e.some((i) => i.field === 'theme')).toBe(true);
   });
 
-  it('rule #5: theme not required for toefl', () => {
-    const e = errors([row({ tier_id: 'toefl', theme: null })]);
+  it('rule #5: theme not required for toefl-only', () => {
+    const w = row({ theme: null });
+    const e = errors([w], [mem(w.id, 'toefl')]);
     expect(e.some((i) => i.field === 'theme')).toBe(false);
+  });
+
+  it('rule #5: theme required if ANY category requires it (foundation + toefl)', () => {
+    const w = row({ theme: null });
+    const e = errors([w], [mem(w.id, 'foundation'), mem(w.id, 'toefl')]);
+    expect(e.some((i) => i.field === 'theme')).toBe(true);
   });
 
   it('rule #6: invalid JSON arrays', () => {
@@ -143,12 +154,10 @@ describe('validateRows', () => {
   });
 
   it('rule #7: missing asset reference', () => {
-    const e = validateRows(
-      [row({ audio_path: 'assets/audio/x.mp3' })],
-      config,
-      {},
-      () => false,
-    ).filter((i) => i.level === 'error');
+    const w = row({ audio_path: 'assets/audio/x.mp3' });
+    const e = validateRows([w], inFoundation([w]), config, {}, () => false).filter(
+      (i) => i.level === 'error',
+    );
     expect(e.some((i) => i.field === 'audio_path')).toBe(true);
   });
 
@@ -168,9 +177,8 @@ describe('validateRows', () => {
   });
 
   it('strict mode warns on in-token underscore', () => {
-    const issues = validateRows([row({ example_sentence: 'cataly_t now' })], config, {
-      strict: true,
-    });
+    const w = row({ example_sentence: 'cataly_t now' });
+    const issues = validateRows([w], inFoundation([w]), config, { strict: true });
     // exactly one blank, but glued -> warning not error
     expect(issues.some((i) => i.level === 'warning' && i.field === 'example_sentence')).toBe(true);
   });

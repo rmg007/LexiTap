@@ -35,7 +35,11 @@ export interface EnrichSummary {
 
 function loadTierRows(db: DB, tier: string): WordRow[] {
   return db
-    .prepare(`SELECT * FROM words WHERE tier_id = ? AND deleted_at IS NULL`)
+    .prepare(
+      `SELECT w.* FROM words w
+       JOIN word_tiers wt ON wt.word_id = w.id
+       WHERE wt.tier_id = ? AND w.deleted_at IS NULL`,
+    )
     .all(tier) as WordRow[];
 }
 

@@ -2,14 +2,16 @@
 title: Database Schema
 category: technical
 status: active
-updated: 2026-05-28
+updated: 2026-05-31
 priority: P0
-tags: [database, schema, sqlite, supabase, srs, soft-delete, append-only, migrations, two-db, attach, blob-backup]
+tags: [database, schema, sqlite, supabase, srs, soft-delete, append-only, migrations, two-db, attach, blob-backup, many-to-many, word-tiers]
 ---
 
 # Database Schema
 
-Canonical v3.0 schema reference for the LexiTap data model. Documents every table, columns, indexes, invariants, and rationale for soft-delete, append-only logs, the two-DB ATTACH strategy, and the encrypted blob backup approach for cloud sync. The operational invariants are mirrored as the Schema Reviewer checklist in [../05-engineering-process/AGENTS_CLAUDE.md](../05-engineering-process/AGENTS_CLAUDE.md).
+Canonical v3.1 schema reference for the LexiTap data model. Documents every table, columns, indexes, invariants, and rationale for soft-delete, append-only logs, the two-DB ATTACH strategy, and the encrypted blob backup approach for cloud sync. The operational invariants are mirrored as the Schema Reviewer checklist in [../05-engineering-process/AGENTS_CLAUDE.md](../05-engineering-process/AGENTS_CLAUDE.md).
+
+> **v3.1 — word↔category is many-to-many.** `words.tier_id` (single-FK) was replaced by a `word_tiers(word_id, tier_id)` junction, and word IDs are now category-independent (`word_${sha1(normalize(word))}`). One word is one `words` row and one `user_progress` row across every category it is tagged into. Rationale: a word like *feature* legitimately belongs to Foundation **and** Most Common 3000 **and** an exam list at once; a per-category id would split its review history. See [REVENUE_MODEL_PRICING.md](../08-financial-legal/REVENUE_MODEL_PRICING.md) (content category vs. store product).
 
 ## Table of Contents
 
@@ -18,6 +20,7 @@ Canonical v3.0 schema reference for the LexiTap data model. Documents every tabl
 - [Content DB: words.db (read-only)](#content-db-wordsdb-read-only)
   - [content_tiers](#content_tiers)
   - [words](#words)
+  - [word_tiers](#word_tiers-word--category-junction)
 - [User DB: user.db (read-write)](#user-db-userdb-read-write)
   - [user_progress](#user_progress-srs-hot-state)
   - [quiz_sessions](#quiz_sessions)
@@ -43,7 +46,7 @@ Canonical v3.0 schema reference for the LexiTap data model. Documents every tabl
 
 | Database | Mode | Owner | Tables |
 |----------|------|-------|--------|
-| `words.db` | read-only, bundled in binary | Track A content CLI | `content_tiers`, `words` |
+| `words.db` | read-only, bundled in binary | Track A content CLI | `content_tiers`, `words`, `word_tiers` |
 | `user.db` | read-write, on device | mobile app | `user_progress`, `quiz_sessions`, `quiz_attempts`, `event_log`, `user_stats`, `notification_schedule`, `schema_version` |
 | Supabase | cloud Postgres | mobile app | `user_accounts`, `content_errors`, `user_db_backups` |
 
@@ -68,18 +71,17 @@ CREATE TABLE content_tiers (
 );
 ```
 
-`price_usd` was removed from this table in v3.0. Pricing is owned by the IAP provider (RevenueCat), not the content DB. Launch-wave tiers: `foundation`/`advanced` (free), and Premium-bundled content (`toefl`, `ielts`, `business`).
+`price_usd` was removed from this table in v3.0. Pricing is owned by the IAP provider (RevenueCat), not the content DB. A tier's `sku` is its store product id for paid exam packs (`com.lexitap.exam.{name}`) or `NULL` for free tiers. Tiers: free frequency/CEFR categories `foundation`/`advanced`/`common3k`/`common9k` (`sku` NULL), and paid one-time exam packs `toefl`/`ielts`/`gre`/`gmat`/`business`. A tier (content **category**) is not a store **product**; the All-Exams bundle/upgrade SKUs are not tier-level (they grant `all_exams`) and live only in the app's store catalog. See [REVENUE_MODEL_PRICING.md](../08-financial-legal/REVENUE_MODEL_PRICING.md).
 
 ### words
 
-Every vocabulary entry across all tiers, including multi-word units (idioms, phrasal verbs) as flat rows.
+Every vocabulary entry, including multi-word units (idioms, phrasal verbs) as flat rows. **One row per unique word** — category membership is NOT here, it lives in [`word_tiers`](#word_tiers-word--category-junction). The `id` is category-independent: `word_${sha1(normalize(word)).slice(0,16)}` (16 hex). The same surface form always resolves to the same row (and therefore one `user_progress` row) no matter how many categories tag it. Editing meaning is done via `definition`/`usage_notes`, never by changing `word` (that re-keys the row and orphans history).
 
 ```sql
 CREATE TABLE words (
-  id               TEXT PRIMARY KEY,   -- "word_foundation_001"
+  id               TEXT PRIMARY KEY,   -- "word_0117691d0201f04a" (category-independent hash)
   word             TEXT NOT NULL,      -- multi-word for idioms: "look up to"
   definition       TEXT NOT NULL,
-  tier_id          TEXT NOT NULL,
   pos              TEXT,
   cefr_level       TEXT,               -- A2..C2
   grade_level      INTEGER,            -- reserved for future Schools app
@@ -88,21 +90,40 @@ CREATE TABLE words (
   theme            TEXT,               -- "Daily Life" (thematic, not alphabetical)
   example_sentence TEXT NOT NULL,      -- exactly one "_" blank
   image_path       TEXT,
-  audio_path       TEXT,               -- launch: TOEFL only
+  audio_path       TEXT,               -- universal (word + sentence audio is free, all tiers)
   synonyms         TEXT,               -- JSON array
   antonyms         TEXT,               -- JSON array
   usage_notes      TEXT,
   created_at       INTEGER NOT NULL,
-  deleted_at       INTEGER,            -- soft-delete; NULL = active
+  deleted_at       INTEGER             -- soft-delete; NULL = active
+);
+
+CREATE INDEX idx_words_cefr         ON words(cefr_level);
+CREATE INDEX idx_words_active       ON words(deleted_at) WHERE deleted_at IS NULL;
+CREATE INDEX idx_words_alphabetical ON words(word) WHERE deleted_at IS NULL;  -- keyset browse
+```
+
+**Invariants:** `example_sentence` contains exactly one `_`; `synonyms`/`antonyms` are valid JSON arrays; multi-word entries set `word_type` and are treated atomically by widgets; every word has ≥1 `word_tiers` membership.
+
+### word_tiers (word ↔ category junction)
+
+Many-to-many membership tagging each word into one or more content categories (tiers). A word with rows for `foundation` + `common3k` + `toefl` appears in all three. Membership is a read-only content tag built by Track A — **not** a store product or entitlement.
+
+```sql
+CREATE TABLE word_tiers (
+  word_id TEXT NOT NULL,
+  tier_id TEXT NOT NULL,
+  PRIMARY KEY (word_id, tier_id),
+  FOREIGN KEY (word_id) REFERENCES words(id),
   FOREIGN KEY (tier_id) REFERENCES content_tiers(id)
 );
 
-CREATE INDEX idx_words_tier   ON words(tier_id);
-CREATE INDEX idx_words_cefr   ON words(cefr_level);
-CREATE INDEX idx_words_active ON words(deleted_at) WHERE deleted_at IS NULL;
+-- PRIMARY KEY (word_id, tier_id) serves word -> tiers lookups;
+-- this index serves the reverse (tier -> words) browse.
+CREATE INDEX idx_word_tiers_tier ON word_tiers(tier_id, word_id);
 ```
 
-**Invariants:** `example_sentence` contains exactly one `_`; `synonyms`/`antonyms` are valid JSON arrays; multi-word entries set `word_type` and are treated atomically by widgets.
+`content_tiers.word_count` is the observed count of `word_tiers` rows for that tier, computed at export — never hardcoded.
 
 ## User DB: user.db (read-write)
 
@@ -240,11 +261,12 @@ CREATE TABLE schema_version (
 ```sql
 ATTACH DATABASE 'file:user.db' AS userdb;
 
--- Review queue (active filter)
+-- Review queue (active filter). Category filter via the word_tiers junction.
 SELECT w.*, p.mastery_level, p.next_review_date
 FROM words w
+JOIN word_tiers wt ON wt.word_id = w.id
 JOIN userdb.user_progress p ON w.id = p.word_id
-WHERE w.tier_id = ? AND w.deleted_at IS NULL AND p.next_review_date <= ?
+WHERE wt.tier_id = ? AND w.deleted_at IS NULL AND p.next_review_date <= ?
 ORDER BY p.next_review_date ASC LIMIT ?;
 
 -- History render (NO active filter — soft-deleted words still shown)
@@ -260,13 +282,14 @@ LexiTap uses keyset pagination everywhere (never `OFFSET`, which degrades at O(N
 
 ### Alphabetical Keyset (words.db)
 
-```sql
-CREATE INDEX idx_words_alphabetical ON words(tier_id, word) WHERE deleted_at IS NULL;
+The order key is `idx_words_alphabetical ON words(word) WHERE deleted_at IS NULL` (defined with the `words` table). The category filter is applied through the `word_tiers` join.
 
+```sql
 SELECT w.id, w.word, w.definition, COALESCE(p.mastery_level, 0) AS mastery_level
 FROM words w
+JOIN word_tiers wt ON wt.word_id = w.id
 LEFT JOIN userdb.user_progress p ON w.id = p.word_id
-WHERE w.tier_id = ? AND w.deleted_at IS NULL
+WHERE wt.tier_id = ? AND w.deleted_at IS NULL
   AND (? IS NULL OR w.word > ?)
 ORDER BY w.word ASC LIMIT 50;
 ```
@@ -279,7 +302,8 @@ CREATE INDEX idx_progress_keyset ON user_progress(next_review_date, word_id);
 SELECT w.id, w.word, p.next_review_date
 FROM userdb.user_progress p
 JOIN words w ON p.word_id = w.id
-WHERE w.tier_id = ? AND w.deleted_at IS NULL
+JOIN word_tiers wt ON wt.word_id = w.id
+WHERE wt.tier_id = ? AND w.deleted_at IS NULL
   AND (? IS NULL OR (p.next_review_date > ? OR (p.next_review_date = ? AND p.word_id > ?)))
 ORDER BY p.next_review_date ASC, p.word_id ASC LIMIT 50;
 ```

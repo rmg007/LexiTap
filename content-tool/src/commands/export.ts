@@ -36,7 +36,7 @@ import { parseByExtension } from '@/lib/csv';
 import { defaultProviders } from '@/providers/defaultProviders';
 import { logger } from '@/lib/logger';
 import { flagValue } from '@/commands/validate';
-import type { TierRow, WordRow } from '@/schema/types';
+import type { TierRow, WordRow, WordTierRow } from '@/schema/types';
 
 const INSERT_TIER = `
 INSERT INTO content_tiers (
@@ -48,18 +48,33 @@ INSERT INTO content_tiers (
 
 const INSERT_WORD = `
 INSERT INTO words (
-  id, word, definition, tier_id, pos, cefr_level, grade_level, word_type,
+  id, word, definition, pos, cefr_level, grade_level, word_type,
   difficulty, theme, example_sentence, image_path, audio_path, synonyms,
   antonyms, usage_notes, created_at, deleted_at
 ) VALUES (
-  @id, @word, @definition, @tier_id, @pos, @cefr_level, @grade_level, @word_type,
+  @id, @word, @definition, @pos, @cefr_level, @grade_level, @word_type,
   @difficulty, @theme, @example_sentence, @image_path, @audio_path, @synonyms,
   @antonyms, @usage_notes, @created_at, @deleted_at
 )
 `.trim();
 
+const INSERT_WORD_TIER = `
+INSERT INTO word_tiers (word_id, tier_id) VALUES (@word_id, @tier_id)
+`.trim();
+
 function activeWords(working: DB): WordRow[] {
   return working.prepare(`SELECT * FROM words WHERE deleted_at IS NULL`).all() as WordRow[];
+}
+
+/** Memberships for active words only (a soft-deleted word's tags are dropped). */
+function activeMemberships(working: DB): WordTierRow[] {
+  return working
+    .prepare(
+      `SELECT wt.word_id, wt.tier_id FROM word_tiers wt
+       JOIN words w ON w.id = wt.word_id
+       WHERE w.deleted_at IS NULL`,
+    )
+    .all() as WordTierRow[];
 }
 
 function tierConfigToRow(tier: TierConfig, wordCount: number): TierRow {
@@ -93,8 +108,17 @@ export interface ExportResult {
   wordIndex: Record<string, string>;
 }
 
-/** A field counts as "covered" when it is non-null (offline noop synonyms emit '[]', still covered). */
-function computeCoverage(words: WordRow[], tiers: readonly TierConfig[]): {
+/**
+ * A field counts as "covered" when it is non-null (offline noop synonyms emit
+ * '[]', still covered). Per-tier coverage is computed over `word_tiers`
+ * memberships (a word in two categories contributes to both); asset totals count
+ * each word's file ONCE regardless of how many categories tag it.
+ */
+function computeCoverage(
+  words: WordRow[],
+  memberships: WordTierRow[],
+  tiers: readonly TierConfig[],
+): {
   coverage: Record<string, TierCoverage>;
   assets: { audio: number; images: number };
 } {
@@ -102,21 +126,21 @@ function computeCoverage(words: WordRow[], tiers: readonly TierConfig[]): {
   for (const tier of tiers) {
     coverage[tier.slug] = { words: 0, with_synonyms: 0, with_audio: 0, with_images: 0 };
   }
+  const byId = new Map(words.map((w) => [w.id, w]));
+  for (const m of memberships) {
+    const w = byId.get(m.word_id);
+    const c = coverage[m.tier_id];
+    if (!w || !c) continue;
+    c.words += 1;
+    if (w.synonyms !== null) c.with_synonyms += 1;
+    if (w.audio_path !== null) c.with_audio += 1;
+    if (w.image_path !== null) c.with_images += 1;
+  }
   let audio = 0;
   let images = 0;
   for (const w of words) {
-    const c = coverage[w.tier_id];
-    if (!c) continue;
-    c.words += 1;
-    if (w.synonyms !== null) c.with_synonyms += 1;
-    if (w.audio_path !== null) {
-      c.with_audio += 1;
-      audio += 1;
-    }
-    if (w.image_path !== null) {
-      c.with_images += 1;
-      images += 1;
-    }
+    if (w.audio_path !== null) audio += 1;
+    if (w.image_path !== null) images += 1;
   }
   return { coverage, assets: { audio, images } };
 }
@@ -133,9 +157,10 @@ export function buildOutputDb(
   userVersion: number,
 ): ExportResult {
   const words = activeWords(working);
+  const memberships = activeMemberships(working);
 
   // Final validation against the OUTPUT data; abort on any error.
-  const issues = validateRows(words, config, { strict: false });
+  const issues = validateRows(words, memberships, config, { strict: false });
   const errors = issues.filter((i) => i.level === 'error');
   if (errors.length > 0) {
     const detail = errors
@@ -145,17 +170,17 @@ export function buildOutputDb(
     throw new Error(`export aborted: ${errors.length} validation error(s): ${detail}`);
   }
 
-  // Observed counts per tier (only tiers that actually have rows are emitted,
-  // but config tiers with zero rows still get a content_tiers row with count 0
-  // so the app can show the tier as available).
+  // Observed membership counts per tier (config tiers with zero members still
+  // get a content_tiers row with count 0 so the app can show the tier).
   const tierCounts: Record<string, number> = {};
   for (const tier of config.tiers) tierCounts[tier.slug] = 0;
-  for (const w of words) {
-    tierCounts[w.tier_id] = (tierCounts[w.tier_id] ?? 0) + 1;
+  for (const m of memberships) {
+    tierCounts[m.tier_id] = (tierCounts[m.tier_id] ?? 0) + 1;
   }
 
   const insertTier = output.prepare(INSERT_TIER);
   const insertWord = output.prepare(INSERT_WORD);
+  const insertWordTier = output.prepare(INSERT_WORD_TIER);
 
   const tx = output.transaction(() => {
     for (const tier of config.tiers) {
@@ -164,12 +189,15 @@ export function buildOutputDb(
     for (const w of words) {
       insertWord.run(w);
     }
+    for (const m of memberships) {
+      insertWordTier.run(m);
+    }
   });
   tx();
 
   output.pragma(`user_version = ${userVersion}`);
 
-  const { coverage, assets } = computeCoverage(words, config.tiers);
+  const { coverage, assets } = computeCoverage(words, memberships, config.tiers);
   const wordIndex = buildWordIndex(words);
   return { userVersion, tierCounts, coverage, assets, totalWords: words.length, wordIndex };
 }

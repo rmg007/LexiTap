@@ -26,7 +26,7 @@ const config: AppConfig = {
       name: 'TOEFL',
       description: null,
       is_free: false,
-      sku: 'com.lexitap.toefl',
+      sku: 'com.lexitap.exam.toefl',
       display_order: 2,
       requires_theme: false,
       audio: true,
@@ -105,16 +105,16 @@ describe('buildOutputDb (export smoke test)', () => {
         name: string;
       }[]
     ).map((i) => i.name);
-    expect(indexes).toContain('idx_words_tier');
     expect(indexes).toContain('idx_words_cefr');
     expect(indexes).toContain('idx_words_active');
+    expect(indexes).toContain('idx_word_tiers_tier');
 
-    // word_count matches actual rows per tier
+    // word_count matches actual memberships per tier
     const foundationCount = (
       output.prepare(`SELECT word_count FROM content_tiers WHERE id='foundation'`).get() as TierRow
     ).word_count;
     const actualFoundation = (
-      output.prepare(`SELECT COUNT(*) AS n FROM words WHERE tier_id='foundation'`).get() as {
+      output.prepare(`SELECT COUNT(*) AS n FROM word_tiers WHERE tier_id='foundation'`).get() as {
         n: number;
       }
     ).n;
@@ -152,7 +152,9 @@ describe('buildOutputDb (export smoke test)', () => {
     const output = openMemoryContentDb();
     buildOutputDb(working, output, config, 1);
     const toeflRow = output
-      .prepare(`SELECT * FROM words WHERE tier_id='toefl'`)
+      .prepare(
+        `SELECT w.* FROM words w JOIN word_tiers wt ON wt.word_id = w.id WHERE wt.tier_id='toefl'`,
+      )
       .get() as WordRow;
     expect(toeflRow.audio_path).toMatch(/^assets\/audio\/.*\.mp3$/);
     expect(toeflRow.synonyms).toBe('[]');

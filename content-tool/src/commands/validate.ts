@@ -12,7 +12,7 @@ import { openWorkingDb } from '@/lib/db';
 import { loadConfig, findTier, tierSlugs, PROJECT_ROOT, type AppConfig } from '@/lib/config';
 import { normalizeWord } from '@/lib/ids';
 import { logger } from '@/lib/logger';
-import { WORD_TYPES, type WordRow } from '@/schema/types';
+import { WORD_TYPES, type WordRow, type WordTierRow } from '@/schema/types';
 
 /** Resolve a stored asset path (e.g. "assets/audio/x.mp3") under data/ and test it exists. */
 export function diskAssetExists(assetPath: string): boolean {
@@ -75,31 +75,58 @@ function isMultiWord(word: string): boolean {
 }
 
 /**
- * Run every validation rule over a set of rows. Pure: depends only on its
- * arguments. `assetExists` lets rule #7 be tested without touching the disk.
+ * Run every validation rule over a set of word rows + their category memberships.
+ * Pure: depends only on its arguments. `assetExists` lets rule #7 be tested
+ * without touching the disk.
+ *
+ * Word↔category is many-to-many (`word_tiers`): per-word rules check the word
+ * row; membership rules check the (word_id, tier_id) tags. Duplicate-surface-
+ * within-a-tier is no longer a rule — a category-independent id makes the same
+ * surface in one tier structurally a single row (PRIMARY KEY collapse), so it
+ * cannot occur.
  */
 export function validateRows(
-  rows: WordRow[],
+  words: WordRow[],
+  memberships: WordTierRow[],
   config: AppConfig,
   options: ValidateOptions = {},
   assetExists: (path: string) => boolean = () => true,
 ): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
   const knownTiers = new Set(tierSlugs(config));
+  const wordIds = new Set(words.map((w) => w.id));
 
-  // Rule #3 prep: detect duplicate (normalize(word), tier_id) among active rows.
-  const seen = new Map<string, string>();
+  // word_id -> set of category slugs it is tagged into.
+  const tiersByWord = new Map<string, Set<string>>();
+  for (const m of memberships) {
+    let set = tiersByWord.get(m.word_id);
+    if (!set) {
+      set = new Set();
+      tiersByWord.set(m.word_id, set);
+    }
+    set.add(m.tier_id);
 
-  for (const row of rows) {
+    // #4 membership must reference a known tier, and an existing word.
+    if (!knownTiers.has(m.tier_id)) {
+      issues.push({ level: 'error', wordId: m.word_id, field: 'tier_id', message: `unknown tier '${m.tier_id}'` });
+    }
+    if (!wordIds.has(m.word_id)) {
+      issues.push({ level: 'error', wordId: m.word_id, field: 'word_id', message: 'membership references unknown word' });
+    }
+  }
+
+  for (const row of words) {
     const push = (level: IssueLevel, field: string, message: string): void => {
       issues.push({ level, wordId: row.id, field, message });
     };
+    const wordTiers = tiersByWord.get(row.id) ?? new Set<string>();
 
     // #1 required fields present
     if (!row.word) push('error', 'word', 'required field is empty');
     if (!row.definition) push('error', 'definition', 'required field is empty');
-    if (!row.tier_id) push('error', 'tier_id', 'required field is empty');
     if (!row.example_sentence) push('error', 'example_sentence', 'required field is empty');
+    // every word must be tagged into at least one category
+    if (wordTiers.size === 0) push('error', 'membership', 'word has no tier membership');
 
     // #2 exactly one blank
     if (row.example_sentence) {
@@ -112,15 +139,10 @@ export function validateRows(
       }
     }
 
-    // #4 valid tier
-    if (row.tier_id && !knownTiers.has(row.tier_id)) {
-      push('error', 'tier_id', `unknown tier '${row.tier_id}'`);
-    }
-
-    // #5 theme required for tiers configured requires_theme
-    const tier = row.tier_id ? findTier(config, row.tier_id) : undefined;
-    if (tier?.requires_theme && (!row.theme || row.theme.trim().length === 0)) {
-      push('error', 'theme', `required for tier '${row.tier_id}' but absent`);
+    // #5 theme required when ANY category this word belongs to requires a theme
+    const requiresTheme = [...wordTiers].some((t) => findTier(config, t)?.requires_theme);
+    if (requiresTheme && (!row.theme || row.theme.trim().length === 0)) {
+      push('error', 'theme', 'required (a category this word belongs to requires a theme) but absent');
     }
     // theme, if present, must be from the closed taxonomy (strict)
     if (row.theme && options.strict && !VALID_THEMES.has(row.theme)) {
@@ -158,27 +180,25 @@ export function validateRows(
         );
       }
     }
-
-    // #3 duplicate surface form within a tier (active rows only)
-    if (row.deleted_at === null && row.word && row.tier_id) {
-      const key = `${row.tier_id}::${normalizeWord(row.word)}`;
-      const existing = seen.get(key);
-      if (existing) {
-        push('error', 'word', `duplicate surface form within tier (also ${existing})`);
-      } else {
-        seen.set(key, row.id);
-      }
-    }
   }
 
   return issues;
 }
 
-function loadRows(db: DB, tier?: string): WordRow[] {
+function loadWords(db: DB, tier?: string): WordRow[] {
   if (tier) {
-    return db.prepare(`SELECT * FROM words WHERE tier_id = ?`).all(tier) as WordRow[];
+    return db
+      .prepare(`SELECT w.* FROM words w JOIN word_tiers wt ON wt.word_id = w.id WHERE wt.tier_id = ?`)
+      .all(tier) as WordRow[];
   }
   return db.prepare(`SELECT * FROM words`).all() as WordRow[];
+}
+
+function loadMemberships(db: DB, tier?: string): WordTierRow[] {
+  if (tier) {
+    return db.prepare(`SELECT word_id, tier_id FROM word_tiers WHERE tier_id = ?`).all(tier) as WordTierRow[];
+  }
+  return db.prepare(`SELECT word_id, tier_id FROM word_tiers`).all() as WordTierRow[];
 }
 
 export interface ValidateResult {
@@ -194,8 +214,9 @@ export function runValidate(
   options: ValidateOptions,
   assetExists: (path: string) => boolean = diskAssetExists,
 ): ValidateResult {
-  const rows = loadRows(db, options.tier);
-  const issues = validateRows(rows, config, options, assetExists);
+  const rows = loadWords(db, options.tier);
+  const memberships = loadMemberships(db, options.tier);
+  const issues = validateRows(rows, memberships, config, options, assetExists);
   const errorCount = issues.filter((i) => i.level === 'error').length;
   const warningCount = issues.filter((i) => i.level === 'warning').length;
   return { rowCount: rows.length, issues, errorCount, warningCount };

@@ -4,9 +4,14 @@ import type { WordRow, ContentTierRow, UserProgressRow } from '@/infrastructure/
 // Named, parameterized query functions for content (words.db, ATTACHed as
 // `contentdb`) joined with user_progress. The ONLY place these SQL strings
 // live. No string interpolation of values — always bound params.
+//
+// Word↔category is many-to-many: `words` has no tier_id column; membership lives
+// in `contentdb.word_tiers`. Tier-scoped browses JOIN word_tiers and project the
+// queried category as `tier_id` (the tier the word was loaded under); `words` is
+// the bare content row.
 
 const WORD_COLUMNS = `
-  w.id, w.word, w.definition, w.tier_id, w.pos, w.cefr_level, w.grade_level,
+  w.id, w.word, w.definition, w.pos, w.cefr_level, w.grade_level,
   w.word_type, w.difficulty, w.theme, w.example_sentence, w.image_path,
   w.audio_path, w.synonyms, w.antonyms, w.usage_notes, w.created_at, w.deleted_at
 `;
@@ -32,7 +37,7 @@ export function selectWordsDueForReview(
   limit: number,
 ): Promise<WordProgressJoinRow[]> {
   return db.all<WordProgressJoinRow>(
-    `SELECT ${WORD_COLUMNS},
+    `SELECT ${WORD_COLUMNS}, wt.tier_id AS tier_id,
        p.mastery_level       AS p_mastery_level,
        p.next_review_date    AS p_next_review_date,
        p.last_reviewed_at    AS p_last_reviewed_at,
@@ -42,8 +47,9 @@ export function selectWordsDueForReview(
        p.first_seen_at       AS p_first_seen_at,
        p.scheduler_version   AS p_scheduler_version
      FROM contentdb.words w
+     JOIN contentdb.word_tiers wt ON wt.word_id = w.id
      JOIN user_progress p ON w.id = p.word_id
-     WHERE w.tier_id = ? AND w.deleted_at IS NULL AND p.next_review_date <= ?
+     WHERE wt.tier_id = ? AND w.deleted_at IS NULL AND p.next_review_date <= ?
      ORDER BY p.next_review_date ASC
      LIMIT ?`,
     [tierId, now, limit],
@@ -58,10 +64,11 @@ export function selectNewWords(
   limit: number,
 ): Promise<WordRow[]> {
   return db.all<WordRow>(
-    `SELECT ${WORD_COLUMNS}
+    `SELECT ${WORD_COLUMNS}, wt.tier_id AS tier_id
      FROM contentdb.words w
+     JOIN contentdb.word_tiers wt ON wt.word_id = w.id
      LEFT JOIN user_progress p ON w.id = p.word_id
-     WHERE w.tier_id = ? AND w.deleted_at IS NULL AND p.word_id IS NULL
+     WHERE wt.tier_id = ? AND w.deleted_at IS NULL AND p.word_id IS NULL
      ORDER BY w.created_at ASC
      LIMIT ?`,
     [tierId, limit],
@@ -69,10 +76,15 @@ export function selectNewWords(
 }
 
 // Single word by id. NO active filter on purpose: used for history/replay
-// render, which must resolve soft-deleted words (DATABASE_SCHEMA.md).
+// render, which must resolve soft-deleted words (DATABASE_SCHEMA.md). No tier
+// context here (a word may be in several categories), so `tier_id` projects a
+// representative membership — sufficient for replay, which doesn't gate on tier.
 export function selectWordById(db: DatabaseHandle, id: string): Promise<WordRow | null> {
   return db.first<WordRow>(
-    `SELECT ${WORD_COLUMNS} FROM contentdb.words w WHERE w.id = ?`,
+    `SELECT ${WORD_COLUMNS},
+       (SELECT wt.tier_id FROM contentdb.word_tiers wt
+         WHERE wt.word_id = w.id ORDER BY wt.tier_id LIMIT 1) AS tier_id
+     FROM contentdb.words w WHERE w.id = ?`,
     [id],
   );
 }
@@ -80,9 +92,10 @@ export function selectWordById(db: DatabaseHandle, id: string): Promise<WordRow 
 // All active words in a tier, for distractor pools and tier browsing.
 export function selectWordsByTier(db: DatabaseHandle, tierId: string): Promise<WordRow[]> {
   return db.all<WordRow>(
-    `SELECT ${WORD_COLUMNS}
+    `SELECT ${WORD_COLUMNS}, wt.tier_id AS tier_id
      FROM contentdb.words w
-     WHERE w.tier_id = ? AND w.deleted_at IS NULL
+     JOIN contentdb.word_tiers wt ON wt.word_id = w.id
+     WHERE wt.tier_id = ? AND w.deleted_at IS NULL
      ORDER BY w.word ASC`,
     [tierId],
   );
@@ -90,7 +103,7 @@ export function selectWordsByTier(db: DatabaseHandle, tierId: string): Promise<W
 
 // Keyset-paginated alphabetical word browse for a tier. Pass null afterWord for
 // the first page; subsequent pages pass the last `word` value received.
-// Uses idx_words_alphabetical — O(log n) regardless of page depth.
+// Membership filter via word_tiers; ordered by w.word (idx_words_alphabetical).
 export function selectWordsByTierAlphabeticalPage(
   db: DatabaseHandle,
   tierId: string,
@@ -98,9 +111,10 @@ export function selectWordsByTierAlphabeticalPage(
   limit: number,
 ): Promise<WordRow[]> {
   return db.all<WordRow>(
-    `SELECT ${WORD_COLUMNS}
+    `SELECT ${WORD_COLUMNS}, wt.tier_id AS tier_id
      FROM contentdb.words w
-     WHERE w.tier_id = ?
+     JOIN contentdb.word_tiers wt ON wt.word_id = w.id
+     WHERE wt.tier_id = ?
        AND w.deleted_at IS NULL
        AND (? IS NULL OR w.word > ?)
      ORDER BY w.word ASC

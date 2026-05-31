@@ -1,12 +1,18 @@
 /**
- * Stable, deterministic word IDs so re-imports are idempotent and `user_progress`
- * references survive a content rebuild (CONTENT_PIPELINE_ARCHITECTURE.md).
+ * Stable, deterministic, CATEGORY-INDEPENDENT word IDs so re-imports are
+ * idempotent and `user_progress` references survive a content rebuild
+ * (CONTENT_PIPELINE_ARCHITECTURE.md).
  *
- *   id = `word_${tier}_${sha1(normalize(word) + '|' + tier).slice(0, 8)}`
+ *   id = `word_${sha1(normalize(word)).slice(0, 16)}`
  *
- * The same word+tier always yields the same ID. Editing meaning must be done via
- * definition/usage_notes, NOT by changing the `word` string (that would re-key
- * the row and orphan review history).
+ * The id derives from the normalized surface form ONLY — never the tier. The
+ * same word tagged into several categories (foundation + toefl + ...) yields the
+ * SAME id, so it is one `words` row and one `user_progress` row across every
+ * category (word↔category is many-to-many via `word_tiers`). Editing meaning
+ * must be done via definition/usage_notes, NOT by changing the `word` string
+ * (that would re-key the row and orphan review history).
+ *
+ * 16 hex chars = 64 bits: collision-free for any realistic content volume.
  */
 
 import { createHash } from 'node:crypto';
@@ -16,8 +22,8 @@ export function normalizeWord(word: string): string {
   return word.trim().toLowerCase().replace(/\s+/g, ' ');
 }
 
-export function makeWordId(word: string, tier: string): string {
+export function makeWordId(word: string): string {
   const normalized = normalizeWord(word);
-  const hash = createHash('sha1').update(`${normalized}|${tier}`).digest('hex').slice(0, 8);
-  return `word_${tier}_${hash}`;
+  const hash = createHash('sha1').update(normalized).digest('hex').slice(0, 16);
+  return `word_${hash}`;
 }

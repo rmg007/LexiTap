@@ -12,7 +12,7 @@ export type WordType = (typeof WORD_TYPES)[number];
 
 /**
  * One row of the `content_tiers` table. `word_count` is computed at export time
- * from the actual `words` rows — never hardcoded.
+ * from the actual `word_tiers` rows — never hardcoded.
  */
 export interface TierRow {
   id: string;
@@ -26,14 +26,15 @@ export interface TierRow {
 }
 
 /**
- * One row of the `words` table. `synonyms`/`antonyms` are stored as JSON-array
- * TEXT (or NULL). `deleted_at` NULL means the row is active.
+ * One row of the `words` table — pure word content, category-independent. A
+ * word's category membership lives in `word_tiers` (WordTierRow), not here.
+ * `synonyms`/`antonyms` are stored as JSON-array TEXT (or NULL). `deleted_at`
+ * NULL means the row is active.
  */
 export interface WordRow {
   id: string;
   word: string;
   definition: string;
-  tier_id: string;
   pos: string | null;
   cefr_level: string | null;
   grade_level: number | null;
@@ -48,4 +49,10 @@ export interface WordRow {
   usage_notes: string | null;
   created_at: number;
   deleted_at: number | null;
+}
+
+/** One row of the `word_tiers` junction: tags `word_id` into category `tier_id`. */
+export interface WordTierRow {
+  word_id: string;
+  tier_id: string;
 }

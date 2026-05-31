@@ -1,14 +1,12 @@
 import type { TierId } from '@/domain/vocabulary/ids';
 import type { TierConfigProvider, TierMeta } from '@/application/tier/TierConfigProvider';
-import { TIER_CONFIG, listTiers, getTierConfig } from '@/config/tiers';
+import { listTiers, getTierConfig } from '@/config/tiers';
 
 // Concrete TierConfigProvider backing the application port with the static
 // TIER_CONFIG map. Config-over-conditionals: the application layer sees only the
-// TierMeta shape, so it stays reusable across sister apps.
-
-// Synthetic tier id recorded for a Premium Pass entitlement. It is not a content
-// tier (it has no words); holding it unlocks every paid tier (RevenueCat is entitlement authority).
-export const PREMIUM_PASS_TIER_ID = 'premium_pass' as TierId;
+// TierMeta shape, so it stays reusable across sister apps. Entitlement decisions
+// (per-pack `exam_{name}` and the global `all_exams` override) are made by the
+// entitlement use case off TierMeta.entitlementId, not here.
 
 export const tierConfigProvider: TierConfigProvider = {
   getTier(id: TierId): TierMeta | null {
@@ -16,11 +14,5 @@ export const tierConfigProvider: TierConfigProvider = {
   },
   getAllTiers(): readonly TierMeta[] {
     return listTiers();
-  },
-  getPremiumPassTierId(): TierId | null {
-    // Present only when the config actually defines a Premium Pass SKU.
-    return Object.values(TIER_CONFIG).some((t) => t.premiumPassSku !== null)
-      ? PREMIUM_PASS_TIER_ID
-      : null;
   },
 };

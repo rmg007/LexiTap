@@ -3,31 +3,91 @@
   "tiers": [
     {
       "slug": "foundation",
-      "name": "LexiTap Foundation (CEFR A2-B1)",
-      "description": "Top ~3,000 most-used English words for everyday communication.",
+      "name": "Foundation (CEFR A2-B1)",
+      "description": "Core everyday vocabulary for the A2-B1 learner.",
       "is_free": true,
       "sku": null,
       "display_order": 1,
       "requires_theme": true,
-      "audio": false
+      "audio": true
     },
     {
       "slug": "advanced",
-      "name": "LexiTap Advanced (CEFR B2-C1)",
-      "description": "Words 3,001-9,000 by real-world frequency for fluent expression.",
+      "name": "Advanced (CEFR B2-C1)",
+      "description": "Higher-register vocabulary for fluent B2-C1 expression.",
       "is_free": true,
       "sku": null,
       "display_order": 2,
       "requires_theme": true,
-      "audio": false
+      "audio": true
+    },
+    {
+      "slug": "common3k",
+      "name": "Most Common 3000",
+      "description": "The 3,000 most frequent English words by real-world usage.",
+      "is_free": true,
+      "sku": null,
+      "display_order": 3,
+      "requires_theme": true,
+      "audio": true
+    },
+    {
+      "slug": "common9k",
+      "name": "Most Common 9000",
+      "description": "Words ranked 3,001-9,000 by real-world frequency.",
+      "is_free": true,
+      "sku": null,
+      "display_order": 4,
+      "requires_theme": true,
+      "audio": true
     },
     {
       "slug": "toefl",
       "name": "TOEFL Vocabulary",
-      "description": "3,000 academic words for the TOEFL exam, with reference audio.",
+      "description": "Curated academic words for the TOEFL exam.",
       "is_free": false,
-      "sku": "com.lexitap.toefl",
-      "display_order": 3,
+      "sku": "com.lexitap.exam.toefl",
+      "display_order": 5,
+      "requires_theme": false,
+      "audio": true
+    },
+    {
+      "slug": "ielts",
+      "name": "IELTS Vocabulary",
+      "description": "Curated academic words for the IELTS exam.",
+      "is_free": false,
+      "sku": "com.lexitap.exam.ielts",
+      "display_order": 6,
+      "requires_theme": false,
+      "audio": true
+    },
+    {
+      "slug": "gre",
+      "name": "GRE Vocabulary",
+      "description": "Advanced academic words for the GRE.",
+      "is_free": false,
+      "sku": "com.lexitap.exam.gre",
+      "display_order": 7,
+      "requires_theme": false,
+      "audio": true
+    },
+    {
+      "slug": "gmat",
+      "name": "GMAT Vocabulary",
+      "description": "Advanced academic words for the GMAT.",
+      "is_free": false,
+      "sku": "com.lexitap.exam.gmat",
+      "display_order": 8,
+      "requires_theme": false,
+      "audio": true
+    },
+    {
+      "slug": "business",
+      "name": "Business English",
+      "description": "Professional and workplace vocabulary.",
+      "is_free": false,
+      "sku": "com.lexitap.exam.business",
+      "display_order": 9,
       "requires_theme": false,
       "audio": true
     }

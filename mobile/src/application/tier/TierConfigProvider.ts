@@ -10,13 +10,14 @@ export interface TierMeta {
   appId: string;
   displayName: string;
   isFree: boolean;
-  // The Premium Pass SKU unlocks all paid tiers when its entitlement is held.
-  premiumPassSku: string | null;
+  // The entitlement that unlocks this tier when held, or null for free tiers.
+  // For paid exam packs this is the per-pack entitlement (`exam_{name}`); the
+  // global `all_exams` bundle override is applied by the entitlement use case,
+  // not encoded per-tier. (Replaces the dead subscription-era premiumPassSku.)
+  entitlementId: string | null;
 }
 
 export interface TierConfigProvider {
   getTier(id: TierId): TierMeta | null;
   getAllTiers(): readonly TierMeta[];
-  // The SKU/tier id that represents the "unlock everything" Premium Pass.
-  getPremiumPassTierId(): TierId | null;
 }

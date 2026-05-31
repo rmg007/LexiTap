@@ -59,6 +59,8 @@ export function mapWordRow(row: WordRow): Word {
     id: asWordId(row.id),
     word: row.word,
     definition: row.definition,
+    // The category the word was loaded under (word↔category is many-to-many;
+    // the query projects the browsed membership as row.tier_id).
     tierId: asTierId(row.tier_id),
     pos: row.pos ?? undefined,
     cefrLevel: toCefrLevel(row.cefr_level),

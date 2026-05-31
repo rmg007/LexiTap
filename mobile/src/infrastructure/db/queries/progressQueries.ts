@@ -78,7 +78,8 @@ export function selectProgressReviewedSince(
 }
 
 // Count active words in a tier whose review is due. Joins content (ATTACHed)
-// for the tier filter; active filter applies (deleted_at IS NULL).
+// via the word_tiers junction for the category filter; active filter applies
+// (deleted_at IS NULL).
 export function countDueInTier(
   db: DatabaseHandle,
   tierId: string,
@@ -88,7 +89,8 @@ export function countDueInTier(
     `SELECT COUNT(*) AS n
      FROM user_progress p
      JOIN contentdb.words w ON w.id = p.word_id
-     WHERE w.tier_id = ? AND w.deleted_at IS NULL AND p.next_review_date <= ?`,
+     JOIN contentdb.word_tiers wt ON wt.word_id = w.id
+     WHERE wt.tier_id = ? AND w.deleted_at IS NULL AND p.next_review_date <= ?`,
     [tierId, now],
   );
 }
@@ -114,7 +116,8 @@ export function selectProgressPage(
     `SELECT p.word_id, p.mastery_level, p.next_review_date
      FROM user_progress p
      JOIN contentdb.words w ON p.word_id = w.id
-     WHERE w.tier_id = ?
+     JOIN contentdb.word_tiers wt ON wt.word_id = w.id
+     WHERE wt.tier_id = ?
        AND w.deleted_at IS NULL
        AND (? IS NULL OR (p.next_review_date > ? OR (p.next_review_date = ? AND p.word_id > ?)))
      ORDER BY p.next_review_date ASC, p.word_id ASC

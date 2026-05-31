@@ -8,6 +8,9 @@ export interface WordRow {
   id: string;
   word: string;
   definition: string;
+  // Not a column on `words` (word↔category is many-to-many via word_tiers).
+  // Word queries project the membership being browsed as `tier_id` — i.e. the
+  // category the word was loaded under, not an intrinsic single owner.
   tier_id: string;
   pos: string | null;
   cefr_level: string | null;

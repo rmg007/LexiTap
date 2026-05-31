@@ -30,16 +30,17 @@ export interface ImportSummary {
 }
 
 /**
- * Map a parsed input row to a full WordRow for a given tier. Pure — assigns the
- * stable id, tier_id, created_at, and normalizes the surface form's whitespace.
+ * Map a parsed input row to a category-independent WordRow. Pure — assigns the
+ * stable id (from the surface form only, NOT the tier), created_at, and
+ * normalizes the surface form's whitespace. Category membership is recorded
+ * separately in `word_tiers` by importRows.
  */
-export function toWordRow(parsed: ParsedInputRow, tier: string, createdAt: number): WordRow {
+export function toWordRow(parsed: ParsedInputRow, createdAt: number): WordRow {
   const word = normalizeWord(parsed.word);
   return {
-    id: makeWordId(word, tier),
+    id: makeWordId(word),
     word,
     definition: parsed.definition,
-    tier_id: tier,
     pos: parsed.pos,
     cefr_level: parsed.cefr_level,
     grade_level: null,
@@ -59,18 +60,17 @@ export function toWordRow(parsed: ParsedInputRow, tier: string, createdAt: numbe
 
 const INSERT_SQL = `
 INSERT INTO words (
-  id, word, definition, tier_id, pos, cefr_level, grade_level, word_type,
+  id, word, definition, pos, cefr_level, grade_level, word_type,
   difficulty, theme, example_sentence, image_path, audio_path, synonyms,
   antonyms, usage_notes, created_at, deleted_at
 ) VALUES (
-  @id, @word, @definition, @tier_id, @pos, @cefr_level, @grade_level, @word_type,
+  @id, @word, @definition, @pos, @cefr_level, @grade_level, @word_type,
   @difficulty, @theme, @example_sentence, @image_path, @audio_path, @synonyms,
   @antonyms, @usage_notes, @created_at, @deleted_at
 )
 ON CONFLICT(id) DO UPDATE SET
   word = excluded.word,
   definition = excluded.definition,
-  tier_id = excluded.tier_id,
   pos = excluded.pos,
   cefr_level = excluded.cefr_level,
   word_type = excluded.word_type,
@@ -80,30 +80,53 @@ ON CONFLICT(id) DO UPDATE SET
   usage_notes = excluded.usage_notes
 `.trim();
 
-/** Insert/upsert parsed rows into the working DB per the conflict policy. */
+const INSERT_MEMBERSHIP_SQL = `INSERT OR IGNORE INTO word_tiers (word_id, tier_id) VALUES (?, ?)`;
+
+/**
+ * Import parsed rows into the working DB, tagging each into `options.tier`.
+ *
+ * Counting is at the MEMBERSHIP grain (import = "tag these words into this
+ * tier"): a word newly tagged into the tier counts as `imported`; an already-
+ * tagged word counts as `updated` (content refreshed) or `skipped`, per policy.
+ * `onConflict='error'` fires only on a true duplicate `(word, tier)` membership
+ * — the same word arriving via a DIFFERENT tier is legitimate (many-to-many),
+ * and refreshes the shared content row without clobbering existing memberships.
+ */
 export function importRows(db: DB, parsed: ParsedInputRow[], options: ImportOptions): ImportSummary {
   const summary: ImportSummary = { imported: 0, updated: 0, skipped: 0 };
-  const existsStmt = db.prepare(`SELECT 1 FROM words WHERE id = ?`);
+  const membershipStmt = db.prepare(`SELECT 1 FROM word_tiers WHERE word_id = ? AND tier_id = ?`);
+  const wordStmt = db.prepare(`SELECT 1 FROM words WHERE id = ?`);
   const insertStmt = db.prepare(INSERT_SQL);
+  const tagStmt = db.prepare(INSERT_MEMBERSHIP_SQL);
 
   const tx = db.transaction((items: ParsedInputRow[]) => {
     for (const item of items) {
-      const row = toWordRow(item, options.tier, options.now());
-      const existing = existsStmt.get(row.id);
-      if (existing) {
+      const row = toWordRow(item, options.now());
+      const alreadyTagged = membershipStmt.get(row.id, options.tier);
+
+      if (alreadyTagged) {
         if (options.onConflict === 'skip') {
           summary.skipped += 1;
           continue;
         }
         if (options.onConflict === 'error') {
-          throw new Error(`duplicate id on import: ${row.id} ("${row.word}")`);
+          throw new Error(
+            `duplicate id on import: ${row.id} ("${row.word}") in tier '${options.tier}'`,
+          );
         }
         insertStmt.run(row);
         summary.updated += 1;
-      } else {
-        insertStmt.run(row);
-        summary.imported += 1;
+        continue;
       }
+
+      // New membership for this tier. Refresh shared content unless 'skip' asks
+      // us to leave an existing word row untouched; always record the tag.
+      const wordExists = wordStmt.get(row.id);
+      if (!wordExists || options.onConflict !== 'skip') {
+        insertStmt.run(row);
+      }
+      tagStmt.run(row.id, options.tier);
+      summary.imported += 1;
     }
   });
   tx(parsed);
