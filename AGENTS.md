@@ -34,6 +34,7 @@ Two databases: `words.db` (read-only, bundled, built by Track A) + `user.db` (re
 - Every SRS write tags `scheduler_version`. SRS v1-fixed intervals: +1/3/7/14/30d by mastery 0-5.
 - Streak boundaries evaluated in the user's IANA timezone, never UTC. No `new Date()` for streak comparison.
 - Secrets: `.env` in dev, EAS secrets in prod. Never commit secrets or hardcode them.
+- Crash reporting (Sentry) imports live ONLY in `infrastructure/crash/`. Every event passes the `beforeSend`/`beforeBreadcrumb` PII scrub (fail-closed: scrub throws → drop event); never `Sentry.setUser` with email/id; drop `sync` + network breadcrumbs; no tracing/replay/screenshots. Env-gated by `EXPO_PUBLIC_SENTRY_DSN` (inert if unset).
 
 ## Done means
 

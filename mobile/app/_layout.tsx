@@ -8,7 +8,12 @@ import { ThemeProvider } from '@/presentation/theme';
 import { ServicesProvider, type Services } from '@/presentation/services';
 import { createContainer } from '@/composition/container';
 import { logger } from '@/lib/logger';
+import { captureException, initCrashReporting, wrapRoot } from '@/infrastructure/crash';
 import '../global.css';
+
+// Initialise crash reporting at module load — before any rendering — so startup
+// crashes are captured. Inert until a DSN is configured (see infrastructure/crash).
+initCrashReporting();
 
 // Root layout. Opens the database and wires the composition root, then provides
 // the resulting `Services` to the tree. The quiz/review path is offline-first,
@@ -16,7 +21,7 @@ import '../global.css';
 // Until services resolve, a splash spinner renders; screens calling useServices()
 // only mount inside the provider.
 
-export default function RootLayout(): React.JSX.Element {
+function RootLayout(): React.JSX.Element {
   const [services, setServices] = useState<Services | null>(null);
 
   useEffect(() => {
@@ -27,6 +32,7 @@ export default function RootLayout(): React.JSX.Element {
       })
       .catch((error) => {
         logger.error('Failed to initialize app container', { error: String(error) });
+        captureException(error);
       });
     return () => {
       cancelled = true;
@@ -70,3 +76,7 @@ export default function RootLayout(): React.JSX.Element {
     </GestureHandlerRootView>
   );
 }
+
+// Wrap with Sentry's error boundary + touch breadcrumbs. No-op wrapper until a
+// DSN is configured.
+export default wrapRoot(RootLayout);

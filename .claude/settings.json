@@ -82,8 +82,17 @@
       "Edit(mobile/src/domain/srs/**)",
       "Edit(mobile/src/infrastructure/iap/**)",
       "Edit(mobile/src/infrastructure/storage/**)",
+      "Edit(mobile/src/infrastructure/crash/**)",
       "Edit(mobile/app.json)",
-      "Edit(.env*)"
+      "Edit(mobile/app.config.ts)",
+      "Edit(**/.env)",
+      "Edit(**/.env.local)",
+      "Edit(**/.env.development)",
+      "Edit(**/.env.development.local)",
+      "Edit(**/.env.production)",
+      "Edit(**/.env.production.local)",
+      "Edit(**/.env.staging)",
+      "Edit(**/.env.test)"
     ]
   }
 }
