@@ -34,6 +34,7 @@ const config: ExpoConfig = {
     eas: { projectId: '4f9ec642-cf69-483b-966c-ff36616c6d94' },
     revenueCatApiKey: process.env.EXPO_PUBLIC_REVENUCAT_API_KEY ?? null,
     sentryDsn: process.env.EXPO_PUBLIC_SENTRY_DSN ?? null,
+    posthogApiKey: process.env.EXPO_PUBLIC_POSTHOG_API_KEY ?? null,
   },
   owner: 'rmg007',
 };

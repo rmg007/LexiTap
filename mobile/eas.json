@@ -7,24 +7,42 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
+      "runtimeVersion": { "policy": "appVersion" },
       "ios": {
         "simulator": true
+      },
+      "android": {
+        "buildType": "apk"
       }
     },
     "development-device": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "runtimeVersion": { "policy": "appVersion" },
+      "ios": {},
+      "android": {
+        "buildType": "apk"
+      }
     },
     "preview": {
       "distribution": "internal",
+      "runtimeVersion": { "policy": "appVersion" },
       "ios": {
         "resourceClass": "m-medium"
+      },
+      "android": {
+        "buildType": "aab"
       }
     },
     "production": {
       "autoIncrement": true,
+      "distribution": "store",
+      "runtimeVersion": { "policy": "appVersion" },
       "ios": {
         "resourceClass": "m-medium"
+      },
+      "android": {
+        "buildType": "aab"
       }
     }
   },
@@ -32,7 +50,8 @@
     "production": {
       "ios": {
         "ascAppId": "6775245619"
-      }
+      },
+      "android": {}
     }
   }
 }
