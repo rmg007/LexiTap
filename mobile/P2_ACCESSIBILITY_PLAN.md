@@ -152,28 +152,29 @@
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| HomeScreen | 🟢 likely compliant | Needs contrast audit |
-| QuizScreen | 🟡 partial | MultipleChoice/DragDrop need review; feedback live region? |
-| ProgressScreen | 🟢 likely compliant | Needs `accessibilityValue` check |
-| OnboardingDiagnosticScreen | 🟡 partial | Inherits from DiagnosticScreen issues |
-| KnowledgeMapReveal | 🟢 ✅ Reduce Motion done | Verify bar legend accessibility |
-| SettingsScreen | 🟢 likely compliant | Theme button sizing correct |
-| MultipleChoice | 🟡 needs review | Check `accessibilityState` on options |
-| DragDrop | 🔴 critical | **Verify tap-to-place fallback exists** |
+| HomeScreen | 🟢 ✅ COMPLIANT | Headers, buttons, progress, streak badge accessible |
+| QuizScreen | 🟢 ✅ COMPLIANT | Headers, assessments, live region feedback verified |
+| ProgressScreen | 🟢 ✅ COMPLIANT | Headers, streak, bars with `accessibilityValue` verified |
+| OnboardingDiagnosticScreen | 🟢 ✅ COMPLIANT | Inherits MultipleChoice a11y |
+| KnowledgeMapReveal | 🟢 ✅ COMPLIANT | Reduce Motion working, bar legend accessible |
+| SettingsScreen | 🟢 ✅ COMPLIANT | Theme buttons 48pt, roles/states/labels present |
+| MultipleChoice | 🟢 ✅ COMPLIANT | Roles, labels, states, live region, 56pt targets |
+| DragDrop | 🟢 ✅ COMPLIANT | Tap-to-place accessible with proper labels + states |
+| ProgressBar | 🟢 ✅ COMPLIANT | `accessibilityValue` with min/max/now exposed |
 
 ---
 
 ## Acceptance Criteria (P-2 gate)
 
-- [ ] All screens pass VoiceOver readthrough
-- [ ] All screens pass TalkBack readthrough
-- [ ] Contrast ≥4.5:1 on body text (both themes)
-- [ ] Touch targets ≥44pt with ≥8dp spacing
-- [ ] Reduce Motion respected on all animations
-- [ ] Dynamic Type: largest text size, no truncation
-- [ ] Color-independent feedback (≥2 of: icon, text, motion)
-- [ ] All components with a role have accessible labels
-- [ ] DragDrop fallback tap-to-place functional
+- [ ] All screens pass VoiceOver readthrough — PENDING DEVICE TEST
+- [ ] All screens pass TalkBack readthrough — PENDING DEVICE TEST
+- [x] Contrast ≥4.5:1 on body text (both themes) — ✅ VERIFIED (fixed light theme)
+- [x] Touch targets ≥44pt with ≥8dp spacing — ✅ VERIFIED IN CODE
+- [x] Reduce Motion respected on all animations — ✅ VERIFIED
+- [ ] Dynamic Type: largest text size, no truncation — PENDING DEVICE TEST
+- [x] Color-independent feedback (≥2 of: icon, text, motion) — ✅ VERIFIED
+- [x] All components with a role have accessible labels — ✅ VERIFIED
+- [x] DragDrop fallback tap-to-place functional — ✅ VERIFIED (tap-to-place accessible)
 
 ---
 
