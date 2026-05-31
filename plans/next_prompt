@@ -1,63 +1,49 @@
-### System Architecture Directive: LexiTap Design System & Initial Scaffolding
+# Next-session prompt (LexiTap)
 
-**Role & Objective**
-You are functioning as the lead architectural engineer for a React Native / Expo application. Bypass third-party design-to-code generators. Utilize the raw HTML/CSS structural payloads and high-fidelity PNG visual targets in the `.design-specs` directory as your canonical source of truth.
-
----
-
-#### Phase 0: Repository Standards & Naming Conventions
-
-*Append this module to the beginning of your Claude Code directive to strictly enforce Expo Router URIs and standard React Native component taxonomies.*
-
-Before generating any architecture, you must strictly adhere to the following file and directory naming taxonomies to ensure compiler compatibility and structural rigor:
-
-* **Routing Architecture (Expo Router):** All files and directories within the `/app` directory must utilize strict `lowercase` and `kebab-case`. This guarantees URL URI consistency.
-* *Valid:* `/app/study-session/index.tsx`, `/app/knowledge-map.tsx`, `/app/_layout.tsx`
-* *Invalid:* `/app/StudySession.tsx`, `/app/Knowledge_Map.tsx`
-
-
-* **Component Library:** All reusable UI elements (extracted from raw HTML) must be placed in a dedicated `/components` directory and utilize strict `PascalCase`.
-* *Valid:* `/components/ui/ActionCard.tsx`, `/components/typography/DisplayHeader.tsx`
-
-
-* **Logic, State, & Configuration:** All non-JSX utility files, theme token definitions, and future Zustand stores must utilize `camelCase`.
-* *Valid:* `/constants/themeTokens.ts`, `/store/userProgress.ts`
-
-
-* **Strict Typing:** Utilize `.tsx` exclusively for files returning React nodes. Utilize `.ts` for pure programmatic logic. The generation of `.js` or `.jsx` files is strictly prohibited.
+Paste this to start a fresh session after `/clear`.
 
 ---
 
-#### Technical Stack
+Read `CLAUDE.md` + `AGENTS.md` first (they are the contract). Then read the work
+queue: GitHub Issues, else the task-level plan `plans/RELEASE_PLAN.md`
+(authoritative ordering) → roadmap mirror `ROADMAP.md` (root) → canonical
+`lexitap-docs/02-product-definition/ROADMAP.md`.
 
-* **Framework:** React Native / Expo (using Expo Router for file-based navigation)
-* **UI Primitives:** React Native Paper
-* **Styling:** NativeWind (`tailwind.config.js`)
-* **State Management (Future Phase):** Zustand & TanStack Query (*Do not implement logic yet; focus strictly on UI/UX scaffolding*).
+## Current ground truth (verified 2026-05-31)
 
----
+- App is **already built**, do NOT scaffold from scratch. Clean/hexagonal layers
+  under `mobile/src/` (`domain/`, `application/`, `infrastructure/`,
+  `presentation/`) + expo-router routes under `mobile/app/`. ~120 TS files, tests
+  colocated. DI via `mobile/src/composition/container.ts` — **not** Redux/Zustand,
+  **not** TanStack Query.
+- Stack: Expo + expo-router + expo-sqlite + nativewind + react-native-paper +
+  @supabase/supabase-js. (No zustand / react-query / react-native-purchases.)
+- IAP: `StubIapService` only; RevenueCat deferred to Phase 3 (see AGENTS.md).
 
-#### Phase 1: Token Initialization (The "Physical Surface" System)
+## The real blocker to launch: content VOLUME
 
-* Ingest the `style_guide` and `component_library` assets from the `.design-specs` directory.
-* Extract the canonical hex codes (Teal `#20B2AA`, Amber `#FFC107`, Deep Charcoal `#0E1112`, Muted Slate `#94A3B8`), the typography scale (H1 through Small-Caps), and the 8pt spatial grid.
-* Configure `tailwind.config.js` to strictly enforce these variables.
-* Initialize the React Native Paper `ThemeProvider`. You must override Paper's default Material UI styles to strictly apply our established 8px border-radius and 1px low-opacity hairline borders to simulate physical surface depth.
+- Delivery is **solved in code** (task C0, merged 2026-05-31): `words.db` is
+  bundled at `mobile/assets/vocab/words.db`, embedded via the `expo-asset` plugin
+  + `metro.config.js` `.db` asset ext, and copied into expo-sqlite's dir at launch
+  by `infrastructure/db/contentDb.ts` (version-gated, `BUNDLED_CONTENT_DB_VERSION`)
+  before the ATTACH in `database.ts`. ⚠️ **Still unverified on a physical device** —
+  the unit tests use fakes; nothing proves the real asset→copy→ATTACH path. Verify
+  on device before trusting "content loads."
+- **Volume is the long pole:** the bundled db holds only **~216 words** (~7%), not
+  a launch-ready catalog. Enriching + rebuilding `words.db` via `content-tool` is
+  the critical path (task C1). See `plans/RELEASE_PLAN.md`.
 
-#### Phase 2: Base Component Assembly
+## Known inconsistency to fix (cheap, high-value)
 
-* Analyze the HTML/CSS payloads strictly for component hierarchy and flexbox logic. Do not implement web-based CSS or inline styles.
-* Translate the HTML DOM logic into isolated React Native JSX components (`Button.tsx`, `Card.tsx`, `ProgressBar.tsx`).
-* Implement these using the configured React Native Paper base components wrapped in NativeWind utility classes. Ensure you account for the Default, Pressed, and Disabled states defined in the Component Library.
+- `mobile/src/config/tiers.ts` was rewritten to the locked 3-SKU Premium model
+  (`com.lexitap.premium.monthly`/`.annual`/`common3k`), but the bundled
+  `content_tiers` rows in `words.db` still encode the OLD dead per-tier model
+  (e.g. `toefl` @ $14.99, sku `com.lexitap.toefl`, `is_active=1`). `words.db` must
+  be rebuilt from `content-tool` to match `tiers.ts` before configuring stores.
 
-#### Phase 3: Navigation Architecture & Routing Topology
+## Also unwired (deferred, not bugs)
 
-* Implement `expo-router` to manage all screen transitions. Do not render disparate views as a monolithic scroll view.
-* **Scaffold the Onboarding Stack (Linear):** Welcome → Goal Selection → Proficiency Assessment → Diagnostic (Word Check) → Knowledge Map Reveal → Premium Paywall.
-* **Scaffold the Core Loop (Authenticated `BottomTabNavigator`):** Study Session (Primary Engine) and Settings Shell (Global Controls).
+- Auth + encrypted user.db blob backup → Phase 3/5.
+- EAS build config not yet in `mobile/app.json`.
 
-#### Phase 4: Screen Implementation
-
-* Construct the JSX for the screens defined in Phase 3. Isolate each distinct UI view into its own modular `.tsx` file within the `/app` directory.
-* Utilize the HTML exports to dictate the flexbox layout and the PNGs as strict visual benchmarks to guarantee 1:1 parity with the padding, alignment, and color rendering.
-* **Halt execution** and output the structural code for review before wiring the Zustand local state or TanStack Query data fetching logic.
+Pick ONE task per session. Commit + push before `/clear`.

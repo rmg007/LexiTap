@@ -33,9 +33,9 @@
     "deny": [
       "Edit(mobile/src/infrastructure/db/**)",
       "Edit(mobile/src/domain/srs/**)",
-      "Edit(mobile/src/application/paywall/**)",
-      "Edit(mobile/src/utils/storage.ts)",
-      "Edit(mobile/app.config.ts)",
+      "Edit(mobile/src/infrastructure/iap/**)",
+      "Edit(mobile/src/infrastructure/storage/**)",
+      "Edit(mobile/app.json)",
       "Edit(.env*)"
     ]
   }

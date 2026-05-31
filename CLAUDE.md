@@ -11,19 +11,20 @@
 | `mobile/` | Expo + React Native app (source of truth: local SQLite) |
 | `content-tool/` | Node + TS CLI that builds bundled read-only `words.db` |
 | `lexitap-docs/` | Full product + research documentation (8 categories) |
-| `memory/`, `docs/`, `plans/` | Project memory, ADRs, implementation plans |
+| `memory/`, `plans/` | Project memory, ADRs, implementation plans |
 
 ---
 
 ## Root Commands
 
 ```bash
-npm run check              # lint + typecheck + test (all projects)
-npm run dev                # Start dev server for mobile
-npm run build              # Build mobile app
+# No root package.json — run scripts inside each sub-project:
+cd mobile       && npm run check   # lint + typecheck + test (mobile)
+cd content-tool && npm run check   # lint + typecheck + test (content-tool)
+cd mobile       && npm run start   # Expo dev server
 ```
 
-Each sub-project has its own npm scripts. See `mobile/CLAUDE.md` and `content-tool/CLAUDE.md` for details.
+Each sub-project has its own `package.json` + scripts. "Done" = `npm run check` passes in the affected project (see [AGENTS.md](AGENTS.md)).
 
 ---
 
@@ -52,7 +53,7 @@ These rules govern how Claude Code should operate on this project. Read before s
 - **Project memory lives in the committed `memory/` dir — never in home-folder auto-memory.** Lightweight session-handoff notes go in `memory/` (auto-loaded via the `@memory/MEMORY.md` import at the bottom of this file). Do **not** write project knowledge to `~/.claude/projects/.../memory/`: that path is outside the repo, never reaches GitHub, and never reaches the next laptop — same reason config belongs in the repo.
 - **Feed raw data, not summaries.** When debugging, paste stack traces and error logs directly — do not paraphrase the problem. Summaries lose signal.
 - **Read `plans/` docs first** when starting release-planning or feature sessions. Read relevant troubleshooting docs first when touching a known fragile area.
-- **GitHub Issues is the work queue.** Start a session by reading open issues, not by asking Ryan what to do.
+- **GitHub Issues is the work queue.** Start a session by reading open issues, not by asking Ryan what to do. If Issues is empty, the active plan is `ROADMAP.md` (root) → canonical `lexitap-docs/02-product-definition/ROADMAP.md`.
 
 ---
 
@@ -64,9 +65,9 @@ These files can still be edited, but Claude Code **pauses and asks for explicit 
 |------|-----|------------|
 | `mobile/src/infrastructure/db/` | Raw SQL, database schema | Wrong changes break data integrity or app startup |
 | `mobile/src/domain/srs/` | SRS scheduling logic | Wrong changes break spaced repetition algorithm or learner progress |
-| `mobile/src/application/paywall/` | Entitlement/paywall logic | Wrong changes lock users out of premium or leak trial state |
-| `mobile/src/utils/storage.ts` | Encryption, state persistence | Wrong changes expose sensitive data or lose user progress |
-| `mobile/app.config.ts` | EAS config, permissions, secrets | Wrong changes break EAS builds or expose secrets |
+| `mobile/src/infrastructure/iap/` | IAP/entitlement adapter (StubIapService) | Wrong changes lock users out of premium or leak trial state |
+| `mobile/src/infrastructure/storage/` | State persistence (AsyncStorage adapter) | Wrong changes lose user progress |
+| `mobile/app.json` | Expo/EAS config, permissions, secrets | Wrong changes break builds or expose secrets |
 | `.env*` files | Secrets | Never commit; never log |
 
 ---
@@ -80,11 +81,11 @@ Every change to this repo must leave the relevant documentation accurate. This i
 | What you changed | What to update |
 |---|---|
 | Architecture decision, new pattern, "never do X" rule | CLAUDE.md or AGENTS.md |
-| Bug that was hard to fix or revealed a fragile area | `plans/LESSONS_LEARNED.md` (if it exists) or add a memory note |
-| Completed a roadmap/feature item | `plans/ROADMAP.md` or issue milestone |
+| Bug that was hard to fix or revealed a fragile area | add a note in `memory/` |
+| Completed a roadmap/feature item | `ROADMAP.md` (root) + `lexitap-docs/02-product-definition/ROADMAP.md` |
 | New high-risk path or forbidden edit | High-Risk Paths section above + `.claude/settings.json` deny list |
-| Database schema or query pattern changed | `mobile/CLAUDE.md` |
-| Payment/entitlement behavior changed | AGENTS.md + paywall application code comments |
+| Database schema or query pattern changed | AGENTS.md + `mobile/src/infrastructure/db/` comments |
+| Payment/entitlement behavior changed | AGENTS.md + `mobile/src/infrastructure/iap/` comments |
 | New slash command created | Add it to `.claude/commands/` + reference in `plans/` |
 
 **Do NOT update docs when:**
@@ -158,11 +159,11 @@ These rules + automations exist so work doesn't vanish between sessions. **All t
 - **JS/TypeScript-only fixes, UI changes, logic:** Ship via EAS Update immediately (same day).
 - **Native changes, new permissions, build config, version bumps:** Store release required (5–6 weeks lead time for app store review).
 
-**Versioning:** Patch-only (`0.0.1`, `0.0.2`, …) — match app.config.ts.
+**Versioning:** match `mobile/app.json` `version` (currently `0.1.0`).
 
 ---
 
-*Last updated: 2026-05-31 — Integrated AsterKit rules and patterns*
+*Last updated: 2026-05-31 — Doc/config integrity sweep: corrected deny-list, high-risk paths, broken cross-refs, root commands, versioning*
 
 ---
 
