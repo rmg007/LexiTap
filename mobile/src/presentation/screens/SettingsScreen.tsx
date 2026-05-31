@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, View, type ViewStyle } from 'react-native';
+import { Pressable, View, type ViewStyle, Switch } from 'react-native';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme, useThemePreference, type ThemePreference } from '@/presentation/theme';
 import { Text, Card } from '@/presentation/components';
 import { APP_ID } from '@/config/app';
 import { useServices, type ContentDbHealth } from '@/presentation/services';
+import { getAnalyticsOptOut, setAnalyticsOptOut } from '@/infrastructure/analytics/AnalyticsOptOutStore';
 
-// Settings: theme override (system / dark / light) plus app metadata. The
-// destructive actions (reset progress, etc.) live behind a confirm sheet and
-// are out of MVP scope here; this screen only owns the theme preference.
+// Settings: theme override (system / dark / light), analytics opt-out toggle, and
+// app metadata. Destructive actions (reset progress, etc.) live behind a confirm sheet
+// and are out of MVP scope here.
 
 const THEME_OPTIONS: ReadonlyArray<{ value: ThemePreference; label: string }> = [
   { value: 'system', label: 'System' },
@@ -22,10 +23,17 @@ export function SettingsScreen(): React.JSX.Element {
   const { queries } = useServices();
   const [dbHealth, setDbHealth] = useState<ContentDbHealth | null>(null);
   const [hoverState, setHoverState] = useState<ThemePreference | null>(null);
+  const [analyticsOptOut, setAnalyticsOptOutLocal] = useState(false);
 
   useEffect(() => {
     queries.getContentDbHealth().then(setDbHealth).catch(() => undefined);
+    getAnalyticsOptOut().then(setAnalyticsOptOutLocal).catch(() => undefined);
   }, [queries]);
+
+  const handleAnalyticsToggle = async (value: boolean) => {
+    setAnalyticsOptOutLocal(value);
+    await setAnalyticsOptOut(value);
+  };
 
   return (
     <Screen>
@@ -76,6 +84,34 @@ export function SettingsScreen(): React.JSX.Element {
                 </Pressable>
               );
             })}
+          </View>
+        </View>
+      </Card>
+
+      <Card>
+        <View style={{ gap: spacing.s3 }}>
+          <Text variant="headline" color="textPrimary">
+            Privacy
+          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View style={{ flex: 1, marginRight: spacing.s2 }}>
+              <Text variant="label" color="textPrimary">
+                Disable Analytics
+              </Text>
+              <Text variant="caption" color="textTertiary" style={{ marginTop: spacing.s1 }}>
+                Help improve LexiTap (usage only, no personal data)
+              </Text>
+            </View>
+            <Switch
+              value={analyticsOptOut}
+              onValueChange={handleAnalyticsToggle}
+              trackColor={{ false: colors.borderSubtle, true: colors.accentSubtle }}
+              thumbColor={analyticsOptOut ? colors.accent : colors.bgSurface}
+              accessibilityRole="switch"
+              accessibilityLabel="Disable analytics"
+              accessibilityHint="Toggle to stop sending usage data"
+              accessible
+            />
           </View>
         </View>
       </Card>
