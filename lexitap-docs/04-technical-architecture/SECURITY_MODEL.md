@@ -52,7 +52,7 @@ What is and is not a secret:
 
 ## Authentication
 
-- Supabase Auth handles **email + password** (Argon2/bcrypt hashing managed by Supabase) and **Google OAuth** (native ID-token flow).
+- Supabase Auth handles **email magic-link** (`signInWithOtp` — no password is ever typed or stored), **Google OAuth** (native ID-token flow), and **Sign in with Apple** (mandatory on iOS once Google is offered, Guideline 4.8).
 - Sessions are JWTs; `auth.uid()` (the user's UUID) is the key every RLS policy checks.
 - Auth is **optional**: the app is fully usable offline and pre-auth. Sign-in unlocks cross-device sync and purchase restore. No account is required to learn.
 - Session refresh is transparent; on unrecoverable auth failure the app silently drops to signed-out/offline mode rather than blocking the user.
@@ -68,9 +68,10 @@ CREATE POLICY own_account ON user_accounts
   USING (id = auth.uid()) WITH CHECK (id = auth.uid());
 
 -- Supabase Storage: user_db_backups bucket
--- Each user's backup object lives at path: {user_id}/user.db.enc
+-- Each user's backup object lives at path: {user_id}/user.db
 -- Bucket policy restricts reads and writes to objects whose path prefix matches auth.uid()::text.
--- Server-side encryption key is per-user (stored in Vault); the client sends the encrypted blob.
+-- Confidentiality comes from RLS path-scoping + Supabase Storage server-side encryption at rest.
+-- No client-side AES / Vault key at MVP (user.db is low-sensitivity progress data) — see Backup below.
 -- content_errors is service-role-write only (written by the Edge Function after deduplication).
 ```
 

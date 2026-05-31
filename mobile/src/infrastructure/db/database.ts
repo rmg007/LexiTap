@@ -4,6 +4,7 @@ import {
   type SQLiteBindParams,
 } from 'expo-sqlite';
 import { pendingMigrations } from '@/infrastructure/db/migrations';
+import { installContentDb } from '@/infrastructure/db/contentDb';
 
 // Typed handle over the single live SQLite connection. The connection is opened
 // on the read-write user.db; the read-only content words.db is ATTACHed as
@@ -69,10 +70,14 @@ async function applyMigrations(db: SQLiteDatabase): Promise<void> {
 // launch and passes the returned handle to every repository constructor.
 //
 // Open/ATTACH sequence:
+//   0. Install the bundled content DB: copy words.db out of the app bundle into
+//      expo-sqlite's directory if missing or stale. expo-sqlite does NOT read
+//      from the bundle, so without this ATTACH would silently create an EMPTY
+//      words.db and every content query would return zero rows (the C0 bug).
 //   1. Open the read-write user.db as the MAIN connection (it is the only one
 //      we ever write to, and runs the migrations).
-//   2. ATTACH the read-only, bundled words.db as `contentdb` so cross-DB joins
-//      (review queue, history render) can reach content from the writable
+//   2. ATTACH the now-present read-only words.db as `contentdb` so cross-DB
+//      joins (review queue, history render) can reach content from the writable
 //      connection. The schema docs phrase the join as words.db-main +
 //      userdb-attached; functionally the ATTACH join is symmetric, and making
 //      user.db the main connection keeps all writes/migrations on one handle.
@@ -81,11 +86,12 @@ async function applyMigrations(db: SQLiteDatabase): Promise<void> {
 // Query functions reference content tables as `contentdb.words` /
 // `contentdb.content_tiers` and user tables unqualified (main).
 export async function openDatabase(): Promise<DatabaseHandle> {
+  // Step 0: must complete before ATTACH (see note above).
+  await installContentDb();
   const db = await openDatabaseAsync(USER_DB_NAME);
   await db.execAsync('PRAGMA foreign_keys = ON');
   // ATTACH the bundled content DB read-only. expo-sqlite resolves the name
-  // against its SQLite directory; the bundled words.db must be present there
-  // (installed from assets by the integration owner's launch flow).
+  // against its SQLite directory, where installContentDb() just placed it.
   await db.execAsync(`ATTACH DATABASE '${CONTENT_DB_NAME}' AS contentdb`);
   await applyMigrations(db);
   return wrap(db);

@@ -53,12 +53,13 @@ On first successful sign-in the client writes the device's IANA timezone (AsyncS
 
 ## Backup: Upload
 
-Triggered opportunistically (on app background / account sign-in). The entire `user.db` is AES-256 encrypted with a per-user key stored in Supabase Vault, then uploaded as an object to the `user_db_backups` Storage bucket at path `{user_id}/user.db.enc`. The operation is idempotent — safe to retry; overwrites the single backup object. The device is always the authority; the cloud blob is a restore aid, not a live mirror.
+Triggered opportunistically (on app background / account sign-in). The entire `user.db` is uploaded as a single object to the `user_db_backups` Storage bucket at path `{user_id}/user.db`. **Confidentiality comes from RLS path-scoping (each object readable/writable only by its owning `auth.uid()`) + Supabase Storage server-side encryption at rest — there is no client-side AES / Vault key at MVP** (`user.db` holds only low-sensitivity learning progress; see SECURITY_MODEL.md). The operation is idempotent — safe to retry; overwrites the single backup object. The device is always the authority; the cloud blob is a restore aid, not a live mirror.
 
 ```ts
-// Pseudocode — actual implementation in infrastructure/sync/BackupService.ts (Phase 3)
-const encrypted = await encryptWithVaultKey(userId, await readLocalDb());
-await supabase.storage.from('user_db_backups').upload(`${userId}/user.db.enc`, encrypted, { upsert: true });
+// Pseudocode — actual implementation in infrastructure/backup/BackupService.ts (Phase 3)
+await supabase.storage
+  .from('user_db_backups')
+  .upload(`${userId}/user.db`, await readLocalDb(), { upsert: true });
 ```
 
 Per-table sync mirror tables (`user_progress_sync`, `user_entitlements_sync`, `user_stats_sync`) were removed in v3.0. There is no row-level push/pull.

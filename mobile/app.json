@@ -14,7 +14,16 @@
     "android": {
       "package": "com.lexitap.app"
     },
-    "plugins": ["expo-router", "expo-sqlite"],
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      [
+        "expo-asset",
+        {
+          "assets": ["./assets/vocab/words.db"]
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
     }
