@@ -53,6 +53,9 @@ export function toWordRow(parsed: ParsedInputRow, createdAt: number): WordRow {
     synonyms: parsed.synonyms ? JSON.stringify(parsed.synonyms) : null,
     antonyms: parsed.antonyms ? JSON.stringify(parsed.antonyms) : null,
     usage_notes: parsed.usage_notes,
+    // C7 provenance: imported content is original-authored by default (the C4
+    // enrich prompt forces original phrasing). `validate --strict` requires this.
+    definition_license: DEFAULT_DEFINITION_LICENSE,
     created_at: createdAt,
     deleted_at: null,
   };

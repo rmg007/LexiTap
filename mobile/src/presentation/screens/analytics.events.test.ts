@@ -57,7 +57,7 @@ describe('Analytics Events Schema & Firing (A1-A5)', () => {
       });
 
       const call = (mockAnalytics.track as jest.Mock).mock.calls[0];
-      expect(call[1].tier_id).toBe('ielts_reading');
+      expect(call?.[1]?.tier_id).toBe('ielts_reading');
     });
   });
 
@@ -96,8 +96,8 @@ describe('Analytics Events Schema & Firing (A1-A5)', () => {
       });
 
       const call = (mockAnalytics.track as jest.Mock).mock.calls[0];
-      expect(typeof call[1].is_correct).toBe('boolean');
-      expect(call[1].is_correct).toBe(false);
+      expect(typeof call?.[1]?.is_correct).toBe('boolean');
+      expect(call?.[1]?.is_correct).toBe(false);
     });
   });
 
@@ -127,8 +127,8 @@ describe('Analytics Events Schema & Firing (A1-A5)', () => {
       });
 
       const call = (mockAnalytics.track as jest.Mock).mock.calls[0];
-      expect(call[1].duration_sec).toBeGreaterThan(0);
-      expect(typeof call[1].duration_sec).toBe('number');
+      expect(call?.[1]?.duration_sec).toBeGreaterThan(0);
+      expect(typeof call?.[1]?.duration_sec).toBe('number');
     });
 
     it('total_correct + total_attempts track session performance', async () => {
@@ -342,10 +342,11 @@ describe('Analytics Events Schema & Firing (A1-A5)', () => {
   describe('Event firing order & timing', () => {
     it('quiz session fires in order: lesson_started → quiz_submitted* → lesson_completed', async () => {
       const events: string[] = [];
-      mockAnalytics.track = jest.fn((eventName) => {
+      const trackMock = jest.fn((eventName: string) => {
         events.push(eventName);
         return Promise.resolve(undefined);
       });
+      mockAnalytics.track = trackMock as jest.Mocked<AnalyticsPort>['track'];
 
       // Simulate a quiz session
       await mockAnalytics.track('lesson_started', { tier_id: 'foundation', mode: 'review' });
@@ -364,10 +365,11 @@ describe('Analytics Events Schema & Firing (A1-A5)', () => {
 
     it('paywall flows fire in order: paywall_viewed → purchase_initiated → (RevenueCat) → purchase_completed', async () => {
       const events: string[] = [];
-      mockAnalytics.track = jest.fn((eventName) => {
+      const trackMock = jest.fn((eventName: string) => {
         events.push(eventName);
         return Promise.resolve(undefined);
       });
+      mockAnalytics.track = trackMock as jest.Mocked<AnalyticsPort>['track'];
 
       await mockAnalytics.track('paywall_viewed', { source: 'quiz_complete' });
       await mockAnalytics.track('purchase_initiated', { tier_id: 'toefl', amount: 9.99 });
@@ -388,9 +390,10 @@ describe('Analytics Events Schema & Firing (A1-A5)', () => {
       await mockAnalytics.track('lesson_started', payload);
 
       const call = (mockAnalytics.track as jest.Mock).mock.calls[0];
-      expect(call[1].email).toBeUndefined();
-      expect(call[1].user_id).toBeUndefined();
-      expect(call[1].token).toBeUndefined();
+      expect(call?.[1]).toBeDefined();
+      expect(Object.keys(call?.[1] ?? {})).not.toContain('email');
+      expect(Object.keys(call?.[1] ?? {})).not.toContain('user_id');
+      expect(Object.keys(call?.[1] ?? {})).not.toContain('token');
     });
 
     it('quiz_submitted contains no user identity', async () => {
@@ -403,8 +406,8 @@ describe('Analytics Events Schema & Firing (A1-A5)', () => {
       await mockAnalytics.track('quiz_submitted', payload);
 
       const call = (mockAnalytics.track as jest.Mock).mock.calls[0];
-      expect(call[1].user_id).toBeUndefined();
-      expect(call[1].email).toBeUndefined();
+      expect(Object.keys(call?.[1] ?? {})).not.toContain('user_id');
+      expect(Object.keys(call?.[1] ?? {})).not.toContain('email');
     });
 
     it('lesson_completed contains no PII', async () => {
@@ -419,9 +422,9 @@ describe('Analytics Events Schema & Firing (A1-A5)', () => {
       await mockAnalytics.track('lesson_completed', payload);
 
       const call = (mockAnalytics.track as jest.Mock).mock.calls[0];
-      expect(call[1].email).toBeUndefined();
-      expect(call[1].user_id).toBeUndefined();
-      expect(call[1].password).toBeUndefined();
+      expect(Object.keys(call?.[1] ?? {})).not.toContain('email');
+      expect(Object.keys(call?.[1] ?? {})).not.toContain('user_id');
+      expect(Object.keys(call?.[1] ?? {})).not.toContain('password');
     });
   });
 
@@ -439,8 +442,8 @@ describe('Analytics Events Schema & Firing (A1-A5)', () => {
       // The payload as received by analytics should NOT have session_id
       // (the service adds it before sending to PostHog)
       const call = (mockAnalytics.track as jest.Mock).mock.calls[0];
-      expect(call[1]).toEqual(payload);
-      expect(call[1].session_id).toBeUndefined(); // Not in the input payload
+      expect(call?.[1]).toEqual(payload);
+      expect(Object.keys(call?.[1] ?? {})).not.toContain('session_id');
     });
   });
 

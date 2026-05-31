@@ -59,6 +59,25 @@ export function hasInTokenUnderscore(sentence: string): boolean {
   return /\S_|_\S/.test(sentence);
 }
 
+/**
+ * Allowed `words.definition_license` provenance tags (C7). All assert ORIGINAL
+ * authorship — a license column is documentation of provenance, not legal
+ * protection (RELEASE_PLAN C7). `validate --strict` requires one of these so a
+ * build can't ship content of undocumented/copyrighted origin.
+ *   - original:    hand-authored original text
+ *   - ai-original: AI-generated under an original-phrasing prompt (the C4 path)
+ *   - cc0 / cc-by-sa: explicitly open-licensed source (attribution handled separately)
+ */
+export const DEFINITION_LICENSES: ReadonlySet<string> = new Set([
+  'original',
+  'ai-original',
+  'cc0',
+  'cc-by-sa',
+]);
+
+/** Default provenance tag stamped at import time (see import.ts). */
+export const DEFAULT_DEFINITION_LICENSE = 'original';
+
 export function isJsonStringArray(value: string | null): boolean {
   if (value === null) return true; // absent is allowed; enrich fills it later
   let parsed: unknown;

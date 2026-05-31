@@ -47,6 +47,13 @@ export interface WordRow {
   synonyms: string | null;
   antonyms: string | null;
   usage_notes: string | null;
+  /**
+   * Provenance/license tag for the definition+example (C7). Documents that the
+   * text is ORIGINAL (not copied from a copyrighted dictionary) — see
+   * DEFINITION_LICENSES. NULL until tagged; `validate --strict` requires a valid
+   * value so a build can't ship undocumented-provenance content.
+   */
+  definition_license: string | null;
   created_at: number;
   deleted_at: number | null;
 }

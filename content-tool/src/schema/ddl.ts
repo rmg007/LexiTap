@@ -44,6 +44,7 @@ CREATE TABLE words (
   synonyms         TEXT,
   antonyms         TEXT,
   usage_notes      TEXT,
+  definition_license TEXT,
   created_at       INTEGER NOT NULL,
   deleted_at       INTEGER
 );
