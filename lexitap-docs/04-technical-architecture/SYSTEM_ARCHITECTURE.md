@@ -163,8 +163,8 @@ Establishing this clear grid ensures that we never mistake local offline caches 
           UPDATE user_progress (mastery, next_review_date)
           INSERT event_log (synchronous, same transaction)
                                          │
-   On app background ── backup ───────────▼── Supabase Storage user_db_backups/{uid}/user.db.enc
-   On new device     ── restore ────────────── (encrypted blob; device is always authority)
+   On app background ── backup ───────────▼── Supabase Storage user_db_backups/{uid}/user.db
+   On new device     ── restore ────────────── (RLS-scoped + SSE-at-rest blob; device is always authority)
 ```
 
 The quiz/review path is 100% local. Cloud backup runs opportunistically on app background (upload encrypted `user.db` blob) and on new-device install (download + decrypt to seed local DB). A user can be offline for weeks; all progress accumulates locally. Full backup semantics are in [API_CONTRACT.md](./API_CONTRACT.md) and [DATABASE_SCHEMA.md](./DATABASE_SCHEMA.md).

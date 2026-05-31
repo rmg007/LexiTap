@@ -6,6 +6,8 @@ status: active
 
 # LexiTap Roadmap
 
+> **⚠️ Ordering superseded (2026-05-30):** A code+docs audit found this file's phase *ordering* and status claims are stale — auth is a Phase 3 dependency (not Phase 5), `words.db` content delivery is currently broken, content is ~7% sourced (216 words, not 3,000), per-table sync was deleted, and Phase 2 requires instrumentation coding. The authoritative, task-level execution plan is **[plans/RELEASE_PLAN.md](plans/RELEASE_PLAN.md)**. This file remains the high-level phase mirror; trust RELEASE_PLAN.md where they conflict.
+
 **21 weeks from validation to 1,000 active users (including B2B cram-school seats).**
 Solo founder. $194 Year 1 budget. Consumer IAP (RevenueCat) as primary revenue. Teacher referrals and B2B licensing deferred to Phase 3+.
 
@@ -17,11 +19,11 @@ This root file is the at-a-glance mirror. The canonical product roadmap is [lexi
 
 | Item | Value |
 |------|-------|
-| Phase | **1 — Build** (active) |
-| Code written | Track A (content-tool CLI) complete. Track B ~85% through Phase 1 — core quiz loop, SRS, streak, widgets, sync service, and DB layer done. Auth and lifecycle wiring deferred to end of Phase 1. |
+| Phase | **1 — Build** (active; ~30% to launch, not 85% — see [plans/RELEASE_PLAN.md](plans/RELEASE_PLAN.md)) |
+| Code written | Domain logic done + tested (SRS, scheduling, mastery, quiz session, DB, 2 widgets). **Fixed 2026-05-30:** words.db delivery (was loading empty on device), `tiers.ts` monetization model, broken Jest harness. Per-table sync was deleted. Auth is a **Phase 3** dependency (not 5). Content is ~7% sourced (216 words). |
 | Stack | React Native (Expo) + TypeScript + SQLite + Supabase |
 | Target | Global ESL learners (cram schools & test prep individuals) |
-| Last updated | 2026-05-27 |
+| Last updated | 2026-05-30 |
 
 ---
 
@@ -72,7 +74,7 @@ These must be resolved before Phase 1 is treated as validated for continued buil
 ### Track B — Mobile MVP (Weeks 2-6)
 
 - [x] Expo + TypeScript project setup
-- [x] Load bundled `words.db` (ATTACH DATABASE setup in infrastructure/db/database.ts)
+- [x] Load bundled `words.db` — asset bundling + version-gated copy before ATTACH (`infrastructure/db/contentDb.ts`); **fixed 2026-05-30, still to be proven on a physical device**
 - [ ] Cloud sync — encrypted `user.db` blob backup via Supabase Storage (Phase 3+; per-table sync removed)
 - [x] Screens: Home, Quiz, Progress, Settings
 - [x] Assessment widgets: MultipleChoice, DragDrop
@@ -101,11 +103,13 @@ These must be resolved before Phase 1 is treated as validated for continued buil
 
 - [ ] Source TOEFL audio (ElevenLabs, ~$50)
 - [ ] Content tool: enrich TOEFL tier with audio
-- [ ] Paywall screen (unified premium subscription: $4.99/mo, $24.99/yr)
+- [ ] Leave Expo Go → EAS dev client (gates all native modules below)
+- [ ] Paywall screen (unified premium subscription: $4.99/mo, $24.99/yr; intro $19.99/yr annual, no free trial)
 - [ ] Apple + Google IAP integration (RevenueCat)
-- [ ] B2B cram-school seat activation validation (Supabase)
-- [ ] Early adopter push ($19.99/yr intro premium pass)
-- [ ] **Gate: 10 paying individual subscribers + 2 paid cram-school contracts**
+- [ ] **Auth (magic-link + Google + Sign in with Apple)** — moved here from Phase 5; backup + identity depend on it
+- [ ] Encrypted `user.db` blob backup wired to authenticated user id
+- [ ] ~~B2B cram-school seat activation~~ **deferred (code was removed; ship pure-B2C, add as fast-follow)**
+- [ ] **Gate: 10 paying individual subscribers**
 
 ---
 
@@ -128,10 +132,9 @@ Mobile additions:
 
 ## Phase 5 — Launch Prep (Weeks 17-18)
 
-- [ ] Account creation — email/password auth screen (Supabase)
-- [ ] Google Sign-In (`expo-google-sign-in` + Supabase OAuth)
-- [ ] Sign in with Apple (`expo-apple-authentication` + Supabase Apple OAuth)
-- [ ] Wire encrypted blob backup to authenticated user ID (Phase 3+)
+> Auth (magic-link + Google + SIWA) and encrypted backup **moved to Phase 3** — they are dependencies of monetization/identity, and Apple 4.8 forces SIWA once Google Sign-In ships. Launch prep below assumes auth already exists.
+
+- [ ] Account deletion + data export (Apple 5.1.1(v), required once accounts exist) + 16+ age gate
 - [ ] App icon (1024×1024)
 - [ ] App Store screenshots showing no-typing recognition practice
 - [ ] App Store description emphasizing subscription value & schools

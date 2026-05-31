@@ -1,0 +1,423 @@
+---
+title: LexiTap Master Release Plan
+status: active
+updated: 2026-05-30
+supersedes-ordering-in: ROADMAP.md, lexitap-docs/02-product-definition/ROADMAP.md
+---
+
+# LexiTap — Master Release Plan (current state → live on both stores)
+
+A concrete, dependency-aware execution plan from today's verified state to a public App Store + Google Play launch. Built from a full code + docs audit (2026-05-30) across six domains. **This plan overrides the phase *ordering* in the two ROADMAP files where they conflict** (auth timing, content scope, Phase 2 "no coding"); the strategy/spec docs in `lexitap-docs/` remain canonical for *content*.
+
+> Effort key: **S** = hours · **M** = 1–3 days · **L** = a week or more. Task IDs (H-1, C0, R4, AU2…) are stable references used in the critical path and risk register.
+
+---
+
+## 0. Status — fixes applied 2026-05-30 (this session)
+
+The audit's code-level bugs were verified against current `master` and **fixed**. What changed:
+
+| # | Fix | State | Evidence |
+|---|---|---|---|
+| **C0** | words.db delivery: bundle `mobile/assets/vocab/words.db`, register `.db` in Metro, embed via the `expo-asset` plugin, copy into expo-sqlite's dir (version-gated) **before** ATTACH | **Done in code** — `npm run check` green; unit-tested version gate. ⚠️ **Still must be proven on a physical iOS + low-end Android build** (the one thing code can't verify). | `infrastructure/db/contentDb.ts`, `contentDbInstall.ts`(+test), `database.ts`, `metro.config.js`, `app.json` |
+| **A1** | `tiers.ts` rewritten to the locked model: 3-SKU catalog (`com.lexitap.premium.monthly` / `.annual` / `com.lexitap.common3k`), premium tiers unlocked by the `premium` **entitlement** (not individually sold), Common 3000 the lone standalone SKU | **Done** | `config/tiers.ts` |
+| **C2** | Empty/unpurchasable tiers set `isActive:false` — only free Foundation + Advanced ship in P1 | **Done** | `config/tiers.ts` |
+| **HARNESS** | **`npm run check` was red on `master`** — `nativewind/babel` (a NativeWind v4 *preset*) was under Babel `plugins`, breaking every Jest suite. Moved to `presets`, skipped in test env (it loads `react-native-worklets/plugin`, a reanimated-v4 artifact absent on reanimated 3). | **Done** — 132 tests / 15 suites green | `babel.config.js`, `@babel/core` pinned 7.25.2 |
+| **D7** | **Resolved: B2B seat-redemption code is GONE** (stripped in the 2026-05-28 cleanup; zero refs in `mobile/`). | **Decision: drop B2B from the initial launch — ship pure-B2C**, add institutional seat tokens as a fast-follow. The 3.1.3(c) App-Review story is not attempted at v1. | `grep` of `mobile/` |
+
+**Not fixed (out of a code session's reach — these are the plan, not bugs):** content enrichment to 3k words, Apple/Google enrollment, EAS dev client, RevenueCat/auth/backup wiring, store submission. See the phase plan below.
+
+## Phase plan at a glance (now → live on both stores)
+
+One scannable list. Each phase has an ordered task set and a single measurable exit gate. IDs map to the detailed domain plans in §A–F. **✅ = done this session.**
+
+**P1 — Make the app real** *(exit: cold-launches on real iOS + Android, loads real Foundation words, completes onboarding→quiz→progress, emits retention events)*
+- ✅ C0 words.db delivery (code) · ✅ A1 tiers model · ✅ C2 tier activation · ✅ test harness green
+- ☐ **Prove C0 on a physical device** (the gate for trusting everything else)
+- ☐ Foundation content to 3,000 words: C3 source → C4 OpenAI enrich adapter → C5 sampled QA → C6 synonyms → C7 validate → C8 release pipeline *(the long pole — runs continuously)*
+- ☐ Real onboarding + Home: H-1 Home progress → O-1 persist `onboarding_state` → O-2 goal → O-3 proficiency(confirm/cut) → O-4 diagnostic (DIAG-B) → O-5 knowledge map; P-1 empty states; P-2 a11y
+- ☐ Instrumentation: A1–A5 PostHog + `event_log` flush, B1–B2 Sentry *(without this P2's gate is unmeasurable)*
+- ☐ Build infra: eas init, `app.json→app.config.ts`, eas.json profiles, CI two-job, signing (build-infra #1–14) · **start Apple+Google enrollment day 1**
+
+**P2 — Beta + retention** *(exit: D7 ≥ 30% on `anon_id` cohorts; 20–30% → fix loop; <20% → pivot/kill)*
+- ☐ A7 retention dashboard (the keystone) · TestFlight external + Play Closed · recruit 60–70 (net ≥50 active) · D1 manual QA matrix + D2 Maestro smoke · run ≥1 week, read A7
+- ⚠️ Struck from the old roadmap: "device-switch/sync test" (sync doesn't exist) and "no coding" (instrumentation is coding)
+
+**P3 — Money + identity** *(exit: 10 paying users; rethink if <5)*
+- ☐ A0 leave Expo Go (EAS dev client) — **gates all of P3** · R1–R7 RevenueCat B2C · AU1–AU3 auth (magic-link + Google + SIWA) · BK1–BK2 encrypted backup · C9 TOEFL tier + ElevenLabs audio
+- ✂️ B2B seat token (B2B1) **deferred** per D7 — pure-B2C this phase
+
+**P4 — Breadth** *(exit: $1,000/mo recurring)*
+- ☐ C11 IELTS / Business / Common3K tiers · W-1 Classification widget · UX polish · (W-2 ImageMatch + C10 images only if curation pays off — likely deferred)
+
+**P5 — Launch** *(exit: live on both stores)*
+- ☐ ASSET-1/2 store assets · LEGAL-1…5 (age gate, account deletion 5.1.1(v), privacy labels, DPAs) · WEB-1 static site (B2B = contact form, no checkout) · REVIEW-1 App-Review battle plan · SUBMIT-1/2/3 — **iOS submission gated on SIWA + account deletion**
+
+**P6 — Growth** *(exit: 1,000 active users)*
+- ☐ Reddit/ASO · store-approved trial referrals · monthly content drops via the C8 pipeline (as store builds — they add IAP, not OTA-safe) · institutional seat tokens fast-follow
+
+**The five things that move the date** (unchanged): prove C0 on device → Foundation content (C3–C8) → leave Expo Go (A0) → Apple/Google enrollment + review latency → auth (AU1–AU3, the iOS-submission gate).
+
+---
+
+## 1. Reality check — the roadmap is ahead of the code
+
+The roadmaps say "Phase 1 ~85% complete, app runs, sync done, content sourced." **The code says otherwise.** The honest picture:
+
+| Roadmap claim | Verified reality |
+|---|---|
+| "Phase 1 ~85% — working app" | ✅ **Fixed in code 2026-05-30.** Was: `database.ts` did `ATTACH DATABASE 'words.db'` on a *bare filename*; nothing copied the bundled DB; `assets/vocab/` was empty → ATTACH silently created an empty DB and every content query returned 0 rows. Now: DB bundled + embedded, version-gated copy before ATTACH, unit-tested. **Remaining: prove on a physical device** — Metro/simulator is not sufficient evidence. |
+| "Foundation (3,000) + TOEFL (3,000) word lists sourced" | `words.db` contains **216 words total** (foundation 200, advanced 10, toefl 6). The input CSVs back this. **~93% of Foundation content does not exist**, and no real enrichment pipeline exists (all providers are stubs). |
+| "sync service done… free cloud sync" | Per-table sync + `SupabaseSyncService` + entitlement use-cases were **deleted 2026-05-28**. Encrypted blob backup is **not written**. The root ROADMAP line is stale. |
+| "auth → Phase 5" | The canonical docs already contradict this: SIWA + Google + magic-link are **Phase 3**. Encrypted backup and B2B seat activation both need `auth.uid()`, so auth *must* precede them. Following ROADMAP literally blocks backup + B2B on auth that "won't exist for two phases." |
+| onboarding / Home are fine for beta | Onboarding steps 2/3/5/6 are placeholder buttons; HomeScreen daily progress is **hardcoded to `0`**. A Phase 2 retention test on this build is meaningless. The diagnostic is a trivial stride sampler, **off-spec** vs the adaptive band-walk the Knowledge Map needs. |
+| IAP deferred, harmless stub | ✅ **Fixed 2026-05-30.** Was: `tiers.ts` encoded the dead per-tier `$9.99` one-time SKU model. Now: the locked 3-SKU catalog (`premium.monthly`/`.annual` + `common3k`), premium tiers unlocked by the `premium` entitlement, Common 3000 the lone standalone unlock. Empty paid tiers set `isActive:false`. |
+
+**Net:** the *domain logic* (SRS, scheduling, mastery, quiz session, DB schema, 2 widgets) is genuinely done and tested — that's real and valuable. But "app + content + release infra" is closer to **~30% to launch** than 85%. The single biggest correction: **content enrichment is the long pole, and the content delivery path is currently broken.**
+
+---
+
+## 2. Decisions required *now* (these block coding)
+
+These are not open-ended; each has a recommendation. They are doc contradictions or product calls that must be settled before the dependent work starts, or you build on sand.
+
+| # | Decision | Recommendation | Blocks |
+|---|---|---|---|
+| D1 | **Diagnostic: adaptive band-walk (spec) vs stride sampler (built)?** | **Ship the downscoped stride sampler for beta** (DIAG-B): seed it from the self-segment band, compute a crude known-count for the Knowledge Map. Full adaptive (DIAG-A) is hard-blocked on a pseudo-word library that doesn't exist. | O-4, O-5, KM screen |
+| D2 | **Trial vs intro price** — Paywall.md said "14-day trial"; revenue doc says no trial, intro $19.99/yr. | ✅ **RESOLVED 2026-05-30: intro price, no free trial** (intro offer on the annual SKU). Paywall.md fixed to match. | R1, REVCAT-1 |
+| D3 | **Auth: magic-link vs email/password?** — SECURITY_MODEL said password (Argon2); everything else said magic-link. | ✅ **RESOLVED 2026-05-30: magic-link** (`signInWithOtp`), never store passwords. SECURITY_MODEL fixed. | AU1, AU2 |
+| D4 | **Backup encryption key model** — API_CONTRACT said "client AES + Vault key"; SECURITY_MODEL said "no app-level encryption." | ✅ **RESOLVED 2026-05-30: Storage server-side-encryption-at-rest + RLS path-scoping; no client AES.** API_CONTRACT / SECURITY_MODEL / SYSTEM_ARCHITECTURE aligned (path is `{uid}/user.db`). | BK1, BK2 |
+| D5 | **Age gate / COPPA stance** | **16+ global, neutral DOB gate, no parental-consent path, delete-on-discovery.** Adult audience avoids "Made for Kids"; a gate neutralizes the minor-signup trap cheaply. Do *not* build a child-consent flow. | LEGAL-1, LEGAL-4 |
+| D6 | **B2B at launch: self-serve web portal vs manual invoice?** | **Manual invoice.** A live B2C checkout on lexitap.app is an App Review risk (3.1.1) and weeks of PCI/tax work. Static site + "contact sales, min 10 seats" + manual Supabase provisioning. | WEB-1, REVIEW-1 |
+| D7 | **Was B2B seat-redemption code deleted 2026-05-28, and is it rebuilt?** | **✅ RESOLVED 2026-05-30: it's gone (zero refs in `mobile/`). Decision taken: drop B2B from the initial launch — ship pure-B2C**, add institutional seat tokens as a fast-follow. B2B1/REVIEW-1's 3.1.3(c) story is not attempted at v1. | ~~B2B1, REVIEW-1, SUBMIT-2~~ (deferred) |
+| D8 | **"Common 3000" ($1.99) vs free Foundation 3000** — heavy overlap. | **Clarify what distinguishes them before sourcing**, or cut Common 3000 as redundant content + SKU work. | C11, A1 |
+
+---
+
+## 3. Corrected phase structure
+
+Same six-phase skeleton, but with the ordering bugs fixed. **Bold = change from the published roadmap.**
+
+| Phase | Theme | Key contents | Gate (measurable) |
+|---|---|---|---|
+| **P1** | Make the app real | **Fix words.db delivery (C0)** · full Foundation content (C3–C8) · finish onboarding + Home (O-1…O-5, H-1) · **analytics + Sentry wired (A1–A5, B1–B2)** · EAS/signing/CI (build-infra 1–14) | App cold-launches on real iOS + Android, loads real Foundation words, completes onboarding→quiz→progress, **emits retention events** |
+| **P2** | Beta + retention | Recruit 60–70 (net ≥50 active) · TestFlight external + Play Closed · **retention dashboard (A7)** · manual QA matrix + Maestro smoke | **D7 ≥ 30%** (anon_id cohorts). 20–30% → fix loop; <20% → pivot/kill. **(Strike the "device-switch/sync test" — sync doesn't exist yet.)** |
+| **P3** | Money + identity | **EAS dev client (A0)** · RevenueCat B2C (R1–R7) · **auth: magic-link + Google + SIWA (AU1–AU3)** · encrypted backup (BK1–BK2) · B2B seat token (B2B1) · TOEFL tier + ElevenLabs audio (C9) | 10 paying users + 2 paid schools (rethink if <5) |
+| **P4** | Breadth | IELTS / Business / Common3K tiers (C11) · Classification widget on `theme` (W-1) · images + ImageMatch **only if curation pays off** (C10, W-2) · UX polish | $1,000/mo recurring |
+| **P5** | Launch | Store assets (ASSET-1/2) · legal + account deletion + age gate (LEGAL-1…5) · privacy labels · App Review battle plan (REVIEW-1) · website (WEB-1) · submit (SUBMIT-1/2/3) | Live on both stores |
+| **P6** | Growth | Reddit/ASO · teacher referral (store-approved trial only) · monthly content drops (reuse C8 pipeline) | 1,000 active users |
+
+**Three structural corrections, stated plainly:**
+
+1. **Auth moves from P5 → P3.** It is a hard dependency of encrypted backup and B2B seat activation, and Apple Guideline 4.8 forces SIWA the moment Google Sign-In ships. RevenueCat B2C can ship *before* auth (anonymous app-user-id; call `Purchases.logIn(supabaseUserId)` later to alias). But auth, backup, and B2B all live together in P3.
+2. **Analytics + crash monitoring move into the tail of P1**, not P2. The P2 retention gate (D7 ≥ 30%) is **unmeasurable** without PostHog retention + an offline `event_log` flush + Sentry. The roadmap's "Phase 2 = no coding" is false. A beta build with no instrumentation forfeits the entire phase.
+3. **Content (Track A) is the launch long pole, runs continuously from P1**, and gates everything visible. It is not a P3/P4 afterthought.
+
+---
+
+## 4. Critical path & long poles
+
+The chain that determines the ship date (everything else parallelizes around it):
+
+```
+C0 (fix words.db delivery, prove on device)         ← URGENT, gates the whole app
+   └─> C3→C4→C5→C6→C7→C8 (Foundation content: source→AI-enrich→sampled QA→export)   ← LONG POLE
+H-1, O-1→O-2→O-3→O-4(D1)→O-5 (Home + onboarding real)                ← gates P2 beta credibility
+   └─> A1→A2→A3→A4→A5 + B1→B2 (instrumentation)      ← gates P2 measurability
+        └─> [P2 beta: ≥1 week data] → D7 gate
+A0 (leave Expo Go / EAS dev client)                  ← gates ALL of P3 monetization+auth
+   └─> R1→R2→R3→R4→R5→R6 (RevenueCat)  +  AU1→AU2→AU3 (auth)  →  BK1→BK2 (backup), B2B1 (seat)
+ACCT-1 (Apple/Google enrollment) ──────────────────► (external latency, start day 1)
+   └─> BUILD-1→BUILD-2 → SUBMIT-1 → [SIWA done] → SUBMIT-2 (iOS review, 1–2wk buffer)
+```
+
+**The five things that actually move the date:**
+
+1. **C0 — words.db delivery.** A live bug, not a future task. Until proven on a *physical device build* (not Metro/simulator), every other claim is unverified. Do first.
+2. **Foundation content enrichment (C3–C8).** Sourcing a 3k frequency list is hours; producing 3,000 ESL-register definitions + single-blank example sentences is the bottleneck. Hand-authoring ≈ weeks; even *reviewing* AI drafts at 20s/word ≈ 17 hours. **Plan = AI-draft (OpenAI adapter, ~$30–90) + sampled QA (10–15% + 100% of validator-flagged) + in-app error reporting as the long-tail fix.** 100% manual review of 3k–6k words is not realistic solo — don't pretend it is.
+3. **Leaving Expo Go (A0).** RevenueCat, Google Sign-In, Apple auth are all native modules — none run in Expo Go. All of P3 is blocked on the EAS dev client + signing existing.
+4. **Apple/Google enrollment + Apple review (ACCT-1, SUBMIT-2).** External latency: Apple ~24–48h enroll; Google's new-account closed-test rule can add **14 days** before production; iOS first review 1–3 days + budget a **1–2 week rejection/resubmit buffer**. Start enrollment on day one.
+5. **Auth (AU1–AU3) as the iOS submission gate.** Account deletion (Apple-mandated once accounts exist) and SIWA both block iOS submission. If auth slips, the store launch slips 1:1. Fallback: descope to pure-B2C launch, add institutional tokens fast-follow.
+
+---
+
+## 5. Risk register
+
+| Risk | Severity | Detail | Mitigation |
+|---|---|---|---|
+| words.db loads empty on device | **Critical** | ATTACH on bare filename; no asset-copy; 216 words anyway | C0 first; verify on physical iOS + low-end Android, not simulator |
+| Content review doesn't scale solo | **High** | ~17h to review 3k words; 6k doubles it | Sampled QA gate + in-app error reporter; AI-draft not hand-author |
+| B2B seat-redemption code was deleted, not rebuilt | **High** | Entire 3.1.3(c) App Review story depends on it (D7) | Verify now; rebuild (B2B1) or drop B2B from launch |
+| Everything in P3 blocked on Expo Go exit | **High** | 3 native modules; New-Arch (`newArchEnabled:true`) compat unverified | A0 early; confirm RevenueCat/Google/Apple libs on New Arch at pinned versions |
+| iOS review rejection | **High** | 3.1.3(c) B2B, missing SIWA, paywall terms, privacy-label mismatch, missing account deletion, website B2C undercut | Pre-empt all six (REVIEW-1, AU3, REVCAT-1, kill sync claims, LEGAL-4, WEB-1); 1–2wk buffer |
+| Stale `tiers.ts` → wrong store SKUs | **Med** | Encodes dead per-tier $9.99 model | A1 before any store/IAP config |
+| EAS build minutes blow the $194 budget | **Med** | Free tier ~30 builds/mo; signing iterations burn them | `eas build --local` for iteration; cloud builds only for uploads |
+| Live doc contradictions implemented as-is | **Med** | Trial-vs-intro, magic-link-vs-password, backup key model | Resolve D2/D3/D4 + fix docs *before* coding |
+| Apple Paid Apps agreement not signed | **Med** | Products silently return empty until tax/banking done | Start R1 banking/tax forms early (days of latency) |
+| Privacy label advertises sync that doesn't ship | **Med** | "Cloud sync" screenshot/claim is now false | Replace Screen 3 with offline messaging; Data Safety = no sync |
+| CI assumes single root package.json | **Low** | Two-project repo; doc's root `npm ci` errors | Two jobs, `working-directory`, path filters; trigger on `master` not `main` |
+| OTA bricks installs via runtimeVersion mismatch | **Low** | Bundled DB is native asset, not OTA-safe | `runtimeVersion: appVersion`; DB/native changes → store build only |
+
+---
+
+## 6. Immediate next actions (first ~2 weeks, in order)
+
+1. ✅ **C0 (code done)** — `words.db` delivery fixed + unit-tested. **Remaining: prove on a physical iOS + low-end Android build.** Nothing downstream is trustworthy until this passes on real hardware.
+2. **ACCT-1 / build-infra #8–9** — start Apple ($99) + Google ($25) enrollment *today* (external latency). **Top remaining priority.**
+3. ✅ **D2/D3/D4/D7 resolved**; **D1/D5/D6/D8 still open** (diagnostic scope, age gate, B2B model, Common3K-vs-Foundation) — settle before dependent coding.
+4. ✅ **A1 (done)** — `tiers.ts` is now the real Premium-Pass entitlement model; empty tiers `isActive:false`.
+5. **H-1 + O-1** — wire real Home progress + `onboarding_state` persistence (unblock the onboarding chain).
+6. **eas init + eas.json + migrate app.json → app.config.ts** (build-infra #1, #4; needed for env injection).
+7. **C3 + build the OpenAI enrichment adapter (C4)** — kick off the content long pole early; it runs for weeks behind everything else.
+8. **Correct the two ROADMAP files** — they are actively misleading (auth timing, sync, content scope, "Phase 2 no coding"). Either point them at this plan or fix the specific lines flagged here.
+
+---
+
+# Domain execution plans
+
+The six detailed, task-level plans below were produced in parallel and lightly edited for consistency. Each is self-contained with done-criteria, dependencies, effort, and file paths.
+
+---
+
+## A. Mobile App Feature Code — Current State to Launch
+
+Scope: onboarding screens, Home daily-progress, Settings, ImageMatch/Classification widgets, local push, presentation polish.
+
+### Findings (read first)
+
+1. **The implemented diagnostic is off-spec.** `mobile/src/domain/onboarding/diagnostic.ts` + `RunDiagnosticUseCase.ts` are a trivial 5-word even-stride sampler. `ONBOARDING_FLOW_SPEC.md` mandates an adaptive band-walk (staircase over frequency rank, confirm-on-Yes, pseudo-words for overclaim, SE stopping rule, frontier-rank → known-count). The current diagnostic produces **no frontier rank**, so the Knowledge Map Reveal has nothing real to show. **Decision D1**: downscope to the stride sampler for beta.
+2. **`onboarding_state` is half-wired.** Column exists (`001_initial_schema.ts:85`), `selectStats` reads it, but `upsertStats` doesn't write it and `UserStats` doesn't carry it. Goal + proficiency have **nowhere to persist**.
+3. **Onboarding completion lives in AsyncStorage, not the DB.** The gate flag in AsyncStorage is fine, but goal/proficiency/frontier must go in `user_stats.onboarding_state` to survive and drive Home.
+4. **ImageMatch is blocked by content, not code.** The widget is fully built and renders from `imageUri`, but the image provider is a Noop, no images are sourced, no asset-bundling path exists. Hard-blocked on content-tool.
+5. **Classification is close** — fully built, needs only bucket data; `Word.theme` already exists end-to-end. A Phase 4 quick win.
+6. **Home `0` + stubbed onboarding gate the P2 retention test** — they are P1 prerequisites, not the Phase 4 work the stub comments claim.
+
+### Phase 1 — make the beta credible
+
+- **H-1 · Wire HomeScreen real daily progress** — S/M. *Done:* "Ready for today" bar reflects `reviewsCompletedToday / effectiveDailyCap`; "Learn new words" shows remaining new-word budget vs `FORGIVENESS.NEW_WORDS_PER_DAY`; no hardcoded `0`. Add `getDailyProgress(tierId, nowMs, tz)` to `ReadQueries`, implement in `buildReadQueries` via `progress.countDue` + today's `quiz_attempts`. Offline failure → zero-state, never an error. *Touches:* `HomeScreen.tsx`, `ServicesContext.tsx`, `container.ts`, new `queries/dailyProgressQueries.ts`, `mockServices.ts`. *Deps:* none — **do first.**
+- **O-1 · Persist onboarding_state** — M. *Done:* typed `OnboardingState` (goal, band, optional frontier, completedAt) written to `user_stats.onboarding_state` JSON and read back; `upsertStats` writes it; `UserStats` carries it. New `SaveOnboardingProfileUseCase`. *Touches:* `domain/user/UserStats.ts`, `statsQueries.ts`, `rows.ts`, `mappers.ts`, `SQLiteUserStatsRepository.ts`, `application/onboarding/SaveOnboardingProfileUseCase.ts`, `ServicesContext.tsx`, `container.ts`. *Deps:* none. **Blocks O-2/3/4.** Parse the JSON blob defensively (corrupt → no profile, don't crash the gate).
+- **O-2 · Goal-selection screen (real)** — M. SelectionCard grid per `OnboardingSelfSegment.md`; selection sets starting band + persists before routing. 44pt targets, `accessibilityState.selected`. *Deps:* O-1.
+- **O-3 · Proficiency screen — confirm vs cut** — S/M. The spec only defines self-segment as Stage 1, so a separate proficiency screen may be **redundant**. Decide: repurpose as the self-segment screen or cut. *Deps:* O-1.
+- **O-4 · Diagnostic** — per D1: **DIAG-B (M, recommended)** = feed stride sampler the self-segment band, compute a crude known-count for the map. DIAG-A (L) = full adaptive engine, hard-blocked on a pseudo-word library + per-word frequency rank. *Deps:* O-2. **Decide before O-5.**
+- **O-5 · Knowledge-map-reveal (real)** — M. Segmented Known/Learning/New bar from the estimated known-count, endowed-progress copy, celebratory motion degrading to static under Reduce Motion, CTA → paywall. *Deps:* O-4. **Gate it on a real estimate — don't ship fake numbers.**
+- **P-1 · Presentation states** — M. Quiz/Progress/Home handle resolving services, `NoWordsAvailableError` → friendly empty state, read failures → zero-state, never assume network. *Deps:* none.
+- **P-2 · Accessibility pass** — M, per `ACCESSIBILITY_REQUIREMENTS`. ≥44pt targets, roles/labels/state on every Pressable, live regions on feedback, Reduce Motion on KM, contrast verified. *Deps:* screens exist.
+
+### Phase 2 — Settings
+
+- **S-1 · Data management + reset progress** — M. Destructive "Reset progress" behind a confirm sheet; clears `user_progress`/`quiz_attempts`/`quiz_sessions`, resets `user_stats` preserving `onboarding_state`; never touch read-only `words.db`. New `ResetProgressUseCase`. *Deps:* O-1.
+- **S-2 · Account section placeholder** — S. Inert "Sign in — coming soon" section so the screen isn't visibly incomplete in beta (auth ships P3). *Deps:* none.
+
+### Phase 4 — advanced widgets (gated on content)
+
+- **W-1 · Classification integration** — M. Buckets from `Word.theme`; question generator picks a word + 2–3 sibling themes as distractor buckets; register in the assessment selector. *Deps:* Foundation has populated `theme` (verify; if sparse, slips). Low content dependency.
+- **W-2 · ImageMatch integration** — L, **BLOCKED**. All four blockers live in content-tool (Noop image provider, no licensing, no asset-bundling, no `imagePath`→widget plumbing). **Defer past initial launch** — most expensive widget for least pedagogical lift; abstract words have no sensible image.
+
+### Push notifications
+
+- **N-1 · Local SRS reminder** — M. Install `expo-notifications`; one daily local notification at a user-set time, fired in the user's IANA timezone, suppressed if already reviewed today, respecting `notification_schedule.quiet_hours_*`. Permission + time toggle in Settings. *Deps:* H-1 (the "reviewed today?" signal). **Build minimal (single local reminder); no remote push / per-word flooding.** Safe to slip to early P2; O-* and H-1 are not.
+
+**Roadmap conflicts:** stub comments claim "Phase 4 will implement" for goal/proficiency/KM — **wrong, they gate the P2 retention test** (only the paywall is legitimately P3+). The diagnostic is "done" but off-spec. ImageMatch is mis-filed as a P4 *widget* task — the app code is done; the real work is a P4 *content* task.
+
+---
+
+## B. Content Supply Chain (content-tool/ + words.db) — the long pole
+
+### State (trust over docs)
+
+- **`words.db` exists but is near-empty: 216 words** (foundation 200, advanced 10, toefl 6). Roadmap/SEED_DATA_SPEC say "top 3,000." ~93% of Foundation does not exist.
+- **The app cannot load it on device** (see C0) — ATTACH on a bare filename, no asset copy, empty `assets/vocab/`. Silently opens an empty DB.
+- **No real enrichment.** All providers in `defaultProviders.ts` are stubs (synonyms empty, image null, audio path-only). `KNOWN_PROVIDERS` lists openai/elevenlabs/unsplash but no adapter is implemented. The 200 Foundation rows carry founder-supplied definitions/sentences in CSV.
+- **Distractors are runtime**, not a content field (`domain/quiz/distractors.ts`) — but quality is a function of pool size, so tiny tiers = garbage distractors until populated.
+- **Doc-vs-code drift:** `CONTENT_PIPELINE_ARCHITECTURE.md` / `SEED_DATA_SPEC.md` describe a `definition_status` state machine, `enrich --add-definitions`, and a `review-definitions` command — **none exist in code.** Docs describe an unbuilt review pipeline as shipped.
+- **Config drift:** `lexitap.config.json` defines 3 tiers; only Foundation should be active — gate `advanced`/`toefl` or they ship empty.
+
+### Tasks
+
+- **C0 · Bundle words.db + prove it loads on device** — M, **URGENT, gates everything.** *Done:* built DB bundled as a Metro asset, copied into expo-sqlite's dir on first launch (re-copied when `content_version` changes), and a smoke test on physical iOS + Android confirms `SELECT count(*) FROM contentdb.words` returns the real count. Add `mobile/assets/vocab/words.db`; `copyContentDbIfNeeded()` via `expo-asset` + `expo-file-system` before ATTACH; `.db` in `assetExts`. *Risk:* expo-sqlite dir differs iOS/Android; must test on real devices. **This may invalidate any "quiz loop works" claim tested only against fixtures.**
+- **C1 · content-version → rebundle contract** — S. App reads `PRAGMA user_version`, re-copies when bundled > installed; `build-manifest.json content_version` is the source of truth; CI fails if bundled version ≠ manifest. *Deps:* C0.
+- **C2 · Reconcile config tiers vs shipped tiers** — S. Ship only tiers with real content (Foundation for P1) or flag others `is_active:0`. Confirm `SQLiteContentTierRepository` respects it. *Deps:* none.
+- **C3 · Source + ingest full Foundation 3,000** — M (sourcing). Real top-3,000 frequency list (word, pos, cefr, theme), stable IDs, zero in-tier dup surface-forms. Definitions/sentences are NOT NULL at export. *Deps:* C2.
+- **C4 · Build the AI definition/sentence enrichment adapter (the bottleneck)** — L. *Done:* real OpenAI adapter behind `--provider openai` + `--add-definitions/--add-examples`, generating ESL-register definitions + single-blank example sentences per SEED_DATA_SPEC, passing `validate --strict`. *Why not hand-author:* 3,000 entries ≈ weeks. Cost: ~$0.01–0.03/word → **~$30–90 for 3,000.** *Files:* new `providers/openaiProvider.ts`, `commands/enrich.ts`, `defaultProviders.ts`. *Deps:* C3.
+- **C5 · Human review at realistic scale** — M (CLI) + L (review time). **100% manual review of 3k–6k words is not realistic solo** (~17h/3k at an optimistic 20s/word). *Done:* build the `review-definitions` CLI the docs reference; ship P1 on a **sampled QA gate** (random 10–15% + 100% of validator-flagged), log pass-rate, gate export on sample-pass threshold; wire in-app content-error reporting as the long-tail fix. Adds `definition_status` to working.db only (must not leak to shipped words.db — export projects an explicit column list). *Deps:* C4.
+- **C6 · Synonyms/antonyms for Foundation** — S (reuses C4 adapter). Valid JSON arrays per validator rule #6. *Deps:* C4.
+- **C7 · Tighten validation + provenance (backlog #41)** — M. `validate --strict` adds orphan check, dup-leak check, and a **provenance/license field** (definitions must be ORIGINAL not copied — real copyright risk; the C4 prompt must force original phrasing; a license column is documentation, not protection). Export aborts on any error. *Deps:* C4.
+- **C8 · Repeatable content-release process** — M. One command/CI job: `import → enrich → validate --strict → export → version bump → copy to mobile/assets/vocab/words.db`, fail-closed. The reusable path for P6 drops. *Deps:* C0, C1, C7.
+- **C9 · TOEFL tier + ElevenLabs audio (P3)** — L. Full TOEFL list enriched + sampled-reviewed; real ElevenLabs adapter synthesizes `audio/{word_id}.mp3`; validator asset-resolve passes; audio bundles; TOEFL becomes paid only after RevenueCat. *Flag:* 3,000 mp3s materially grow bundle size — measure; may need on-demand download (a new, undesigned mechanism). ~$50 plausible; confirm character pricing. *Deps:* C4, C8 + audio asset-bundling.
+- **C10 · Images for ImageMatch (HIDDEN LONG POLE)** — L+, curation-dominated. `image_path` 0/216, Unsplash provider is a no-op. Many Foundation words (abstract: borrow, tired, negotiate) have **no sensible single image** — ImageMatch only works for a concrete-noun subset. **Defer to P4; do not block launch.** MultipleChoice + DragDrop cover the loop.
+- **C11 · P4 tiers: IELTS, Business English, Common 3000** — L per tier (enrichment/review time; code reused). 6 tiers in config with correct `sku`/`is_active`/`is_free`. *Flag (D8):* Common 3000 ($1.99) overlaps free Foundation — clarify the distinction before sourcing or it's redundant.
+
+**Critical path to P1:** C0 → C1 → C2 → C3 → C4 → C5(sampled) → C6 → C7 → C8. (C9=P3, C10/C11=P4.)
+
+---
+
+## C. Build, Signing, Release & CI/CD
+
+**Verified state: nothing in this domain exists.** No `eas.json`, no Expo project ID, no `.github/workflows/`, no accounts, `assets/vocab/` empty. The CI doc has two structural errors.
+
+### Blocking problems to fix first
+
+1. **CI doc assumes a single root `package.json`. There isn't one.** Two-project repo (`mobile/` Expo+Jest, `content-tool/` Node+Vitest). Root `npm ci` errors immediately. CI must be **two jobs with `working-directory`** + per-dir `cache-dependency-path` + path filters.
+2. **words.db bundling is broken code, not just absent** (see C0). `database.ts:90` ATTACHes a bare filename against the writable dir where the file doesn't exist → throws on a real build. The "P1 = app runs both platforms" target is fake until this is proven on a device build.
+3. **"$194 budget" is optimistic on EAS minutes.** Free tier ~30 builds/mo; signing iterations burn them. **Use `eas build --local` for iteration; reserve cloud builds for uploads.**
+4. **OTA + bundled DB is a trap.** words.db is a native asset; DB/native/`runtimeVersion`-affecting changes **cannot ship OTA** — only pure-JS. Document before the first update or you brick clients.
+5. **`npm test --if-present` is a soft gate** — make it hard `npm run check`.
+
+### Tasks (dependency-ordered)
+
+| # | Task | Done | Deps | Effort |
+|---|------|------|------|--------|
+| 1 | Expo account + `eas init` | `extra.eas.projectId`+`owner` in config; `eas whoami` works | — | S |
+| 2 | **Fix words.db bundling (= C0)** | committed asset; `expo-asset` copy before ATTACH; cold-launch on a real device build opens DB | — | M |
+| 3 | words.db git policy | **commit the built binary** (tiny, deterministic, no CI build step); document in GIT_WORKFLOW | 2 | S |
+| 4 | `eas.json` profiles | `development`/`preview`/`production`, iOS+Android, `runtimeVersion:{policy:"appVersion"}` | 1 | M |
+| 5 | Versioning | `app` version = semver source; production `autoIncrement:true`; RT policy `appVersion` | 4 | S |
+| 6 | CI PR gate (two-job monorepo) | `ci.yml` with `mobile-check`+`content-tool-check`, `working-directory` set, per-dir cache, path filters, trigger on **`master`** | — | M |
+| 7 | expo-doctor + SDK audit | clean; **stay on SDK 52 for launch**; verify paper/reanimated/gesture-handler New-Arch compat | 1 | S |
+| 8 | **Apple Developer enroll** ($99) | active; Team ID captured | — (24–48h) | S+wait |
+| 9 | **Google Play enroll** ($25) | active; **new accounts may face a 20-tester/14-day closed-test gate — start early** | — | S+wait |
+| 10 | iOS signing (EAS-managed) | cert+profile auto; `eas build -p ios --profile preview` succeeds | 4,8 | M |
+| 11 | Android keystore + Play App Signing | EAS upload keystore; enroll Play App Signing; preview build installs | 4,9 | M |
+| 12 | Secrets | `EXPO_PUBLIC_*` for public keys; server-only via `eas secret`; `EXPO_TOKEN` in GH; `.env` git-ignored | 1 | S |
+| 13 | EAS Update/OTA channels | `expo-updates`; channels mapped to profiles; OTA-vs-store-build boundary documented | 4,5 | M |
+| 14 | First internal build → TestFlight + Play Internal | `build --profile preview -p all` → `submit`; installs + cold-launches on real devices (proves task 2 end-to-end) | 10,11,2 | M |
+| 15 | Channel→track mapping | preview→internal; preview-external→beta (P2); production→stores; submit configs carry ASC API key + Play SA JSON as EAS secrets | 14 | S |
+| 16 | CI release-build trigger (optional) | `release.yml` on `push: tags v*`, `expo-github-action`+`EXPO_TOKEN`, `working-directory: mobile` | 6,10,11 | S |
+| 17 | Hard test gate | `ci.yml` uses `npm run check`; required-status on `master` | 6 | S |
+| 18 | Submission dry-run | walk DEPLOYMENT_RELEASE_RUNBOOK with a production build to TestFlight external before real review | 14,15 | M |
+
+**Sequencing:** start **8 + 9 on day one** (external latency; Google's 14-day gate can block production). Tasks 1–7 proceed locally in parallel. Task 2/14 must be proven on a **real device build**, not Metro/simulator. Don't build on every PR. Fix the doc's hardcoded `main` → `master`.
+
+---
+
+## D. Monetization, Auth & Backup
+
+### Blunt sequencing truth
+
+The "Phase 3 IAP vs Phase 5 auth" conflict exists only in the **stale root ROADMAP** — the canonical docs already resolved it: `APP_STORE_DISTRIBUTION_STRATEGY.md:71` says **SIWA ships in Phase 3 alongside Google**; `API_CONTRACT.md:33` lists all three providers with no phasing split. Real chain:
+
+1. **RevenueCat does not need your auth** — uses its own anonymous app-user-id; restore works off the store account. **B2C subscriptions can ship before auth.**
+2. **Encrypted backup AND B2B seat activation both require `auth.uid()`** — backup path is `{user_id}/user.db`. **Neither ships without auth.**
+3. So auth lands **with/just after RevenueCat in P3**, not P5. After sign-in call `Purchases.logIn(supabaseUserId)` to alias the anonymous id.
+
+**Recommended order:** RevenueCat B2C → Auth (3 providers) → entitlement gating → backup/restore → B2B seat. **Nothing starts until A0** (native modules can't run in Expo Go).
+
+### Pre-work
+
+- **A0 · Migrate off Expo Go → EAS dev client (prebuild)** — M config / L with signing. The hard gate for the whole domain. *Done:* `npx expo prebuild` succeeds; dev build installs on physical iOS + Android; existing SQLite/quiz flow intact. *Risk:* confirm RevenueCat + `@react-native-google-signin` + Apple auth are New-Arch compatible (`newArchEnabled:true` is set).
+- **A1 · Fix `tiers.ts` (dead business model)** — S. `PREMIUM_PASS_SKU='lexitap.premium_pass'` is wrong (locked SKUs: `com.lexitap.premium.monthly` + `.annual`, two products, one entitlement). Per-tier `priceUsd:9.99`/`sku` is the killed one-time model — paid tiers are unlocked by the Premium Pass *entitlement*, not separately purchasable; only `com.lexitap.common3k` ($1.99) is standalone. *Done:* separate "content tier" from "store product"; product catalog = exactly the 3 SKUs. **Do first or you configure stores wrong.**
+
+### RevenueCat (B2C)
+
+- **R1 · Store products + agreements** — M (calendar-L). Apple **Paid Apps agreement** + banking/tax (the #1 silent blocker), Google merchant profile; 3 SKUs in both consoles; one subscription group (monthly+annual) with the **intro offer** ($19.99/yr) on annual. *Per D2: intro price, not free trial.*
+- **R2 · RevenueCat dashboard** — S. iOS+Android apps, products imported, `premium` entitlement (monthly+annual) + `common3k` entitlement, one Offering. Record public SDK keys.
+- **R3 · Install `react-native-purchases` + plugin** — M. Keys via `EXPO_PUBLIC_*`; `Purchases.configure()` once at start; `getOfferings()` returns the offering on a real device. *Deps:* A0, R2.
+- **R4 · `RevenueCatIapService` (implements existing `IapService` port)** — M. Map offerings→`getProducts`, `purchasePackage`→`purchase` (incl. `pending` Ask-to-Buy, `cancelled`), `restorePurchases`; `validateReceipt` delegated to RevenueCat `CustomerInfo` (the old `validate_receipt` Edge Function is **superseded** per API_CONTRACT — Paywall.md is stale). Container swaps Stub→RevenueCat; keep Stub for jest. **Port gap:** the interface can't *read current entitlements* — add `getActiveEntitlements()`/`getCustomerInfo()`. *Deps:* R3.
+- **R5 · Entitlement-check use-case** — M. New `CheckTierAccessUseCase.canAccessTier(tierId)` from (a) free flag, (b) `premium` entitlement, (c) `common3k`, (d) B2B seat flag. **Entitlement state memory-only, never written to `user.db`** (SECURITY_MODEL invariant) — except the B2B seat flag. Unit-tested with a fake IapService. *Deps:* R4, A1.
+- **R6 · Paywall wiring** — L. `paywall.tsx` is a placeholder; spec `Paywall.md`. Live products via the application layer (presentation must not import infrastructure); monthly $4.99 + annual $24.99, Restore, always-dismissible, no dark patterns; success/pending/cancel/offline states; standalone bottom-sheet from Progress/Settings; Common3K on Foundation-adjacent entry only. **Zero off-store steering.** *Deps:* R4, R5.
+- **R7 · Tier gating in learn/progress** — M. Locked tiers visually locked → tap opens paywall; `StartQuizUseCase`/selection refuse locked tiers; Settings "Unlock content" + "Restore purchases". *Deps:* R5, R6.
+
+### Auth (same phase as IAP)
+
+- **AU1 · Supabase Auth schema + RLS + providers** — M. `user_accounts` (id=`auth.uid()`, email, display_name, timezone) + `own_account` RLS + signup trigger; Google OAuth client IDs (iOS/Android/web) + Apple service/key in Supabase. *Per D3: magic-link, not password — SECURITY_MODEL line is stale.*
+- **AU2 · Auth adapter + session persistence** — L. New `SupabaseAuthService` wrapping `signInWithOtp` (magic-link deep-link via the `lexitap` scheme), Google native ID-token, Apple Sign-In; session persists via the AsyncStorage adapter already in `supabaseClient.ts`; unrecoverable failure → silent offline; after sign-in `Purchases.logIn(user.id)`. *Deps:* A0, AU1, R3. *Risk:* magic-link deep-link in a dev client is fiddly (expo-router + expo-linking).
+- **AU3 · Sign-in / Account screen (skippable)** — M. Apple/Google/Email-magic-link + "Skip for now"; reachable from Settings + onboarding; signed-in shows identity + sign-out; **on iOS, Apple button present whenever Google is** (4.8). *Deps:* AU2.
+
+### Encrypted backup
+
+- **BK1 · Backup upload** — L. New `BackupService` reads `user.db`, uploads to `user_db_backups/{userId}/user.db` (`upsert:true`), on background + sign-in; throws `SyncError`, never crashes. *Deps:* AU2 (**why backup can't precede auth**) + Storage bucket/RLS. *D4 RESOLVED 2026-05-30:* **rely on Storage server-side-encryption-at-rest + RLS path-scoping; no client-side AES** (docs SECURITY_MODEL/API_CONTRACT/SYSTEM_ARCHITECTURE aligned).
+- **BK2 · Restore / device-switch** — L. Fresh signed-in install with no local DB downloads + initializes from the blob; no backup → empty schema + onboarding; device authoritative (blob replaces, no merge). *Risk:* **hydration must complete before `openDatabase()` runs migrations** or you migrate an empty DB then clobber it — insert a hydration gate ahead of the current open-first flow. *Deps:* BK1, AU2.
+
+### B2B
+
+- **B2B1 · Seat-token activation** — L. Settings redemption field labeled **verbatim** per APP_STORE_DISTRIBUTION_STRATEGY:83; code validated by a Supabase Edge Function (service-role, server-authoritative — client cannot self-grant); success writes a local entitlement flag to `user.db` (the **one** allowed entitlement there) feeding `CheckTierAccessUseCase`; **zero off-store steering.** *Deps:* AU2, R5 + Supabase seat tables/function. *Risk:* highest App-Review risk (3.1.3(c)); ship review notes verbatim; **do not** put a Stripe B2B checkout in the app. **Per D7: verify this code wasn't deleted 2026-05-28 and orphaned.**
+
+### Cross-cutting
+
+- Expo Go is a hard wall (A0). `tiers.ts` encodes the dead model (A1). Three doc contradictions to resolve as doc-bugs, not features (D2/D3/D4). `IapService` port can't read entitlements (R4). Container hydration ordering (BK2). The roadmap's "auth in P5" is wrong and the docs know it.
+
+---
+
+## E. Instrumentation, Beta Distribution & Quality Gates
+
+### Conflicts in the roadmap (read first)
+
+- **"Test cloud sync via device switch" / "free cloud sync" in P2 — sync was deleted, deferred to P3+.** Cannot run in P2. **Strike it; move to a P3 acceptance test** gated on backup landing. Fix the P1 deliverable line "free cloud sync" → "free Foundation tier."
+- **"Phase 2 = no coding" is false.** The D7 gate is unmeasurable without analytics + an off-device `event_log` flush + Sentry — all coding. **Relabel P2 "instrumentation + beta" and pull analytics/Sentry into the tail of P1.**
+- **Auth is P3, so `account_created` can't fire in P2 and there's no server identity. Retention cohorts MUST be keyed on the device `anon_id`** — a reinstall = new cohort member. Document it.
+- **`ANALYTICS_PLAN.md` retention "Open Question" (in-tool vs SQL rollup) is unresolved** — the >30% gate has no owner/query until A7. Highest-risk gap.
+- **`ERROR_MONITORING_PLAN.md` lists `sync` errors as P0** — sync doesn't exist. Drop the `sync` tag now; re-add P3.
+
+Verified: `event_log` is local, append-only, INSERT-only, written synchronously in the answer transaction. Only `answer_recorded` exists. **No analytics SDK, no flush, no Sentry.** AGENTS.md is right that `event_log` is the local source-of-truth to flush, not the analytics sink.
+
+### Track A — Analytics (before beta)
+
+- **A1 · `AnalyticsPort` + emit seam** — S. Pure-TS `AnalyticsPort` (`capture`/`identifyAnon`/`optOut`/`flush`) + `NoopAnalytics`; use cases emit, domain stays pure. *Touches:* `domain/analytics/AnalyticsPort.ts`, `container.ts`, quiz use cases.
+- **A2 · `anon_id` + `session_id`** — S. Device-scoped UUIDv4 `anon_id` once on first launch (never email/Supabase id); per-session `session_id`; both in every payload. *Touches:* `infrastructure/identity/AnonId.ts`.
+- **A3 · PostHog impl** — M. `posthog-react-native`, autocapture OFF, EU host (GDPR), no PII. **Resolves the open question → PostHog** (free built-in funnels/retention; don't hand-roll SQL). *Deps:* A1, A2.
+- **A4 · Offline flush `event_log` → PostHog (idempotent)** — M. Batch unsent rows on foreground/background/session-end with retry; client-generated event id prevents double-count; preserve `occurred_at`. **Schema touch:** add nullable `synced_at` (migration 003) — additive only, no payload UPDATE. *Deps:* A3.
+- **A5 · Emit the planned events** — M. `session_started/completed`, `streak_incremented/broken`, `srs_backlog_reanchored`, `analytics_opt_out`, `app_opened` (first-open, days-since-install). Defer paywall/purchase to P3, `account_created` to P3-auth. *Deps:* A1, A3.
+- **A6 · Opt-out toggle + consent** — S. Settings "Share anonymous usage data"; off → local log still writes, no off-device send. **Flag:** opt-out vs opt-in for EU is unresolved (ANALYTICS_PLAN + GDPR doc) — decide before EU external beta; opt-out OK for internal testers. *Deps:* A4.
+- **A7 · Retention dashboard + the D7 gate** — S (config). PostHog Retention on `anon_id` (first=`app_opened`, return=`session_completed`), D1/D7/D30 cohorts; Activation funnel; crash-free from Sentry. **Gate: D7 ≥30% proceed / 20–30% fix / <20% pivot.** **Without this the P2 gate is literally unmeasurable — the keystone.** *Deps:* A3, A5 (≥1 week data).
+
+### Track B — Crash monitoring (before external beta)
+
+- **B1 · `@sentry/react-native` + Expo plugin** — M. (`sentry-expo` is deprecated for SDK 50+ — ERROR_MONITORING_PLAN predates this; correct it.) DSN via EAS secret; init in `_layout.tsx`; offline disk cache verified.
+- **B2 · `beforeSend` PII scrub + tags + breadcrumbs** — S. Strip bodies/email/name/token/promo; set `anon_id`/`session_id`/release/free-paid/locale/online; domains `db`/`srs`/`ui` (`auth`→P3, `iap`→P3, **drop `sync`**); breadcrumbs for last DB op + nav. *Deps:* B1, A2.
+- **B3 · Source maps + release health + alerts** — M. EAS uploads source maps; release-health populated; the 5 alerts configured. Crash-free feeds A7. *Deps:* B1, eas.json (build-infra #4), Sentry token in EAS secrets.
+
+### Track C — Beta distribution
+
+- **C1 · Apple + Google accounts** — S+wait. (= build-infra #8/#9.) Start day one.
+- **C2 · `eas.json` + signing + profiles** — M. (= build-infra #4/#10/#11.) **Does not exist; blocks B3 + all beta channels — the long pole of Track C.** EAS secrets hold PostHog key, Sentry DSN + token.
+- **C3 · TestFlight internal + external** — M. Internal instant; **external needs Beta App Review (~1–2 days) — schedule it.** *Deps:* C2 + an **instrumented** build (A3–A5 + B1–B2).
+- **C4 · Play Internal + Closed** — M. Data-safety form = "Tracking: No / pseudonymous analytics." *Deps:* C2, instrumented build.
+- **C5 · Recruit 50 testers + 2 schools** — M ongoing. r/TOEFL, r/IELTS, APAC ESL + 2 pilots; install/test/report brief. **Recruit 60–70 to net ≥50 active** (attrition); want active cohort ≥30 to read a stable D7. *Deps:* C3/C4 live, A7 ready.
+
+### Track D — QA
+
+- **D1 · Manual QA matrix** — M first / S per build. Home→Quiz→Progress→Settings, full onboarding (steps 2/3/5/6 test they don't crash), settings + analytics opt-out, **offline** (quiz airplane-moded; events queue + flush), **a low-end Android** (2–3GB RAM) for ATTACH + cold-start. Green on both before each beta build.
+- **D2 · One Maestro smoke (recommended) or accept manual-only** — S. One YAML (launch → onboarding → one quiz answer → Progress) on Maestro Cloud catches the white-screen/migration-crash class between builds. Detox not worth it. Else a one-line ADR "manual-only, D1 gates every build."
+- **D3 · Verify words.db bundles (= C0/BUILD-2)** — S. Confirm the `.ipa`/`.aab` ships the DB and ATTACH succeeds on a clean install on the low-end Android. **If broken, every beta build is dead on arrival.**
+
+### Mandatory ordering
+
+A beta with no instrumentation forfeits the whole phase. **D3 → (A1→A2→A3→A4→A5, B1→B2 in parallel) → A7 → C1/C2 → B3 → C3/C4 (instrumented build only) → D1+D2 → C5 → run window → read A7.** Long poles: Apple Beta App Review, Apple enrollment, eas.json+signing — start C1/C2 immediately, parallel to analytics coding.
+
+---
+
+## F. Store Submission, Legal/Compliance & Go-To-Market
+
+**Current reality: nothing built.** No `eas.json`, no icon/splash (`assets/` has only `vocab/`), no account-deletion/export/age-gate code. The docs are good target specs; this is from zero.
+
+### Flags first
+
+- **SIWA timing conflict.** Docs say SIWA P3; verified state says auth unwired/P5. **iOS submission cannot start until auth delivers Google + SIWA** — the largest cross-domain dependency. Apple 4.8: Google Sign-In present → SIWA mandatory.
+- **COPPA is a cheap-to-neutralize trap, not a non-issue.** Adult audience avoids "Made for Kids," but a global audience means minors will try to sign up. **16+ neutral DOB gate + delete-on-discovery; no parental-consent path** (that path *is* the trap). ~S task (D5).
+- **B2B web portal not realistic solo → manual invoice.** A live B2C checkout on the site is an App Review risk (3.1.1) and weeks of PCI/tax work. Static site + "contact sales, min 10 seats" + manual Supabase provisioning (D6).
+- **Kill the "Cloud Sync" screenshot/claim** (strategy doc Screen 3) — sync was deleted; advertising it is a rejectable marketing/behavior mismatch and pollutes the Data Safety form. Replace with offline messaging.
+- **Screenshots must show NO TextInput** — and can only feature MultipleChoice + DragDrop (the other widgets are skeletons). Don't design store art around widgets that don't exist. Also: don't screenshot Home while it shows `0` (H-1 first).
+- **Config mismatch:** runbook assumes `app.config.ts`; repo has static `app.json`. Migrate before EAS-secret/RevenueCat key injection.
+
+### Tasks
+
+- **LEGAL-1 · Age-gate + COPPA decision** — S. Lock 16+ global, neutral DOB, no parental consent, delete-on-discovery. (= D5.) *Touches:* GDPR doc.
+- **LEGAL-2 · Privacy policy + ToS finalized + hosted** — M (counsel turnaround). Fill template, **get a paid counsel review** (the one place to spend money), publish at `lexitap.app/privacy` + `/terms`. *Deps:* LEGAL-1, WEB-1.
+- **LEGAL-3 · Sub-processor DPAs + data region** — S. Supabase DPA + region (pick **EU** unless latency forces US) + SCCs; Sentry DPA with PII scrub. *Deps:* none.
+- **ACCT-1 · Developer accounts** — S+wait. Apple ($99, + Small Business Program 30%→15%), Google ($25), Expo, RevenueCat. **Start immediately** (enrollment latency).
+- **BUILD-1 · `app.json` → `app.config.ts` + `eas.json`** — M. Env injection via `extra`; profiles + `ascAppId`/`appleTeamId`/Android SA; `expo-doctor` clean. *Deps:* ACCT-1.
+- **BUILD-2 · words.db bundling verification** — M (= C0). Release blocker — a store build shipping an empty word list is dead on arrival. *Deps:* BUILD-1.
+- **LEGAL-4 · Account deletion + data export + age gate (CODE)** — L. Settings "Delete account" (**Apple-mandated once accounts exist, 5.1.1(v)** — cascades Supabase + clears device, irreversible), "Export my data" (JSON), neutral DOB 16+ block. *Deps:* auth domain (accounts must exist), LEGAL-1. **Highest-coupling legal item — blocked on unwired auth.**
+- **ASSET-1 · Icon + splash + store icons** — M. 1024² iOS (no alpha/rounding), Android adaptive, 512² Play, splash. None exist. *Deps:* none.
+- **ASSET-2 · Screenshots** — M. 6 × iPhone 6.9" (1320×2868) showing no-typing recognition (MC + DragDrop only), SRS, TOEFL/IELTS, Premium "cancel anytime," Knowledge Map; **Screen 3 = offline messaging, not sync**; Android feature graphic 1024×500. *Deps:* BUILD-2, H-1 (no `0` progress).
+- **ASO-1 · Listing copy + metadata** — M. iOS name "LexiTap: TOEFL & IELTS Vocab", subtitle "Offline vocabulary review. No typing.", 100-char keywords, 4000-char desc; Android short(80)+full; category; age rating general/teen (NOT Kids); English-only at launch. *Deps:* none.
+- **LEGAL-5 · Privacy nutrition labels + Data Safety** — S. Both forms per GDPR doc map, Tracking=No, **match each other and runtime SDK behavior**, do NOT declare sync. Privacy URL entered. *Deps:* LEGAL-2/3 + final SDK list.
+- **REVCAT-1 · Store IAP products + RevenueCat wiring** — L. 3 SKUs in ASC+Play, `premium` entitlement + `default` offering, keys as EAS secrets, paywall lists terms/price/auto-renewal + ToS/Privacy per 3.1.2. (Cross-domain with §D.) *Deps:* ACCT-1.
+- **WEB-1 · lexitap.app static site + B2B sales-contact** — M. Hosts privacy/terms; B2B = contact form only, **no B2C checkout / price list / steering** (Apple reviews the site). Manual invoice. *Deps:* LEGAL-1/2.
+- **REVIEW-1 · App Review battle plan (3.1.3(c))** — M. 2 pre-provisioned seat tokens + 1 teacher demo + private video (student enters token → unlocks TOEFL offline) + verbatim 3.1.3(c) notes + exact redemption-field copy. **Risk HIGH — depends on B2B1 existing; if seat redemption was deleted (D7), the institutional story is vapor — rebuild or drop B2B.** *Deps:* B2B1, LEGAL-2, REVCAT-1.
+- **SUBMIT-1 · TestFlight + Play Internal** — M. Production build both platforms; founder + cohort install + run offline; `expo-doctor` clean. *Deps:* BUILD-1/2, ASSET-1/2, REVCAT-1, LEGAL-4, **auth+SIWA shipped.**
+- **SUBMIT-2 · iOS App Store** — S to submit, **1–2wk review buffer.** Pre-empt the six rejection causes: 3.1.3(c) (REVIEW-1), missing SIWA (AU3), paywall terms (REVCAT-1), privacy/behavior mismatch (kill sync claims), account deletion (LEGAL-4), website B2C undercut (WEB-1). *Deps:* all above + SIWA + REVIEW-1.
+- **SUBMIT-3 · Google Play** — S. Internal→Closed→Open→Production; content rating Everyone; Data Safety matching iOS; target API meets minimum. (Play review faster; Apple is the schedule driver.) *Deps:* SUBMIT-1, LEGAL-5.
+- **GTM-1 · Launch GTM (P6)** — ongoing. Reddit (value-first), ASO tracking + OTA-safe listing edits, teacher referral = store-approved trial only, monthly content drops as **store builds** (they add IAP products — not OTA). *Deps:* SUBMIT-2/3 live.
+
+**Sequencing:** ACCT-1 + LEGAL-1/2/3 + ASSET-1 + ASO-1 start in parallel immediately. BUILD-1→2 unblock builds. **The critical path runs through the auth domain** (LEGAL-4 + SIWA block iOS submission). REVIEW-1 depends on a seat-redemption path that may have been deleted — **verify (D7) before promising B2B.** If auth or seat-redemption slip, descope to pure-B2C iOS launch + fast-follow institutional tokens rather than holding the whole release.

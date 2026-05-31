@@ -9,15 +9,17 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 # Product Roadmap — LexiTap
 
+> **⚠️ Execution ordering superseded (2026-05-30):** A code+docs audit produced a task-level master plan at [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md) that corrects this roadmap's phase ordering (auth → Phase 3, not 5; analytics/Sentry into late Phase 1; content as the continuous long pole) and flags that `words.db` delivery is currently broken and content is ~7% sourced. This doc remains canonical for *phase intent and content cadence*; trust RELEASE_PLAN.md for *what to build in what order*.
+
 The detailed product roadmap: 6 phases across 21 weeks, two parallel build tracks, deliverables and gates per phase, and the post-launch content-drop cadence. This doc expands the at-a-glance tracker [../../ROADMAP.md](../../ROADMAP.md). Feature detail is in [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md); requirements in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md).
 
 ## Current Status
 
 | Item | Value |
 |------|-------|
-| Phase | **1 — Build** (active) |
-| Code written | Track A (content-tool CLI) complete. Track B ~85% through Phase 1 — core quiz loop, SRS, streak, widgets, sync service, and DB layer done. Auth and lifecycle wiring deferred to end of Phase 1. |
-| Last updated | 2026-05-27 |
+| Phase | **1 — Build** (active; ~30% to launch — see [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md)) |
+| Code written | Track A CLI exists but content is ~7% sourced (216 words). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. |
+| Last updated | 2026-05-30 |
 
 ## Table of Contents
 
@@ -59,7 +61,7 @@ Content is the launch-blocking long pole, not code. Each tier's drop date is gat
 
 **Track A (Weeks 2–3) — COMPLETE:** CLI `import` / `validate` / `export` ✔; CSV + SQLite export ✔; `npm run build:db` ✔. Foundation tier DB bundle pending verification ☐.
 
-**Track B (Weeks 2–6) — IN PROGRESS:** Expo + TS setup ✔; load bundled `words.db` (ATTACH DATABASE) ✔; Home/Quiz/Progress/Settings screens ✔; MultipleChoice + DragDrop widgets ✔; SRS scheduling, mastery, quiz session implemented as use-case/service layer ✔ (hexagonal architecture); streak counter ✔. Per-table cloud sync removed; encrypted blob backup deferred to Phase 3+. Auth screen and account creation deferred to Phase 5.
+**Track B (Weeks 2–6) — IN PROGRESS:** Expo + TS setup ✔; bundled `words.db` delivery (asset bundle + version-gated copy before ATTACH) ✔ *(fixed 2026-05-30; was loading empty on device — verify on a physical device)*; Home/Quiz/Progress/Settings screens ✔ *(Home progress + onboarding steps still stubbed)*; MultipleChoice + DragDrop widgets ✔; SRS scheduling, mastery, quiz session as use-case/service layer ✔ (hexagonal); streak counter ✔. Per-table cloud sync removed; encrypted blob backup → **Phase 3** (needs auth). **Auth (magic-link + Google + SIWA) → Phase 3**, not Phase 5.
 
 **Deliverable:** working iOS + Android app, free Foundation tier, free cloud sync.
 **Gate:** app runs on both platforms.
@@ -72,7 +74,7 @@ Content is the launch-blocking long pole, not code. Each tier's drop date is gat
 ## Phase 3: First Paid Tier (Weeks 11–12)
 
 **Track A:** enrich TOEFL with premium audio (ElevenLabs).
-**Track B:** paywall, Apple/Google IAP via RevenueCat, restore purchases, Supabase auth. Early-adopter annual intro price ($19.99 vs $24.99 list). Teacher referral codes and promo codes deferred to Phase 3+.
+**Track B:** leave Expo Go (EAS dev client) → paywall, Apple/Google IAP via RevenueCat, restore purchases; **auth here (magic-link + Google + SIWA)**; encrypted blob backup wired to the authenticated user id. Early-adopter annual intro price ($19.99 vs $24.99 list), no free trial. Teacher referral codes and promo codes deferred to Phase 3+. **B2B seat activation deferred** (code removed; ship pure-B2C, add as fast-follow).
 
 **Gate:** 10 paying users (rethink if < 5 at Week 12).
 
@@ -84,7 +86,7 @@ Content is the launch-blocking long pole, not code. Each tier's drop date is gat
 
 ## Phase 5: Launch Prep (Weeks 17–18)
 
-**Auth (all three providers, implemented here):** email/password account creation screen (Supabase), Google Sign-In (`expo-google-sign-in` + Supabase OAuth), Sign in with Apple (`expo-apple-authentication` + Supabase Apple OAuth + App Store Connect capability — required by Guideline 4.8 whenever Google Sign-In is offered). Wire encrypted blob backup lifecycle to authenticated user ID (Phase 3+).
+**Auth ships in Phase 3, not here** (magic-link + Google + Sign in with Apple via Supabase; SIWA required by Guideline 4.8 whenever Google Sign-In is offered; encrypted backup wired to the authenticated user id there too). Phase 5 adds only the launch-gating legal code: **account deletion + data export (Apple 5.1.1(v), required once accounts exist) and a 16+ age gate.**
 
 App Store assets (icon, 6 screenshots, description), privacy policy + ToS, support email, launch lexitap.app, run `npx expo-doctor` and evaluate SDK upgrade requirements, Apple ($99/yr) + Google ($25 one-time) submission. Teacher referral portal deferred to Phase 3+.
 **Deliverable:** live on both stores.

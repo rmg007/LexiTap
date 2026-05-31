@@ -53,7 +53,7 @@ Convert at the moment of genuine need (test-prep urgency, locked-tier tap, or Se
 │ │ Unlocks ALL paid tiers   │ │
 │ │              [ Choose ]  │ │
 │ └─────────────────────────┘ │
-│  applied · 14-day trial      │
+│  Early-adopter: $19.99 1st yr│  ← intro offer on annual, NO free trial (F)
 │  Restore purchases           │  ← always present (G)
 └─────────────────────────────┘
 ```
@@ -91,15 +91,17 @@ Pending/deferred receipts (e.g. Apple "Ask to Buy") must show the pending state 
 
 **Hexagonal Architecture Boundaries:**
 - The IAP adapter (`StubIapService` at MVP, `RevenueCatIapService` at Phase 3) lives strictly in `infrastructure/iap/`. **The Paywall screen (presentation layer) calls the application layer only and must never import from `infrastructure/` directly.**
-- Paywall business logic (what tier to offer, trial balance) deferred to Phase 3 RevenueCat integration.
+- Paywall business logic (what tier to offer) deferred to Phase 3 RevenueCat integration.
 - Premium Pass unlocks all current and future paid tiers globally. No off-store steering allowed in the presentation layer.
+
+> **Pricing model (D2 RESOLVED 2026-05-30 — matches REVENUE_MODEL_PRICING.md):** the consumer offering has **NO free trial**. The annual SKU (`com.lexitap.premium.annual`, $24.99/yr list) carries an **introductory offer of $19.99 for the first year**, configured as a StoreKit/Play intro offer. The only "trial" concept anywhere is the **teacher-referral extended-access offer (deferred to Phase 3+)**, which is a store-approved promo/offer code — never a standard paywall free trial.
 
 ## 6. States
 
 | State | Trigger | Rendering |
 |---|---|---|
 | **Default** | Opened | Title, benefits, options, restore |
-| **Teacher code active** | Code applied | Show extended trial line (F); no discount steering |
+| **Teacher code active** | Code applied (deferred, Phase 3+) | Show extended-access line (F) via store-approved offer code; no discount steering |
 | **Purchasing** | Choose tapped | Hand off to native StoreKit/Play sheet; show pending affordance |
 | **Success** | Receipt validated (RevenueCat server-side) | `CustomerInfo` cached in memory; content unlocks; confirmation toast; dismiss |
 | **Pending/deferred** | Store returns `pending` (e.g. Ask to Buy / family approval) | "We'll unlock as soon as it's approved." No content unlocked until RevenueCat confirms. |
@@ -114,7 +116,7 @@ Pending/deferred receipts (e.g. Apple "Ask to Buy") must show the pending state 
 | Choose monthly (D) | tap | Native purchase (monthly) | none |
 | Choose annual (E) | tap | Native purchase (Premium Pass) | none |
 | Restore (G) | tap | Restore purchases via RevenueCat | none |
-| Teacher line (F) | — | Informational; reflects applied trial | n/a |
+| Teacher line (F) | — | Informational; reflects applied extended-access offer (deferred) | n/a |
 
 ## 8. Copy
 
