@@ -215,39 +215,6 @@ export function OnboardingAgeGateScreen({ onContinue }: OnboardingAgeGateScreenP
           onPress={handleContinue}
           accessibilityLabel={isOldEnough ? 'Continue to LexiTap' : 'Verify age to continue'}
         />
-
-        {/* Legal links footer */}
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: spacing.s2,
-            marginTop: spacing.s3,
-          }}
-        >
-          <Pressable
-            accessibilityRole="link"
-            accessibilityLabel="Privacy policy"
-            onPress={() => Linking.openURL('https://lexitap.app/privacy.html')}
-          >
-            <Text variant="caption" color="accent" style={{ textDecorationLine: 'underline' }}>
-              Privacy
-            </Text>
-          </Pressable>
-          <Text variant="caption" color="textTertiary">
-            •
-          </Text>
-          <Pressable
-            accessibilityRole="link"
-            accessibilityLabel="Terms of service"
-            onPress={() => Linking.openURL('https://lexitap.app/terms.html')}
-          >
-            <Text variant="caption" color="accent" style={{ textDecorationLine: 'underline' }}>
-              Terms
-            </Text>
-          </Pressable>
-        </View>
       </View>
     </Screen>
   );
