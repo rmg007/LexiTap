@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "check": "npm run lint && npm run typecheck && npm run test",
+    "smoke": "bash scripts/sim-smoke.sh",
     "postinstall": "node scripts/patch-nativewind.js"
   },
   "dependencies": {
