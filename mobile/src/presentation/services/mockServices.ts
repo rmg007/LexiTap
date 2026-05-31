@@ -16,6 +16,7 @@ export interface MockServiceHandlers {
   getUserStats?: () => Promise<UserStats | null>;
   getMasteryLevels?: () => Promise<readonly number[]>;
   getDailyProgress?: () => Promise<DailyProgressMetrics>;
+  getContentDbHealth?: () => Promise<{ wordCount: number; dbVersion: number }>;
 }
 
 const notImplemented =
@@ -40,6 +41,7 @@ export function createMockServices(handlers: MockServiceHandlers = {}): Services
         newWordsCompletedToday: 0,
         newWordsBudget: 10,
       })),
+      getContentDbHealth: handlers.getContentDbHealth ?? (async () => ({ wordCount: 0, dbVersion: 0 })),
     },
   };
   return services as unknown as Services;

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, View, type ViewStyle } from 'react-native';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme, useThemePreference, type ThemePreference } from '@/presentation/theme';
 import { Text, Card } from '@/presentation/components';
 import { APP_ID } from '@/config/app';
+import { useServices, type ContentDbHealth } from '@/presentation/services';
 
 // Settings: theme override (system / dark / light) plus app metadata. The
 // destructive actions (reset progress, etc.) live behind a confirm sheet and
@@ -18,6 +19,12 @@ const THEME_OPTIONS: ReadonlyArray<{ value: ThemePreference; label: string }> = 
 export function SettingsScreen(): React.JSX.Element {
   const { colors, radii, spacing } = useTheme();
   const { preference, setPreference } = useThemePreference();
+  const { queries } = useServices();
+  const [dbHealth, setDbHealth] = useState<ContentDbHealth | null>(null);
+
+  useEffect(() => {
+    queries.getContentDbHealth().then(setDbHealth).catch(() => undefined);
+  }, [queries]);
 
   return (
     <Screen>
@@ -66,6 +73,12 @@ export function SettingsScreen(): React.JSX.Element {
       <Text variant="caption" color="textTertiary">
         {`${APP_ID} · v0.1.0`}
       </Text>
+
+      {dbHealth !== null && (
+        <Text variant="caption" color="textTertiary">
+          {`Content DB · ${dbHealth.wordCount} words · schema v${dbHealth.dbVersion}`}
+        </Text>
+      )}
     </Screen>
   );
 }

@@ -4,6 +4,7 @@ import type { WordRepository } from '@/domain/vocabulary/WordRepository';
 import type { UserProgressRepository } from '@/domain/user/UserProgressRepository';
 import type { QuizSessionRepository } from '@/domain/quiz/repositories';
 import type { QuizMode, QuizSession } from '@/domain/quiz/types';
+import type { AnalyticsPort } from '@/domain/analytics/AnalyticsPort';
 import { NoWordsAvailableError } from '@/domain/quiz/errors';
 import {
   FORGIVENESS,
@@ -28,6 +29,7 @@ export class StartQuizUseCase {
     private readonly words: WordRepository,
     private readonly progress: UserProgressRepository,
     private readonly sessions: QuizSessionRepository,
+    private readonly analytics: AnalyticsPort,
   ) {}
 
   async execute(input: StartQuizInput): Promise<QuizSession> {
@@ -54,7 +56,16 @@ export class StartQuizUseCase {
     };
 
     const id = await this.sessions.save(draft);
-    return { ...draft, id };
+    const session = { ...draft, id };
+
+    this.analytics.track('session_started', {
+      sessionId: session.id,
+      tierId,
+      mode,
+      wordCount: selected.length,
+    });
+
+    return session;
   }
 
   private async selectReviewWords(tierId: TierId, nowMs: number, tz: string): Promise<Word[]> {
