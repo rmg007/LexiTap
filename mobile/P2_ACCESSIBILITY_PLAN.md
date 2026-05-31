@@ -152,39 +152,50 @@
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| HomeScreen | 🟢 ✅ COMPLIANT | Headers, buttons, progress, streak badge accessible |
-| QuizScreen | 🟢 ✅ COMPLIANT | Headers, assessments, live region feedback verified |
-| ProgressScreen | 🟢 ✅ COMPLIANT | Headers, streak, bars with `accessibilityValue` verified |
+| HomeScreen | 🟢 ✅ COMPLIANT | Headers, buttons (hints added), progress, streak badge accessible (commit dc2ed79) |
+| QuizScreen | 🟢 ✅ COMPLIANT | Headers, assessments, live region feedback, empty state announced (commit dc2ed79) |
+| ProgressScreen | 🟢 ✅ COMPLIANT | Headers, streak summary, mastery cards w/ word counts, bars w/ value (commit dc2ed79) |
 | OnboardingDiagnosticScreen | 🟢 ✅ COMPLIANT | Inherits MultipleChoice a11y |
 | KnowledgeMapReveal | 🟢 ✅ COMPLIANT | Reduce Motion working, bar legend accessible |
 | SettingsScreen | 🟢 ✅ COMPLIANT | Theme buttons 48pt, roles/states/labels present |
 | MultipleChoice | 🟢 ✅ COMPLIANT | Roles, labels, states, live region, 56pt targets |
 | DragDrop | 🟢 ✅ COMPLIANT | Tap-to-place accessible with proper labels + states |
-| ProgressBar | 🟢 ✅ COMPLIANT | `accessibilityValue` with min/max/now exposed |
+| ProgressBar | 🟢 ✅ COMPLIANT | `accessibilityValue` with min/max/now + label exposed |
+| Button | 🟢 ✅ COMPLIANT | Primary 64pt, secondary/tertiary 48pt, `accessibilityHint` support (commit dc2ed79) |
 
 ---
 
 ## Acceptance Criteria (P-2 gate)
 
-- [ ] All screens pass VoiceOver readthrough — PENDING DEVICE TEST
-- [ ] All screens pass TalkBack readthrough — PENDING DEVICE TEST
-- [x] Contrast ≥4.5:1 on body text (both themes) — ✅ VERIFIED (fixed light theme)
-- [x] Touch targets ≥44pt with ≥8dp spacing — ✅ VERIFIED IN CODE
+- ◐ All screens pass VoiceOver readthrough
+  - 🟢 ✅ Code verified: labels, roles, hints, live regions present (commit dc2ed79)
+  - 🔄 PENDING physical iPhone test (simulator proven)
+- ◐ All screens pass TalkBack readthrough
+  - 🟢 ✅ Code verified: labels, roles, hints, live regions present (commit dc2ed79)
+  - 🔄 PENDING low-end Android device test
+- [x] Contrast ≥4.5:1 on body text (both themes) — ✅ VERIFIED (design system tokens)
+- [x] Touch targets ≥44pt with ≥8dp spacing — ✅ VERIFIED IN CODE (tests added commit dc2ed79)
 - [x] Reduce Motion respected on all animations — ✅ VERIFIED
-- [ ] Dynamic Type: largest text size, no truncation — PENDING DEVICE TEST
+- ◐ Dynamic Type: largest text size, no truncation — uses `variant` tokens (ready for device test)
 - [x] Color-independent feedback (≥2 of: icon, text, motion) — ✅ VERIFIED
-- [x] All components with a role have accessible labels — ✅ VERIFIED
+- [x] All components with a role have accessible labels — ✅ VERIFIED (commit dc2ed79)
 - [x] DragDrop fallback tap-to-place functional — ✅ VERIFIED (tap-to-place accessible)
 
 ---
 
-## Next Steps
+## Completion Status
 
-1. Review MultipleChoice + DragDrop components (20min)
-2. Check ProgressBar `accessibilityValue` (5min)
-3. Contrast audit on both themes (30min)
-4. Create fix list + estimate (30min)
-5. Implement fixes (1–2h)
-6. Device test VoiceOver/TalkBack (2–3h)
+✅ **P-2 code implementation DONE (commit dc2ed79):**
+- [x] MultipleChoice + DragDrop reviewed (already compliant)
+- [x] ProgressBar `accessibilityValue` verified
+- [x] Contrast verified on both themes (design tokens)
+- [x] Button component enhanced with `accessibilityHint`
+- [x] All screens have accessibility labels + roles + hints
+- [x] Live regions for feedback (quiz results, empty states)
+- [x] Touch targets verified ≥44pt (tests confirm)
+- [x] 19 new tests verify a11y attribute presence + error fallback
 
-**Estimated total:** ~5–7h (half-day sprint)
+**REMAINING:** Device test (VoiceOver/TalkBack on physical iOS + Android)
+- Code review complete, ready for device verification
+- Simulator proof-of-concept works (C0 proven on iOS sim)
+- No code changes anticipated post-device test
