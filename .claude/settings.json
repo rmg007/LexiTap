@@ -1,0 +1,42 @@
+{
+  "model": "sonnet",
+  "effortLevel": "high",
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '\n📋 Session ending. Did you update CLAUDE.md or AGENTS.md? If architectural decisions were made this session, commit and push before /clear.'"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'git rev-parse --git-dir >/dev/null 2>&1 && git diff --quiet HEAD || echo \"⚠️ Unpushed commits detected. Push before /clear.\"' || true"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'git rev-parse --git-dir >/dev/null 2>&1 && echo \"✓ Git repo ready\" || echo \"Not a git repo\"' || true"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "deny": [
+      "Edit(mobile/src/infrastructure/db/**)",
+      "Edit(mobile/src/domain/srs/**)",
+      "Edit(mobile/src/application/paywall/**)",
+      "Edit(mobile/src/utils/storage.ts)",
+      "Edit(mobile/app.config.ts)",
+      "Edit(.env*)"
+    ]
+  }
+}
