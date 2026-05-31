@@ -14,7 +14,7 @@ The dependency-ordered execution path from **current state → content-complete,
 
 ## Current state (verified 2026-05-31)
 
-- App skeleton ~85% (clean/hexagonal, ~120 TS files). **Content ~7%** (~216 words) — the real launch blocker.
+- App skeleton ~85% (clean/hexagonal, ~120 TS files). **Content ~8%** (241 words / 246 memberships; restored 2026-05-31) — the real launch blocker.
 - ~~`tiers.ts` + bundled `words.db` still encode the dead subscription model.~~ **DONE (Stage 1, 2026-05-31):** schema is many-to-many (`word_tiers`); `tiers.ts` + `words.db` express the one-time exam-pack model.
 - `words.db` device-delivery solved in code, **unverified on a physical device**.
 - `content-tool` enrichment providers are **stubs** (no real definitions/sentences/audio).
@@ -36,7 +36,7 @@ Stage 1 SCHEMA+CONFIG ✅ → Stage 2 ENRICHMENT → Stage 3 CONTENT VOLUME → 
   - `mobile`: `infrastructure/db/queries/wordQueries.ts` **and** `queries/progressQueries.ts` (both JOIN `word_tiers`); `rows.ts`/`mappers.ts` keep `tier_id` as the projected loaded-under category (no domain ripple — `distractors.ts` unchanged); `SQLiteWordRepository.ts` needed no change.
 - **1.2 `tiers.ts` rebuild.** ✅ Exam packs `com.lexitap.exam.{toefl,ielts,gre,gmat,business}` ($9.99, `exam_{name}`) + bundle `com.lexitap.bundle.full` ($29.99, `all_exams`) + upgrade SKUs `bundle.upgrade1/2`; free categories carry **no product**. `TierMeta.premiumPassSku` → `entitlementId`; unused `getPremiumPassTierId` dropped.
 - **1.3 `content-tool/lexitap.config.json`.** ✅ 9 tiers (4 free freq/CEFR + 5 exam packs); `audio: true` universal.
-- **1.4 Rebuild `words.db`.** ✅ `content_tiers` (9) + `word_tiers` (216 memberships) match config; copied to `mobile/assets/vocab/words.db`.
+- **1.4 Rebuild `words.db`.** ✅ `content_tiers` (9) + `word_tiers` (246 memberships / 241 unique words; restored 2026-05-31) match config; copied to `mobile/assets/vocab/words.db`.
 
 **Done:** ✅ `npm run check` green in both projects (content-tool 43 tests, mobile 132); `words.db` reflects the new model; `import.test.ts` proves one word in ≥2 categories → one content/progress row (real SQLite engine).
 **Blocks:** everything below. **Blocked by:** nothing.
