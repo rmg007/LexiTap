@@ -1,0 +1,7 @@
+# Apex is canonical; redirect www → apex (301).
+https://www.lexitap.app/* https://lexitap.app/:splat 301
+
+# Friendly aliases for legal pages.
+/privacy   /privacy.html  301
+/terms     /terms.html    301
+/privacy-policy  /privacy.html  301

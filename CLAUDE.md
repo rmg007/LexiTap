@@ -11,6 +11,7 @@
 | `mobile/` | Expo + React Native app (source of truth: local SQLite) |
 | `content-tool/` | Node + TS CLI that builds bundled read-only `words.db` |
 | `lexitap-docs/` | Full product + research documentation (8 categories) |
+| `website/` | Static marketing + legal site for lexitap.app (Cloudflare Pages; plain HTML/CSS, theme mirrors app) |
 | `memory/`, `plans/` | Project memory, ADRs, implementation plans |
 
 ---
