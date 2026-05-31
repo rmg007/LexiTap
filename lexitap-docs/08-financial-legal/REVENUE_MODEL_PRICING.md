@@ -38,6 +38,15 @@ LexiTap is a solo-founder ESL vocabulary app. The audience is global ESL test-ta
 
 Locked through launch. Do not change without satisfying the repricing triggers below.
 
+### Summary: Free vs Paid
+
+| Category | Tiers | Price | Notes |
+|----------|-------|-------|-------|
+| **Free (no purchase)** | Foundation, Advanced, Most Common 3000, Most Common 9000 | $0.00 | All frequency/CEFR content + word/sentence audio. Many-to-many tags; words overlap across tiers. |
+| **Paid (one-time)** | TOEFL, IELTS, GRE, GMAT, Business English | $9.99 each | Rare academic words disjoint from free frequency bands. Exam-curated study sets. |
+| **Paid (one-time bundle)** | All-Exams Bundle | $29.99 | Unlocks every exam pack (current + future). |
+| **Paid (upgrade SKUs)** | All-Exams Upgrade (own 1 pack / own 2 packs) | $19.99 / $9.99 | Discounted path from individual packs to bundle. |
+
 ### Consumer Products (In-App Purchase, one-time non-consumables)
 
 | SKU | Product | Type | Price | Grants entitlement |
