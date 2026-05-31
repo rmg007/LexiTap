@@ -1,0 +1,14 @@
+{
+  "name": "lexitap-website",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Marketing + legal site for lexitap.app (static, Cloudflare Pages)",
+  "scripts": {
+    "dev": "wrangler pages dev public",
+    "deploy": "wrangler pages deploy public --project-name=lexitap",
+    "deploy:prod": "wrangler pages deploy public --project-name=lexitap --branch=main"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}

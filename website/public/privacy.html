@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy — LexiTap</title>
+  <meta name="description" content="How LexiTap collects, uses, and protects your data. Offline-first, encrypted backups, anonymous analytics, no advertising." />
+  <meta name="theme-color" content="#0E1112" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#FBFCFC" media="(prefers-color-scheme: light)" />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://lexitap.app/privacy.html" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script>(function(){try{var t=localStorage.getItem("lexitap-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/">Lexi<span class="dot">Tap</span></a>
+      <nav class="nav" aria-label="Primary">
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <button class="theme-toggle" type="button" aria-label="Switch theme">☀</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="doc">
+    <div class="wrap prose">
+      <h1>Privacy Policy</h1>
+      <p class="updated">Last updated: 31 May 2026</p>
+
+      <p>LexiTap ("we", "us") is an offline-first English vocabulary app. We built it to collect as little about you as possible. This policy explains what we collect, why, and the choices you have.</p>
+
+      <div class="callout">
+        <p><strong>The short version:</strong> Your learning progress lives on your device. We don't sell your data, show ads, or track you across other apps. Analytics are anonymous and optional. Crash reports are stripped of personal information before they leave your phone.</p>
+      </div>
+
+      <h2>1. What we collect</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Data</th><th>Why</th><th>Where it lives</th></tr></thead>
+          <tbody>
+            <tr><td>Email &amp; display name (if you create an account)</td><td>Sign-in and device-switch recovery</td><td>Supabase (auth provider)</td></tr>
+            <tr><td>Learning progress — review history, schedule, streaks</td><td>To run spaced repetition and show your stats</td><td>Your device. Optional encrypted backup to our storage.</td></tr>
+            <tr><td>Purchases (exam packs)</td><td>To unlock and restore what you bought</td><td>Apple / Google &amp; our payments processor</td></tr>
+            <tr><td>Anonymous usage events — e.g. app opened, session completed</td><td>To understand which features help learners and fix drop-off</td><td>PostHog (EU). Pseudonymous ID only. Opt-out in Settings.</td></tr>
+            <tr><td>Crash diagnostics — error traces, app/OS version, device model</td><td>To find and fix bugs</td><td>Sentry. Personal data scrubbed on-device first.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>What we never collect</h3>
+      <p>Location, contacts, photos, microphone or voice, health data, government IDs, or advertising identifiers (IDFA/AAID).</p>
+
+      <h2>2. How analytics work</h2>
+      <p>Usage analytics are <strong>anonymous</strong> — tied to a random device ID, never to your email or account. They contain no personal information, are hosted in the EU, and are used only to improve the app (retention, conversion, and finding broken flows). We never use them for advertising, cross-app tracking, or selling data. You can turn analytics off at any time in <strong>Settings → Privacy</strong>.</p>
+
+      <h2>3. Crash reporting</h2>
+      <p>When the app crashes, a diagnostic report helps us fix it. Before any report leaves your device, we strip out identifying information — user IDs, email, IP address, device name, tokens, and URLs. We do not record your screen or session.</p>
+
+      <h2>4. Sub-processors</h2>
+      <p>We rely on a small number of trusted providers to operate LexiTap:</p>
+      <ul>
+        <li><strong>Supabase</strong> — account authentication and encrypted backup storage</li>
+        <li><strong>Apple App Store / Google Play</strong> — app distribution and payments</li>
+        <li><strong>RevenueCat</strong> — purchase and entitlement management</li>
+        <li><strong>PostHog (EU)</strong> — anonymous product analytics</li>
+        <li><strong>Sentry</strong> — crash diagnostics (PII-scrubbed)</li>
+        <li><strong>Text-to-speech provider</strong> — pronunciation audio</li>
+      </ul>
+
+      <h2>5. Where your data is stored</h2>
+      <p>Your learning data is stored locally on your device by default. If you sign in and enable backup, an <strong>encrypted</strong> copy is saved to our cloud storage so you can recover it on a new device. Some providers above may process data outside your country; where required, we rely on standard contractual safeguards.</p>
+
+      <h2>6. Data retention</h2>
+      <p>On-device data stays until you delete it or uninstall the app. If you have an account, you can delete it and its backups at any time (see below). Anonymous analytics are retained only as long as needed to improve the product.</p>
+
+      <h2>7. Your rights</h2>
+      <p>Depending on where you live, you may have the right to access, correct, export, or delete your personal data, and to object to certain processing. Because most data lives on your device, you control it directly. For account data, email us and we will help. We do not sell personal data.</p>
+
+      <h2>8. Children</h2>
+      <p>LexiTap is intended for users aged 13 and older. We do not knowingly collect personal information from children under 13. If you believe a child has provided us data, contact us and we will remove it.</p>
+
+      <h2>9. Changes to this policy</h2>
+      <p>We may update this policy as the app evolves. Material changes will be reflected here with a new "last updated" date, and where appropriate, in the app.</p>
+
+      <h2>10. Contact</h2>
+      <p>Questions or requests about your privacy: <a href="mailto:privacy@lexitap.app">privacy@lexitap.app</a><br />General support: <a href="mailto:support@lexitap.app">support@lexitap.app</a></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© 2026 LexiTap</span>
+      <nav class="links" aria-label="Footer">
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="mailto:support@lexitap.app">support@lexitap.app</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/theme-toggle.js" defer></script>
+</body>
+</html>
