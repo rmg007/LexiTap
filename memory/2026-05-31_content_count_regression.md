@@ -12,6 +12,15 @@ rebuilt, copied to the mobile bundle. Result: **241 unique words / 246 tier
 memberships** across 9 tiers. The input CSVs and the mobile `words.db` are both
 git-tracked, so the restore is durable on commit.
 
+> **⚠️ SUPERSEDED later the same day.** The 241/246 restore was overtaken by
+> concurrent C3 content sourcing (commits `f8a9ddd` "Expand Foundation tier to
+> 3,000 words", `4526bb6`, `eccf83d`): `words.db` now holds **2,881 words /
+> 2,894 memberships** (foundation 2,848, advanced 10, toefl 6, six exam/common
+> tiers × 5). The 241 figures throughout this note are historical. The
+> **root-cause analysis below — m2m refactor `a85d8d9` was innocent; `5c190d2`
+> did the downsizing — remains valid and is the lasting lesson.** Status docs
+> were synced to 2,881.
+
 ## Ground truth (all verified)
 
 | Count | What it is |
