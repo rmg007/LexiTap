@@ -1,7 +1,8 @@
 import type { UserStatsRepository, UserStats } from '@/domain/user/UserStats';
+import type { OnboardingState } from '@/domain/onboarding/OnboardingState';
 import type { DatabaseHandle } from '@/infrastructure/db/database';
 import { mapUserStatsRow } from '@/infrastructure/db/mappers';
-import { selectStats, upsertStats } from '@/infrastructure/db/queries/statsQueries';
+import { selectStats, upsertStats, upsertOnboardingState } from '@/infrastructure/db/queries/statsQueries';
 
 // SQLite implementation of the UserStatsRepository port. Composes the durable
 // streak/freeze StreakState with session/mastery totals into the domain
@@ -24,5 +25,9 @@ export class SQLiteUserStatsRepository implements UserStatsRepository {
       freezeCount: stats.streak.freezeCount,
       freezesGrantedTotal: stats.streak.freezesGrantedTotal,
     });
+  }
+
+  async saveOnboardingProfile(state: OnboardingState): Promise<void> {
+    await upsertOnboardingState(this.db, JSON.stringify(state));
   }
 }

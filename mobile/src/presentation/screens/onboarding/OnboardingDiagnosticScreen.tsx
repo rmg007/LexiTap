@@ -7,7 +7,7 @@ import { MultipleChoice } from '@/presentation/components/assessments';
 import type { AssessmentAnswer } from '@/presentation/components/assessments/types';
 import { useServices } from '@/presentation/services';
 import { buildQuestion } from '@/presentation/screens/quizQuestion';
-import { asTierId, type Word, type DiagnosticResult } from '@/domain/index';
+import { asTierId, type Word, type DiagnosticResult, type LearningGoal, type ProficiencyBand } from '@/domain/index';
 
 // First-run onboarding diagnostic. Walks the learner through a short tap-only
 // quiz (NO TextInput) sampled across the tier's difficulty range, grades each
@@ -22,6 +22,9 @@ export interface OnboardingDiagnosticScreenProps {
   // Called once seeds are written (or the diagnostic is skipped). The route
   // marks first-run complete and navigates to Home.
   onComplete: () => void;
+  // Goal and band selected in earlier onboarding steps. Merged into the
+  // onboarding profile save so the full profile is persisted in one write.
+  partialProfile?: { goal?: LearningGoal; band?: ProficiencyBand };
 }
 
 type Phase =
@@ -34,9 +37,10 @@ export function OnboardingDiagnosticScreen({
   tierId,
   sampleSize,
   onComplete,
+  partialProfile,
 }: OnboardingDiagnosticScreenProps): React.JSX.Element {
   const { spacing } = useTheme();
-  const { runDiagnostic } = useServices();
+  const { runDiagnostic, saveOnboardingProfile } = useServices();
 
   const [phase, setPhase] = useState<Phase>({ kind: 'loading' });
   // Re-mount the widget per question so internal selection state resets.
@@ -50,10 +54,17 @@ export function OnboardingDiagnosticScreen({
       } catch {
         // Offline-first: never block first-run on a seed write failure.
       }
+      try {
+        // Persist the onboarding completion timestamp. goal / band / frontierRank
+        // are added by later onboarding steps (goal picker, Knowledge Map reveal).
+        await saveOnboardingProfile.execute({ ...partialProfile, completedAt: Date.now() });
+      } catch {
+        // Non-blocking: profile save failure must not trap the user on first run.
+      }
       setPhase({ kind: 'done' });
       onComplete();
     },
-    [runDiagnostic, onComplete],
+    [runDiagnostic, saveOnboardingProfile, onComplete],
   );
 
   const load = useCallback(async () => {

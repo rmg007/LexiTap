@@ -20,8 +20,7 @@ const CONTENT_DB_PATH = `${SQLITE_DIR}/${CONTENT_DB_FILE_NAME}`;
 const VERSION_SENTINEL_PATH = `${CONTENT_DB_PATH}.version`;
 
 // Metro bundles this as an asset (metro.config.js registers the `db` extension);
-// expo-asset embeds it in the binary (app.json expo-asset plugin).
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// expo-asset embeds it in the binary (app.config.ts expo-asset plugin).
 const CONTENT_DB_MODULE = require('../../../assets/vocab/words.db');
 
 async function readInstalledVersion(): Promise<number | null> {

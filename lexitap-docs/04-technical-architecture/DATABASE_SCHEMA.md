@@ -229,6 +229,19 @@ CREATE TABLE user_stats (
 
 Freeze state is **device-only** — not included in cloud backups. Freeze earning/consumption rules live in [SRS_FORGIVENESS_MECHANICS.md](../02-product-definition/SRS_FORGIVENESS_MECHANICS.md).
 
+**`onboarding_state` JSON shape** (domain type `OnboardingState`, written by `SaveOnboardingProfileUseCase` at the end of the first-run flow, parsed defensively in `mappers.ts`):
+
+```jsonc
+{
+  "goal":         "exam" | "general" | "professional" | "academic",  // optional
+  "band":         "A2" | "B1" | "B2" | "C1" | "C2",                  // optional CEFR band
+  "frontierRank": 3000,                                              // optional word-frequency frontier
+  "completedAt":  1717200000000                                      // required, Unix ms
+}
+```
+
+Parsing is **defensive**: a NULL/empty/malformed blob, a non-object, or a missing/non-numeric `completedAt` all map to **no profile** (`undefined`) rather than throwing — a corrupt blob must never crash Home or the Knowledge Map. Invalid `goal`/`band` enum values are dropped individually while a valid `completedAt` is preserved. Only `completedAt` is written by the diagnostic step today; `goal`/`band`/`frontierRank` are filled in by the goal-picker and Knowledge Map steps as they ship.
+
 ### notification_schedule
 
 Stores scheduled local notification metadata so the app can cancel/update them on reschedule without querying the OS notification center.
