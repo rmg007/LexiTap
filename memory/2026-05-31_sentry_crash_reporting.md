@@ -1,6 +1,6 @@
 # Sentry Crash Reporting — B1 + Scrub Core (2026-05-31)
 
-**Resolved a doc contradiction, not a new decision.** CLAUDE.md Forbidden Patterns banned crash SDKs in prod, but `plans/RELEASE_PLAN.md` (B1–B3) + the drafted privacy policy (§2/§5) already assumed Sentry in prod. Release plan + privacy policy win → Sentry **allowed in production**, env-gated + PII-scrubbed. CLAUDE.md crash rule rewritten accordingly. Distinction locked: **crash reporting allowed in prod (scrubbed); analytics still not.**
+**Resolved a doc contradiction, not a new decision.** CLAUDE.md Forbidden Patterns banned crash SDKs in prod, but `plans/RELEASE_PLAN.md` (B1–B3) + the drafted privacy policy (§2/§5) already assumed Sentry in prod. Release plan + privacy policy win → Sentry **allowed in production**, env-gated + PII-scrubbed. CLAUDE.md crash rule rewritten accordingly. Distinction locked: **crash reporting allowed in prod (scrubbed); analytics still not.** **(Superseded 2026-05-31: analytics is now ALSO allowed in prod — env-gated + `anon_id`-only + no-PII + autocapture-off + EU-host + opt-out + disclosed, purpose-limited to app improvement. The two are now parallel; see [[2026-05-31_analytics_posthog_policy]].)**
 
 Also locked: **no 13–16 age bifurcation** — uniform PII scrub for all users (age gates unenforceable; uniform scrub satisfies GDPR worst-case by default; one code path).
 
@@ -32,4 +32,4 @@ Also locked: **no 13–16 age bifurcation** — uniform PII scrub for all users 
 `cd mobile && npm run check` green (155 tests, incl. `scrub.test.ts`). Device send-path + offline disk cache = device-verify later (needs a real DSN).
 
 ## Related / flagged
-PostHog/analytics (RELEASE_PLAN A1–A7) is the same contradiction class vs CLAUDE.md's analytics ban — but PostHog is Noop-by-default + `.env.example` gates it "dev/staging only". Flagged via spawn-task for explicit doc reconciliation; not touched here. See [[2026-05-31_monetization_rethink]] context for the broader privacy posture.
+PostHog/analytics (RELEASE_PLAN A1–A7) is the same contradiction class vs CLAUDE.md's analytics ban — but PostHog is Noop-by-default + `.env.example` gates it "dev/staging only". Flagged via spawn-task for explicit doc reconciliation; not touched here. **✅ RESOLVED 2026-05-31 — PostHog allowed in prod, conditioned + purpose-limited to app improvement; see [[2026-05-31_analytics_posthog_policy]].** See [[2026-05-31_monetization_rethink]] context for the broader privacy posture.
