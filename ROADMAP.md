@@ -69,18 +69,18 @@ These must be resolved before Phase 1 is treated as validated for continued buil
 - [x] CLI: `import`, `validate`, `export` commands
 - [x] CSV parser + SQLite export
 - [x] `npm run build:db` → `data/output/words.db`
-- [ ] Deliverable: Foundation tier DB (words.db not yet verified in bundled assets)
+- [ ] Deliverable: Foundation tier DB (241 words / 246 memberships restored 2026-05-31; full 3k sourcing is the long pole; see [plans/RELEASE_PLAN.md §B](plans/RELEASE_PLAN.md))
 
 ### Track B — Mobile MVP (Weeks 2-6)
 
 - [x] Expo + TypeScript project setup
-- [x] Load bundled `words.db` — asset bundling + version-gated copy before ATTACH (`infrastructure/db/contentDb.ts`); **fixed 2026-05-30, still to be proven on a physical device**
-- [ ] Cloud sync — encrypted `user.db` blob backup via Supabase Storage (Phase 3+; per-table sync removed)
+- [x] Load bundled `words.db` — asset bundling + version-gated copy before ATTACH (`infrastructure/db/contentDb.ts`); **fixed 2026-05-30, proven on iOS simulator 2026-05-31; physical device verification in progress**
+- [ ] Cloud sync — encrypted `user.db` blob backup via Supabase Storage (Phase 3+; per-table sync removed 2026-05-28)
 - [x] Screens: Home, Quiz, Progress, Settings
 - [x] Assessment widgets: MultipleChoice, DragDrop
-- [x] Use cases + services: SRS scheduling, mastery, quiz session, sync, entitlements — implemented via use-case/service layer (hooks pattern replaced by this architecture per clean/hexagonal design)
+- [x] Use cases + services: SRS scheduling, mastery, quiz session, entitlements — implemented via use-case/service layer (hexagonal design; per-table sync deleted)
 - [x] Streak counter (non-negotiable gamification)
-- [ ] Deliverable: Working iOS + Android app, free tier, no-typing recognition loop, cloud sync included
+- [ ] Deliverable: Working iOS + Android app, free Foundation tier, no-typing recognition loop; **encrypted backup wired to auth (Phase 3)**
 
 ---
 
@@ -94,8 +94,8 @@ These must be resolved before Phase 1 is treated as validated for continued buil
 - [ ] Measure D7 retention (target >30%)
 - [ ] Measure D30 retention (target >15%)
 - [ ] Avg session >3 min
-- [ ] Cloud sync device-switch test
-- [ ] No coding — testing + analysis only
+- [ ] Retention dashboard + analytics instrumentation (PostHog + Sentry; not "no coding" — see [plans/RELEASE_PLAN.md §3](plans/RELEASE_PLAN.md#3-corrected-phase-structure))
+- ~~Cloud sync device-switch test~~ (deleted 2026-05-28; deferred to Phase 3)
 
 ---
 

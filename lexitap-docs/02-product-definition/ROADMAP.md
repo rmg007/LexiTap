@@ -9,7 +9,7 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 # Product Roadmap — LexiTap
 
-> **⚠️ Execution ordering superseded (2026-05-30):** A code+docs audit produced a task-level master plan at [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md) that corrects this roadmap's phase ordering (auth → Phase 3, not 5; analytics/Sentry into late Phase 1; content as the continuous long pole) and flags that `words.db` delivery is currently broken and content is ~7% sourced. This doc remains canonical for *phase intent and content cadence*; trust RELEASE_PLAN.md for *what to build in what order*.
+> **⚠️ SOURCE OF TRUTH:** [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md) is the current, task-level execution plan (updated 2026-05-31). This file mirrors the phase structure and status for quick reference; **consult RELEASE_PLAN.md for actual dependencies, current blockers, and revised task list** (e.g., auth in P3 not P5, content as the long pole, Phase 2 requires analytics instrumentation, per-table sync deleted). Updates below reconcile this file with the audit.
 
 The detailed product roadmap: 6 phases across 21 weeks, two parallel build tracks, deliverables and gates per phase, and the post-launch content-drop cadence. This doc expands the at-a-glance tracker [../../ROADMAP.md](../../ROADMAP.md). Feature detail is in [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md); requirements in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md).
 
@@ -55,21 +55,21 @@ Content is the launch-blocking long pole, not code. Each tier's drop date is gat
 
 > **Audience note:** LexiTap targets adult ESL learners (non-native English speakers), not native-speaking K-12 buyer personas. All validation must use the actual audience. See [../01-discovery-strategy/TARGET_USER_PERSONAS.md](../01-discovery-strategy/TARGET_USER_PERSONAS.md).
 
-## Phase 1: Build (Weeks 2–6) — IN PROGRESS (~85%)
+## Phase 1: Build (Weeks 2–6) — IN PROGRESS (~30%)
 
 **Baseline setup:** Git repo ✔; `CLAUDE.md` ✔; memory dirs ✔; GitHub Actions CI ☐; Ship-and-Watch loop ☐; Git worktrees (single repo used in practice) ☐; EAS Build ☐.
 
-**Track A (Weeks 2–3) — COMPLETE:** CLI `import` / `validate` / `export` ✔; CSV + SQLite export ✔; `npm run build:db` ✔. Foundation tier DB bundle pending verification ☐.
+**Track A (Weeks 2–3) — COMPLETE:** CLI `import` / `validate` / `export` ✔; CSV + SQLite export ✔; `npm run build:db` ✔. Foundation tier DB (241 words / 246 memberships restored 2026-05-31; full 3k sourcing is the long pole) ☐.
 
-**Track B (Weeks 2–6) — IN PROGRESS:** Expo + TS setup ✔; bundled `words.db` delivery (asset bundle + version-gated copy before ATTACH) ✔ *(fixed 2026-05-30; was loading empty on device — verify on a physical device)*; Home/Quiz/Progress/Settings screens ✔ *(Home progress + onboarding steps still stubbed)*; MultipleChoice + DragDrop widgets ✔; SRS scheduling, mastery, quiz session as use-case/service layer ✔ (hexagonal); streak counter ✔. Per-table cloud sync removed; encrypted blob backup → **Phase 3** (needs auth). **Auth (magic-link + Google + SIWA) → Phase 3**, not Phase 5.
+**Track B (Weeks 2–6) — IN PROGRESS:** Expo + TS setup ✔; bundled `words.db` delivery (asset bundle + version-gated copy before ATTACH) ✔ *(fixed 2026-05-30; proven on iOS simulator 2026-05-31; physical device verification pending)*; Home/Quiz/Progress/Settings screens ✔ *(Home progress wired; onboarding steps 2/4/5 done, full flow complete)*; MultipleChoice + DragDrop widgets ✔; SRS scheduling, mastery, quiz session as use-case/service layer ✔ (hexagonal); streak counter ✔. Per-table cloud sync removed 2026-05-28; encrypted blob backup → **Phase 3** (needs auth). **Auth (magic-link + Google + SIWA) → Phase 3**, not Phase 5.
 
-**Deliverable:** working iOS + Android app, free Foundation tier, free cloud sync.
-**Gate:** app runs on both platforms.
+**Deliverable:** working iOS + Android app, free Foundation tier.
+**Gate:** cold-launches on real devices, loads real Foundation words, completes onboarding→quiz→progress, emits retention events. **(See [../../plans/RELEASE_PLAN.md §3](../../plans/RELEASE_PLAN.md#3-corrected-phase-structure) for task-level current state.)**
 
 ## Phase 2: User Validation (Weeks 7–10)
 
-**Goal:** 50 beta testers (TestFlight + Google Play Internal); measure retention; test cloud sync via device switch. No coding.
-**Gate:** D7 > 30% → proceed. 20–30% → fix core loop. < 20% → product broken, pivot/kill.
+**Goal:** 50 beta testers (TestFlight + Google Play Internal); measure retention (via PostHog analytics dashboard); **analytics + Sentry instrumentation required** (not "no coding"). ~~Test cloud sync via device switch~~ (sync deleted 2026-05-28; deferred to Phase 3).
+**Gate:** D7 > 30% → proceed. 20–30% → fix core loop. < 20% → product broken, pivot/kill. **(See [../../plans/RELEASE_PLAN.md §E](../../plans/RELEASE_PLAN.md#e-instrumentation-beta-distribution--quality-gates) for instrumentation detail.)**
 
 ## Phase 3: First Paid Pack (Weeks 11–12)
 
