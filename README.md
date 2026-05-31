@@ -75,8 +75,8 @@ cd mobile && npm run start
 
 ```bash
 # Type-check, lint, and run all tests (both projects)
-cd mobile && npm run check       # 163 tests, 15 suites
-cd content-tool && npm run check # <5 tests
+cd mobile && npm run check       # 163 tests, 18 suites
+cd content-tool && npm run check # 59 tests, 6 suites
 
 # iOS cold-launch smoke test (simulator)
 cd mobile && npm run smoke
