@@ -21,6 +21,7 @@ export function SettingsScreen(): React.JSX.Element {
   const { preference, setPreference } = useThemePreference();
   const { queries } = useServices();
   const [dbHealth, setDbHealth] = useState<ContentDbHealth | null>(null);
+  const [hoverState, setHoverState] = useState<ThemePreference | null>(null);
 
   useEffect(() => {
     queries.getContentDbHealth().then(setDbHealth).catch(() => undefined);
@@ -40,6 +41,7 @@ export function SettingsScreen(): React.JSX.Element {
           <View style={{ flexDirection: 'row', gap: spacing.s2 }}>
             {THEME_OPTIONS.map((option) => {
               const selected = preference === option.value;
+              const isHovered = hoverState === option.value;
               const chip: ViewStyle = {
                 flex: 1,
                 minHeight: 48,
@@ -47,7 +49,13 @@ export function SettingsScreen(): React.JSX.Element {
                 alignItems: 'center',
                 justifyContent: 'center',
                 paddingHorizontal: spacing.s3,
-                backgroundColor: selected ? colors.accentSubtle : colors.bgSurfaceRaised,
+                backgroundColor: selected
+                  ? isHovered
+                    ? colors.accentPressed
+                    : colors.accentSubtle
+                  : isHovered
+                    ? colors.bgSurfaceRaised
+                    : colors.bgSurfaceRaised,
                 borderWidth: 1,
                 borderColor: selected ? colors.accent : colors.borderSubtle,
               };
@@ -58,6 +66,8 @@ export function SettingsScreen(): React.JSX.Element {
                   accessibilityLabel={`${option.label} appearance`}
                   accessibilityState={{ selected }}
                   onPress={() => setPreference(option.value)}
+                  onPressIn={() => setHoverState(option.value)}
+                  onPressOut={() => setHoverState(null)}
                   style={chip}
                 >
                   <Text variant="label" color={selected ? 'accent' : 'textPrimary'}>
@@ -75,9 +85,17 @@ export function SettingsScreen(): React.JSX.Element {
       </Text>
 
       {dbHealth !== null && (
-        <Text variant="caption" color="textTertiary">
-          {`Content DB · ${dbHealth.wordCount} words · schema v${dbHealth.dbVersion}`}
-        </Text>
+        <View style={{ gap: spacing.s1 }}>
+          <Text variant="caption" color="textTertiary">
+            Content DB
+          </Text>
+          <Text variant="caption" color="textTertiary">
+            {`Foundation tier · ${dbHealth.wordCount} words`}
+          </Text>
+          <Text variant="caption" color="textTertiary">
+            {`Schema v${dbHealth.dbVersion}`}
+          </Text>
+        </View>
       )}
     </Screen>
   );
