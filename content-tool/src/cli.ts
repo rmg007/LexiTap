@@ -15,7 +15,8 @@ const USAGE = `lexitap-tool <command> [options]
 Commands:
   import    --source <path> --tier <slug> [--type t] [--on-conflict update|skip|error] [--dry-run]
   validate  [--tier <slug>] [--strict]
-  enrich    --tier <slug> [--add-synonyms] [--add-audio] [--add-images] [--limit n] [--force] [--dry-run]
+  enrich    (DB mode)  --tier <slug> [--add-synonyms] [--add-audio] [--add-images] [--limit n] [--force] [--dry-run]
+            (CSV mode) --input <path> --output <path> [--budget usd] [--dry-run]
   export    [--output <path>] [--bump major|minor|patch]`;
 
 async function main(): Promise<void> {
