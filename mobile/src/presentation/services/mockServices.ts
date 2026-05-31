@@ -1,6 +1,7 @@
 import type { Services, DailyProgressMetrics } from '@/presentation/services/ServicesContext';
 import type { AnswerQuestionOutput } from '@/application/quiz/AnswerQuestionUseCase';
-import type { QuizSession, UserStats, OnboardingState } from '@/domain/index';
+import type { QuizSession, UserStats, OnboardingState, AnalyticsPort } from '@/domain/index';
+import { NoopAnalyticsService } from '@/infrastructure/analytics/NoopAnalyticsService';
 
 // Typed mock factory for tests / Storybook. The real use-case classes hold
 // private repository fields, so we build structurally-shaped stubs and assert
@@ -32,6 +33,7 @@ export function createMockServices(handlers: MockServiceHandlers = {}): Services
     saveOnboardingProfile: {
       execute: handlers.saveOnboardingProfile ?? (async () => undefined),
     },
+    analytics: new NoopAnalyticsService(),
     queries: {
       getUserStats: handlers.getUserStats ?? (async () => null),
       getMasteryLevels: handlers.getMasteryLevels ?? (async () => []),

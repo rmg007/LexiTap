@@ -33,7 +33,7 @@ export interface QuizScreenProps {
 type Phase =
   | { kind: 'loading' }
   | { kind: 'empty' }
-  | { kind: 'active'; session: QuizSession }
+  | { kind: 'active'; session: QuizSession; startedAt: number }
   | { kind: 'complete'; correct: number; total: number };
 
 // MVP widget rotation: alternate the two shipped widgets by question index.
@@ -56,7 +56,12 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
         nowMs: Date.now(),
         tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
-      setPhase({ kind: 'active', session });
+      // Fire lesson_started event.
+      void services.analytics.track('lesson_started', {
+        tier_id: tierId,
+        mode,
+      });
+      setPhase({ kind: 'active', session, startedAt: Date.now() });
     } catch (error) {
       if (error instanceof NoWordsAvailableError) {
         setPhase({ kind: 'empty' });
@@ -89,25 +94,40 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
           isCorrect,
           nowMs: Date.now(),
         });
+        // Fire quiz_submitted event for this question.
+        void services.analytics.track('quiz_submitted', {
+          tier_id: tierId,
+          assessment_type: answer.assessmentType,
+          is_correct: isCorrect,
+        });
         questionKey.current += 1;
         if (out.result.isSessionComplete) {
           hapticsSessionComplete();
           hapticsStreakIncrement();
+          // Fire lesson_completed event.
+          const durationSec = phase.startedAt ? Math.round((Date.now() - phase.startedAt) / 1000) : 0;
+          void services.analytics.track('lesson_completed', {
+            tier_id: tierId,
+            mode,
+            total_correct: out.result.totalCorrect,
+            total_attempts: out.session.words.length,
+            duration_sec: durationSec,
+          });
           setPhase({
             kind: 'complete',
             correct: out.result.totalCorrect,
             total: out.session.words.length,
           });
         } else {
-          setPhase({ kind: 'active', session: out.session });
+          setPhase({ kind: 'active', session: out.session, startedAt: phase.startedAt });
         }
       } catch {
         // Never block the quiz path on a write failure: advance locally.
         questionKey.current += 1;
-        setPhase({ kind: 'active', session: phase.session });
+        setPhase({ kind: 'active', session: phase.session, startedAt: phase.startedAt });
       }
     },
-    [phase, services],
+    [phase, services, tierId, mode],
   );
 
   if (phase.kind === 'loading') {

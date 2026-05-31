@@ -128,6 +128,7 @@ export async function createContainer(): Promise<Container> {
     answerQuestion: new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler, analytics),
     runDiagnostic: new RunDiagnosticUseCase(words, progress, v1FixedScheduler),
     saveOnboardingProfile: new SaveOnboardingProfileUseCase(stats),
+    analytics,
     onboarding: {
       isComplete: () => storage.isOnboardingComplete(),
       markComplete: () => storage.setOnboardingComplete(),

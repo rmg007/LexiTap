@@ -3,6 +3,7 @@ import type { StartQuizUseCase } from '@/application/quiz/StartQuizUseCase';
 import type { AnswerQuestionUseCase } from '@/application/quiz/AnswerQuestionUseCase';
 import type { RunDiagnosticUseCase } from '@/application/onboarding/RunDiagnosticUseCase';
 import type { SaveOnboardingProfileUseCase } from '@/application/onboarding/SaveOnboardingProfileUseCase';
+import type { AnalyticsPort } from '@/domain/analytics/AnalyticsPort';
 import type { TierId } from '@/domain/index';
 import type { UserStats } from '@/domain/index';
 
@@ -48,6 +49,8 @@ export interface Services {
   readonly runDiagnostic: RunDiagnosticUseCase;
   // Persists goal / band / frontier rank after the onboarding flow completes.
   readonly saveOnboardingProfile: SaveOnboardingProfileUseCase;
+  // Analytics port for screen-level events (lesson_started, quiz_submitted, etc).
+  readonly analytics: AnalyticsPort;
   // First-run gate flag, backed by device storage (not learning data).
   readonly onboarding: {
     isComplete(): Promise<boolean>;

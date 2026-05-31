@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { useTheme } from '@/presentation/theme';
@@ -6,6 +6,7 @@ import type { ColorTokens, Radii, Spacing } from '@/presentation/theme/tokens';
 import { Text, Button, Card } from '@/presentation/components';
 import type { TierConfigEntry } from '@/config/tiers';
 import { listTiers } from '@/config/tiers';
+import { useServices } from '@/presentation/services';
 
 // P-3: Paywall screen for exam pack SKUs. Displays paid tiers (exam packs +
 // bundle) with product cards. Placeholder buttons (R1: RevenueCat integration
@@ -20,12 +21,19 @@ import { listTiers } from '@/config/tiers';
 // - Dynamic Type: all text scales with OS setting (useScaledFont).
 
 export interface PaywallScreenProps {
+  source?: string;
   onDismiss?: () => void;
   onSubscribe?: (packId: string) => void;
 }
 
-export function PaywallScreen({ onDismiss, onSubscribe }: PaywallScreenProps): React.JSX.Element {
+export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: PaywallScreenProps): React.JSX.Element {
   const { colors, spacing, radii } = useTheme();
+  const { analytics } = useServices();
+
+  // Fire paywall_viewed event on mount.
+  useEffect(() => {
+    void analytics.track('paywall_viewed', { source });
+  }, [analytics, source]);
 
   const handleDismiss = useCallback(() => {
     if (onDismiss) {
@@ -37,6 +45,14 @@ export function PaywallScreen({ onDismiss, onSubscribe }: PaywallScreenProps): R
 
   const handleSubscribe = useCallback(
     (pack: TierConfigEntry) => {
+      // Fire purchase_initiated event.
+      const unlock = pack.unlock;
+      if (unlock.kind === 'exam_pack') {
+        void analytics.track('purchase_initiated', {
+          tier_id: pack.id,
+          amount: unlock.listPriceUsd,
+        });
+      }
       if (onSubscribe) {
         onSubscribe(pack.id);
       } else {
@@ -44,7 +60,7 @@ export function PaywallScreen({ onDismiss, onSubscribe }: PaywallScreenProps): R
         // TODO: implement RevenueCat purchase initiation (R1 task)
       }
     },
-    [onSubscribe],
+    [onSubscribe, analytics],
   );
 
   // Filter to paid exam packs + bundle only (unlock.kind === 'exam_pack')

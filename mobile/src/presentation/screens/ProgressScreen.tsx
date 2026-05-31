@@ -30,9 +30,10 @@ interface TierMastery {
 
 export function ProgressScreen(): React.JSX.Element {
   const { spacing } = useTheme();
-  const { queries } = useServices();
+  const { queries, analytics } = useServices();
   const [stats, setStats] = useState<UserStats | null>(null);
   const [tiers, setTiers] = useState<readonly TierMastery[]>([]);
+  const [streakEventFired, setStreakEventFired] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -64,6 +65,20 @@ export function ProgressScreen(): React.JSX.Element {
   useEffect(() => {
     void load();
   }, [load]);
+
+  // Fire streak_maintained event once after stats load.
+  useEffect(() => {
+    if (!streakEventFired && stats !== null) {
+      const today = toLocalCivilDate(Date.now(), Intl.DateTimeFormat().resolvedOptions().timeZone);
+      const streak = stats.streak ?? initialStreakState();
+      const { atRisk } = evaluateStreakAtRisk(streak, today);
+      void analytics.track('streak_maintained', {
+        current_streak: streak.currentStreak,
+        at_risk: atRisk,
+      });
+      setStreakEventFired(true);
+    }
+  }, [stats, streakEventFired, analytics]);
 
   const streak = stats?.streak ?? initialStreakState();
   const today = toLocalCivilDate(Date.now(), Intl.DateTimeFormat().resolvedOptions().timeZone);
