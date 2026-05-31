@@ -11,6 +11,7 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'com.lexitap.app',
+    appleTeamId: 'W8FZGT253G',
     infoPlist: {
       // App only uses standard HTTPS/TLS — exempt from export compliance docs.
       ITSAppUsesNonExemptEncryption: false,
