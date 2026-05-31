@@ -26,6 +26,7 @@ const CSS_INTEROP_PATH = path.join(
 );
 const ROOT_RN = path.join(__dirname, 'node_modules/react-native');
 const NATIVEWIND_DEPS = path.join(__dirname, 'node_modules/nativewind/node_modules');
+const POSTHOG_CORE = path.join(__dirname, 'node_modules/@posthog/core');
 
 config.resolver.extraNodeModules = {
   ...config.resolver.extraNodeModules,
@@ -34,6 +35,21 @@ config.resolver.extraNodeModules = {
 
 const _prevResolve = config.resolver.resolveRequest;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
+  // posthog-react-native@4 imports subpath exports of @posthog/core
+  // (e.g. "@posthog/core/surveys"). Metro on SDK 52 does not follow the package
+  // `exports` map, so these subpaths fail to resolve and the bundle dies.
+  // Redirect them straight to the built dist files. require.resolve cannot be
+  // used here — the `exports` field makes Node refuse deep paths with
+  // ERR_PACKAGE_PATH_NOT_EXPORTED — so we join the absolute path ourselves.
+  // Bare "@posthog/core" is left alone: its `main` field resolves fine.
+  if (moduleName.startsWith('@posthog/core/')) {
+    const sub = moduleName.slice('@posthog/core/'.length);
+    const filePath = sub.startsWith('vendor/')
+      ? path.join(POSTHOG_CORE, 'dist', `${sub}.js`)
+      : path.join(POSTHOG_CORE, 'dist', sub, 'index.js');
+    return { type: 'sourceFile', filePath };
+  }
+
   // When a file inside nativewind's own node_modules imports react-native (or
   // any react-native/* sub-path), redirect to the project-root version so we
   // don't bundle nativewind's bundled RN 0.83+ by mistake.
