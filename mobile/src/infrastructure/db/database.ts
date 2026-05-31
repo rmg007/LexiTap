@@ -4,7 +4,7 @@ import {
   type SQLiteBindParams,
 } from 'expo-sqlite';
 import { pendingMigrations } from '@/infrastructure/db/migrations';
-import { installContentDb } from '@/infrastructure/db/contentDb';
+import { installContentDb, contentDbAttachPath } from '@/infrastructure/db/contentDb';
 
 // Typed handle over the single live SQLite connection. The connection is opened
 // on the read-write user.db; the read-only content words.db is ATTACHed as
@@ -45,9 +45,9 @@ function wrap(db: SQLiteDatabase): DatabaseHandle {
   };
 }
 
-// File names of the two databases. words.db is bundled read-only; user.db is
-// created/persisted in the app's writable SQLite directory by expo-sqlite.
-const CONTENT_DB_NAME = 'words.db';
+// user.db is created/persisted in the app's writable SQLite directory by
+// expo-sqlite, which resolves it by name. The read-only content words.db is
+// ATTACHed by ABSOLUTE path instead (see contentDbAttachPath / the ATTACH below).
 const USER_DB_NAME = 'user.db';
 
 // Run forward-only migrations on user.db, gating each step on PRAGMA
@@ -90,9 +90,11 @@ export async function openDatabase(): Promise<DatabaseHandle> {
   await installContentDb();
   const db = await openDatabaseAsync(USER_DB_NAME);
   await db.execAsync('PRAGMA foreign_keys = ON');
-  // ATTACH the bundled content DB read-only. expo-sqlite resolves the name
-  // against its SQLite directory, where installContentDb() just placed it.
-  await db.execAsync(`ATTACH DATABASE '${CONTENT_DB_NAME}' AS contentdb`);
+  // ATTACH the bundled content DB read-only, by ABSOLUTE path. A bare name
+  // ('words.db') is resolved by SQLite against the process CWD (app-bundle root
+  // on iOS), not expo-sqlite's dir, so it fails to open on-device even though
+  // installContentDb() just placed the file there — that was the C0 bug.
+  await db.execAsync(`ATTACH DATABASE '${contentDbAttachPath()}' AS contentdb`);
   await applyMigrations(db);
   return wrap(db);
 }
