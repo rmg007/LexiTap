@@ -7,6 +7,18 @@ supersedes-ordering-in: ROADMAP.md, lexitap-docs/02-product-definition/ROADMAP.m
 
 # LexiTap — Master Release Plan (current state → live on both stores)
 
+> ⚠️ **MONETIZATION MODEL CHANGED 2026-05-31 — this plan predates it.** The
+> subscription / Premium-Pass / standalone-$1.99-Common3k model assumed throughout
+> the RevenueCat tasks (A1, R1–R6), decision rows (D2, D8), and content tasks
+> (C9, C11) is **dead**. New model: free frequency/CEFR content + universal audio,
+> one-time **exam packs ($9.99)** + **All-Exams bundle ($29.99)** + upgrade SKUs,
+> **no subscriptions**, B2B deferred. Authoritative:
+> [../lexitap-docs/08-financial-legal/REVENUE_MODEL_PRICING.md](../lexitap-docs/08-financial-legal/REVENUE_MODEL_PRICING.md)
+> + [../memory/2026-05-31_monetization_rethink.md](../memory/2026-05-31_monetization_rethink.md).
+> Rows below are annotated where directly affected, but **a full task-by-task
+> reconciliation of the RevenueCat block is still pending** — treat the new pricing
+> doc as the source of truth on any conflict.
+
 A concrete, dependency-aware execution plan from today's verified state to a public App Store + Google Play launch. Built from a full code + docs audit (2026-05-30) across six domains. **This plan overrides the phase *ordering* in the two ROADMAP files where they conflict** (auth timing, content scope, Phase 2 "no coding"); the strategy/spec docs in `lexitap-docs/` remain canonical for *content*.
 
 > Effort key: **S** = hours · **M** = 1–3 days · **L** = a week or more. Task IDs (H-1, C0, R4, AU2…) are stable references used in the critical path and risk register.
@@ -20,7 +32,7 @@ The audit's code-level bugs were verified against current `master` and **fixed**
 | # | Fix | State | Evidence |
 |---|---|---|---|
 | **C0** | words.db delivery: bundle `mobile/assets/vocab/words.db`, register `.db` in Metro, embed via the `expo-asset` plugin, copy into expo-sqlite's dir (version-gated) **before** ATTACH | **Done in code** — `npm run check` green; unit-tested version gate. ⚠️ **Still must be proven on a physical iOS + low-end Android build** (the one thing code can't verify). | `infrastructure/db/contentDb.ts`, `contentDbInstall.ts`(+test), `database.ts`, `metro.config.js`, `app.json` |
-| **A1** | `tiers.ts` rewritten to the locked model: 3-SKU catalog (`com.lexitap.premium.monthly` / `.annual` / `com.lexitap.common3k`), premium tiers unlocked by the `premium` **entitlement** (not individually sold), Common 3000 the lone standalone SKU | **Done** | `config/tiers.ts` |
+| **A1** | ~~`tiers.ts` rewritten to the 3-SKU subscription model~~ **SUPERSEDED 2026-05-31.** That subscription catalog is now dead. `tiers.ts` must be rewritten again to one-time exam-pack + bundle products (see pricing doc). | **Redo** | `config/tiers.ts` |
 | **C2** | Empty/unpurchasable tiers set `isActive:false` — only free Foundation + Advanced ship in P1 | **Done** | `config/tiers.ts` |
 | **HARNESS** | **`npm run check` was red on `master`** — `nativewind/babel` (a NativeWind v4 *preset*) was under Babel `plugins`, breaking every Jest suite. Moved to `presets`, skipped in test env (it loads `react-native-worklets/plugin`, a reanimated-v4 artifact absent on reanimated 3). | **Done** — 132 tests / 15 suites green | `babel.config.js`, `@babel/core` pinned 7.25.2 |
 | **D7** | **Resolved: B2B seat-redemption code is GONE** (stripped in the 2026-05-28 cleanup; zero refs in `mobile/`). | **Decision: drop B2B from the initial launch — ship pure-B2C**, add institutional seat tokens as a fast-follow. The 3.1.3(c) App-Review story is not attempted at v1. | `grep` of `mobile/` |
@@ -71,7 +83,7 @@ The roadmaps say "Phase 1 ~85% complete, app runs, sync done, content sourced." 
 | "sync service done… free cloud sync" | Per-table sync + `SupabaseSyncService` + entitlement use-cases were **deleted 2026-05-28**. Encrypted blob backup is **not written**. The root ROADMAP line is stale. |
 | "auth → Phase 5" | The canonical docs already contradict this: SIWA + Google + magic-link are **Phase 3**. Encrypted backup and B2B seat activation both need `auth.uid()`, so auth *must* precede them. Following ROADMAP literally blocks backup + B2B on auth that "won't exist for two phases." |
 | onboarding / Home are fine for beta | Onboarding steps 2/3/5/6 are placeholder buttons; HomeScreen daily progress is **hardcoded to `0`**. A Phase 2 retention test on this build is meaningless. The diagnostic is a trivial stride sampler, **off-spec** vs the adaptive band-walk the Knowledge Map needs. |
-| IAP deferred, harmless stub | ✅ **Fixed 2026-05-30.** Was: `tiers.ts` encoded the dead per-tier `$9.99` one-time SKU model. Now: the locked 3-SKU catalog (`premium.monthly`/`.annual` + `common3k`), premium tiers unlocked by the `premium` entitlement, Common 3000 the lone standalone unlock. Empty paid tiers set `isActive:false`. |
+| IAP deferred, harmless stub | ⚠️ **`tiers.ts` must be rebuilt (model changed 2026-05-31).** The 2026-05-30 "3-SKU subscription catalog" (`premium.monthly`/`.annual` + `common3k`) is now **also dead**. Target: one-time **exam-pack products ($9.99)** + **All-Exams bundle ($29.99)** + upgrade SKUs; free categories carry no product. See [REVENUE_MODEL_PRICING.md](../lexitap-docs/08-financial-legal/REVENUE_MODEL_PRICING.md). |
 
 **Net:** the *domain logic* (SRS, scheduling, mastery, quiz session, DB schema, 2 widgets) is genuinely done and tested — that's real and valuable. But "app + content + release infra" is closer to **~30% to launch** than 85%. The single biggest correction: **content enrichment is the long pole, and the content delivery path is currently broken.**
 
@@ -84,13 +96,13 @@ These are not open-ended; each has a recommendation. They are doc contradictions
 | # | Decision | Recommendation | Blocks |
 |---|---|---|---|
 | D1 | **Diagnostic: adaptive band-walk (spec) vs stride sampler (built)?** | **Ship the downscoped stride sampler for beta** (DIAG-B): seed it from the self-segment band, compute a crude known-count for the Knowledge Map. Full adaptive (DIAG-A) is hard-blocked on a pseudo-word library that doesn't exist. | O-4, O-5, KM screen |
-| D2 | **Trial vs intro price** — Paywall.md said "14-day trial"; revenue doc says no trial, intro $19.99/yr. | ✅ **RESOLVED 2026-05-30: intro price, no free trial** (intro offer on the annual SKU). Paywall.md fixed to match. | R1, REVCAT-1 |
+| D2 | ~~Trial vs intro price~~ | ⊘ **MOOT 2026-05-31** — no subscription exists, so no trial/intro-price question. One-time packs only. | R1, REVCAT-1 |
 | D3 | **Auth: magic-link vs email/password?** — SECURITY_MODEL said password (Argon2); everything else said magic-link. | ✅ **RESOLVED 2026-05-30: magic-link** (`signInWithOtp`), never store passwords. SECURITY_MODEL fixed. | AU1, AU2 |
 | D4 | **Backup encryption key model** — API_CONTRACT said "client AES + Vault key"; SECURITY_MODEL said "no app-level encryption." | ✅ **RESOLVED 2026-05-30: Storage server-side-encryption-at-rest + RLS path-scoping; no client AES.** API_CONTRACT / SECURITY_MODEL / SYSTEM_ARCHITECTURE aligned (path is `{uid}/user.db`). | BK1, BK2 |
 | D5 | **Age gate / COPPA stance** | **16+ global, neutral DOB gate, no parental-consent path, delete-on-discovery.** Adult audience avoids "Made for Kids"; a gate neutralizes the minor-signup trap cheaply. Do *not* build a child-consent flow. | LEGAL-1, LEGAL-4 |
 | D6 | **B2B at launch: self-serve web portal vs manual invoice?** | **Manual invoice.** A live B2C checkout on lexitap.app is an App Review risk (3.1.1) and weeks of PCI/tax work. Static site + "contact sales, min 10 seats" + manual Supabase provisioning. | WEB-1, REVIEW-1 |
 | D7 | **Was B2B seat-redemption code deleted 2026-05-28, and is it rebuilt?** | **✅ RESOLVED 2026-05-30: it's gone (zero refs in `mobile/`). Decision taken: drop B2B from the initial launch — ship pure-B2C**, add institutional seat tokens as a fast-follow. B2B1/REVIEW-1's 3.1.3(c) story is not attempted at v1. | ~~B2B1, REVIEW-1, SUBMIT-2~~ (deferred) |
-| D8 | **"Common 3000" ($1.99) vs free Foundation 3000** — heavy overlap. | **Clarify what distinguishes them before sourcing**, or cut Common 3000 as redundant content + SKU work. | C11, A1 |
+| D8 | ~~"Common 3000" ($1.99) vs free Foundation 3000 — heavy overlap.~~ | ✅ **RESOLVED 2026-05-31.** The overlap is the *point*, not a bug: words carry **many-to-many** category tags (a word is in Foundation AND Common 3000 at once). Both Most Common 3000 and 9000 are now **free** categories; the $1.99 standalone SKU is **cut**. Paid content moved to one-time exam packs. | C11, A1 |
 
 ---
 
@@ -243,9 +255,9 @@ Scope: onboarding screens, Home daily-progress, Settings, ImageMatch/Classificat
 - **C6 · Synonyms/antonyms for Foundation** — S (reuses C4 adapter). Valid JSON arrays per validator rule #6. *Deps:* C4.
 - **C7 · Tighten validation + provenance (backlog #41)** — M. `validate --strict` adds orphan check, dup-leak check, and a **provenance/license field** (definitions must be ORIGINAL not copied — real copyright risk; the C4 prompt must force original phrasing; a license column is documentation, not protection). Export aborts on any error. *Deps:* C4.
 - **C8 · Repeatable content-release process** — M. One command/CI job: `import → enrich → validate --strict → export → version bump → copy to mobile/assets/vocab/words.db`, fail-closed. The reusable path for P6 drops. *Deps:* C0, C1, C7.
-- **C9 · TOEFL tier + ElevenLabs audio (P3)** — L. Full TOEFL list enriched + sampled-reviewed; real ElevenLabs adapter synthesizes `audio/{word_id}.mp3`; validator asset-resolve passes; audio bundles; TOEFL becomes paid only after RevenueCat. *Flag:* 3,000 mp3s materially grow bundle size — measure; may need on-demand download (a new, undesigned mechanism). ~$50 plausible; confirm character pricing. *Deps:* C4, C8 + audio asset-bundling.
+- **C9 · Audio (P3)** — L. **REVISED 2026-05-31: universal audio on ALL content (free + paid), via neural TTS (Amazon Polly / Google, ~$10) — NOT ElevenLabs** (ElevenLabs ~$100-160 for ~9k words breaks the $194 budget). Real TTS adapter synthesizes `audio/{word_id}.mp3` (word + sentence); validator asset-resolve passes; audio bundles. *Flag:* thousands of mp3s materially grow bundle size — measure; may need on-demand download (a new, undesigned mechanism). *Deps:* C4, C8 + audio asset-bundling.
 - **C10 · Images for ImageMatch (HIDDEN LONG POLE)** — L+, curation-dominated. `image_path` 0/216, Unsplash provider is a no-op. Many Foundation words (abstract: borrow, tired, negotiate) have **no sensible single image** — ImageMatch only works for a concrete-noun subset. **Defer to P4; do not block launch.** MultipleChoice + DragDrop cover the loop.
-- **C11 · P4 tiers: IELTS, Business English, Common 3000** — L per tier (enrichment/review time; code reused). 6 tiers in config with correct `sku`/`is_active`/`is_free`. *Flag (D8):* Common 3000 ($1.99) overlaps free Foundation — clarify the distinction before sourcing or it's redundant.
+- **C11 · P4 paid exam packs: IELTS, Business English, GRE, GMAT** — L per pack (enrichment/review time; code reused). Each is a one-time $9.99 product joining the `all_exams` bundle. **REVISED 2026-05-31:** Most Common 3000/9000 are **free** categories (not paid), shipped at launch via many-to-many tags — the old "$1.99 Common 3000" SKU is cut (D8). Paid packs carry the rare academic words disjoint from the free frequency bands.
 
 **Critical path to P1:** C0 → C1 → C2 → C3 → C4 → C5(sampled) → C6 → C7 → C8. (C9=P3, C10/C11=P4.)
 
@@ -305,7 +317,7 @@ The "Phase 3 IAP vs Phase 5 auth" conflict exists only in the **stale root ROADM
 ### Pre-work
 
 - **A0 · Migrate off Expo Go → EAS dev client (prebuild)** — M config / L with signing. The hard gate for the whole domain. *Done:* `npx expo prebuild` succeeds; dev build installs on physical iOS + Android; existing SQLite/quiz flow intact. *Risk:* confirm RevenueCat + `@react-native-google-signin` + Apple auth are New-Arch compatible (`newArchEnabled:true` is set).
-- **A1 · Fix `tiers.ts` (dead business model)** — S. `PREMIUM_PASS_SKU='lexitap.premium_pass'` is wrong (locked SKUs: `com.lexitap.premium.monthly` + `.annual`, two products, one entitlement). Per-tier `priceUsd:9.99`/`sku` is the killed one-time model — paid tiers are unlocked by the Premium Pass *entitlement*, not separately purchasable; only `com.lexitap.common3k` ($1.99) is standalone. *Done:* separate "content tier" from "store product"; product catalog = exactly the 3 SKUs. **Do first or you configure stores wrong.**
+- **A1 · Rebuild `tiers.ts` to the one-time exam-pack model (2026-05-31)** — S. The current file's subscription catalog (`premium.monthly`/`.annual` + standalone `common3k`) is dead. Target product catalog = **exam packs** `com.lexitap.exam.{toefl,ielts,gre,gmat,business}` ($9.99, grant `exam_{name}`) + **All-Exams bundle** `com.lexitap.bundle.full` ($29.99, grants `all_exams`) + upgrade SKUs `bundle.upgrade1/2`; free categories (Foundation, Advanced, Most Common 3000/9000) carry **no product**. Keep "content category" (many-to-many tag) separate from "store product". Spec: [REVENUE_MODEL_PRICING.md](../lexitap-docs/08-financial-legal/REVENUE_MODEL_PRICING.md). **Do first or you configure stores wrong.** *Pairs with the schema → `word_tiers` many-to-many migration.*
 
 ### RevenueCat (B2C)
 
@@ -314,7 +326,7 @@ The "Phase 3 IAP vs Phase 5 auth" conflict exists only in the **stale root ROADM
 - **R3 · Install `react-native-purchases` + plugin** — M. Keys via `EXPO_PUBLIC_*`; `Purchases.configure()` once at start; `getOfferings()` returns the offering on a real device. *Deps:* A0, R2.
 - **R4 · `RevenueCatIapService` (implements existing `IapService` port)** — M. Map offerings→`getProducts`, `purchasePackage`→`purchase` (incl. `pending` Ask-to-Buy, `cancelled`), `restorePurchases`; `validateReceipt` delegated to RevenueCat `CustomerInfo` (the old `validate_receipt` Edge Function is **superseded** per API_CONTRACT — Paywall.md is stale). Container swaps Stub→RevenueCat; keep Stub for jest. **Port gap:** the interface can't *read current entitlements* — add `getActiveEntitlements()`/`getCustomerInfo()`. *Deps:* R3.
 - **R5 · Entitlement-check use-case** — M. New `CheckTierAccessUseCase.canAccessTier(tierId)` from (a) free flag, (b) `premium` entitlement, (c) `common3k`, (d) B2B seat flag. **Entitlement state memory-only, never written to `user.db`** (SECURITY_MODEL invariant) — except the B2B seat flag. Unit-tested with a fake IapService. *Deps:* R4, A1.
-- **R6 · Paywall wiring** — L. `paywall.tsx` is a placeholder; spec `Paywall.md`. Live products via the application layer (presentation must not import infrastructure); monthly $4.99 + annual $24.99, Restore, always-dismissible, no dark patterns; success/pending/cancel/offline states; standalone bottom-sheet from Progress/Settings; Common3K on Foundation-adjacent entry only. **Zero off-store steering.** *Deps:* R4, R5.
+- **R6 · Paywall wiring** — L. `paywall.tsx` is a placeholder; spec `Paywall.md`. **REVISED 2026-05-31: one-time products, no subscription** — exam packs ($9.99) + All-Exams bundle ($29.99) + gated upgrade SKUs (`bundle.upgrade1/2`, priced `$29.99 − paid`). Live products via the application layer (presentation must not import infrastructure); Restore, always-dismissible, no dark patterns; success/pending/cancel/offline states; standalone bottom-sheet from Progress/Settings; exam-pack entry from the relevant pack's locked content. **Zero off-store steering.** *Deps:* R4, R5.
 - **R7 · Tier gating in learn/progress** — M. Locked tiers visually locked → tap opens paywall; `StartQuizUseCase`/selection refuse locked tiers; Settings "Unlock content" + "Restore purchases". *Deps:* R5, R6.
 
 ### Auth (same phase as IAP)

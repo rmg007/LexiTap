@@ -2,7 +2,7 @@
 title: Data Models and Domain Entities
 category: technical
 status: active
-updated: 2026-05-24
+updated: 2026-05-31
 priority: P1
 tags: [data-models, domain, typescript, entities, repositories, ports, mapping]
 ---
@@ -48,7 +48,7 @@ export interface Word {
   id: WordId;
   word: string;                 // multi-word for idioms, e.g. "look up to"
   definition: string;
-  tierId: TierId;
+  tierIds: TierId[];            // MANY-TO-MANY: a word belongs to several categories (e.g. "advanced" + "toefl")
   pos?: string;
   cefrLevel?: CefrLevel;
   wordType: WordType;
@@ -81,6 +81,8 @@ export interface WordWithProgress {
   progress: UserProgress;
 }
 ```
+
+> **Category membership is many-to-many.** A word belongs to several categories (e.g. the same word may be tagged `advanced` and `toefl`); membership is no longer a single `tier_id` foreign key on `words`. The schema migration to a `word_tiers` junction is **pending (not yet implemented in code)** — current code still carries the legacy single `tier_id`. The domain shape above (`tierIds: TierId[]`) reflects the target model.
 
 ## Progress and SRS Types
 
@@ -153,18 +155,26 @@ export interface QuizResult {
 ## Entitlement Types
 
 ```ts
+// A purchased non-consumable. `productId` is one of the exam packs
+// (`com.lexitap.exam.{toefl,ielts,gre,gmat,business}`) or the All-Exams bundle
+// (`com.lexitap.bundle.full` / upgrade SKUs). Grants are derived from this, NOT stored in user.db.
 export interface Entitlement {
-  tierId: TierId;
+  productId: string;          // store product id of the one-time purchase
+  grant: string;              // 'exam_{name}' | 'all_exams'
   purchasedAt: number;
-  expiresAt: number | null;   // null = permanent unlock, set = subscription / B2B seat expiry
+  // No expiry: all purchases are one-time non-consumables. (Field kept null-able only for
+  // the deferred B2B seat door — unused at launch.)
+  expiresAt: number | null;
   receiptToken?: string;
 }
 
-// Access decision is application-layer logic (Premium Pass unlocks all paid tiers)
+// Access decision is application-layer logic. A category is accessible when:
+//   isFree OR owns(pack-for-category) OR owns('all_exams').
+// Entitlements are read from RevenueCat CustomerInfo in memory — never from user.db.
 export interface TierAccess {
   tierId: TierId;
   hasAccess: boolean;
-  reason: 'free' | 'purchased' | 'premium_pass' | 'promo' | 'locked';
+  reason: 'free' | 'purchased' | 'all_exams' | 'promo' | 'locked';
 }
 ```
 
@@ -255,7 +265,9 @@ export function toWord(row: WordRow): Word {
     id: row.id as WordId,
     word: row.word,
     definition: row.definition,
-    tierId: row.tier_id as TierId,
+    // Migration pending: code still reads the legacy single `tier_id`; wrap it as a
+    // one-element array until the `word_tiers` junction lands, then map the joined rows.
+    tierIds: [row.tier_id as TierId],
     pos: row.pos ?? undefined,
     cefrLevel: (row.cefr_level as CefrLevel) ?? undefined,
     wordType: (row.word_type ?? 'vocabulary') as WordType,

@@ -2,9 +2,9 @@
 title: Product Requirements Document
 category: product
 status: active
-updated: 2026-05-24
+updated: 2026-05-31
 priority: P0
-tags: [prd, requirements, mvp, srs, recognition, no-typing, subscription, B2B-activation]
+tags: [prd, requirements, mvp, srs, recognition, no-typing, one-time, exam-packs]
 ---
 
 # Product Requirements Document — LexiTap MVP
@@ -22,7 +22,7 @@ This is the authoritative product requirements specification for the LexiTap MVP
 - [Spaced Repetition System](#spaced-repetition-system-srs)
 - [Onboarding Diagnostic](#onboarding-diagnostic)
 - [Gamification](#gamification)
-- [Accounts and Subscription Gating](#accounts-and-subscription-gating)
+- [Accounts and Entitlement Gating](#accounts-and-entitlement-gating)
 - [Content](#content)
 - [Success Metrics](#success-metrics)
 - [Decision Notes](#decision-notes)
@@ -31,10 +31,10 @@ This is the authoritative product requirements specification for the LexiTap MVP
 
 ## Product Summary
 
-LexiTap is an offline-first, high-efficacy English vocabulary acquisition app for global ESL learners and cram schools. The free Foundation tier builds the MVP daily recognition habit through tap, drag, match, and classify interactions; Advanced remains a free tier as the launch-wave content matures. A unified Premium Subscription ($4.99/mo, $24.99/yr) and bulk B2B Licensing Portal for language schools unlock the specific high-stakes content (TOEFL, IELTS, Business English, etc.).
+LexiTap is an offline-first, high-efficacy English vocabulary acquisition app for global ESL learners. The free frequency categories (Foundation, Advanced, Most Common 3000, Most Common 9000) build the MVP daily recognition habit through tap, drag, match, and classify interactions — all free, with full word + sentence audio, SRS, streaks, and themes. One-time non-consumable exam packs (TOEFL, IELTS, GRE, GMAT, Business English) at $9.99 each, or an All-Exams bundle at $29.99, unlock the specific high-stakes exam content. B2B cram-school seat packs are deferred out of launch.
 
 The core differentiators are:
-1. **Low-cost Subscription & B2B bulk packages** (flexible, institutional-friendly).
+1. **One-time exam packs & All-Exams bundle** (no subscriptions, buy once, own forever).
 2. **No-typing recognition practice** (fast, mobile-native tap/drag/match/classify reviews).
 3. **Offline-first local SQLite authority** (for 5-minute commute windows).
 4. **Free cloud sync mirror** (never lose progress; cloud is not the source of truth).
@@ -44,14 +44,15 @@ The core differentiators are:
 ## Goals and Non-Goals
 
 ### Goals (MVP)
-- **G1** — Ship a working iOS + Android app with the free Foundation tier, a no-typing recognition quiz loop, and a fixed-interval SRS scheduler.
+- **G1** — Ship a working iOS + Android app with the free frequency categories, a no-typing recognition quiz loop, and a fixed-interval SRS scheduler.
 - **G2** — Deliver an engaging daily habit hook (streak counter) without guilt mechanics.
-- **G3** — Implement B2B seat token activation allowing cram school students to unlock Premium immediately.
+- **G3** — Implement one-time exam-pack purchase flows allowing learners to unlock exam content immediately.
 - **G4** — Build durable vocabulary recognition through tap, drag, match, and classify interactions without quiz text entry.
-- **G5** — Validate core retention metrics (D7 > 30%) and B2B pilot interest before final store release.
+- **G5** — Validate core retention metrics (D7 > 30%) before final store release.
 
 ### Non-Goals (MVP)
-- In-app subscription payments and store IAP flows (mocked in Phase 1-2, live in Phase 3).
+- In-app one-time purchase payments and store IAP flows (mocked in Phase 1-2, live in Phase 3).
+- B2B cram-school seat packs (deferred entirely out of launch; door left open in the entitlement model).
 - ImageMatch and Classification widgets (Phase 4).
 - Active production typing/speaking, raw QWERTY keyboard character entry, audio pronunciation analysis, or AI chatbot conversation.
 
@@ -60,7 +61,7 @@ The core differentiators are:
 ## Target User
 
 - **Individual Test-Takers:** Non-native English speakers preparing for TOEFL/IELTS/GRE. Requires fast recognition of definitions, collocations, idioms, and exam-relevant vocabulary under deadline pressure.
-- **Cram School Classes:** Bundles of 20–200 students managed by a course teacher. Requires group progress tracking and simple seat allocation.
+- **Cram School Classes (deferred):** Bundles of 20–200 students managed by a course teacher. B2B seat packs are deferred out of launch; the entitlement model leaves the door open but no B2B feature is built for launch.
 
 ---
 
@@ -68,13 +69,13 @@ The core differentiators are:
 
 | Area | MVP Includes | Deferred |
 |---|---|---|
-| Tiers | Foundation (free) + TOEFL (locked premium content) | Advanced full list, all other paid tiers |
-| Screens | Home, Quiz, Progress, Settings, Paywall | School admin portal (web-only) |
+| Categories | Free frequency categories (Foundation, Advanced, Most Common 3000/9000) + TOEFL exam pack (locked one-time content) | All other exam packs |
+| Screens | Home, Quiz, Progress, Settings, Paywall | B2B school admin portal (web-only, deferred) |
 | Widgets | MultipleChoice, DragDrop | ImageMatch, Classification |
-| Hooks | useSpacedRepetition, useMastery, useQuizSession, useSync, useSeatLicensing | — |
+| Hooks | useSpacedRepetition, useMastery, useQuizSession, useSync, useEntitlements | — |
 | SRS | Fixed 1/3/7/14/30 days, mastery integer scale 0–5 | Dynamic FSRS parameters |
 | Onboarding | Simplified adaptive diagnostic | Full IRT modeling |
-| Accounts | Email/password + Google Sign-In + Sign in with Apple + B2B seat code entry | — |
+| Accounts | Email/password + Google Sign-In + Sign in with Apple | — |
 | Sync | Free, automatic, background progress mirroring | — |
 
 ---
@@ -104,10 +105,10 @@ The core differentiators are:
   - Clearly demonstrates recognition mastery, due reviews, and retained vocabulary growth.
 
 ### Settings
-- **Requirement:** Handle account sync, Google Sign-In, and B2B school license activation.
+- **Requirement:** Handle account sync, Google Sign-In, and restore purchases.
 - **Acceptance Criteria:**
-  - Includes a text field: "Enter Cram School Seat Token."
-  - Redeeming a valid token updates local and Supabase accounts to "Premium Subscription" status.
+  - Includes a "Restore Purchases" action that re-reads exam-pack and All-Exams entitlements from RevenueCat.
+  - Restoring re-grants owned entitlements (held in RevenueCat `CustomerInfo`, never written to user.db).
   - Features data-deletion path (GDPR).
 
 ---
@@ -144,22 +145,21 @@ The core differentiators are:
 
 ---
 
-## Accounts and Subscription Gating
+## Accounts and Entitlement Gating
 
 - **Gating Rules:**
-  - **Free Tier:** Access to Foundation (top 3,000 words) and Advanced (3,001–9,000 words).
-  - **Premium Tier:** Access to TOEFL, IELTS, Business English, GRE, GMAT, and post-launch content packs.
-- **B2B Seat Activation:**
-  - Students enter an 8-character token (e.g., `CP-A7K2D`) in Settings.
-  - App calls Supabase RPC `activate_seat_license(token)`.
-  - On validation, the token is bound to the user's UUID, mapping their account to active Premium.
-  - B2B licenses can be revoked by the administrator, returning the client to the free tier on next sync.
+  - **Free (no product, ever):** Foundation (A2-B1), Advanced (B2-C1), Most Common 3000, and Most Common 9000 — all free, with word + sentence audio, SRS, streaks, and themes. Words carry many-to-many category tags (a word can be in Foundation AND Most Common 3000 AND an exam pack at once).
+  - **Paid (one-time non-consumable only):** Exam packs `com.lexitap.exam.{toefl,ielts,gre,gmat,business}` at $9.99 each (each grants entitlement `exam_{name}`); the **All-Exams bundle** `com.lexitap.bundle.full` at $29.99 (grants `all_exams`, unlocking every exam pack current and future); and upgrade SKUs `com.lexitap.bundle.upgrade1` ($19.99, for owners of 1 pack) and `com.lexitap.bundle.upgrade2` ($9.99, for owners of 2 packs), both granting `all_exams`.
+- **Entitlements:** Per-pack plus `all_exams`, held in RevenueCat `CustomerInfo` (memory only) and NEVER written to user.db. Access check: `isFree OR owns(pack) OR owns(all_exams)`.
+- **B2B Seat Activation (deferred):** Cram-school seat packs are deferred entirely out of launch — nothing is built. The entitlement model leaves the door open for a future seat-grant mechanism.
+- **Audio:** Free and universal on all content (word + sentence), generated via cheap neural TTS (Amazon Polly / Google). Not a paid feature.
+- **Authoritative pricing source:** [../08-financial-legal/REVENUE_MODEL_PRICING.md](../08-financial-legal/REVENUE_MODEL_PRICING.md).
 
 ## Content
 
-- **MVP:** Foundation vocabulary plus TOEFL premium-content path for validation.
-- **Launch Wave:** Advanced free tier, IELTS, Business English, and Common 3000 one-time unlock.
-- **Post-Launch:** GRE, GMAT, idioms, and phrasal verbs ship as Premium Pass content drops.
+- **MVP:** Free Foundation vocabulary plus the TOEFL exam-pack path for validation.
+- **Launch Wave:** Advanced (free), Most Common 3000/9000 (free), IELTS and Business English exam packs.
+- **Post-Launch:** GRE, GMAT, idioms, and phrasal verbs ship as additional exam-pack content drops (covered by `all_exams`).
 - **Sourcing Rule:** All lists must pass provenance, license, enrichment, and human-review gates before they enter `words.db`.
 
 ---
@@ -169,9 +169,9 @@ The core differentiators are:
 | Metric | Target | Phase |
 |---|---|---|
 | D7 Active Retention | > 30% | Phase 2 |
-| B2B Seat Activation Rate | > 85% of purchased bulk seats | Phase 2 |
+| Exam-Pack Purchase Conversion | > 5% of active free learners buy a pack or bundle | Phase 3 |
 | Recognition Review Accuracy | Avg improvement of 20% over 14 days | Phase 2 |
-| Blended Monthly Churn | < 8% across individual premium subscribers | Phase 3 |
+| All-Exams Bundle Attach Rate | > 30% of paying customers choose the bundle or upgrade | Phase 3 |
 
 ## Decision Notes
 

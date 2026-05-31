@@ -2,7 +2,7 @@
 title: Support and Escalation Runbook
 category: operations-compliance
 status: active
-updated: 2026-05-24
+updated: 2026-05-31
 priority: P2
 tags: [support, escalation, bug-triage, runbook, sync-conflicts, refunds, teacher-rewards, sla]
 ---
@@ -71,8 +71,8 @@ on-device data is intact unless overwritten by a newer sync.
 Entitlements restore via Apple/Google receipt re-validation. Steps: have the user tap "Restore
 Purchases" while signed into the same store account that bought it; confirm they are on the same app
 account. If still locked, request the store order id and check RevenueCat dashboard for the
-server-side receipt validation logs. Note Premium Pass unlocks all paid tiers via a single
-purchase record.
+server-side receipt validation logs. Note each exam pack is a separate one-time purchase; the
+All-Exams bundle grants the `all_exams` entitlement covering all current and future exam packs.
 
 ### Streak disputes / "I lost my streak unfairly"
 
@@ -100,18 +100,10 @@ with email/password and vice versa. Trigger password reset via Supabase Auth for
 
 ## Teacher-Reward Disputes
 
-Teachers receive non-cash Premium seats or credits while the advocate loop stays digital-only (per
-[../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md](../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md)).
-Dispute playbook:
-
-1. (Phase 3) Pull the teacher's `referrals` rows (code, referred account, reward status, qualifying activity,
-   and source event id) and reconcile against the dashboard total.
-2. Common cause: a referred account never completed the qualifying trial/activity threshold or was
-   later flagged as fraudulent/self-referred; explain with the source event id.
-3. Verify the reward tier matched the teacher's status at time of qualification; tiers are
-   snapshotted per referral, not retroactively re-rated.
-4. Confirm the Premium seat or credit destination before re-issuing a reward.
-5. Honor genuine reconciliation errors in the next reward run; log the adjustment.
+Deferred — no teacher referral or advocate program operates at launch, so no reward disputes are
+expected. If such a program is later introduced, a dispute playbook (pull `referrals` rows, reconcile
+against the dashboard, verify qualifying activity, confirm reward destination, honor genuine
+reconciliation errors) will be defined here at that time.
 
 ## Escalation Path
 
@@ -119,7 +111,7 @@ Dispute playbook:
   [ERROR_MONITORING_PLAN.md](./ERROR_MONITORING_PLAN.md) staged rollout.
 - **Privacy/legal** → privacy inbox + flag for counsel if a rights request is complex.
 - **Payment/refund** → store support (Apple/Google) for the user; we cannot override.
-- **Teacher reward** → manual non-cash reward reconciliation as above.
+- **Teacher reward** → deferred; no program at launch (see above).
 - **Out of scope (pronunciation, fluency claims)** → set expectations: LexiTap is a vocabulary tool,
   not a pronunciation or fluency product.
 
@@ -133,4 +125,4 @@ playbook above to keep response time low.
 
 - `requires-product-decision` — Public FAQ/help page on the website before launch? Recommended; scope TBD.
 - `deferred` — Help-desk tool threshold (tickets/day). Revisit at launch.
-- `deferred` — Teacher Premium-seat reward threshold and cadence (Phase 3+).
+- `deferred` — Teacher advocate program (reward currency, threshold, cadence) — deferred entirely out of launch; revisit only if introduced.

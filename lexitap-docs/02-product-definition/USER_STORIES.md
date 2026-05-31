@@ -2,7 +2,7 @@
 title: User Stories and Job Stories
 category: product
 status: active
-updated: 2026-05-24
+updated: 2026-05-31
 priority: P1
 tags: [user-stories, epics, onboarding, srs, sync, gamification, teacher-advocate]
 ---
@@ -17,7 +17,7 @@ User stories grouped by epic, each with acceptance criteria. Requirements detail
 - [Epic: Daily Review](#epic-daily-review)
 - [Epic: Learning New Words](#epic-learning-new-words)
 - [Epic: Progress Tracking](#epic-progress-tracking)
-- [Epic: Purchasing Premium](#epic-purchasing-premium)
+- [Epic: Purchasing Exam Packs](#epic-purchasing-exam-packs)
 - [Epic: Streak and Gamification](#epic-streak-and-gamification)
 - [Epic: Cloud Sync Across Devices](#epic-cloud-sync-across-devices)
 - [Epic: Teacher Advocate Redemption](#epic-teacher-advocate-redemption)
@@ -79,21 +79,21 @@ As a Learner, I want a view of how many words I've mastered so that I feel my pr
 As a Test-Prep Learner, I want to see my curriculum and remaining words so that I can gauge how close I am to my goal.
 - Knowledge Map shows known vs remaining; no leaderboard framing.
 
-## Epic: Purchasing Premium
+## Epic: Purchasing Exam Packs
 
 *(Phase 3+ — not in MVP, captured for sequencing.)*
 
-**US-B1 — Subscribe for test-prep content.**
-As a Test-Prep Learner, I want to subscribe only while I am studying intensely so that TOEFL/IELTS content matches my deadline window.
-- Premium Pass monthly/annual IAP; restores across devices via account.
+**US-B1 — Buy a single exam pack for test-prep content.**
+As a Test-Prep Learner, I want to buy just the exam pack I need so that I only pay for the TOEFL/IELTS content my deadline requires.
+- One-time non-consumable IAP at $9.99 per pack (`com.lexitap.exam.{toefl,ielts,gre,gmat,business}`); restores across devices via account.
 
-**US-B2 — Get everything for one annual price.**
-As a Professional, I want a Premium Pass that unlocks all paid tiers including future drops so that I get the best value.
-- $24.99/yr unlocks launch + post-launch tiers automatically.
+**US-B2 — Get every exam pack for one price.**
+As a Professional, I want an All-Exams bundle that unlocks every exam pack including future drops so that I get the best value.
+- `com.lexitap.bundle.full` at $29.99 grants `all_exams`, unlocking every exam pack current and future. Owners of 1 or 2 packs can upgrade for the difference ($19.99 / $9.99).
 
 **US-B3 — Restore my purchases.**
 As a Learner, I want to restore purchases on a new device so that I don't pay twice.
-- Restore button; entitlements via Supabase.
+- Restore button; entitlements held in RevenueCat `CustomerInfo` (never written to user.db).
 
 ## Epic: Streak and Gamification
 
@@ -121,16 +121,16 @@ As a Learner, I want the app to work without a connection so that I can study on
 
 ## Epic: Teacher Advocate Redemption
 
-*(Phase 3+ — referral system ships with paid tiers.)*
+*(Phase 3+ — referral system ships with the paid exam packs.)*
 
 **US-T1 — Use my teacher's code.**
-As a Learner, I want to enter my teacher's referral code so that I get an extended Premium trial.
-- 14-day Premium trial applied; code validated via Supabase; no off-store discount steering.
+As a Learner, I want to enter my teacher's referral code so that I get an exam pack granted to me.
+- Referral code grants the entitled exam pack; code validated via Supabase; no off-store discount steering.
 
 **US-T2 — Earn non-cash rewards as a teacher.**
-As a Teacher, I want active student referrals attributed to my code so that I can earn Premium seats or credits to gift.
+As a Teacher, I want active student referrals attributed to my code so that I can earn exam-pack grants or credits to gift.
 - Active referrals attribute to teacher; rewards are digital-only and require legal/tax review before launch.
 
 **US-T3 — Redeem a promo code.**
-As a Learner, I want to redeem a goodwill promo code so that I can unlock a tier for free when given one.
-- Promo code unlocks the entitled tier; tracked in Supabase.
+As a Learner, I want to redeem a goodwill promo code so that I can unlock an exam pack for free when given one.
+- Promo code grants the entitled exam pack; tracked in Supabase.

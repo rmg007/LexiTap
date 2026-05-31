@@ -71,18 +71,20 @@ Content is the launch-blocking long pole, not code. Each tier's drop date is gat
 **Goal:** 50 beta testers (TestFlight + Google Play Internal); measure retention; test cloud sync via device switch. No coding.
 **Gate:** D7 > 30% → proceed. 20–30% → fix core loop. < 20% → product broken, pivot/kill.
 
-## Phase 3: First Paid Tier (Weeks 11–12)
+## Phase 3: First Paid Pack (Weeks 11–12)
 
-**Track A:** enrich TOEFL with premium audio (ElevenLabs).
-**Track B:** leave Expo Go (EAS dev client) → paywall, Apple/Google IAP via RevenueCat, restore purchases; **auth here (magic-link + Google + SIWA)**; encrypted blob backup wired to the authenticated user id. Early-adopter annual intro price ($19.99 vs $24.99 list), no free trial. Teacher referral codes and promo codes deferred to Phase 3+. **B2B seat activation deferred** (code removed; ship pure-B2C, add as fast-follow).
+**Monetization: one-time exam packs, no subscriptions.** See [../08-financial-legal/REVENUE_MODEL_PRICING.md](../08-financial-legal/REVENUE_MODEL_PRICING.md).
 
-**Gate:** 10 paying users (rethink if < 5 at Week 12).
+**Track A:** universal word+sentence audio on all content via **neural TTS (Polly/Google, ~$10)** — not ElevenLabs.
+**Track B:** leave Expo Go (EAS dev client) → paywall (one-time **exam packs $9.99 + All-Exams bundle $29.99 + gated upgrade SKUs**), Apple/Google IAP via RevenueCat (non-consumables only; `exam_*` + `all_exams` entitlements), restore purchases; **auth here (magic-link + Google + SIWA)**; encrypted blob backup wired to the authenticated user id. **B2B deferred** (build nothing; entitlement door left open).
 
-## Phase 4: Launch Wave Tiers (Weeks 12–16)
+**Gate:** 10 paying customers (rethink if < 5 at Week 12).
 
-**Track A:** source + import IELTS, Business English, Common 3000; export `words.db` (6 tiers).
-**Track B:** add IAP products, update paywall, Premium Pass logic, ImageMatch + Classification widgets, UX polish.
-**Gate:** $1,000/month revenue.
+## Phase 4: Launch Wave Packs (Weeks 12–16)
+
+**Track A:** source + import IELTS, Business English, GRE, GMAT exam packs (paid); export `words.db` (free frequency/CEFR categories + paid exam packs). *Most Common 3000/9000 are free, shipped at launch.*
+**Track B:** add exam-pack IAP products, update paywall + bundle attach, ImageMatch + Classification widgets, UX polish.
+**Gate:** $1,000 cumulative pack/bundle revenue (one-time).
 
 ## Phase 5: Launch Prep (Weeks 17–18)
 
@@ -93,21 +95,21 @@ App Store assets (icon, 6 screenshots, description), privacy policy + ToS, suppo
 
 ## Phase 6: Growth and Content Drops (Week 19+)
 
-Activate teacher network, Reddit presence, ASO, content marketing. Ship post-launch paid tiers on a monthly cadence.
+Reddit presence, ASO, content marketing. Ship post-launch paid packs on a monthly cadence. (Teacher network deferred with B2B.)
 **Gate:** 1,000 users.
 
 ## Content-Drop Cadence
 
-Target schedule (order may shift on conversion data). Premium Pass holders get each drop free automatically.
+Target schedule (order may shift on conversion data). All-Exams bundle holders get each new **exam pack** free automatically (bundle covers future exams).
 
-| Week | Tier | Monetization |
+| Week | Pack | Monetization |
 | --- | --- | --- |
-| 22 | GRE Vocabulary | Included in Premium Pass |
-| 26 | GMAT Vocabulary | Included in Premium Pass |
-| 30 | Idioms & Expressions | Included in Premium Pass |
-| 34 | Phrasal Verbs | Included in Premium Pass |
+| 22 | GRE | Exam pack ($9.99); in All-Exams bundle |
+| 26 | GMAT | Exam pack ($9.99); in All-Exams bundle |
+| 30 | Idioms & Expressions | One-time content pack — pricing TBD (not an exam; not in bundle) |
+| 34 | Phrasal Verbs | One-time content pack — pricing TBD (not an exam; not in bundle) |
 
-Each drop: sourced list → example sentences → QA → (audio where needed) → paywall/UI updated → ship via app update + Premium Pass auto-unlock. Create additional IAP products only if the pricing model intentionally changes away from the unified Premium Pass.
+Each drop: sourced list → example sentences → QA → audio → paywall/UI updated → ship via store build (IAP products are not OTA-updatable). Exam packs auto-unlock for `all_exams` holders; non-exam packs are sold as separate one-time products.
 
 ## Kill Criteria
 
@@ -115,8 +117,8 @@ Each drop: sourced list → example sentences → QA → (audio where needed) �
 | --- | --- | --- |
 | Week 1 | Validation interviews fail | Stop — pivot or kill |
 | Week 10 | D7 retention < 20% | Product broken — pivot/kill |
-| Week 12 | < 5 paying users | Pivot to B2B or rethink pricing |
-| Week 20 | < 100 users acquired | Rethink GTM, invest in teacher network |
+| Week 12 | < 5 paying customers (pack/bundle) | Restructure pricing or rethink paid content |
+| Week 20 | < 100 users acquired | Rethink GTM |
 
 ## Phase 1 Blockers
 

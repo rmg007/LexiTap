@@ -2,7 +2,7 @@
 title: Analytics Plan
 category: operations-compliance
 status: active
-updated: 2026-05-24
+updated: 2026-05-31
 priority: P1
 tags: [analytics, events, tracking, retention, conversion, funnel, event-schema, privacy, offline-first]
 ---
@@ -44,10 +44,10 @@ matter).
 | Streak adherence | % of active users with streak >= 7; streak break rate | Validates streak-as-product thesis |
 | Lesson completion rate | Completed quiz sessions / started | Core-loop friction |
 | New→review balance | Ratio of new-word vs. review attempts | SRS backlog health (forgiveness mechanics) |
-| Free→paid conversion | % of active free users who buy any paid tier | Target 5% (15% optimistic TOEFL) |
+| Free→paid conversion | % of active free users who buy any paid exam pack or the All-Exams bundle | Target 5% (15% optimistic TOEFL) |
 | Paywall view→purchase | Purchases / paywall views | Pricing/paywall effectiveness |
-| Tier mix | Distribution across TOEFL/IELTS/Business/Common3K/Premium Pass | Informs post-launch drop order |
-| Teacher-code attach rate | % of purchases using a teacher code | GTM channel health |
+| Pack mix | Distribution across TOEFL/IELTS/GRE/GMAT/Business exam packs and the All-Exams bundle | Informs post-launch drop order |
+| Bundle attach rate | % of paying customers who buy the All-Exams bundle (incl. upgrade SKUs) vs. single packs | Pricing/bundle effectiveness |
 | Crash-free sessions | From error monitoring (release health) | See [ERROR_MONITORING_PLAN.md](./ERROR_MONITORING_PLAN.md) |
 
 ## Event Taxonomy

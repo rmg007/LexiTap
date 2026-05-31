@@ -6,3 +6,4 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 - [AsterKit Integration (2026-05-31)](2026-05-31_asterkit_integration.md) — Rules, patterns, and workflows adopted from AsterKit; what fit, what didn't
 - [Repo State Reconciliation (2026-05-31)](2026-05-31_repo_state_reconciliation.md) — Merged the unmerged fix branch (words.db delivery + 3-SKU tiers + green tests); content VOLUME (~7%) + device-verify are the remaining blockers; integrity-sweep doc fixes
+- [Monetization Rethink (2026-05-31)](2026-05-31_monetization_rethink.md) — Killed subscriptions: free frequency/CEFR content + audio, one-time exam packs ($9.99) + All-Exams bundle ($29.99), upgrade SKUs, B2B deferred, neural-TTS not ElevenLabs; word↔category many-to-many is the next code task

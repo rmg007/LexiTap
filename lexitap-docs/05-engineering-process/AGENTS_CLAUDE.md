@@ -2,7 +2,7 @@
 title: AGENTS and CLAUDE Conventions
 category: engineering-process
 status: active
-updated: 2026-05-24
+updated: 2026-05-31
 priority: P0
 tags: [agents, claude, conventions, ai-workflow, planning-gate, adversarial-review, compound-learning]
 ---
@@ -129,15 +129,17 @@ Checklist:
 
 ### 4. Paywall / IAP Reviewer
 
-**Trigger:** Any change to IAP logic, paywall UI, entitlement checking, Premium Pass logic, or `content_tiers.is_active`.
+**Trigger:** Any change to IAP logic, paywall UI, entitlement checking, exam-pack / All-Exams bundle logic, or `content_tiers.is_active`.
 
 Checklist:
 
-- [ ] Premium Pass automatically unlocks ALL current AND future paid tiers when new content drops activate (`is_active` flip).
+- [ ] The `all_exams` entitlement (All-Exams bundle + upgrade SKUs) automatically unlocks ALL current AND future exam packs when new content drops activate (`is_active` flip).
+- [ ] All paid products are one-time non-consumables — no subscription, auto-renew, trial, or intro-price logic anywhere.
+- [ ] Entitlements come from RevenueCat `CustomerInfo` held in memory only — never persisted to `user.db`.
 - [ ] IAP product IDs match `content_tiers.store_product_id` exactly — no hardcoded strings outside the table.
 - [ ] Paywall / entitlement logic lives in `application/`, not `domain/` or `presentation/`.
 - [ ] Paywall copy contains no specific word counts (tier names and CEFR levels are the durable claims; counts depend on sourcing).
-- [ ] No auto-renewal deception or dark patterns in subscription/purchase copy.
+- [ ] No deceptive pricing or dark patterns in purchase copy (one-time price stated clearly; no fake recurring-billing language).
 
 ### 5. UX / Mobile Reviewer
 

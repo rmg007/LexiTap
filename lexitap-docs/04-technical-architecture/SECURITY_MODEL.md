@@ -2,7 +2,7 @@
 title: Security Model
 category: technical
 status: active
-updated: 2026-05-24
+updated: 2026-05-31
 priority: P0
 tags: [security, secrets, rls, receipt-validation, auth, threat-model, data-at-rest, eas]
 ---
@@ -85,7 +85,7 @@ All paths that grant paid access must go through server-side validation. The cli
 
 | Grant source | User-facing entry | Validation authority | Local persistence |
 |---|---|---|---|
-| Store subscription / one-time IAP | Paywall / Restore Purchases | RevenueCat SDK (server-side) | Memory only; re-queried each session. Never written to `user.db`. |
+| Store one-time IAP (exam pack / All-Exams bundle) | Paywall / Restore Purchases | RevenueCat SDK (server-side) | Memory only; re-queried each session. Never written to `user.db`. |
 | B2B institutional seat token | Seat-token activation | Supabase Edge Function (service-role token validation) | Local flag in `user.db` after accepted (Phase 3+) |
 | Teacher advocate trial | Teacher code redemption | Supabase RPC `redeem_teacher_code` with `source_event_id` idempotency | After accepted (Phase 3+) |
 | Promo code | Promo screen | Supabase RPC `redeem_promo` with server-side decrement guard | After accepted (Phase 3+) |

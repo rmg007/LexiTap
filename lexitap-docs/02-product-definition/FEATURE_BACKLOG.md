@@ -2,7 +2,7 @@
 title: Feature Backlog and Prioritization
 category: product
 status: active
-updated: 2026-05-24
+updated: 2026-05-31
 priority: P1
 tags: [backlog, features, prioritization, moscow, mvp, launch-wave, post-launch]
 ---
@@ -42,14 +42,14 @@ Monetization + the launch-wave paid catalog.
 | Feature | MoSCoW | Notes |
 | --- | --- | --- |
 | Paywall screen | Must | Phase 3. |
-| Apple + Google IAP | Must | RevenueCat (`react-native-purchases`) — locked vendor; native install planned for Phase 3. |
-| Entitlement management | Must | Via Supabase. |
-| TOEFL premium content + audio | Must | First Premium Pass content focus. |
-| Restore purchases | Must | Cross-device. |
-| Teacher referral code validation | Must | Extended 14-day trial / non-cash rewards only; no off-store discount steering. |
-| Promo code system | Must | Goodwill marketing. |
-| IELTS, Business English, Common 3000 | Must | Launch-wave content; Common 3000 one-time unlock is $1.99, IELTS/Business are Premium Pass content. |
-| Premium Pass ($4.99/mo, $24.99/yr) | Must | Unlocks all paid tiers incl. future drops. |
+| Apple + Google IAP (one-time non-consumables) | Must | RevenueCat (`react-native-purchases`) — locked vendor; native install planned for Phase 3. |
+| Entitlement management | Must | Per-pack + `all_exams`, held in RevenueCat `CustomerInfo` (memory only); never written to user.db. Access check: `isFree OR owns(pack) OR owns(all_exams)`. |
+| TOEFL exam pack + audio | Must | First exam-pack content focus (`com.lexitap.exam.toefl`, $9.99). Audio is free and universal. |
+| Restore purchases | Must | Cross-device; re-reads entitlements from RevenueCat. |
+| Teacher referral code validation | Must | Grants an exam pack / non-cash rewards only; no off-store discount steering. |
+| Promo code system | Must | Goodwill marketing; grants an exam pack. |
+| IELTS, Business English exam packs | Must | Launch-wave one-time packs at $9.99 each. Most Common 3000/9000 are free frequency categories (no SKU). |
+| All-Exams bundle ($29.99) + upgrade SKUs | Must | `com.lexitap.bundle.full` grants `all_exams` (every exam pack, current and future); `upgrade1` ($19.99) / `upgrade2` ($9.99) for owners of 1 / 2 packs. |
 | ImageMatch + Classification widgets | Should | Phase 4. |
 | UX polish (animations, haptics) | Should | Phase 4. |
 | Advanced tier full word list (3,001–9,000) | Should | MVP shipped a subset. |
@@ -60,10 +60,10 @@ Monthly cadence; order may shift on conversion data.
 
 | Feature | MoSCoW | Notes |
 | --- | --- | --- |
-| GRE Vocabulary | Should | Week 22 target; included in Premium Pass. |
-| GMAT Vocabulary | Should | Week 26 target; included in Premium Pass. |
-| Idioms & Expressions | Should | Week 30; fills WordUp blindspot; included in Premium Pass. |
-| Phrasal Verbs | Should | Week 34; fills WordUp blindspot; included in Premium Pass. |
+| GRE Vocabulary | Should | Week 22 target; exam pack ($9.99), covered by `all_exams`. |
+| GMAT Vocabulary | Should | Week 26 target; exam pack ($9.99), covered by `all_exams`. |
+| Idioms & Expressions | Should | Week 30; fills WordUp blindspot; bundled into exam-pack content, covered by `all_exams`. |
+| Phrasal Verbs | Should | Week 34; fills WordUp blindspot; bundled into exam-pack content, covered by `all_exams`. |
 | Audio Playlist passive mode | Should | Backlog #49; needs 3-clip audio + background entitlement. |
 | Context-aware push notifications | Should | Part of habit-loop design (backlog #43). |
 | Notification strategy (reminders, streak protection) | Should | Backlog #20. |

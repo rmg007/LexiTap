@@ -3,11 +3,11 @@ title: Settings Screen Spec
 screen_id: settings
 category: ux-design
 status: active
-updated: 2026-05-24
+updated: 2026-05-31
 priority: P1
 tab: Settings
 target_file: mobile/src/presentation/screens/SettingsScreen.tsx
-related_flows: [purchasing-premium, switching-devices-sync]
+related_flows: [buying-an-exam-pack, switching-devices-sync]
 tags: [screen, settings, account, sync, content, study, about]
 ---
 
@@ -82,7 +82,7 @@ Central hub for account/sync, content unlocks, study preferences, and legal/help
 | **Signed in** | Account exists | Shows account identity + sync status |
 | **Reminder on/off** | Toggle | Single daily reminder scheduled / cleared (opt-in) |
 | **Appearance** | Selection | System default with Dark fallback |
-| **All paid unlocked** | Premium Pass | "Unlock content" reframes to "Manage subscription" / hides upsell |
+| **All paid unlocked** | Owns All-Exams bundle (`all_exams`) | "Unlock content" reframes to "All exams unlocked" / hides upsell |
 | **Teacher code active** | Code applied | Row shows applied trial state |
 | **Offline** | No connectivity | Sync/restore rows show "connect to sync"; rest functional |
 
@@ -137,7 +137,7 @@ Minimal — standard row press feedback (`motion.fast`). Toggle animates per pla
 
 ## 12. Open questions
 
-- (None. About sub-pages are resolved to open in the system browser using `expo-web-browser` to keep the bundle size small. Manage subscription deep-links to App Store subscriptions URL `https://apps.apple.com/account/subscriptions` on iOS.)
+- (None. About sub-pages are resolved to open in the system browser using `expo-web-browser` to keep the bundle size small. No "Manage subscription" deep-link is needed — all purchases are one-time non-consumables, not subscriptions.)
 
 ---
 

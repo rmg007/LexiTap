@@ -2,14 +2,14 @@
 title: Third-Party Dependency Audit
 category: financial-legal
 status: active
-updated: 2026-05-24
+updated: 2026-05-31
 priority: P1
-tags: [dependencies, licenses, vendor-risk, lock-in, budget, expo, supabase, elevenlabs, openai, unsplash, paypal, content-licensing]
+tags: [dependencies, licenses, vendor-risk, lock-in, budget, expo, supabase, neural-tts, polly, openai, unsplash, paypal, content-licensing]
 ---
 
 # Third-Party Dependency Audit
 
-Every external service and key library LexiTap depends on, with its cost, license, lock-in risk, and failure exposure — mapped against the ~$194 realistic Year 1 cash outlay. The guiding constraint: keep everything on free tiers except the unavoidable paid items (Apple, Google, domain, audio). Pairs with [REVENUE_MODEL_PRICING.md](./REVENUE_MODEL_PRICING.md) and the tech stack in [../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md](../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md).
+Every external service and key library LexiTap depends on, with its cost, license, lock-in risk, and failure exposure — mapped against the **$194 Year 1 budget** (projected cash outlay now ~$150 after dropping ElevenLabs, leaving headroom). The guiding constraint: keep everything on free tiers except the unavoidable paid items (Apple, Google, domain; audio is now near-free neural TTS). Pairs with [REVENUE_MODEL_PRICING.md](./REVENUE_MODEL_PRICING.md) and the tech stack in [../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md](../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md).
 
 ## Contents
 
@@ -28,12 +28,12 @@ Every external service and key library LexiTap depends on, with its cost, licens
 |------|------|------|-------|
 | Apple Developer Program | $99 | Annual | Required for App Store + TestFlight |
 | Google Play Developer | $25 | One-time | Lifetime registration |
-| ElevenLabs audio (TOEFL) | ~$50 | One-off / month-of | Premium TTS; generate, cache, cancel |
+| Neural TTS audio (Amazon Polly / Google) | ~$0–10 | One-off (build-time) | Universal free audio for all tiers; generate, cache, bundle. ElevenLabs dropped — too costly. |
 | Domain (lexitap.app) | ~$20 | Annual | Registrar varies; project docs cite ~$20/yr |
-| **Subtotal** | **~$194** | | Realistic first-year cash outlay |
+| **Subtotal** | **~$150** | | Projected first-year cash outlay (vs **$194** budget — ~$40 headroom) |
 | Everything else | $0 | Free tier | Expo/EAS, Supabase within quotas, RevenueCat (free to $2.5k monthly tracked revenue), Unsplash, OpenAI free credits, Vercel |
 
-**Budget note:** treat ~$194 as the realistic first-year cash outlay. Lower legacy estimates should not drive planning because they undercount Google Play registration, domain, and audio-enrichment costs. Even the conservative Year 1 revenue model (~$3,600 net) covers the realistic cost base many times over.
+**Budget note:** the **Year 1 budget remains $194**; projected cash outlay is now ~$150, leaving ~$40 headroom because switching audio to neural TTS (Polly/Google) drops the audio line from the old ~$50 ElevenLabs estimate to ~$10. Account for Google Play registration and domain. The old revenue projections were voided by the 2026-05-31 model change (pure one-time B2C, B2B deferred) and are being re-modelled — see [REVENUE_MODEL_PRICING.md](./REVENUE_MODEL_PRICING.md); even a modest one-time-pack take covers this cost base.
 
 ## Service Audit
 
@@ -41,13 +41,13 @@ Every external service and key library LexiTap depends on, with its cost, licens
 |---------|------|------|-----------------|---------|------|
 | **Expo / EAS** | RN framework + cloud build/submit | Free tier | Expo OSS = MIT; EAS = commercial SaaS | Medium — RN code is portable, but EAS Build/Submit and OTA updates are Expo-specific | Low. Mature, widely used. Free build queue is slow but sufficient solo. |
 | **Supabase** | Auth + Postgres + cloud sync + teacher/referral/promo backend | Free within quotas: 50K auth MAU, 500 MB DB, 5 GB egress, 1 GB storage, 500K Edge Function invocations; paid plan when quotas/production needs require | Apache-2.0 core (self-hostable); hosted = commercial | Medium-low — it's Postgres; data is exportable and Supabase is self-hostable | Low-medium. Single backend for sync + business logic = concentration risk, mitigated by Postgres portability. Watch quota usage and free-project inactivity. |
-| **ElevenLabs** | Premium TTS for TOEFL (and later pronunciation tiers) | ~$50 one-off | Commercial; check audio-usage/redistribution rights in plan tier | Low — audio is generated, cached, and bundled; no runtime dependency | Medium. Confirm the license permits redistributing generated audio inside a paid app. Generate-and-cancel keeps cost one-off. |
+| **Neural TTS (Amazon Polly / Google)** | Universal free TTS audio for all tiers | ~$0–10 one-off | Commercial; both permit redistributing synthesized speech (confirm per provider terms) | Low — audio is generated, cached, and bundled; no runtime dependency | Low. Pay-per-character neural voices; generate, cache, bundle. Replaces ElevenLabs (dropped — too costly for universal audio). |
 | **OpenAI** | Content enrichment (definitions, synonyms, example sentences) at build time | Free credits / minimal | Commercial API; usage-based | None at runtime — build-time only, output is stored | Low cost; medium content risk (review AI output for accuracy before shipping). |
 | **Unsplash** | Imagery for word cards (dual-coding) | Free | Unsplash License (free commercial use, no attribution required, cannot sell unmodified photos as-is) | Low — images cached/bundled | Low-medium. License permits app use; verify no per-image restrictions and avoid building a competing image service. |
 | **PayPal / Wise** | Historical teacher cash-payout option, not in current plan | $0 because unused | Commercial ToS | Low — not a runtime dependency | Retired by the non-cash advocate model. Revisit only if cash commissions return. |
 | **Apple App Store** | iOS distribution + IAP | $99/yr + 15% commission | Apple Developer Agreement | High — required channel for iOS; IAP mandatory for digital goods | Structural, unavoidable. See compliance doc. |
 | **Google Play** | Android distribution + IAP | $25 once + 15% commission | Play Developer Distribution Agreement | High — required channel for Play | Structural, unavoidable. |
-| **RevenueCat** | IAP + subscription entitlements, server-side receipt validation | Free up to $2.5k monthly tracked revenue (MTR), then usage-based | Commercial SaaS (SDK is MIT) | Medium — entitlement logic flows through its SDK, but it sits behind the `IapService` port so a swap is bounded | Low-medium. Wiring deferred to Phase 3; free tier covers the projection horizon. |
+| **RevenueCat** | IAP one-time non-consumable entitlements, server-side receipt validation | Free up to $2.5k monthly tracked revenue (MTR), then usage-based | Commercial SaaS (SDK is MIT) | Medium — entitlement logic flows through its SDK, but it sits behind the `IapService` port so a swap is bounded | Low-medium. Wiring deferred to Phase 3; free tier covers the projection horizon. |
 | **Vercel** | Static website + teacher portal hosting | Free tier | Commercial SaaS | Low — static HTML, trivially movable | Low. |
 
 ## Key npm / Library Audit
@@ -75,7 +75,7 @@ This is the highest legal-risk dependency category and the founder's primary IP 
 - **Frequency word lists** (top 3,000 / 9,000 most-used words): frequency rankings derived from corpora can carry licensing terms. The founder's existing corpora must be confirmed as public-domain or properly licensed before shipping Foundation/Advanced. The strategy risk register already flags "word list copyright issues" with mitigation "use public domain; legal review before TOEFL."
 - **TOEFL / IELTS / GRE / GMAT word lists:** test names are trademarks (ETS owns TOEFL and GRE; GMAC owns GMAT; IELTS is jointly owned). LexiTap may describe tiers as "TOEFL vocabulary" (nominative fair use / preparation), but must **not** imply endorsement or affiliation, and must not reproduce official test content. Vocabulary itself (words + definitions LexiTap authors) is not protected; copied official materials are. Legal review required before the TOEFL tier ships.
 - **Definitions / example sentences:** author original or AI-generate-then-review; do not copy a dictionary's proprietary definitions verbatim.
-- **Audio:** ElevenLabs-generated; confirm redistribution rights (above).
+- **Audio:** neural-TTS-generated (Amazon Polly / Google); confirm redistribution rights (above).
 - **Imagery:** Unsplash License covers app use.
 
 ## Media Licensing & Provenance Registry
@@ -84,7 +84,7 @@ To protect LexiTap from copyright claims and platform takedowns, the following r
 
 | Asset Category | Source | License / Tier | Commercial Rights | Launch Verification Gate |
 |---|---|---|---|---|
-| **Pronunciation Audio** | ElevenLabs | Creator/Independent Publisher ($22/mo tier) | Commercial distribution permitted for downloaded/cached audio. | **Paid Tier Gate:** Confirm founder's account is in a paid tier *during the generation run*. Free tier audio does NOT permit commercial app distribution. |
+| **Pronunciation Audio** | Amazon Polly / Google neural TTS | Pay-per-character (AWS / Google Cloud commercial terms) | Commercial distribution of synthesized speech permitted for downloaded/cached audio. | **Redistribution Gate:** Confirm the provider's terms permit redistributing generated speech inside a commercial app before the generation run. |
 | **Word Card Imagery** | Unsplash | Unsplash License | Permitted for commercial app packaging. No attribution required. | **No Hot-Linking Gate:** Content pipeline must download and bundle images locally. Streaming/hot-linking Unsplash URLs at runtime is forbidden (violates offline-first and API limits). |
 | **Frequency Wordlists** | Open Corpus / Wikipedia | Public Domain (derived from GSL & open corpus ranks) | Permitted to order and tier learning paths. | **No-Prep-Book Gate:** Verify frequency rankings are synthesized from open corpora and do not copy proprietary TOEFL/IELTS preparatory publishers verbatim. |
 
@@ -94,13 +94,13 @@ To protect LexiTap from copyright claims and platform takedowns, the following r
 |----------|--------------|-----|
 | High (structural) | Apple, Google | Required distribution channels; cannot ship mobile without them. |
 | Medium | Expo/EAS, Supabase, RevenueCat | Portable underneath (RN code, Postgres data) or port-isolated (RevenueCat behind `IapService`), but tooling/workflow is vendor-shaped. |
-| Low | ElevenLabs, OpenAI, Unsplash, Vercel; PayPal/Wise retired | Outputs cached or trivially swappable; no runtime coupling. |
+| Low | Neural TTS (Polly/Google), OpenAI, Unsplash, Vercel; PayPal/Wise retired | Outputs cached or trivially swappable; no runtime coupling. |
 
 Net: lock-in is concentrated where it is unavoidable (app stores) and deliberately minimized everywhere else via cache-and-bundle and Postgres-portability choices.
 
 ## Decision Notes
 
-- **Budget reconciliation — resolved:** use ~$194 as realistic first-year cash outlay; do not use lower legacy budget estimates for planning.
+- **Budget reconciliation — resolved:** budget stays **$194**; realistic first-year cash outlay ~$150 (audio moved to near-free neural TTS frees ~$40 headroom). Do not treat the lower outlay as a reduced budget.
 - **IAP vendor — resolved:** RevenueCat (`react-native-purchases`) is locked, replacing the deprecated `expo-in-app-purchases`; native wiring lands in Phase 3 (see [APP_STORE_DISTRIBUTION_STRATEGY.md](./APP_STORE_DISTRIBUTION_STRATEGY.md) and [../05-engineering-process/DEPLOYMENT_RELEASE_RUNBOOK.md](../05-engineering-process/DEPLOYMENT_RELEASE_RUNBOOK.md#9-revenuecat-payments-and-iap)). RevenueCat's free threshold is $2.5k MTR / monthly tracked revenue, not recurring-revenue-only semantics.
 
 ## Official Source Currentness
@@ -123,12 +123,12 @@ External sources that are time-sensitive and must be re-verified before launch (
 | RevenueCat pricing ($2.5k MTR free tier) | `THIRD_PARTY_DEPENDENCY_AUDIT.md`, root `ROADMAP.md` | 2026-05-24 | Any RevenueCat pricing-page change | Yes — verify free-tier limit still applies at launch |
 | Supabase free-tier quotas (auth MAU, DB size, egress, storage, Edge Functions) | `THIRD_PARTY_DEPENDENCY_AUDIT.md` | 2026-05-24 | Supabase billing announcement; Year 2 cost modelling | Yes — confirm headroom before Phase 3 |
 | Expo SDK version (currently 52) | `ENVIRONMENT_SETUP.md`, `TECH_STACK_DECISIONS.md` | 2026-05-24 | SDK deprecation notice; next major Expo release | Yes — pin to latest stable before submission |
-| ElevenLabs redistribution rights | `CONTENT_PIPELINE_ARCHITECTURE.md`, `THIRD_PARTY_DEPENDENCY_AUDIT.md` | not yet | Before generating any commercial audio | **Launch gate** — must be confirmed before TOEFL/paid audio ships |
+| Neural TTS (Polly/Google) redistribution rights | `CONTENT_PIPELINE_ARCHITECTURE.md`, `THIRD_PARTY_DEPENDENCY_AUDIT.md` | not yet | Before generating any commercial audio | **Launch gate** — must be confirmed before any audio ships (audio is universal/free) |
 | Unsplash API terms (offline redistribution) | `CONTENT_PIPELINE_ARCHITECTURE.md` | not yet | Before bundling any images in a paid build | **Launch gate** — must be confirmed before paid tiers ship |
 | GDPR/UK GDPR regulatory guidance (age thresholds, consent requirements) | `GDPR_COPPA_COMPLIANCE.md`, `PRIVACY_POLICY_TERMS_OF_SERVICE.md` | 2026-05-24 | Any material ICO/DPC guidance update | Yes — review before EU launch |
 
 ## Open Questions
 
-- `requires-external-validation` — **ElevenLabs license:** verify plan tier permits redistributing generated audio in a paid commercial app (launch gate for audio tiers).
+- `requires-external-validation` — **Neural TTS license (Polly/Google):** verify provider terms permit redistributing generated audio in a commercial app (launch gate for the universal free audio).
 - `unresolved` — **Word-list provenance:** document the exact source and license of each sourced corpus (P0 backlog #41 content sourcing — required before shipping Foundation/Advanced).
 - `deferred` — **Supabase paid-tier trigger:** model paid plan into Year 2 cost base when free-tier limits are approached.

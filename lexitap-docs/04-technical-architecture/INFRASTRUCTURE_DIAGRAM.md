@@ -2,7 +2,7 @@
 title: Infrastructure Diagram
 category: technical
 status: active
-updated: 2026-05-24
+updated: 2026-05-31
 priority: P2
 tags: [infrastructure, supabase, eas, content-cli, referral-portal, budget, diagram]
 ---
@@ -68,7 +68,7 @@ How LexiTap's components connect: the mobile app, the bundled content DB, Supaba
                                     ▼
    ┌──────────────────────────────────────────────────────────────────┐
    │  Teacher Advocate Portal (web)  → Supabase Postgres                │
-   │   referral codes, reward credits, Premium-seat grants              │
+   │   referral codes, reward credits, exam-pack seat grants (deferred) │
    └──────────────────────────────────────────────────────────────────┘
 ```
 
@@ -82,7 +82,7 @@ How LexiTap's components connect: the mobile app, the bundled content DB, Supaba
 | Supabase | managed cloud | Auth, content_errors, user_db_backups (Phase 3), Edge Functions | free tier (target) |
 | EAS Build/Submit | Expo cloud | Build + submit signed binaries | free/low tier |
 | Content CLI (Track A) | dev machine | Generate/validate/enrich/export `words.db` | one-time enrichment $ |
-| Teacher advocate portal | web (Supabase-backed) | Referral codes, non-cash reward credits, Premium-seat grants | minimal/free |
+| Teacher advocate portal | web (Supabase-backed) | Referral codes, non-cash reward credits, exam-pack seat grants (B2B deferred) | minimal/free |
 
 Detail references: content CLI in [../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md](../06-content-data/CONTENT_PIPELINE_ARCHITECTURE.md); referral portal in [../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md](../01-discovery-strategy/GO_TO_MARKET_STRATEGY.md); API surface in [API_CONTRACT.md](./API_CONTRACT.md).
 
@@ -104,7 +104,7 @@ Runs entirely on the developer machine; produces the bundled `words.db` that shi
 ```
 data/input/*.csv|json ─▶ import ─▶ working SQLite
                       ─▶ validate (blocks bad data: missing blank, orphan assets)
-                      ─▶ enrich  (synonyms via OpenAI; audio via TTS for TOEFL)
+                      ─▶ enrich  (synonyms via OpenAI; audio via neural TTS for all categories)
                       ─▶ export  ─▶ data/output/words.db + assets/
                       ─▶ copy to Track B: assets/words.db, assets/vocab/
 ```
@@ -119,11 +119,11 @@ data/input/*.csv|json ─▶ import ─▶ working SQLite
 
 ## Budget Constraints
 
-Realistic Year-1 cash outlay is roughly ~$194. Dominant line items are Apple Developer Program ($99/yr), Google Play one-time registration ($25), domain (~$20/yr), and build-time premium audio generation (up to ~$50). The architecture is intentionally constrained by that ceiling:
+Realistic Year-1 cash outlay is roughly ~$194. Dominant line items are Apple Developer Program ($99/yr), Google Play one-time registration ($25), domain (~$20/yr), and build-time neural-TTS audio generation (Amazon Polly / Google Cloud TTS — cheap, well under ~$50). The architecture is intentionally constrained by that ceiling:
 
 - **No custom server** — Supabase free tier (managed Postgres/Auth/Edge Functions) absorbs cloud needs at the ~1,000-user target.
 - **Cloud sync is dumb and sparse** — push on close / pull on open only; no realtime subscriptions, no background workers, no analytics pipeline (would add cost and operational load).
-- **Content enrichment is one-time, offline** — TTS (~$10-50) and synonym generation are batch costs paid once at build, not recurring runtime spend.
+- **Content enrichment is one-time, offline** — neural TTS (Polly/Google, cheap) and synonym generation are batch costs paid once at build, not recurring runtime spend.
 - **EAS on free/low tier** — batch builds; avoid burning build minutes.
 - **Storage minimal** — assets bundled in the binary, not served from Supabase Storage at launch.
 

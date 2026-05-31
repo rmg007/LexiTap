@@ -2,7 +2,7 @@
 title: Deployment and Release Runbook
 category: engineering-process
 status: active
-updated: 2026-05-24
+updated: 2026-05-31
 priority: P1
 tags: [deployment, release, app-store, google-play, eas, eas-update, ota, expo, certificates, provisioning, keystore, push-notifications, apns, fcm, revenuecat, iap, testflight, submission, api-keys, renewals, sign-in-with-apple]
 ---
@@ -49,7 +49,7 @@ Do these first; everything else depends on them.
 | Apple Developer | developer.apple.com | $99/yr | Required to ship on iOS |
 | Google Play Console | play.google.com/console | $25 one-time | Required to ship on Android |
 | Expo / EAS | expo.dev | Free tier | Required for EAS Build/Submit/Update |
-| RevenueCat | revenuecat.com | Free up to $2.5k MTR / monthly tracked revenue | IAP + subscriptions |
+| RevenueCat | revenuecat.com | Free up to $2.5k MTR / monthly tracked revenue | IAP (one-time non-consumables) |
 
 The Apple + Google fees ($99 + $25) are the largest unavoidable platform line items in the realistic ~$194 first-year cash outlay — see [../08-financial-legal/THIRD_PARTY_DEPENDENCY_AUDIT.md](../08-financial-legal/THIRD_PARTY_DEPENDENCY_AUDIT.md).
 
@@ -143,8 +143,8 @@ RevenueCat is the locked vendor; wiring is deferred to Phase 3 but the store/con
 1. **Create project** at app.revenuecat.com → add iOS app (Bundle ID + ASC API key) + Android app (Package Name + Play service credentials).
 2. **ASC API key for RevenueCat:** App Store Connect → Users and Access → Integrations → In-App Purchase → generate → download `.p8` + Key ID + Issuer ID → paste into RevenueCat iOS settings.
 3. **Play service credentials:** console.cloud.google.com → enable Google Play Android Developer API → create Service Account → grant Financial data viewer in Play Console (Setup → API access) → download JSON → upload to RevenueCat Android settings.
-4. **Create products** in App Store Connect and Google Play using the locked SKUs: Common 3000 as a Non-Consumable (`com.lexitap.common3k`) plus Premium Pass Monthly/Annual as Auto-Renewable Subscriptions (`com.lexitap.premium.monthly`, `com.lexitap.premium.annual`).
-5. **Entitlements + Offerings:** create the `premium` entitlement, attach both stores' product IDs, create the `default` offering. App code reads it via `Purchases.getOfferings()`.
+4. **Create products** in App Store Connect and Google Play using the locked SKUs, all as **Non-Consumables** (no subscriptions): exam packs `com.lexitap.exam.{toefl,ielts,gre,gmat,business}` @ $9.99, the All-Exams bundle `com.lexitap.bundle.full` @ $29.99, and the bundle-upgrade SKUs `com.lexitap.bundle.upgrade1` ($19.99) / `com.lexitap.bundle.upgrade2` ($9.99).
+5. **Entitlements + Offerings:** create the per-pack entitlements (`exam_toefl`, `exam_ielts`, …) and the `all_exams` entitlement (granted by the bundle and both upgrade SKUs, covering all current and future exam packs); attach both stores' product IDs and create the `default` offering. App code reads it via `Purchases.getOfferings()` and entitlements via `CustomerInfo` (memory only, never persisted to user.db).
 6. **API keys:** copy iOS (`appl_…`) and Android (`goog_…`) public SDK keys → store as EAS secrets `REVENUECAT_IOS_KEY` / `REVENUECAT_ANDROID_KEY`.
 
 ## 10. TestFlight

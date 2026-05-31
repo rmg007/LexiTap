@@ -8,8 +8,8 @@ status: active
 
 > **⚠️ Ordering superseded (2026-05-30):** A code+docs audit found this file's phase *ordering* and status claims are stale — auth is a Phase 3 dependency (not Phase 5), `words.db` content delivery is currently broken, content is ~7% sourced (216 words, not 3,000), per-table sync was deleted, and Phase 2 requires instrumentation coding. The authoritative, task-level execution plan is **[plans/RELEASE_PLAN.md](plans/RELEASE_PLAN.md)**. This file remains the high-level phase mirror; trust RELEASE_PLAN.md where they conflict.
 
-**21 weeks from validation to 1,000 active users (including B2B cram-school seats).**
-Solo founder. $194 Year 1 budget. Consumer IAP (RevenueCat) as primary revenue. Teacher referrals and B2B licensing deferred to Phase 3+.
+**21 weeks from validation to 1,000 active users.**
+Solo founder. $194 Year 1 budget. **One-time consumer IAP (exam packs + bundle) via RevenueCat — no subscriptions.** B2B licensing and teacher referrals deferred (door left open). See [pricing model](lexitap-docs/08-financial-legal/REVENUE_MODEL_PRICING.md).
 
 This root file is the at-a-glance mirror. The canonical product roadmap is [lexitap-docs/02-product-definition/ROADMAP.md](lexitap-docs/02-product-definition/ROADMAP.md).
 
@@ -99,34 +99,37 @@ These must be resolved before Phase 1 is treated as validated for continued buil
 
 ---
 
-## Phase 3 — First Paid Tier (Weeks 11-12)
+## Phase 3 — First Paid Pack (Weeks 11-12)
 
-- [ ] Source TOEFL audio (ElevenLabs, ~$50)
-- [ ] Content tool: enrich TOEFL tier with audio
+**Monetization model: one-time exam packs, NO subscriptions.** See [lexitap-docs/08-financial-legal/REVENUE_MODEL_PRICING.md](lexitap-docs/08-financial-legal/REVENUE_MODEL_PRICING.md).
+
+- [ ] Universal audio (word + sentence) on ALL content via **neural TTS (Amazon Polly / Google, ~$10)** — NOT ElevenLabs
+- [ ] Content tool: generate audio across tiers
 - [ ] Leave Expo Go → EAS dev client (gates all native modules below)
-- [ ] Paywall screen (unified premium subscription: $4.99/mo, $24.99/yr; intro $19.99/yr annual, no free trial)
-- [ ] Apple + Google IAP integration (RevenueCat)
+- [ ] Paywall screen — **one-time exam packs ($9.99) + All-Exams bundle ($29.99) + gated upgrade SKUs**; no subscription
+- [ ] Apple + Google IAP (RevenueCat) — one-time non-consumables only; `exam_*` + `all_exams` entitlements
 - [ ] **Auth (magic-link + Google + Sign in with Apple)** — moved here from Phase 5; backup + identity depend on it
 - [ ] Encrypted `user.db` blob backup wired to authenticated user id
-- [ ] ~~B2B cram-school seat activation~~ **deferred (code was removed; ship pure-B2C, add as fast-follow)**
-- [ ] **Gate: 10 paying individual subscribers**
+- [ ] ~~B2B cram-school seat activation~~ **deferred (build nothing; leave entitlement door open)**
+- [ ] **Gate: 10 paying customers (pack or bundle purchases)**
 
 ---
 
 ## Phase 4 — Launch Wave Tiers (Weeks 12-16)
 
 Content tool additions:
-- [ ] Source + import IELTS word list
-- [ ] Source + import Business English word list
-- [ ] Source + import Common 3K word list
-- [ ] Export updated `words.db` (6 tiers total)
+- [ ] Source + import IELTS exam pack (paid)
+- [ ] Source + import Business English exam pack (paid)
+- [ ] Source + import GRE / GMAT exam packs (paid)
+- [ ] Export updated `words.db` (free frequency/CEFR categories + paid exam packs)
+
+> Note: Most Common 3000 / 9000 are **free** frequency categories shipped at launch, not Phase 4 paid additions.
 
 Mobile additions:
-- [ ] Update paywall UI with IELTS/Business highlights
-- [ ] B2B school management portal deploy (web-based bulk purchase)
+- [ ] Add IELTS / Business / GRE / GMAT exam-pack products; update paywall + bundle attach
 - [ ] Assessment widgets: Classification, ImageMatch
 - [ ] UX polish (animations, haptics)
-- [ ] **Gate: $1,000/month recurring revenue**
+- [ ] **Gate: $1,000 cumulative pack/bundle revenue** (one-time, not recurring)
 
 ---
 
@@ -137,10 +140,10 @@ Mobile additions:
 - [ ] Account deletion + data export (Apple 5.1.1(v), required once accounts exist) + 16+ age gate
 - [ ] App icon (1024×1024)
 - [ ] App Store screenshots showing no-typing recognition practice
-- [ ] App Store description emphasizing subscription value & schools
+- [ ] App Store description emphasizing exam packs + free frequency content
 - [ ] Privacy policy & Terms of Service
 - [ ] Support email setup
-- [ ] Launch lexitap.app website with B2B licensing portal
+- [ ] Launch lexitap.app static site (privacy/terms; no B2B portal — deferred)
 - [ ] Apple App Store submission ($99/year)
 - [ ] Google Play submission ($25 one-time)
 - [ ] **Deliverable: Live on both stores**
@@ -150,17 +153,17 @@ Mobile additions:
 ## Phase 6 — Growth and Content Drops (Week 19+)
 
 Growth:
-- [ ] Scale cram-school institutional sales outreach
-- [ ] Activate teacher referral program (Phase 3+)
+- [ ] ~~Scale cram-school institutional sales~~ (B2B deferred — door left open)
+- [ ] ~~Teacher referral program~~ (deferred with B2B)
 - [ ] Reddit presence (r/TOEFL, r/ESL, r/languagelearning)
 - [ ] App Store Optimization for "TOEFL vocabulary", "IELTS vocabulary", and "offline vocabulary"
 - [ ] Content marketing (blog, TikTok/YouTube Shorts)
 
 Content drop cadence:
-- [ ] Week 22 — GRE Vocabulary (included in Premium)
-- [ ] Week 26 — GMAT Vocabulary (included in Premium)
-- [ ] Week 30 — Idioms & Expressions (included in Premium)
-- [ ] Week 34 — Phrasal Verbs (included in Premium)
+- [ ] Week 22 — GRE exam pack (paid; joins All-Exams bundle)
+- [ ] Week 26 — GMAT exam pack (paid; joins All-Exams bundle)
+- [ ] Week 30 — Idioms & Expressions (one-time content pack — pricing TBD)
+- [ ] Week 34 — Phrasal Verbs (one-time content pack — pricing TBD)
 
 **Gate: 1,000 active users**
 
@@ -173,10 +176,10 @@ Content drop cadence:
 | 1 | Validation interviews + word lists sourced + cram school outreach |
 | 3 | Content tool done (Track A) |
 | 6 | Mobile MVP done — free tiers + recognition widgets |
-| 10 | Retention data from 50 beta users + B2B school trials |
-| 11 | WTP validated for Premium Subscription & Cram School bulk |
-| 12 | First 10 paying subscribers + 2 cram school accounts |
-| 17 | All launch-wave tiers + B2B web portal complete |
+| 10 | Retention data from 50 beta users |
+| 11 | WTP validated for exam-pack pricing ($9.99 / $29.99 bundle) |
+| 12 | First 10 paying customers (pack or bundle) |
+| 17 | All launch-wave exam packs complete |
 | 19 | App Store live |
 | 21 | 1,000 active users |
 
@@ -184,13 +187,13 @@ Content drop cadence:
 
 ## Revenue Targets
 
+> ⚠️ Old subscription + B2B projections are **void** (model changed 2026-05-31). Business is now pure one-time B2C exam packs. Re-modeling is an open task — see [pricing doc](lexitap-docs/08-financial-legal/REVENUE_MODEL_PRICING.md#revenue-projections-needs-re-modeling).
+
 | Milestone | Target |
 |-----------|--------|
-| First paying users | 10 subscribers + 2 schools (Week 12) |
-| Monthly revenue | $1,000 recurring (Phase 4) |
-| Year 1 (conservative) | $3,600 net |
-| Year 2 (growth) | $30,000 net |
-| Year 3 (mature) | $67,500 net |
+| First paying customers | 10 pack/bundle purchases (Week 12) |
+| Cumulative revenue | $1,000 (Phase 4; one-time, not recurring) |
+| Year 1 (rough) | ~$2,000 net — covers the $194 cost base; full re-model pending |
 
 ---
 
@@ -200,7 +203,7 @@ Content drop cadence:
 |-------|-----------|--------|
 | Week 1 | Validation interviews/school interest fail | Stop — pivot or kill |
 | Week 10 | D7 retention <20% | Product broken — pivot/kill |
-| Week 12 | <5 paying subscribers OR 0 B2B schools paid | Pivot to consumer-only or restructure pricing |
+| Week 12 | <5 paying customers (pack/bundle) | Restructure pricing or rethink paid content |
 | Week 20 | <100 active users acquired | Rethink GTM, pivot sales strategy |
 
 ---

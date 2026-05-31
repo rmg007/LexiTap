@@ -2,7 +2,7 @@
 title: User Flows
 category: ux-design
 status: active
-updated: 2026-05-24
+updated: 2026-05-31
 priority: P0
 tags: [user-flows, navigation, screens, journeys, onboarding, srs, paywall, sync, streak]
 ---
@@ -20,7 +20,7 @@ MVP screens are Home, Quiz, Progress, Settings (locked, [PRODUCT_REQUIREMENTS_DO
 - [2. Daily Review Session](#2-daily-review-session)
 - [3. Learning New Words](#3-learning-new-words)
 - [4. Hitting the Daily Cap (Forgiveness)](#4-hitting-the-daily-cap-forgiveness)
-- [5. Purchasing Premium (Paywall)](#5-purchasing-premium-paywall)
+- [5. Buying an Exam Pack (Paywall)](#5-buying-an-exam-pack-paywall)
 - [7. Switching Devices (Sync)](#7-switching-devices-sync)
 - [8. Maintaining and Recovering a Streak](#8-maintaining-and-recovering-a-streak)
 - [Open Questions](#open-questions)
@@ -112,7 +112,7 @@ Steps:
 HOME ▶ Learn new words ▶ [ LEARN CARD ▶ Got it ] × 10 ▶ quick check ▶ seed SRS ▶ HOME
 ```
 
-Edge case: tier exhausted (no new words) → suggest upgrading the tier or, for free users, the next free tier / a relevant paid tier via the Paywall (flow 5), framed as a natural next step, never a hard wall.
+Edge case: category exhausted (no new words) → suggest the next free category or, where relevant (test prep), a paid exam pack via the Paywall (flow 5), framed as a natural next step, never a hard wall.
 
 ## 4. Hitting the Daily Cap (Forgiveness)
 
@@ -135,16 +135,16 @@ REVIEW ▶ cap reached ▶ FORGIVENESS sheet
 
 Anti-pattern guard: never show overdue counts as a red alarm or home-screen guilt badge ([SRS_FORGIVENESS_MECHANICS.md](../02-product-definition/SRS_FORGIVENESS_MECHANICS.md) anti-patterns).
 
-## 5. Purchasing Premium (Paywall)
+## 5. Buying an Exam Pack (Paywall)
 
-Goal: convert at the moment of genuine need (test prep urgency), with clear subscription framing and zero dark patterns. Pricing in [PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md).
+Goal: convert at the moment of genuine need (test prep urgency), with clear one-time-purchase framing and zero dark patterns. No subscriptions — every paid item is a one-time non-consumable. Pricing in [PRODUCT_REQUIREMENTS_DOCUMENT.md](../02-product-definition/PRODUCT_REQUIREMENTS_DOCUMENT.md).
 
 Steps:
 
-1. Trigger points: tier-exhaustion suggestion (flow 3), a locked tier tapped on Progress, or Settings → "Unlock content."
-2. **Paywall sheet** presents Premium Pass monthly ($4.99/mo) and annual ($24.99/yr) options, plus the Common 3000 one-time unlock ($1.99) where applicable. Honest framing: cancel anytime, no auto-renew tricks, no ads.
+1. Trigger points: category-exhaustion suggestion (flow 3), a locked exam pack tapped on Progress, or Settings → "Unlock content."
+2. **Paywall sheet** presents the relevant exam pack ($9.99 one-time, e.g. `com.lexitap.exam.toefl`) and the **All-Exams bundle** ($29.99 one-time, `com.lexitap.bundle.full`, covering all current and future exam packs). Honest framing: pay once, own forever, no recurring charge, no ads. Customers who already own a single pack see discounted upgrade-to-bundle pricing (`bundle.upgrade1` / `bundle.upgrade2`).
 4. User taps **Unlock** → native StoreKit / Google Play Billing purchase sheet opens (IAP adapter). Store returns one of: `cancelled` / `pending` / `error` / receipt token.
-5. Receipt token is validated server-side by RevenueCat. On valid receipt: RevenueCat returns verified `CustomerInfo`; app unlocks content in memory; confirmation toast. On Premium Pass, all current and future paid tiers unlock. A pending/deferred receipt (e.g. Apple "Ask to Buy") shows a "We'll unlock as soon as it's approved" state.
+5. Receipt token is validated server-side by RevenueCat. On valid receipt: RevenueCat returns verified `CustomerInfo`; app unlocks content in memory; confirmation toast. An exam pack grants `exam_{name}`; the bundle grants `all_exams` (covers all current and future exam packs). A pending/deferred receipt (e.g. Apple "Ask to Buy") shows a "We'll unlock as soon as it's approved" state.
 6. **Restore purchases** is always available (Settings + Paywall footer) for reinstalls/new devices.
 
 ```

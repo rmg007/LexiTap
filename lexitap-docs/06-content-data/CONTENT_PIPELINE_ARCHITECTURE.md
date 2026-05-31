@@ -2,9 +2,9 @@
 title: Content Pipeline Architecture
 category: content-data
 status: active
-updated: 2026-05-24
+updated: 2026-05-31
 priority: P0
-tags: [content-pipeline, cli, sqlite, csv, enrichment, elevenlabs, openai, unsplash, app-agnostic, two-db, versioning]
+tags: [content-pipeline, cli, sqlite, csv, enrichment, neural-tts, polly, google-tts, openai, unsplash, app-agnostic, two-db, versioning]
 ---
 
 # Content Pipeline Architecture
@@ -67,11 +67,22 @@ Not in scope:
 
 Content sourcing is **frequency-based and already resolved**. The founder possesses the corpora:
 
-| Tier slug   | Source corpus                          | Access |
-|-------------|----------------------------------------|--------|
-| `foundation`| Top 3,000 most-used English words      | Free |
-| `advanced`  | Words 3,001–9,000 by real-world frequency | Free |
-| `toefl`     | 3,000 TOEFL words                      | Premium Pass |
+| Category slug | Source corpus                          | Access |
+|---------------|----------------------------------------|--------|
+| `foundation`  | Top 3,000 most-used English words (A2-B1) | Free |
+| `advanced`    | Words 3,001–9,000 by real-world frequency (B2-C1) | Free |
+| `toefl`       | 3,000 TOEFL words                      | Paid exam pack (`com.lexitap.exam.toefl`, $9.99 one-time) |
+
+> **Words carry many-to-many category tags.** A single word can belong to several categories
+> (e.g. a frequency word that is also on the TOEFL list). Category membership is therefore a
+> many-to-many relationship, not one category per word. See
+> [../04-technical-architecture/DATA_MODELS.md](../04-technical-architecture/DATA_MODELS.md) —
+> the schema migration to a `word_tiers` junction is **pending (not yet implemented in code)**.
+
+> **Free vs. paid.** Foundation, Advanced, Most Common 3000, and Most Common 9000 are all free
+> (word + sentence audio included). The only paid content is one-time, non-consumable exam packs
+> (`com.lexitap.exam.{toefl,ielts,gre,gmat,business}`, $9.99 each) plus an All-Exams bundle
+> (`com.lexitap.bundle.full`, $29.99). No subscriptions, no per-corpus "Premium Pass."
 
 Therefore pipeline work is **enrichment only** — definitions, audio, imagery, example
 sentences, synonyms/antonyms. There is no acquisition phase.
@@ -108,7 +119,7 @@ lexitap-content-tool/
 ├── package.json              # bin: { "lexitap-tool": "dist/cli.js" }
 ├── tsconfig.json
 ├── lexitap.config.json       # app_id, tier definitions
-├── .env                       # OPENAI_API_KEY, ELEVENLABS_API_KEY, UNSPLASH_ACCESS_KEY (gitignored)
+├── .env                       # OPENAI_API_KEY, AWS creds (Polly), GOOGLE_TTS creds, UNSPLASH_ACCESS_KEY (gitignored)
 ├── src/
 │   ├── cli.ts                # argument parsing and command dispatch
 │   ├── commands/
@@ -118,8 +129,8 @@ lexitap-content-tool/
 │   │   └── export.ts
 │   ├── providers/
 │   │   ├── openai.ts         # synonyms/antonyms, definition cleanup
-│   │   ├── elevenlabs.ts     # audio TTS
-│   │   ├── googleTts.ts      # audio TTS (cheaper alt)
+│   │   ├── polly.ts          # neural audio TTS (Amazon Polly, default)
+│   │   ├── googleTts.ts      # neural audio TTS (Google Cloud, alt)
 │   │   └── unsplash.ts       # curated image search + download
 │   ├── db/
 │   │   ├── working.ts        # open/migrate working.db
@@ -300,14 +311,14 @@ npx lexitap-tool enrich --tier <slug> [enrichment flags] [options]
 | `--add-synonyms`      | Fill `synonyms`/`antonyms` via OpenAI; store as JSON arrays. |
 | `--add-audio`         | Generate pronunciation audio; set `audio_path`. |
 | `--add-images`        | Curate one image per word; set `image_path`. |
-| `--provider <name>`   | `openai` (text), `elevenlabs`\|`google` (audio), `unsplash` (images). |
+| `--provider <name>`   | `openai` (text), `polly`\|`google` (neural audio TTS), `unsplash` (images). |
 | `--tier <slug>`       | Limit to one tier (required to bound cost). |
 | `--limit <n>`         | Cap rows processed this run (incremental enrichment). |
 | `--force`             | Re-enrich rows that already have the field. |
 | `--dry-run`           | Show what would be called + cost estimate, no API calls. |
 
 ```bash
-npx lexitap-tool enrich --tier toefl --add-audio --provider elevenlabs
+npx lexitap-tool enrich --tier toefl --add-audio --provider polly
 npx lexitap-tool enrich --tier foundation --add-synonyms --provider openai --limit 500
 npx lexitap-tool enrich --tier toefl --add-images --provider unsplash --dry-run
 ```
@@ -372,13 +383,14 @@ npx lexitap-tool export --bump minor
 
 ## Enrichment Strategies and Costs
 
-Costs are one-time per content build (cached thereafter). Audio is the dominant cost and is
-launch-scoped to TOEFL only.
+Costs are one-time per content build (cached thereafter). Audio is now generated with cheap
+neural TTS (Amazon Polly / Google Cloud TTS — not ElevenLabs) and is **free and universal**:
+word + sentence audio ships for every category, free and paid alike.
 
 | Enrichment        | Provider (default → alt)        | Stored as            | Cost (this build) |
 |-------------------|---------------------------------|----------------------|-------------------|
-| Synonyms/antonyms | OpenAI                          | `synonyms`,`antonyms` JSON arrays | a few dollars across all tiers |
-| Audio (TOEFL)     | ElevenLabs (~$50) → Google TTS (~$10) | `audio_path` → `assets/audio/{word_id}.mp3` | ~$10–$50 |
+| Synonyms/antonyms | OpenAI                          | `synonyms`,`antonyms` JSON arrays | a few dollars across all categories |
+| Audio (all categories) | Amazon Polly → Google Cloud TTS (neural) | `audio_path` → `assets/audio/{word_id}.mp3` | low (neural TTS is cheap; batch one-time) |
 | Imagery           | Unsplash free tier (curated)    | `image_path` → `assets/images/{word_id}.jpg` | $0 (free tier) |
 
 Notes:
@@ -386,9 +398,10 @@ Notes:
 - **Synonyms/antonyms (OpenAI):** prompt `List up to 3 common synonyms and up to 3 antonyms for
   "{word}" used as a {pos}, suitable for an ESL learner. Return JSON {"synonyms":[],"antonyms":[]}.`
   Validate the JSON parses before storing.
-- **Audio = reference only.** ElevenLabs for higher quality (~$50 for the TOEFL tier), Google
-  Cloud TTS as the ~$10 budget fallback. Launch ships audio for TOEFL; other tiers re-evaluate
-  per ROI ([../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md](../01-discovery-strategy/VISION_PROBLEM_STATEMENT.md) Audio Scope-Out). Not pronunciation training.
+- **Audio = reference only, free, and universal.** Generated with neural TTS (Amazon Polly,
+  Google Cloud TTS as the alternate) — **not** ElevenLabs, which is no longer used. Word and
+  sentence audio ship for every category (Foundation, Advanced, Most Common 3000/9000, and the
+  paid exam packs); audio is never gated behind a purchase. Not pronunciation training.
 - **Imagery is curated, not per-word AI-generated** at MVP. Unsplash free tier (or similar);
   one representative image per word, manually spot-checked. Per-word AI imagery is a Year 2
   differentiator (Backlog #34), deliberately deferred for cost.
@@ -415,7 +428,10 @@ npx lexitap-tool validate --strict
 npx lexitap-tool enrich --tier foundation --add-synonyms --provider openai
 npx lexitap-tool enrich --tier advanced   --add-synonyms --provider openai
 npx lexitap-tool enrich --tier toefl      --add-synonyms --provider openai
-npx lexitap-tool enrich --tier toefl      --add-audio     --provider elevenlabs
+# Audio is free + universal: generate word + sentence audio for every category via neural TTS
+npx lexitap-tool enrich --tier foundation --add-audio     --provider polly
+npx lexitap-tool enrich --tier advanced   --add-audio     --provider polly
+npx lexitap-tool enrich --tier toefl      --add-audio     --provider polly
 npx lexitap-tool enrich --tier foundation --add-images    --provider unsplash
 
 # 4. Human review gate — approve all AI-generated definitions before export
@@ -449,9 +465,9 @@ not Phase-1 scope — LexiTap is the only `app_id` we build now.
 {
   "app_id": "lexitap",
   "tiers": [
-    { "slug": "foundation", "name": "LexiTap Foundation (CEFR A2-B1)", "is_free": true,  "sku": null,                "display_order": 1, "requires_theme": true,  "audio": false },
-    { "slug": "advanced",   "name": "LexiTap Advanced (CEFR B2-C1)",   "is_free": true,  "sku": null,                "display_order": 2, "requires_theme": true,  "audio": false },
-    { "slug": "toefl",      "name": "TOEFL Vocabulary",                "is_free": false, "sku": null,                "display_order": 3, "requires_theme": false, "audio": true  }
+    { "slug": "foundation", "name": "LexiTap Foundation (CEFR A2-B1)", "is_free": true,  "sku": null,                     "display_order": 1, "requires_theme": true,  "audio": true },
+    { "slug": "advanced",   "name": "LexiTap Advanced (CEFR B2-C1)",   "is_free": true,  "sku": null,                     "display_order": 2, "requires_theme": true,  "audio": true },
+    { "slug": "toefl",      "name": "TOEFL Vocabulary",                "is_free": false, "sku": "com.lexitap.exam.toefl", "display_order": 3, "requires_theme": false, "audio": true }
   ]
 }
 ```
@@ -509,11 +525,11 @@ Content update (an app store update ships a new `words.db`):
   "user_version": 10200,
   "built_at": "2026-05-24T00:00:00Z",
   "tiers": {
-    "foundation": { "words": 2987, "with_synonyms": 2987, "with_images": 2987, "with_audio": 0 },
-    "advanced":   { "words": 5994, "with_synonyms": 5994, "with_images": 0,    "with_audio": 0 },
+    "foundation": { "words": 2987, "with_synonyms": 2987, "with_images": 2987, "with_audio": 2987 },
+    "advanced":   { "words": 5994, "with_synonyms": 5994, "with_images": 0,    "with_audio": 5994 },
     "toefl":      { "words": 2961, "with_synonyms": 2961, "with_images": 0,    "with_audio": 2961 }
   },
-  "assets": { "audio": 2961, "images": 2987 },
+  "assets": { "audio": 11942, "images": 2987 },
   "source_hashes": { "foundation.csv": "sha1:...", "advanced.csv": "sha1:...", "toefl.csv": "sha1:..." }
 }
 ```
@@ -530,5 +546,5 @@ Content update (an app store update ships a new `words.db`):
 
 - `unresolved` — **Definition authoring source.** Not confirmed whether definitions ship in source CSVs or are partly generated/cleaned by OpenAI during enrich. If generated, add `--add-definitions` enrich flag with mandatory human review. (Synonyms/antonyms confirmed; definitions TBD.) Resolve before first content export.
 - `requires-external-validation` — **Image licensing at scale.** Unsplash free tier is MVP plan. Attribution/redistribution terms for bundling images offline need a legal check before TOEFL paid launch.
-- `requires-product-decision` — **Audio voice selection.** ElevenLabs voice/accent for TOEFL (US vs UK) not yet chosen. TOEFL is US-admissions-oriented; US voice recommended — confirm.
+- `requires-product-decision` — **Audio voice selection.** Neural-TTS (Amazon Polly / Google Cloud TTS) voice/accent not yet chosen. Audio is free + universal across all categories; for the TOEFL pack (US-admissions-oriented) a US voice is recommended — confirm.
 - `requires-product-decision` — **Free-tier imagery coverage.** Full image coverage vs. subset for Foundation/Advanced. Curation-time cost, not money. Decide at content-build time.

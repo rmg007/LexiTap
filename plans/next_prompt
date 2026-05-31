@@ -19,6 +19,11 @@ queue: GitHub Issues, else the task-level plan `plans/RELEASE_PLAN.md`
 - Stack: Expo + expo-router + expo-sqlite + nativewind + react-native-paper +
   @supabase/supabase-js. (No zustand / react-query / react-native-purchases.)
 - IAP: `StubIapService` only; RevenueCat deferred to Phase 3 (see AGENTS.md).
+- **Monetization model changed 2026-05-31** → one-time exam packs ($9.99) +
+  All-Exams bundle ($29.99), NO subscriptions, B2B deferred. Authoritative:
+  `lexitap-docs/08-financial-legal/REVENUE_MODEL_PRICING.md` +
+  `memory/2026-05-31_monetization_rethink.md`. `tiers.ts` + `words.db` still
+  encode the dead subscription model — rebuild needed (see below).
 
 ## The real blocker to launch: content VOLUME
 
@@ -33,13 +38,21 @@ queue: GitHub Issues, else the task-level plan `plans/RELEASE_PLAN.md`
   a launch-ready catalog. Enriching + rebuilding `words.db` via `content-tool` is
   the critical path (task C1). See `plans/RELEASE_PLAN.md`.
 
-## Known inconsistency to fix (cheap, high-value)
+## Monetization rebuild needed (model changed 2026-05-31)
 
-- `mobile/src/config/tiers.ts` was rewritten to the locked 3-SKU Premium model
-  (`com.lexitap.premium.monthly`/`.annual`/`common3k`), but the bundled
-  `content_tiers` rows in `words.db` still encode the OLD dead per-tier model
-  (e.g. `toefl` @ $14.99, sku `com.lexitap.toefl`, `is_active=1`). `words.db` must
-  be rebuilt from `content-tool` to match `tiers.ts` before configuring stores.
+Both `tiers.ts` AND `words.db` encode dead models and must be rebuilt to the new
+one-time exam-pack model (`REVENUE_MODEL_PRICING.md`). Two coupled tasks:
+
+1. **Schema → many-to-many.** `words.tier_id` single-FK → `word_tiers` junction
+   (a word carries multiple free category tags + exam membership). Word IDs become
+   word-text-only (`word_${hash}`), so one word = one progress row across
+   categories. Touches `content-tool` schema/import/export/validate + `mobile`
+   db queries/repositories/mappers/rows. (Started + reverted this session — design
+   was entangled with pricing; pricing now settled, so it can proceed.)
+2. **Products → exam packs.** `tiers.ts` rewrite: drop subscription SKUs
+   (`premium.monthly/.annual`) + standalone `common3k`; add exam-pack products
+   ($9.99) + `all_exams` bundle ($29.99) + upgrade SKUs; free categories carry no
+   product. Then rebuild `words.db` from `content-tool` so `content_tiers` matches.
 
 ## Also unwired (deferred, not bugs)
 
