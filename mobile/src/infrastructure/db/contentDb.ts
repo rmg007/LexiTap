@@ -72,3 +72,13 @@ const effects: ContentDbInstallEffects = {
 export function installContentDb(): Promise<ContentDbInstallResult> {
   return ensureContentDbInstalled(effects);
 }
+
+// Absolute filesystem path of the installed content DB, for SQL `ATTACH`.
+// A bare `ATTACH 'words.db'` is handed straight to SQLite, which resolves a
+// relative path against the process CWD (the app-bundle root on iOS) — NOT the
+// expo-sqlite directory — so it fails to open on-device even though the file is
+// present (the C0 bug, proven on a real build). ATTACH this full path instead.
+// documentDirectory carries a file:// scheme; SQLite wants a plain path, so strip it.
+export function contentDbAttachPath(): string {
+  return CONTENT_DB_PATH.replace(/^file:\/\//, '');
+}

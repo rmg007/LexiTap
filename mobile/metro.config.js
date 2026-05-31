@@ -25,7 +25,9 @@ const CSS_INTEROP_PATH = path.join(
   'node_modules/nativewind/node_modules/react-native-css-interop',
 );
 const ROOT_RN = path.join(__dirname, 'node_modules/react-native');
+const ROOT_REACT = path.join(__dirname, 'node_modules/react');
 const NATIVEWIND_DEPS = path.join(__dirname, 'node_modules/nativewind/node_modules');
+const POSTHOG_CORE = path.join(__dirname, 'node_modules/@posthog/core');
 
 config.resolver.extraNodeModules = {
   ...config.resolver.extraNodeModules,
@@ -34,6 +36,21 @@ config.resolver.extraNodeModules = {
 
 const _prevResolve = config.resolver.resolveRequest;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
+  // posthog-react-native@4 imports subpath exports of @posthog/core
+  // (e.g. "@posthog/core/surveys"). Metro on SDK 52 does not follow the package
+  // `exports` map, so these subpaths fail to resolve and the bundle dies.
+  // Redirect them straight to the built dist files. require.resolve cannot be
+  // used here — the `exports` field makes Node refuse deep paths with
+  // ERR_PACKAGE_PATH_NOT_EXPORTED — so we join the absolute path ourselves.
+  // Bare "@posthog/core" is left alone: its `main` field resolves fine.
+  if (moduleName.startsWith('@posthog/core/')) {
+    const sub = moduleName.slice('@posthog/core/'.length);
+    const filePath = sub.startsWith('vendor/')
+      ? path.join(POSTHOG_CORE, 'dist', `${sub}.js`)
+      : path.join(POSTHOG_CORE, 'dist', sub, 'index.js');
+    return { type: 'sourceFile', filePath };
+  }
+
   // When a file inside nativewind's own node_modules imports react-native (or
   // any react-native/* sub-path), redirect to the project-root version so we
   // don't bundle nativewind's bundled RN 0.83+ by mistake.
@@ -46,6 +63,24 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
     const redirected = moduleName === 'react-native'
       ? ROOT_RN
       : path.join(ROOT_RN, moduleName.slice('react-native/'.length));
+    return { type: 'sourceFile', filePath: require.resolve(redirected) };
+  }
+
+  // Same problem, different package: nativewind bundles its OWN react@19 (it pairs
+  // with the RN 0.85 it drags in). The Babel JSX transform routes every component
+  // through react-native-css-interop's jsx-runtime, which imports `react/jsx-runtime`
+  // — and from inside nativewind's nested node_modules that resolves to react@19,
+  // NOT the project-root react@18.3.1 that actually renders the tree. The element
+  // factories then stamp a $$typeof React 18 doesn't recognise → every screen dies
+  // with "Objects are not valid as a React child". Redirect react (and react/jsx-*)
+  // imports that originate inside nativewind's deps back to the single root react.
+  if (
+    origin.startsWith(NATIVEWIND_DEPS) &&
+    (moduleName === 'react' || moduleName.startsWith('react/'))
+  ) {
+    const redirected = moduleName === 'react'
+      ? ROOT_REACT
+      : path.join(ROOT_REACT, moduleName.slice('react/'.length));
     return { type: 'sourceFile', filePath: require.resolve(redirected) };
   }
   if (_prevResolve) return _prevResolve(context, moduleName, platform);
