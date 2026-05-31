@@ -18,7 +18,7 @@ The detailed product roadmap: 6 phases across 21 weeks, two parallel build track
 | Item | Value |
 |------|-------|
 | Phase | **1 — Build** (active; ~30% to launch — see [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md)) |
-| Code written | Track A CLI exists but content is ~8% sourced (241 unique words / 246 tier memberships across 9 tiers; restored 2026-05-31). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. |
+| Code written | Track A CLI exists; content is Foundation ~2,848/3,000 sourced (2,881 words / 2,894 memberships across 9 tiers; TOEFL + exam tiers still stubs). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. |
 | Last updated | 2026-05-30 |
 
 ## Table of Contents
@@ -59,7 +59,7 @@ Content is the launch-blocking long pole, not code. Each tier's drop date is gat
 
 **Baseline setup:** Git repo ✔; `CLAUDE.md` ✔; memory dirs ✔; GitHub Actions CI ☐; Ship-and-Watch loop ☐; Git worktrees (single repo used in practice) ☐; EAS Build ☐.
 
-**Track A (Weeks 2–3) — COMPLETE:** CLI `import` / `validate` / `export` ✔; CSV + SQLite export ✔; `npm run build:db` ✔. Foundation tier DB (241 words / 246 memberships restored 2026-05-31; full 3k sourcing is the long pole) ☐.
+**Track A (Weeks 2–3) — COMPLETE:** CLI `import` / `validate` / `export` ✔; CSV + SQLite export ✔; `npm run build:db` ✔. Foundation tier DB (2,848/3,000 words sourced; 2,881 total / 2,894 memberships; enrichment is the long pole) ☐.
 
 **Track B (Weeks 2–6) — IN PROGRESS:** Expo + TS setup ✔; bundled `words.db` delivery (asset bundle + version-gated copy before ATTACH) ✔ *(fixed 2026-05-30; proven on iOS simulator 2026-05-31; physical device verification pending)*; Home/Quiz/Progress/Settings screens ✔ *(Home progress wired; onboarding steps 2/4/5 done, full flow complete)*; MultipleChoice + DragDrop widgets ✔; SRS scheduling, mastery, quiz session as use-case/service layer ✔ (hexagonal); streak counter ✔. Per-table cloud sync removed 2026-05-28; encrypted blob backup → **Phase 3** (needs auth). **Auth (magic-link + Google + SIWA) → Phase 3**, not Phase 5.
 

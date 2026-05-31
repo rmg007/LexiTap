@@ -2,9 +2,10 @@ import React, { useCallback } from 'react';
 import { View, ScrollView, Pressable } from 'react-native';
 import { router } from 'expo-router';
 import { useTheme } from '@/presentation/theme';
+import type { ColorTokens, Radii, Spacing } from '@/presentation/theme/tokens';
 import { Text, Button, Card } from '@/presentation/components';
 import type { TierConfigEntry } from '@/config/tiers';
-import { TIER_CONFIG, listTiers } from '@/config/tiers';
+import { listTiers } from '@/config/tiers';
 
 // P-3: Paywall screen for exam pack SKUs. Displays paid tiers (exam packs +
 // bundle) with product cards. Placeholder buttons (R1: RevenueCat integration
@@ -156,9 +157,9 @@ interface ProductCardProps {
   tier: TierConfigEntry;
   isBundle: boolean;
   onPress: () => void;
-  spacing: typeof TIER_CONFIG;
-  colors: typeof TIER_CONFIG;
-  radii: typeof TIER_CONFIG;
+  spacing: Spacing;
+  colors: ColorTokens;
+  radii: Radii;
 }
 
 function ProductCard({
