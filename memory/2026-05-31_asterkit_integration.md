@@ -45,12 +45,24 @@
 | Monorepo structure | ✗ | LexiTap is looser (content-tool, mobile, lexitap-docs); not a pnpm workspace |
 | EAS versioning complexity | ✗ | Simplified for LexiTap (Expo managed, not bare workflow) |
 
+## Clarifications Applied
+
+After reviewing against LexiTap's actual architecture:
+
+| Issue | Fix |
+|-------|-----|
+| Release Process assumed OTA for all fixes | Split into pre-release (store only) + post-release (OTA for JS fixes) |
+| Secrets guidance vague | Clarified: local `.env` (dev) vs. EAS secrets (production builds) |
+| Storage Model overstated | Kept as-is; matches AGENTS.md; implementation gaps are separate tasks |
+| High-Risk Paths over-gated? | Kept focused; don't gate entire infrastructure layer |
+
+Commits: `fd4c79b` (Release Process + Secrets clarification)
+
 ## Next Steps
 
 1. **Test the hooks** — end a session and verify the Stop hook runs
 2. **Try the deny list** — attempt to edit `mobile/src/infrastructure/db/` and confirm it requires approval
 3. **Create project-specific commands** if needed (e.g., `/build-words-db`, `/deploy`, etc.) — add to `.claude/commands/`
-4. **Create memory index** if not already present: `memory/MEMORY.md` with `@memory/MEMORY.md` auto-load in CLAUDE.md (already added)
 
 ## Files Modified
 - `CLAUDE.md` — expanded from minimal redirect to full agent rulebook
