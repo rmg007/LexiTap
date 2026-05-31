@@ -31,7 +31,7 @@ The audit's code-level bugs were verified against current `master` and **fixed**
 
 | # | Fix | State | Evidence |
 |---|---|---|---|
-| **C0** | words.db delivery: bundle `mobile/assets/vocab/words.db`, register `.db` in Metro, embed via the `expo-asset` plugin, copy into expo-sqlite's dir (version-gated) **before** ATTACH | **Done in code** — `npm run check` green; unit-tested version gate. ⚠️ **Still must be proven on a physical iOS + low-end Android build** (the one thing code can't verify). | `infrastructure/db/contentDb.ts`, `contentDbInstall.ts`(+test), `database.ts`, `metro.config.js`, `app.json` |
+| **C0** | words.db delivery: bundle `mobile/assets/vocab/words.db`, register `.db` in Metro, embed via the `expo-asset` plugin, copy into expo-sqlite's dir (version-gated) **before** ATTACH | ✅ **PROVEN on iOS simulator 2026-05-31** (cold launch → ATTACH → 43 rows queried → onboarding renders). Getting there exposed TWO runtime bugs the original "done in code" missed because `npm run check` can't see them: (1) **dual React** ($$typeof crash) and (2) **bare-name `ATTACH 'words.db'`** resolving vs CWD not the SQLite dir — the actual C0 bug. Both fixed (PR #7). ⚠️ **Physical iOS + low-end Android still pending** (fresh EAS build in flight; `0324f457` is stale). See [../memory/2026-05-31_ios_build_posthog_metro.md](../memory/2026-05-31_ios_build_posthog_metro.md). | `infrastructure/db/contentDb.ts`, `contentDbInstall.ts`(+test), `database.ts`, `metro.config.js`, `app.json` |
 | **A1** | ~~`tiers.ts` rewritten to the 3-SKU subscription model~~ **SUPERSEDED 2026-05-31.** That subscription catalog is now dead. `tiers.ts` must be rewritten again to one-time exam-pack + bundle products (see pricing doc). | **Redo** | `config/tiers.ts` |
 | **C2** | Empty/unpurchasable tiers set `isActive:false` — only free Foundation + Advanced ship in P1 | **Done** | `config/tiers.ts` |
 | **HARNESS** | **`npm run check` was red on `master`** — `nativewind/babel` (a NativeWind v4 *preset*) was under Babel `plugins`, breaking every Jest suite. Moved to `presets`, skipped in test env (it loads `react-native-worklets/plugin`, a reanimated-v4 artifact absent on reanimated 3). | **Done** — 132 tests / 15 suites green | `babel.config.js`, `@babel/core` pinned 7.25.2 |
@@ -45,7 +45,7 @@ One scannable list. Each phase has an ordered task set and a single measurable e
 
 **P1 — Make the app real** *(exit: cold-launches on real iOS + Android, loads real Foundation words, completes onboarding→quiz→progress, emits retention events)*
 - ✅ C0 words.db delivery (code) · ✅ A1 tiers model · ✅ C2 tier activation · ✅ test harness green
-- ☐ **Prove C0 on a physical device** (the gate for trusting everything else)
+- ◐ **Prove C0 on a physical device** — ✅ proven on iOS **simulator** (after fixing dual-React + bare-name-ATTACH bugs); physical iOS + low-end Android still pending (fresh EAS build in flight)
 - ☐ Foundation content to 3,000 words: C3 source → C4 OpenAI enrich adapter → C5 sampled QA → C6 synonyms → C7 validate → C8 release pipeline *(the long pole — runs continuously)*
 - ☐ Real onboarding + Home: H-1 Home progress → O-1 persist `onboarding_state` → O-2 goal → O-3 proficiency(confirm/cut) → O-4 diagnostic (DIAG-B) → O-5 knowledge map; P-1 empty states; P-2 a11y
 - ◐ Instrumentation: A1–A5 PostHog + `event_log` flush; **B1 Sentry ✅ + B2 scrub ✅** (B2 enrichment tags pending A2) *(without this P2's gate is unmeasurable)*
@@ -157,7 +157,7 @@ ACCT-1 (Apple/Google enrollment) ───────────────�
 
 | Risk | Severity | Detail | Mitigation |
 |---|---|---|---|
-| words.db loads empty on device | **Critical** | ATTACH on bare filename; no asset-copy; 216 words anyway | C0 first; verify on physical iOS + low-end Android, not simulator |
+| words.db loads empty on device | ~~Critical~~ → **Mitigated** | Was real: bare-name ATTACH resolved vs CWD → "unable to open database"; fixed to absolute-path ATTACH and **proven on the iOS sim** (43 rows). Physical-device confirm still pending. (Separately: bundled DB has only **43 rows** vs 216 documented — a content-volume question, not a delivery one.) | Fixed (PR #7) + `npm run smoke` guards it; confirm on physical iOS + low-end Android |
 | Content review doesn't scale solo | **High** | ~17h to review 3k words; 6k doubles it | Sampled QA gate + in-app error reporter; AI-draft not hand-author |
 | B2B seat-redemption code was deleted, not rebuilt | **High** | Entire 3.1.3(c) App Review story depends on it (D7) | Verify now; rebuild (B2B1) or drop B2B from launch |
 | Everything in P3 blocked on Expo Go exit | **High** | 3 native modules; New-Arch (`newArchEnabled:true`) compat unverified | A0 early; confirm RevenueCat/Google/Apple libs on New Arch at pinned versions |
@@ -174,7 +174,7 @@ ACCT-1 (Apple/Google enrollment) ───────────────�
 
 ## 6. Immediate next actions (first ~2 weeks, in order)
 
-1. ✅ **C0 (code done)** — `words.db` delivery fixed + unit-tested. **Remaining: prove on a physical iOS + low-end Android build.** Nothing downstream is trustworthy until this passes on real hardware.
+1. ◐ **C0 (PROVEN on iOS simulator 2026-05-31)** — `words.db` delivery fixed + unit-tested AND verified on the sim (cold launch → ATTACH → 43 rows → UI renders), after fixing two runtime bugs `npm run check` missed (dual React; bare-name ATTACH). **Remaining: confirm on a physical iOS + low-end Android build** (fresh EAS build in flight; `0324f457` is stale). New harness: `cd mobile && npm run smoke`.
 2. **ACCT-1 / build-infra #8–9** — start Apple ($99) + Google ($25) enrollment *today* (external latency). **Top remaining priority.**
 3. ✅ **D2/D3/D4/D7 resolved**; **D1/D5/D6/D8 still open** (diagnostic scope, age gate, B2B model, Common3K-vs-Foundation) — settle before dependent coding.
 4. ✅ **A1 (done)** — `tiers.ts` is now the real Premium-Pass entitlement model; empty tiers `isActive:false`.
