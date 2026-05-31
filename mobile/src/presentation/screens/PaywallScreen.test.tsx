@@ -9,7 +9,16 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
+import type { TierUnlock } from '@/config/tiers';
 import { TIER_CONFIG, listTiers } from '@/config/tiers';
+
+// Type-safe accessor for exam pack price
+function getExamPackPrice(unlock: TierUnlock): number | null {
+  if (unlock.kind === 'exam_pack') {
+    return unlock.listPriceUsd;
+  }
+  return null;
+}
 
 describe('PaywallScreen', () => {
   describe('Product catalog filtering', () => {
@@ -39,20 +48,18 @@ describe('PaywallScreen', () => {
       const allTiers = listTiers();
       const paidTiers = allTiers.filter((t) => t.unlock.kind === 'exam_pack');
 
-      const bundle = paidTiers.find(
-        (t) => t.unlock.kind === 'exam_pack' && (t.unlock as any).listPriceUsd === 29.99,
-      );
+      const bundle = paidTiers.find((t) => getExamPackPrice(t.unlock) === 29.99);
       const examPacks = paidTiers.filter((t) => t !== bundle);
 
       expect(bundle).toBeDefined();
       if (bundle && bundle.unlock.kind === 'exam_pack') {
         expect(bundle.unlock.kind).toBe('exam_pack');
-        expect((bundle.unlock as any).listPriceUsd).toBe(29.99);
+        expect(getExamPackPrice(bundle.unlock)).toBe(29.99);
       }
 
       examPacks.forEach((pack) => {
         expect(pack.unlock.kind).toBe('exam_pack');
-        expect((pack.unlock as any).listPriceUsd).toBe(9.99);
+        expect(getExamPackPrice(pack.unlock)).toBe(9.99);
       });
     });
   });
@@ -61,7 +68,7 @@ describe('PaywallScreen', () => {
     it('finds the bundle as the single 29.99 product', () => {
       const allTiers = listTiers();
       const paidTiers = allTiers.filter((t) => t.unlock.kind === 'exam_pack');
-      const bundles = paidTiers.filter((t) => (t.unlock as any).listPriceUsd === 29.99);
+      const bundles = paidTiers.filter((t) => getExamPackPrice(t.unlock) === 29.99);
 
       expect(bundles.length).toBe(1);
       expect(bundles[0]?.displayName).toContain('All-Exams');
@@ -72,7 +79,7 @@ describe('PaywallScreen', () => {
       // verify the bundle is correctly identified for highlighting.
       const allTiers = listTiers();
       const paidTiers = allTiers.filter((t) => t.unlock.kind === 'exam_pack');
-      const bundle = paidTiers.find((t) => (t.unlock as any).listPriceUsd === 29.99);
+      const bundle = paidTiers.find((t) => getExamPackPrice(t.unlock) === 29.99);
 
       expect(bundle?.displayName.toLowerCase()).toMatch(/all.*exam|bundle|full/i);
     });
@@ -84,8 +91,8 @@ describe('PaywallScreen', () => {
       const paidTiers = allTiers.filter((t) => t.unlock.kind === 'exam_pack');
 
       paidTiers.forEach((tier) => {
-        if (tier.unlock.kind === 'exam_pack') {
-          const price = (tier.unlock as any).listPriceUsd;
+        const price = getExamPackPrice(tier.unlock);
+        if (price !== null) {
           const formatted = `$${price.toFixed(2)}`;
 
           expect(formatted).toMatch(/^\$\d+\.\d{2}$/);
@@ -100,7 +107,7 @@ describe('PaywallScreen', () => {
 
       paidTiers.forEach((tier) => {
         expect(tier.unlock.kind).toBe('exam_pack');
-        expect((tier.unlock as any).listPriceUsd).toBeGreaterThan(0);
+        expect(getExamPackPrice(tier.unlock)).toBeGreaterThan(0);
       });
     });
   });
