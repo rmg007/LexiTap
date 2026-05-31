@@ -3,6 +3,7 @@ import {
   selectDiagnosticSample,
   seedMasteryFor,
   seedMasteryFromResults,
+  estimateFrontierFromResults,
 } from '@/domain/onboarding/diagnostic';
 import { v1FixedScheduler, DAY_MS } from '@/domain/srs/v1-fixed';
 import type { Word } from '@/domain/vocabulary/Word';
@@ -140,5 +141,36 @@ describe('RunDiagnosticUseCase.seed', () => {
       { wordId: asWordId('a'), masteryLevel: 2 },
       { wordId: asWordId('b'), masteryLevel: 0 },
     ]);
+  });
+});
+
+describe('estimateFrontierFromResults', () => {
+  it('returns default for empty results', () => {
+    expect(estimateFrontierFromResults([])).toBe(2000);
+  });
+
+  it('scales from 500 (0 correct) to 3500 (all correct)', () => {
+    expect(estimateFrontierFromResults([{ word: word('a'), isCorrect: false }])).toBe(500);
+    expect(estimateFrontierFromResults([{ word: word('a'), isCorrect: true }])).toBe(3500);
+  });
+
+  it('interpolates for mixed results', () => {
+    const half = [
+      { word: word('a'), isCorrect: true },
+      { word: word('b'), isCorrect: false },
+    ];
+    expect(estimateFrontierFromResults(half)).toBe(2000); // 50% → mid-range
+  });
+
+  it('scales correctly for 3/5 correct', () => {
+    const results = [
+      { word: word('a'), isCorrect: true },
+      { word: word('b'), isCorrect: true },
+      { word: word('c'), isCorrect: true },
+      { word: word('d'), isCorrect: false },
+      { word: word('e'), isCorrect: false },
+    ];
+    // 3/5 = 60% → 500 + 0.6*3000 = 2300
+    expect(estimateFrontierFromResults(results)).toBe(2300);
   });
 });

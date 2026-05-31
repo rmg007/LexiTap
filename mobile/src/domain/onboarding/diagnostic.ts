@@ -94,3 +94,17 @@ export function seedMasteryFor(result: DiagnosticResult): MasteryLevel {
 export function seedMasteryFromResults(results: readonly DiagnosticResult[]): SeedMastery[] {
   return results.map((r) => ({ wordId: r.word.id, masteryLevel: seedMasteryFor(r) }));
 }
+
+/**
+ * Estimate the learner's vocabulary frontier (frequency rank) from the stride
+ * sampler results. A crude DIAG-B estimate: % correct → frontier rank.
+ *
+ * Range: 500 (knew 0/5) to 3500 (knew 5/5), scaled linearly.
+ */
+export function estimateFrontierFromResults(results: readonly DiagnosticResult[]): number {
+  if (results.length === 0) return 2000; // Default to mid-range if empty.
+  const correct = results.filter((r) => r.isCorrect).length;
+  const pct = correct / results.length;
+  // Linear scale: 0% → 500, 100% → 3500.
+  return Math.round(500 + pct * 3000);
+}

@@ -8,6 +8,7 @@ import type { AssessmentAnswer } from '@/presentation/components/assessments/typ
 import { useServices } from '@/presentation/services';
 import { buildQuestion } from '@/presentation/screens/quizQuestion';
 import { asTierId, type Word, type DiagnosticResult, type LearningGoal, type ProficiencyBand } from '@/domain/index';
+import { estimateFrontierFromResults } from '@/domain/onboarding/diagnostic';
 
 // First-run onboarding diagnostic. Walks the learner through a short tap-only
 // quiz (NO TextInput) sampled across the tier's difficulty range, grades each
@@ -55,9 +56,14 @@ export function OnboardingDiagnosticScreen({
         // Offline-first: never block first-run on a seed write failure.
       }
       try {
-        // Persist the onboarding completion timestamp. goal / band / frontierRank
-        // are added by later onboarding steps (goal picker, Knowledge Map reveal).
-        await saveOnboardingProfile.execute({ ...partialProfile, completedAt: Date.now() });
+        // Persist the full onboarding profile: goal + band from earlier steps,
+        // frontierRank estimated from diagnostic results, completedAt now.
+        const frontierRank = estimateFrontierFromResults(results);
+        await saveOnboardingProfile.execute({
+          ...partialProfile,
+          frontierRank,
+          completedAt: Date.now(),
+        });
       } catch {
         // Non-blocking: profile save failure must not trap the user on first run.
       }
