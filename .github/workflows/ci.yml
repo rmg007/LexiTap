@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'mobile/**'
+      - 'content-tool/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mobile/**'
+      - 'content-tool/**'
+      - '.github/workflows/ci.yml'
+  workflow_dispatch:
+
+jobs:
+  mobile-check:
+    name: Mobile — lint + typecheck + test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - run: npm ci
+      - run: npm run check
+
+  content-tool-check:
+    name: Content Tool — lint + typecheck + test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: content-tool
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: content-tool/package-lock.json
+      - run: npm ci
+      - run: npm run check

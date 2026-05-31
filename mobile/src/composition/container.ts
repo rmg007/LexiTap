@@ -7,6 +7,7 @@ import {
   SQLiteUserStatsRepository,
   SQLiteAnswerWriter,
 } from '@/infrastructure/db';
+import { buildDailyProgressQueries } from '@/infrastructure/db/queries/dailyProgressQueries';
 import { AsyncStorageAdapter } from '@/infrastructure/storage';
 import { StubIapService } from '@/infrastructure/iap/StubIapService';
 
@@ -29,10 +30,13 @@ import { logger } from '@/lib/logger';
 // application,infrastructure,presentation}).
 
 function buildReadQueries(
+  db: DatabaseHandle,
   words: SQLiteWordRepository,
   progress: SQLiteUserProgressRepository,
   stats: SQLiteUserStatsRepository,
 ): ReadQueries {
+  const dailyProgressQueries = buildDailyProgressQueries(db);
+
   return {
     async getUserStats() {
       try {
@@ -55,6 +59,22 @@ function buildReadQueries(
       } catch (error) {
         logger.warn('getMasteryLevels failed; returning empty', { error: String(error) });
         return [];
+      }
+    },
+    async getDailyProgress(tierId: TierId) {
+      try {
+        const nowMs = Date.now();
+        const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        return await dailyProgressQueries.getDailyProgress(tierId, nowMs, userTz);
+      } catch (error) {
+        logger.warn('getDailyProgress failed; returning zero-state', { error: String(error) });
+        // Return zero-state on any error (including timezone issues)
+        return {
+          reviewsCompletedToday: 0,
+          effectiveDailyCap: 40,
+          newWordsCompletedToday: 0,
+          newWordsBudget: 10,
+        };
       }
     },
   };
@@ -91,7 +111,7 @@ export async function createContainer(): Promise<Container> {
       isComplete: () => storage.isOnboardingComplete(),
       markComplete: () => storage.setOnboardingComplete(),
     },
-    queries: buildReadQueries(words, progress, stats),
+    queries: buildReadQueries(db, words, progress, stats),
   };
 
   return { services, db, storage };

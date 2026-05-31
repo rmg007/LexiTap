@@ -3,11 +3,12 @@ import { View } from 'react-native';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme } from '@/presentation/theme';
 import { Text, Button, Card, ProgressBar, StreakBadge } from '@/presentation/components';
-import { useServices } from '@/presentation/services';
+import { useServices, type DailyProgressMetrics } from '@/presentation/services';
 import {
   evaluateStreakAtRisk,
   toLocalCivilDate,
   initialStreakState,
+  asTierId,
   type UserStats,
 } from '@/domain/index';
 import { listActiveTiers } from '@/config/tiers';
@@ -34,6 +35,12 @@ export function HomeScreen({
   const { spacing } = useTheme();
   const { queries } = useServices();
   const [stats, setStats] = useState<UserStats | null>(null);
+  const [dailyProgress, setDailyProgress] = useState<DailyProgressMetrics>({
+    reviewsCompletedToday: 0,
+    effectiveDailyCap: 40,
+    newWordsCompletedToday: 0,
+    newWordsBudget: 10,
+  });
 
   const load = useCallback(async () => {
     try {
@@ -41,6 +48,22 @@ export function HomeScreen({
     } catch {
       // Offline-first: never block Home on a read failure.
       setStats(null);
+    }
+
+    try {
+      const activeTier = listActiveTiers()[0];
+      if (activeTier) {
+        const progress = await queries.getDailyProgress(asTierId(activeTier.id));
+        setDailyProgress(progress);
+      }
+    } catch {
+      // Offline-first: never block Home on a read failure.
+      setDailyProgress({
+        reviewsCompletedToday: 0,
+        effectiveDailyCap: 40,
+        newWordsCompletedToday: 0,
+        newWordsBudget: 10,
+      });
     }
   }, [queries]);
 
@@ -66,12 +89,24 @@ export function HomeScreen({
           <Text variant="headline" color="textPrimary">
             Ready for today
           </Text>
-          <ProgressBar progress={0} label="Daily review progress" />
+          <ProgressBar
+            progress={
+              dailyProgress.effectiveDailyCap > 0
+                ? Math.min(dailyProgress.reviewsCompletedToday / dailyProgress.effectiveDailyCap, 1)
+                : 0
+            }
+            label={`${dailyProgress.reviewsCompletedToday}/${dailyProgress.effectiveDailyCap} reviews`}
+          />
           <Button label="Start review" variant="primary" fullWidth onPress={onStartReview} />
         </View>
       </Card>
 
-      <Button label="Learn new words" variant="secondary" fullWidth onPress={onLearnNewWords} />
+      <Button
+        label={`Learn new words (${dailyProgress.newWordsBudget} left today)`}
+        variant="secondary"
+        fullWidth
+        onPress={onLearnNewWords}
+      />
 
       {ACTIVE_TIER && (
         <Text variant="caption" color="textTertiary">

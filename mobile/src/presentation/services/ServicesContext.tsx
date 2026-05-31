@@ -17,11 +17,20 @@ import type { UserStats } from '@/domain/index';
 // modelled as plain async method signatures so the integration owner can back
 // them with whatever read repository / query they like (offline-first: a read
 // failure should resolve, not block the quiz path).
+export interface DailyProgressMetrics {
+  reviewsCompletedToday: number;
+  effectiveDailyCap: number;
+  newWordsCompletedToday: number;
+  newWordsBudget: number;
+}
+
 export interface ReadQueries {
   // Aggregate stats for Home / Progress (streak, totals, mastered count).
   getUserStats(): Promise<UserStats | null>;
   // Per-tier mastery levels for the Progress dashboard rings/bars.
   getMasteryLevels(tierId: TierId): Promise<readonly number[]>;
+  // Daily progress: reviews completed vs cap, new words learned vs budget.
+  getDailyProgress(tierId: TierId): Promise<DailyProgressMetrics>;
 }
 
 export interface Services {
