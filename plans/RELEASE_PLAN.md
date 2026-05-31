@@ -47,7 +47,7 @@ One scannable list. Each phase has an ordered task set and a single measurable e
 - ✅ C0 words.db delivery (code) · ✅ A1 tiers model · ✅ C2 tier activation · ✅ test harness green
 - ◐ **Prove C0 on a physical device** — ✅ proven on iOS **simulator** (after fixing dual-React + bare-name-ATTACH bugs); physical iOS + low-end Android still pending (fresh EAS build in flight)
 - ☐ Foundation content to 3,000 words: C3 source → C4 OpenAI enrich adapter → C5 sampled QA → C6 synonyms → C7 validate → C8 release pipeline *(the long pole — runs continuously)*
-- ◐ Real onboarding + Home: **H-1 Home progress ✅ → O-1 persist `onboarding_state` ✅ → O-2 goal ✅ → O-4 diagnostic ✅** → O-5 knowledge map; P-1 empty states; P-2 a11y *(O-3 proficiency screen cut)*
+- ◐ Real onboarding + Home: **H-1 Home progress ✅ → O-1 persist `onboarding_state` ✅ → O-2 goal ✅ → O-4 diagnostic ✅ → O-5 knowledge map ✅**; P-1 empty states; P-2 a11y *(O-3 proficiency screen cut)*
 - ◐ Instrumentation: A1–A5 PostHog + `event_log` flush; **B1 Sentry ✅ + B2 scrub ✅** (B2 enrichment tags pending A2) *(without this P2's gate is unmeasurable)*
 - ☐ Build infra: eas init, `app.json→app.config.ts`, eas.json profiles, CI two-job, signing (build-infra #1–14) · **start Apple+Google enrollment day 1**
 
@@ -134,7 +134,7 @@ The chain that determines the ship date (everything else parallelizes around it)
 ```
 C0 (fix words.db delivery, prove on device)         ← URGENT, gates the whole app
    └─> C3→C4→C5→C6→C7→C8 (Foundation content: source→AI-enrich→sampled QA→export)   ← LONG POLE
-H-1, O-1→O-2✅→O-4✅→O-5 (Home + onboarding real)                ← gates P2 beta credibility *(O-3 cut)*
+H-1, O-1✅→O-2✅→O-4✅→O-5✅ (Home + onboarding real)                ← gates P2 beta credibility *(O-3 cut)*
    └─> A1→A2→A3→A4→A5 + B1→B2 (instrumentation)      ← gates P2 measurability
         └─> [P2 beta: ≥1 week data] → D7 gate
 A0 (leave Expo Go / EAS dev client)                  ← gates ALL of P3 monetization+auth
@@ -211,7 +211,7 @@ Scope: onboarding screens, Home daily-progress, Settings, ImageMatch/Classificat
 - ✅ **O-2 · Goal-selection screen (real)** — **DONE** (commit TBD). Thread goal from goal-selection → diagnostic. Add goal→CEFR-band default (`goalToStartingBand` in diagnostic.tsx); band persisted with goal + completedAt to `onboarding_state`. SelectionCard a11y verified (accessibilityRole=radio, accessibilityState.selected, 72pt touch target). All 159 tests green. *Deps:* O-1.
 - ✂️ **O-3 · Proficiency screen — cut** — DECISION: **cut** per D1. Spec calls for self-segment (frequency rank), not CEFR proficiency. Proficiency screen was off-spec and redundant. Route goal → diagnostic directly. *Deps:* O-1.
 - ✅ **O-4 · Diagnostic (DIAG-B)** — **DONE** (commit TBD). Stride sampler (5 words, even-difficulty spans) now computes frontier-rank estimate from results: `estimateFrontierFromResults()` maps % correct → frequency rank (0% → rank 500, 100% → rank 3500). Persists to `onboarding_state.frontierRank` alongside goal/band/completedAt. All 163 tests green. Next: O-5 (Knowledge Map reveal using frontierRank). *Deps:* O-2 ✅.
-- **O-5 · Knowledge-map-reveal (real)** — M. Segmented Known/Learning/New bar from the estimated known-count, endowed-progress copy, celebratory motion degrading to static under Reduce Motion, CTA → paywall. *Deps:* O-4. **Gate it on a real estimate — don't ship fake numbers.**
+- ✅ **O-5 · Knowledge-map-reveal (real)** — **DONE** (commit TBD). Reads frontierRank from onboarding_state (O-4 output), computes segment counts: Known = frontier, Learning = ~500-word band, New = remainder. Displays animated segmented bar (success/accent/tertiary) + count (~{n} words) + endowed-progress copy ("You already know..."). Animated reveal uses `react-native-reanimated` with `motion.slow` (360ms), respects Reduce Motion (static fallback). Routes "Start learning" → paywall. All 163 tests green. *Deps:* O-4 ✅.
 - **P-1 · Presentation states** — M. Quiz/Progress/Home handle resolving services, `NoWordsAvailableError` → friendly empty state, read failures → zero-state, never assume network. *Deps:* none.
 - **P-2 · Accessibility pass** — M, per `ACCESSIBILITY_REQUIREMENTS`. ≥44pt targets, roles/labels/state on every Pressable, live regions on feedback, Reduce Motion on KM, contrast verified. *Deps:* screens exist.
 
