@@ -7,13 +7,6 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "runtimeVersion": {
-        "policy": "appVersion"
-      },
-      "env": {
-        "EXPO_PUBLIC_POSTHOG_API_KEY": "",
-        "EXPO_PUBLIC_SENTRY_DSN": ""
-      },
       "ios": {
         "simulator": true
       },
@@ -24,13 +17,6 @@
     "development-device": {
       "developmentClient": true,
       "distribution": "internal",
-      "runtimeVersion": {
-        "policy": "appVersion"
-      },
-      "env": {
-        "EXPO_PUBLIC_POSTHOG_API_KEY": "",
-        "EXPO_PUBLIC_SENTRY_DSN": ""
-      },
       "ios": {},
       "android": {
         "buildType": "apk"
@@ -38,13 +24,6 @@
     },
     "preview": {
       "distribution": "internal",
-      "runtimeVersion": {
-        "policy": "appVersion"
-      },
-      "env": {
-        "EXPO_PUBLIC_POSTHOG_API_KEY": "",
-        "EXPO_PUBLIC_SENTRY_DSN": ""
-      },
       "ios": {
         "resourceClass": "m-medium"
       },
@@ -55,13 +34,6 @@
     "production": {
       "autoIncrement": true,
       "distribution": "store",
-      "runtimeVersion": {
-        "policy": "appVersion"
-      },
-      "env": {
-        "EXPO_PUBLIC_POSTHOG_API_KEY": "",
-        "EXPO_PUBLIC_SENTRY_DSN": ""
-      },
       "ios": {
         "resourceClass": "m-medium"
       },
