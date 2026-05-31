@@ -10,6 +10,7 @@
   "scripts": {
     "build:db": "tsx src/cli.ts export",
     "cli": "tsx src/cli.ts",
+    "qa:sample": "tsx src/qa/cli.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",

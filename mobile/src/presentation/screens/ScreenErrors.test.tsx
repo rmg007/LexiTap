@@ -155,8 +155,8 @@ describe('Error fallback behavior (offline-first)', () => {
   it('null coalescing provides zero-state for missing stats', () => {
     // Simulate the fallback logic from HomeScreen/ProgressScreen
     let stats: unknown = null;
-    const totalSessions = (stats as any)?.totalSessions ?? 0;
-    const totalWordsMastered = (stats as any)?.totalWordsMastered ?? 0;
+    const totalSessions = (stats as Record<string, number> | null)?.totalSessions ?? 0;
+    const totalWordsMastered = (stats as Record<string, number> | null)?.totalWordsMastered ?? 0;
 
     expect(totalSessions).toBe(0);
     expect(totalWordsMastered).toBe(0);
