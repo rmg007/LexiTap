@@ -255,3 +255,7 @@ export function flagValue(args: string[], flag: string): string | undefined {
   if (i === -1 || i + 1 >= args.length) return undefined;
   return args[i + 1];
 }
+
+export function flagExists(args: string[], flag: string): boolean {
+  return args.indexOf(flag) !== -1;
+}

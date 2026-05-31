@@ -1,39 +1,49 @@
 /**
- * LexiTap content-tool CLI (Track A). Dispatches the four pipeline commands:
- *   import -> validate -> enrich -> export
+ * LexiTap content-tool CLI (Track A). Dispatches the five pipeline commands:
+ *   import -> validate -> enrich -> review -> export
  * Run via `tsx src/cli.ts <command>` (see package.json scripts `cli`/`build:db`).
  */
 
 import { importCommand } from '@/commands/import';
 import { validateCommand } from '@/commands/validate';
 import { enrichCommand } from '@/commands/enrich';
+import { reviewCommand, reviewFinalizeCommand } from '@/commands/review';
 import { exportCommand } from '@/commands/export';
 import { logger } from '@/lib/logger';
 
 const USAGE = `lexitap-tool <command> [options]
 
 Commands:
-  import    --source <path> --tier <slug> [--type t] [--on-conflict update|skip|error] [--dry-run]
-  validate  [--tier <slug>] [--strict]
-  enrich    (DB mode)  --tier <slug> [--add-synonyms] [--add-audio] [--add-images] [--limit n] [--force] [--dry-run]
-            (CSV mode) --input <path> --output <path> [--budget usd] [--dry-run]
-  export    [--output <path>] [--bump major|minor|patch]`;
+  import           --source <path> --tier <slug> [--type t] [--on-conflict update|skip|error] [--dry-run]
+  validate         [--tier <slug>] [--strict]
+  enrich           (DB mode)  --tier <slug> [--add-synonyms] [--add-audio] [--add-images] [--limit n] [--force] [--dry-run]
+                   (CSV mode) --input <path> --output <path> [--budget usd] [--dry-run]
+  review           [--sample-percent <n>] [--output <path>] [--no-flagged]
+  review finalize  --input <path> [--pass-rate <n>]
+  export           [--output <path>] [--bump major|minor|patch]`;
 
 async function main(): Promise<void> {
-  const [command, ...args] = process.argv.slice(2);
+  const [command, secondArg, ...rest] = process.argv.slice(2);
 
   switch (command) {
     case 'import':
-      importCommand(args);
+      importCommand([secondArg ?? '', ...rest].filter(Boolean));
       break;
     case 'validate':
-      validateCommand(args);
+      validateCommand([secondArg ?? '', ...rest].filter(Boolean));
       break;
     case 'enrich':
-      await enrichCommand(args);
+      await enrichCommand([secondArg ?? '', ...rest].filter(Boolean));
+      break;
+    case 'review':
+      if (secondArg === 'finalize') {
+        reviewFinalizeCommand(rest);
+      } else {
+        reviewCommand([secondArg ?? '', ...rest].filter(Boolean));
+      }
       break;
     case 'export':
-      await exportCommand(args);
+      await exportCommand([secondArg ?? '', ...rest].filter(Boolean));
       break;
     case undefined:
     case 'help':
