@@ -17,18 +17,22 @@ Offline-first ESL vocabulary mobile app for global non-native English learners (
 
 ## Phase 1 — Make the app real
 
-**Current state (2026-05-31):** ~30% to launch. C0 (words.db delivery) proven on iOS simulator; awaiting physical device confirmation. Onboarding scaffolded + O-2/O-4/O-5 complete (goal, diagnostic, knowledge map). Analytics + Sentry env-gated, baseline wired. Build infra not started.
+**Current state (2026-05-31):** ~30% to launch. C0 (words.db delivery) proven on iOS simulator; physical device confirmation pending. Onboarding complete (O-1 thru O-5: goal, diagnostic, knowledge map all wired). Home shows real daily progress. Analytics + Sentry env-gated and verified. All core domain logic (SRS, scheduling, mastery, quiz session, schema) is shipped + tested (163 tests green).
 
-**P1 Exit Gate:** App cold-launches on real iOS + Android, loads Foundation words, completes onboarding→quiz→progress, emits retention events.
+**Remaining P1 work:** Prove C0 on physical devices (iOS + low-end Android) · complete Foundation content pipeline (C3–C8: sourcing → enrichment → QA → validate → export) · build infra (EAS init, Apple/Google enrollment, signing, CI) · analytics/Sentry event emissions verified in beta (A4–A5, B2).
 
-**Critical path:**
-1. ✅ C0 prove on physical iOS + low-end Android (words.db bundled + ATTACH succeeds)
-2. Foundation content (3,000 words): sourcing → OpenAI enrichment → sampled QA → validate → export
+**P1 Exit Gate:** App cold-launches on real iOS + Android, loads real Foundation words (3,000+), completes onboarding→quiz→progress, emits retention events to PostHog.
+
+**Critical path (unchanged from RELEASE_PLAN.md §4):**
+1. ◐ C0 prove on physical iOS + low-end Android (fresh EAS build in flight; current `0324f457` is stale)
+2. ☐ Foundation content (3,000 words): sourcing → OpenAI enrichment → sampled QA → validate → export (the long pole)
 3. ✅ Onboarding complete (goal/diagnostic/knowledge map done; no typing, no sync)
-4. Build infra: EAS, Apple/Google enrollment (start day 1 — external latency), signing, CI
-5. Analytics (PostHog) + crash reporting (Sentry) wired and env-gated for P2 measurement
+4. ☐ Build infra: EAS init, app.config.ts, Apple/Google enrollment (start day 1), signing, CI
+5. ☐ Analytics (PostHog) + crash reporting (Sentry) event emissions verified in beta
 
-**P1 doesn't include:** Auth (P3), premium content (P3), RevenueCat (P3), device sync (deferred post-launch).
+**See [plans/RELEASE_PLAN.md §4](plans/RELEASE_PLAN.md#4-critical-path--long-poles) for full ordering + risk.**
+
+**P1 does not include:** Auth (P3), premium exam packs (P3), RevenueCat (P3), device sync (deferred post-launch).
 
 ### Setup
 

@@ -12,6 +12,8 @@ updated: 2026-05-31
 
 **Timeline: 1–4 weeks minimum for stable D7 data** (depends on tester volume and daily active churn). Target recruitment: 60–70 testers (net ≥ 50 active in days 2–7).
 
+**Prerequisites (P1 complete):** See [RELEASE_PLAN.md §4](../plans/RELEASE_PLAN.md#4-critical-path--long-poles) for critical path. P2 entry requires: C0 proven on physical devices, Foundation content (C3–C8) complete, build infra live (ACCT-1, eas.json, CI), analytics (A3–A5) + crash (B1–B2) wired.
+
 ---
 
 ## 1. Recruitment Strategy

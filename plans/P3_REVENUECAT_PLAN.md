@@ -26,6 +26,8 @@ releaseCriteria:
 - Entitlement checks in `CheckTierAccessUseCase` → gate quiz content.
 - Analytics via `AnalyticsService` (PostHog): purchase lifecycle events.
 
+**Parallel P3 workstreams:** See [P3_AUTH_PLAN.md](P3_AUTH_PLAN.md) (magic-link + Google + SIWA) and [P3_BACKUP_PLAN.md](P3_BACKUP_PLAN.md) (encrypted user.db). Auth must precede backup; RevenueCat can ship before auth (anonymous app-user-id; alias via `Purchases.logIn(supabaseUserId)` once signed in).
+
 ---
 
 ## Task Breakdown (R1–R7)

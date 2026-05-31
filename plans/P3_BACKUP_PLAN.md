@@ -12,6 +12,8 @@ depends-on:
 
 Server-side encryption at rest + RLS path-scoping. No client-side AES. Backup tied to authentication state: only authenticated users can upload/download their own `user.db`. Storage bucket is `user-backups` with path-scoped RLS (`{uid}/user.db`).
 
+**Prerequisite:** [P3_AUTH_PLAN.md](P3_AUTH_PLAN.md) (AU1–AU3). Backup requires `auth.uid()` for RLS + identity restore on device-switch.
+
 ---
 
 ## High-Level Design

@@ -1,8 +1,9 @@
 ---
 title: LexiTap Master Release Plan
 status: active
-updated: 2026-05-30
+updated: 2026-05-31
 supersedes-ordering-in: ROADMAP.md, lexitap-docs/02-product-definition/ROADMAP.md
+phase: P1 (Phase 1 of 6 — tail)
 ---
 
 # LexiTap — Master Release Plan (current state → live on both stores)
@@ -176,12 +177,33 @@ ACCT-1 (Apple/Google enrollment) ───────────────�
 
 1. ◐ **C0 (PROVEN on iOS simulator 2026-05-31)** — `words.db` delivery fixed + unit-tested AND verified on the sim (cold launch → ATTACH → 43 rows at the time → UI renders; DB since expanded to 2,881 words), after fixing two runtime bugs `npm run check` missed (dual React; bare-name ATTACH). **Remaining: confirm on a physical iOS + low-end Android build** (fresh EAS build in flight; `0324f457` is stale). New harness: `cd mobile && npm run smoke`.
 2. **ACCT-1 / build-infra #8–9** — start Apple ($99) + Google ($25) enrollment *today* (external latency). **Top remaining priority.**
-3. ✅ **D2/D3/D4/D7 resolved**; **D1/D5/D6/D8 still open** (diagnostic scope, age gate, B2B model, Common3K-vs-Foundation) — settle before dependent coding.
-4. ✅ **A1 (done)** — `tiers.ts` is now the real Premium-Pass entitlement model; empty tiers `isActive:false`.
+3. ✅ **D2/D3/D4/D7 resolved**; ✅ **D1/D5/D6/D8 also resolved** (diagnostic scope→DIAG-B, age gate→16+ neutral, B2B model→pure-B2C launch, Common3K→free). All blocking decisions settled.
+4. ✅ **A1 (done)** — `tiers.ts` is now the one-time exam-pack entitlement model (exam packs $9.99, All-Exams bundle $29.99, upgrade SKUs, free Foundation/Advanced/Common3K); empty tiers `isActive:false`.
 5. ✅ **H-1 + O-1 (done)** — Home shows real daily progress (`dailyProgressQueries` → container injects now/tz → `HomeScreen`, no hardcoded `0`, offline→zero-state, unit-tested); `onboarding_state` persists end-to-end (`SaveOnboardingProfileUseCase` + defensive parse). Both already on `master` (commit `5808079`). **O-2 (goal screen) is now the head of the onboarding chain** — it's what actually populates `goal`/`band`/`frontierRank`.
 6. **eas init + eas.json + migrate app.json → app.config.ts** (build-infra #1, #4; needed for env injection).
 7. **C3 + build the OpenAI enrichment adapter (C4)** — kick off the content long pole early; it runs for weeks behind everything else.
 8. **Correct the two ROADMAP files** — they are actively misleading (auth timing, sync, content scope, "Phase 2 no coding"). Either point them at this plan or fix the specific lines flagged here.
+
+---
+
+## 7. Phase planning documents (cross-references)
+
+All phase 2–5 work is detailed in these task-ordered plans, each self-contained and with explicit dependencies:
+
+| Phase | Plan | Key contents | Exit gate |
+|---|---|---|---|
+| **P2** | [P2_BETA_PLAN.md](P2_BETA_PLAN.md) | Recruitment (60–70 testers) · TestFlight + Play Closed · retention dashboard (A7) · QA matrix (D1–D3) | D7 ≥ 30% (anon_id cohorts) |
+| **P3** | [P3_REVENUECAT_PLAN.md](P3_REVENUECAT_PLAN.md) | Store products (R1–R2) · RevenueCat integration (R3–R7) · paywall wiring · tier gating | 10 paying users |
+| **P3** | [P3_AUTH_PLAN.md](P3_AUTH_PLAN.md) | Magic-link (AU1) · Google Sign-In (AU2) · Sign in with Apple (AU3) · account deletion · entitlement alias to RevenueCat | All three providers shipped |
+| **P3** | [P3_BACKUP_PLAN.md](P3_BACKUP_PLAN.md) | Encrypted backup upload (BK1) · restore/device-switch (BK2) · Supabase Storage + RLS | Verified on real device |
+| **P5** | [WEB-1_STATIC_SITE.md](WEB-1_STATIC_SITE.md) | Static marketing site (lexitap.app) · B2B contact form · privacy/terms pages · no B2C checkout | Live at lexitap.app |
+| **P2** | [P2_RECRUITMENT_CHECKLIST.md](P2_RECRUITMENT_CHECKLIST.md) | Channel-by-channel recruitment script · Discord/Reddit/email templates · A/B messaging | 50+ active testers |
+| **P2** | [RETENTION_DASHBOARD.md](RETENTION_DASHBOARD.md) | PostHog Retention cohort config · D7/D30/D1 reads · funnel + crash-free stack | A7 ready for read |
+
+**Next actions** link to the phase plans per what's next:
+- **P1 tail:** C0 device-prove, C3–C8 content pipeline, ACCT-1 enrollment, build-infra tasks. See §A (C0–C8) + §C (build #1–18).
+- **P2 entry:** See P2_BETA_PLAN.md for recruitment/retention setup.
+- **P3 entry:** Unlock with A0 (EAS dev client); proceed in order: P3_REVENUECAT_PLAN.md → P3_AUTH_PLAN.md → P3_BACKUP_PLAN.md.
 
 ---
 

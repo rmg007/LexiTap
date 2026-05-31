@@ -12,6 +12,8 @@ blocks: BK1 (encrypted backup), B2B1 (seat activation), SUBMIT-2 (iOS App Review
 
 Locked commitment: Ship three auth pathways, no password, identity + entitlements wired end-to-end. User creates identity once, backs up encrypted data, activates B2B seats (if applicable), and passes iOS 4.8 (SIWA mandatory once Google added).
 
+**Parallel P3 workstreams:** Auth unblocks [P3_BACKUP_PLAN.md](P3_BACKUP_PLAN.md) (BK1–BK2) and must ship *with or before* [P3_REVENUECAT_PLAN.md](P3_REVENUECAT_PLAN.md) (R1–R7). After sign-in, call `Purchases.logIn(supabaseUserId)` to alias RevenueCat's anonymous user ID.
+
 ---
 
 ## 1. Overview & Constraints
