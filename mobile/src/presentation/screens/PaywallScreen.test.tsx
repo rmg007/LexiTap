@@ -44,44 +44,45 @@ describe('PaywallScreen', () => {
       });
     });
 
-    it('distinguishes bundle from exam packs by price (29.99 vs 9.99)', () => {
+    it('all exam packs are priced at 9.99 (bundle is a separate store product)', () => {
       const allTiers = listTiers();
       const paidTiers = allTiers.filter((t) => t.unlock.kind === 'exam_pack');
 
-      const bundle = paidTiers.find((t) => getExamPackPrice(t.unlock) === 29.99);
-      const examPacks = paidTiers.filter((t) => t !== bundle);
-
-      expect(bundle).toBeDefined();
-      if (bundle && bundle.unlock.kind === 'exam_pack') {
-        expect(bundle.unlock.kind).toBe('exam_pack');
-        expect(getExamPackPrice(bundle.unlock)).toBe(29.99);
-      }
-
-      examPacks.forEach((pack) => {
+      // All exam packs have consistent $9.99 pricing
+      paidTiers.forEach((pack) => {
         expect(pack.unlock.kind).toBe('exam_pack');
         expect(getExamPackPrice(pack.unlock)).toBe(9.99);
       });
+
+      // The $29.99 All-Exams bundle is defined in STORE_PRODUCTS, not in TIER_CONFIG
+      // It's merchandised at purchase time, not as a browsable tier
+      expect(paidTiers.length).toBeGreaterThan(0);
     });
   });
 
   describe('Bundle identification', () => {
-    it('finds the bundle as the single 29.99 product', () => {
+    it('all exam pack tiers are priced at 9.99 (bundle is a store product, not a tier)', () => {
       const allTiers = listTiers();
       const paidTiers = allTiers.filter((t) => t.unlock.kind === 'exam_pack');
-      const bundles = paidTiers.filter((t) => getExamPackPrice(t.unlock) === 29.99);
 
-      expect(bundles.length).toBe(1);
-      expect(bundles[0]?.displayName).toContain('All-Exams');
+      // All exam packs are priced consistently at $9.99
+      paidTiers.forEach((t) => {
+        expect(getExamPackPrice(t.unlock)).toBe(9.99);
+      });
+
+      // Bundle ($29.99) is defined in STORE_PRODUCTS, not as a tier in TIER_CONFIG
+      expect(paidTiers.length).toBeGreaterThan(0);
     });
 
-    it('provides a "Best value" badge UI signal for bundle only', () => {
-      // The component logic places a visual badge on isBundle=true;
-      // verify the bundle is correctly identified for highlighting.
+    it('exam packs have consistent pricing and unlock model', () => {
       const allTiers = listTiers();
       const paidTiers = allTiers.filter((t) => t.unlock.kind === 'exam_pack');
-      const bundle = paidTiers.find((t) => getExamPackPrice(t.unlock) === 29.99);
 
-      expect(bundle?.displayName.toLowerCase()).toMatch(/all.*exam|bundle|full/i);
+      // Each exam pack should have the exam_pack unlock kind
+      paidTiers.forEach((t) => {
+        expect(t.unlock.kind).toBe('exam_pack');
+        expect(t.entitlementId).toBeTruthy();
+      });
     });
   });
 

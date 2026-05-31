@@ -1,6 +1,6 @@
 import type { Services, DailyProgressMetrics } from '@/presentation/services/ServicesContext';
 import type { AnswerQuestionOutput } from '@/application/quiz/AnswerQuestionUseCase';
-import type { QuizSession, UserStats, OnboardingState, AnalyticsPort } from '@/domain/index';
+import type { QuizSession, UserStats, OnboardingState } from '@/domain/index';
 import { NoopAnalyticsService } from '@/infrastructure/analytics/NoopAnalyticsService';
 
 // Typed mock factory for tests / Storybook. The real use-case classes hold

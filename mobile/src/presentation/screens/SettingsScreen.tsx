@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, View, type ViewStyle, Switch } from 'react-native';
+import { Pressable, View, type ViewStyle, Switch, Linking } from 'react-native';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme, useThemePreference, type ThemePreference } from '@/presentation/theme';
 import { Text, Card } from '@/presentation/components';
@@ -113,6 +113,59 @@ export function SettingsScreen(): React.JSX.Element {
               accessible
             />
           </View>
+        </View>
+      </Card>
+
+      <Card>
+        <View style={{ gap: spacing.s3 }}>
+          <Text variant="headline" color="textPrimary">
+            Legal
+          </Text>
+          <Pressable
+            accessibilityRole="link"
+            accessibilityLabel="Privacy policy"
+            onPress={() => Linking.openURL('https://lexitap.app/privacy.html')}
+            style={{
+              paddingVertical: spacing.s2,
+              paddingHorizontal: spacing.s1,
+              borderRadius: 8,
+            }}
+          >
+            <Text variant="body" color="accent" style={{ textDecorationLine: 'underline' }}>
+              Privacy Policy
+            </Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="link"
+            accessibilityLabel="Terms of service"
+            onPress={() => Linking.openURL('https://lexitap.app/terms.html')}
+            style={{
+              paddingVertical: spacing.s2,
+              paddingHorizontal: spacing.s1,
+              borderRadius: 8,
+            }}
+          >
+            <Text variant="body" color="accent" style={{ textDecorationLine: 'underline' }}>
+              Terms of Service
+            </Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Delete account"
+            onPress={() => {
+              // TODO: Implement account deletion flow
+              // Should show confirmation sheet with 30-second grace period
+            }}
+            style={{
+              paddingVertical: spacing.s2,
+              paddingHorizontal: spacing.s1,
+              borderRadius: 8,
+            }}
+          >
+            <Text variant="body" color="destructive" style={{ textDecorationLine: 'underline' }}>
+              Delete Account
+            </Text>
+          </Pressable>
         </View>
       </Card>
 

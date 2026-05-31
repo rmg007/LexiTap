@@ -1,29 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import { router } from 'expo-router';
-import { Screen } from '@/presentation/screens/Screen';
-import { Text, Button } from '@/presentation/components';
 
-// Onboarding step 1: Welcome.
-// Phase 4 will implement the full design-spec layout from .design-specs/html/screens/welcome*.html
+// Onboarding entry: redirect to age gate (O-0), which is now the first screen.
 
-export default function WelcomeRoute(): React.JSX.Element {
-  return (
-    <Screen>
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 24 }}>
-        <Text variant="h1" color="textPrimary" accessibilityRole="header">
-          LexiTap
-        </Text>
-        <Text variant="body" color="textSecondary">
-          Build real English vocabulary — one word at a time.
-        </Text>
-        <Button
-          label="Get started"
-          variant="primary"
-          fullWidth
-          onPress={() => router.push('/onboarding/goal-selection')}
-        />
-      </View>
-    </Screen>
-  );
+export default function OnboardingIndexRoute(): React.JSX.Element {
+  useEffect(() => {
+    router.replace('/onboarding/age');
+  }, []);
+
+  // Return empty view while redirecting.
+  return <View />;
 }

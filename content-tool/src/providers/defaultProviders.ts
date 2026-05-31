@@ -18,6 +18,7 @@ import type {
   SynonymProvider,
   SynonymSet,
 } from '@/providers/types';
+import { OpenAiSynonymProvider } from '@/providers/openaiSynonymProvider';
 
 export class NoopSynonymProvider implements SynonymProvider {
   readonly name = 'noop';
@@ -65,14 +66,23 @@ export const KNOWN_PROVIDERS: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * Resolve the provider registry for an optional `--provider` name. Until real
- * adapters are wired the offline defaults are returned regardless, but an
+ * Resolve the provider registry for an optional `--provider` name. An
  * unrecognized name throws so a typo never silently produces an empty build.
+ *
+ * `--provider openai` swaps in the env-gated OpenAiSynonymProvider for the
+ * synonyms modality (C6). That provider is fail-closed: with no `OPENAI_API_KEY`
+ * (and no injected network caller) it behaves exactly like the Noop — empty
+ * arrays, zero network — so CI and a clean checkout still run with no paid call.
+ * Audio/image stay on the offline defaults until their real adapters land.
  */
 export function selectProviders(provider?: string): ProviderRegistry {
   if (provider !== undefined && !KNOWN_PROVIDERS.has(provider)) {
     const known = [...KNOWN_PROVIDERS].join(', ');
     throw new Error(`unknown --provider '${provider}' (known: ${known})`);
   }
-  return defaultProviders();
+  const registry = defaultProviders();
+  if (provider === 'openai') {
+    registry.synonyms = new OpenAiSynonymProvider();
+  }
+  return registry;
 }

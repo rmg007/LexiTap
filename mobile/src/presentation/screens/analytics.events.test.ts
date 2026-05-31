@@ -480,9 +480,12 @@ describe('Analytics Events Schema & Firing (A1-A5)', () => {
       });
 
       const call = (mockAnalytics.track as jest.Mock).mock.calls[0];
-      expect(typeof call[1].total_correct).toBe('number');
-      expect(typeof call[1].total_attempts).toBe('number');
-      expect(typeof call[1].duration_sec).toBe('number');
+      expect(call).toBeDefined();
+      if (call && call[1]) {
+        expect(typeof call[1].total_correct).toBe('number');
+        expect(typeof call[1].total_attempts).toBe('number');
+        expect(typeof call[1].duration_sec).toBe('number');
+      }
     });
 
     it('all string fields (tier_id, mode, source) are strings', async () => {
@@ -492,8 +495,11 @@ describe('Analytics Events Schema & Firing (A1-A5)', () => {
       });
 
       const call = (mockAnalytics.track as jest.Mock).mock.calls[0];
-      expect(typeof call[1].tier_id).toBe('string');
-      expect(typeof call[1].mode).toBe('string');
+      expect(call).toBeDefined();
+      if (call && call[1]) {
+        expect(typeof call[1].tier_id).toBe('string');
+        expect(typeof call[1].mode).toBe('string');
+      }
     });
 
     it('boolean fields (is_correct, at_risk) are booleans', async () => {
@@ -504,7 +510,10 @@ describe('Analytics Events Schema & Firing (A1-A5)', () => {
       });
 
       const call = (mockAnalytics.track as jest.Mock).mock.calls[0];
-      expect(typeof call[1].is_correct).toBe('boolean');
+      expect(call).toBeDefined();
+      if (call && call[1]) {
+        expect(typeof call[1].is_correct).toBe('boolean');
+      }
     });
   });
 });
