@@ -4,6 +4,7 @@ import {
   countBlanks,
   hasInTokenUnderscore,
   isJsonStringArray,
+  exampleLeaksAnswer,
 } from '@/commands/validate';
 import type { AppConfig } from '@/lib/config';
 import type { WordRow, WordTierRow } from '@/schema/types';
@@ -51,6 +52,7 @@ function row(overrides: Partial<WordRow> = {}): WordRow {
     synonyms: null,
     antonyms: null,
     usage_notes: null,
+    definition_license: 'original',
     created_at: 1,
     deleted_at: null,
     ...overrides,
@@ -63,6 +65,10 @@ const inFoundation = (words: WordRow[]): WordTierRow[] => words.map((w) => mem(w
 
 function errors(words: WordRow[], memberships: WordTierRow[] = inFoundation(words), strict = false) {
   return validateRows(words, memberships, config, { strict }).filter((i) => i.level === 'error');
+}
+
+function strictErrors(words: WordRow[], memberships: WordTierRow[] = inFoundation(words)) {
+  return errors(words, memberships, true);
 }
 
 describe('helper functions', () => {
@@ -181,5 +187,72 @@ describe('validateRows', () => {
     const issues = validateRows([w], inFoundation([w]), config, { strict: true });
     // exactly one blank, but glued -> warning not error
     expect(issues.some((i) => i.level === 'warning' && i.field === 'example_sentence')).toBe(true);
+  });
+});
+
+describe('C7 strict: orphan / dup-leak / provenance', () => {
+  it('orphan (always-on): word with no membership errors even without --strict', () => {
+    const e = errors([row()], []);
+    expect(e.some((i) => i.field === 'membership')).toBe(true);
+  });
+
+  it('orphan (always-on): membership pointing at a missing word errors', () => {
+    const e = errors([row()], [mem('word_ghost', 'foundation'), mem('word_borrow0001', 'foundation')]);
+    expect(e.some((i) => i.field === 'word_id' && /unknown word/.test(i.message))).toBe(true);
+  });
+
+  it('exampleLeaksAnswer detects the answer word spelled out', () => {
+    expect(exampleLeaksAnswer('borrow', 'Can I _ your pen?')).toBe(false);
+    expect(exampleLeaksAnswer('borrow', 'I borrow and _ books.')).toBe(true);
+    // case-insensitive, whole-token (does not match "borrowing" substring)
+    expect(exampleLeaksAnswer('borrow', 'Borrow it: can I _ it?')).toBe(true);
+    expect(exampleLeaksAnswer('row', 'We grow a _ of plants.')).toBe(false);
+  });
+
+  it('strict: example leaking the answer word is an error', () => {
+    const e = strictErrors([row({ example_sentence: 'I borrow and _ pens.' })]);
+    expect(e.some((i) => i.field === 'example_sentence' && /leaks the answer/.test(i.message))).toBe(true);
+  });
+
+  it('non-strict: an answer leak is NOT flagged', () => {
+    const e = errors([row({ example_sentence: 'I borrow and _ pens.' })]);
+    expect(e.some((i) => /leaks the answer/.test(i.message))).toBe(false);
+  });
+
+  it('strict: missing provenance/license is an error', () => {
+    const e = strictErrors([row({ definition_license: null })]);
+    expect(e.some((i) => i.field === 'definition_license' && /missing/.test(i.message))).toBe(true);
+  });
+
+  it('strict: invalid provenance/license value is an error', () => {
+    const e = strictErrors([row({ definition_license: 'webster-1913' })]);
+    expect(e.some((i) => i.field === 'definition_license' && /invalid/.test(i.message))).toBe(true);
+  });
+
+  it('strict: a valid provenance tag passes', () => {
+    const e = strictErrors([row({ definition_license: 'ai-original' })]);
+    expect(e.some((i) => i.field === 'definition_license')).toBe(false);
+  });
+
+  it('non-strict: missing provenance/license is NOT flagged', () => {
+    const e = errors([row({ definition_license: null })]);
+    expect(e.some((i) => i.field === 'definition_license')).toBe(false);
+  });
+
+  it('strict: two distinct words sharing one definition are flagged', () => {
+    const a = row({ id: 'word_a', word: 'big', definition: 'large in size', example_sentence: 'a _ house' });
+    const b = row({ id: 'word_b', word: 'huge', definition: 'Large in size', example_sentence: 'a _ ship' });
+    const e = validateRows([a, b], inFoundation([a, b]), config, { strict: true }).filter(
+      (i) => i.level === 'error',
+    );
+    const dups = e.filter((i) => i.field === 'definition' && /duplicate definition/.test(i.message));
+    expect(dups.map((i) => i.wordId).sort()).toEqual(['word_a', 'word_b']);
+  });
+
+  it('non-strict: duplicate definitions are NOT flagged', () => {
+    const a = row({ id: 'word_a', word: 'big', definition: 'large in size', example_sentence: 'a _ house' });
+    const b = row({ id: 'word_b', word: 'huge', definition: 'large in size', example_sentence: 'a _ ship' });
+    const e = errors([a, b]);
+    expect(e.some((i) => /duplicate definition/.test(i.message))).toBe(false);
   });
 });

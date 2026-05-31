@@ -11,7 +11,7 @@ import { parseByExtension, type ParsedInputRow } from '@/lib/csv';
 import { makeWordId, normalizeWord } from '@/lib/ids';
 import { loadConfig, findTier } from '@/lib/config';
 import { logger } from '@/lib/logger';
-import { flagValue } from '@/commands/validate';
+import { flagValue, DEFAULT_DEFINITION_LICENSE } from '@/commands/validate';
 import type { WordRow, WordType } from '@/schema/types';
 
 export type OnConflict = 'update' | 'skip' | 'error';
@@ -65,11 +65,11 @@ const INSERT_SQL = `
 INSERT INTO words (
   id, word, definition, pos, cefr_level, grade_level, word_type,
   difficulty, theme, example_sentence, image_path, audio_path, synonyms,
-  antonyms, usage_notes, created_at, deleted_at
+  antonyms, usage_notes, definition_license, created_at, deleted_at
 ) VALUES (
   @id, @word, @definition, @pos, @cefr_level, @grade_level, @word_type,
   @difficulty, @theme, @example_sentence, @image_path, @audio_path, @synonyms,
-  @antonyms, @usage_notes, @created_at, @deleted_at
+  @antonyms, @usage_notes, @definition_license, @created_at, @deleted_at
 )
 ON CONFLICT(id) DO UPDATE SET
   word = excluded.word,

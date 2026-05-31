@@ -140,6 +140,27 @@ describe('buildOutputDb (export smoke test)', () => {
     output.close();
   });
 
+  it('non-strict build tolerates a duplicate definition; --strict aborts (C7 fail-closed)', () => {
+    const working = openMemoryContentDb();
+    const dup = (word: string) => ({ ...parsed(word), definition: 'identical meaning' });
+    importRows(working, [dup('alpha'), dup('beta')], {
+      tier: 'foundation',
+      onConflict: 'update',
+      now: () => 1,
+    });
+    // Non-strict: dup definitions are allowed -> build succeeds.
+    const ok = openMemoryContentDb();
+    expect(() => buildOutputDb(working, ok, config, 1)).not.toThrow();
+    ok.close();
+    // Strict: the C7 dup-definition check turns it into a hard abort.
+    const strictOut = openMemoryContentDb();
+    expect(() => buildOutputDb(working, strictOut, config, 1, { strict: true })).toThrow(
+      /validation error/,
+    );
+    strictOut.close();
+    working.close();
+  });
+
   it('assigns audio paths for audio tiers via offline enrich, persisted to output', async () => {
     const working = seedWorking();
     await runEnrich(working, defaultProviders(), {

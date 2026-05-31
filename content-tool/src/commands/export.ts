@@ -34,6 +34,7 @@ import { importRows } from '@/commands/import';
 import { runEnrich } from '@/commands/enrich';
 import { parseByExtension } from '@/lib/csv';
 import { defaultProviders } from '@/providers/defaultProviders';
+import type { ProviderRegistry } from '@/providers/types';
 import { logger } from '@/lib/logger';
 import { flagValue } from '@/commands/validate';
 import type { TierRow, WordRow, WordTierRow } from '@/schema/types';
@@ -50,11 +51,11 @@ const INSERT_WORD = `
 INSERT INTO words (
   id, word, definition, pos, cefr_level, grade_level, word_type,
   difficulty, theme, example_sentence, image_path, audio_path, synonyms,
-  antonyms, usage_notes, created_at, deleted_at
+  antonyms, usage_notes, definition_license, created_at, deleted_at
 ) VALUES (
   @id, @word, @definition, @pos, @cefr_level, @grade_level, @word_type,
   @difficulty, @theme, @example_sentence, @image_path, @audio_path, @synonyms,
-  @antonyms, @usage_notes, @created_at, @deleted_at
+  @antonyms, @usage_notes, @definition_license, @created_at, @deleted_at
 )
 `.trim();
 
@@ -155,12 +156,15 @@ export function buildOutputDb(
   output: DB,
   config: AppConfig,
   userVersion: number,
+  options: { strict?: boolean } = {},
 ): ExportResult {
   const words = activeWords(working);
   const memberships = activeMemberships(working);
 
-  // Final validation against the OUTPUT data; abort on any error.
-  const issues = validateRows(words, memberships, config, { strict: false });
+  // Final validation against the OUTPUT data; abort on any error. Under --strict
+  // the extra C7 checks (dup-leak, provenance) also gate the build (fail-closed:
+  // a bad DB is never written/copied to the mobile bundle).
+  const issues = validateRows(words, memberships, config, { strict: options.strict });
   const errors = issues.filter((i) => i.level === 'error');
   if (errors.length > 0) {
     const detail = errors
@@ -270,14 +274,27 @@ export function computeUserVersion(current: number, bump: 'major' | 'minor' | 'p
  * checkout can produce a real words.db via `npm run build:db`.
  */
 async function bootstrapWorkingIfEmpty(working: DB, config: AppConfig): Promise<void> {
+  await bootstrapWorkingForRelease(working, config, defaultProviders());
+}
+
+/**
+ * Import + enrich the working DB from `data/input/` using the GIVEN provider
+ * registry (so C8 `release` can pass an offline-or-openai registry). No-op if the
+ * working DB already has rows or the input dir is absent. Enrichment respects the
+ * no-paid-call rule via the injected providers (Noop unless openai + key).
+ */
+export async function bootstrapWorkingForRelease(
+  working: DB,
+  config: AppConfig,
+  providers: ProviderRegistry,
+): Promise<void> {
   const count = (working.prepare(`SELECT COUNT(*) AS n FROM words`).get() as { n: number }).n;
   if (count > 0) return;
 
   const inputDir = resolve(PROJECT_ROOT, 'data', 'input');
   if (!existsSync(inputDir)) return;
 
-  logger.info('working DB empty — bootstrapping from data/input/ (import + offline enrich)');
-  const providers = defaultProviders();
+  logger.info('working DB empty — bootstrapping from data/input/ (import + enrich)');
   for (const tier of config.tiers) {
     for (const ext of ['csv', 'json']) {
       const path = resolve(inputDir, `${tier.slug}.${ext}`);
@@ -341,6 +358,7 @@ function versionToSemver(userVersion: number): string {
 export async function exportCommand(args: string[]): Promise<void> {
   const outputPath = flagValue(args, '--output') ?? OUTPUT_DB_PATH;
   const bump = (flagValue(args, '--bump') ?? 'patch') as 'major' | 'minor' | 'patch';
+  const strict = args.includes('--strict');
 
   const config = loadConfig();
   const working = openWorkingDb(WORKING_DB_PATH);
@@ -359,7 +377,7 @@ export async function exportCommand(args: string[]): Promise<void> {
 
     const output = createFreshOutputDb(outputPath);
     try {
-      const result = buildOutputDb(working, output, config, userVersion);
+      const result = buildOutputDb(working, output, config, userVersion, { strict });
       writeManifest(config, result, versionToSemver(userVersion));
       logger.print(
         `export complete: ${result.totalWords} words, user_version=${userVersion}, ${outputPath}`,

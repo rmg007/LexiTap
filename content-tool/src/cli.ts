@@ -9,6 +9,7 @@ import { validateCommand } from '@/commands/validate';
 import { enrichCommand } from '@/commands/enrich';
 import { reviewCommand, reviewFinalizeCommand } from '@/commands/review';
 import { exportCommand } from '@/commands/export';
+import { releaseCommand } from '@/commands/release';
 import { logger } from '@/lib/logger';
 
 const USAGE = `lexitap-tool <command> [options]
@@ -20,7 +21,8 @@ Commands:
                    (CSV mode) --input <path> --output <path> [--budget usd] [--dry-run]
   review           [--sample-percent <n>] [--output <path>] [--no-flagged]
   review finalize  --input <path> [--pass-rate <n>]
-  export           [--output <path>] [--bump major|minor|patch]`;
+  export           [--output <path>] [--bump major|minor|patch] [--strict]
+  release          [--bump major|minor|patch] [--no-copy] [--provider openai]`;
 
 async function main(): Promise<void> {
   const [command, secondArg, ...rest] = process.argv.slice(2);
@@ -44,6 +46,9 @@ async function main(): Promise<void> {
       break;
     case 'export':
       await exportCommand([secondArg ?? '', ...rest].filter(Boolean));
+      break;
+    case 'release':
+      await releaseCommand([secondArg ?? '', ...rest].filter(Boolean));
       break;
     case undefined:
     case 'help':

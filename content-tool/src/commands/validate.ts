@@ -94,6 +94,21 @@ function isMultiWord(word: string): boolean {
 }
 
 /**
+ * C7 dup-leak: does the example sentence reveal the answer word outside the
+ * blank? A single-blank sentence should make the learner RECALL the word; if the
+ * surface form also appears spelled out, the item is trivially solvable. Matches
+ * the word as a whole token (case-insensitive), ignoring the `_` blank itself.
+ */
+export function exampleLeaksAnswer(word: string, sentence: string): boolean {
+  const target = normalizeWord(word).trim();
+  if (!target) return false;
+  const escaped = target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  // Whole-token, case-insensitive. \b around multi-word surfaces still anchors
+  // on the outer word boundaries.
+  return new RegExp(`\\b${escaped}\\b`, 'i').test(sentence);
+}
+
+/**
  * Run every validation rule over a set of word rows + their category memberships.
  * Pure: depends only on its arguments. `assetExists` lets rule #7 be tested
  * without touching the disk.
@@ -197,6 +212,48 @@ export function validateRows(
           'word_type',
           'multi-word entry must set word_type (expression|idiom|phrasal_verb)',
         );
+      }
+    }
+
+    if (options.strict) {
+      // #10 strict: example sentence must not leak the answer word.
+      if (row.word && row.example_sentence && exampleLeaksAnswer(row.word, row.example_sentence)) {
+        push('error', 'example_sentence', `leaks the answer word '${row.word}' outside the blank`);
+      }
+      // #11 strict: provenance/license must be present and from the allowed set.
+      if (!row.definition_license) {
+        push('error', 'definition_license', 'missing provenance/license tag (C7)');
+      } else if (!DEFINITION_LICENSES.has(row.definition_license)) {
+        push(
+          'error',
+          'definition_license',
+          `invalid provenance/license '${row.definition_license}' (allowed: ${[...DEFINITION_LICENSES].join(', ')})`,
+        );
+      }
+    }
+  }
+
+  // #12 strict: no two distinct words may share an identical definition (a copy-
+  // paste / dup-leak smell). Grouped after the per-row loop so it sees all rows.
+  if (options.strict) {
+    const byDefinition = new Map<string, string[]>();
+    for (const row of words) {
+      if (!row.definition) continue;
+      const key = row.definition.trim().toLowerCase();
+      const ids = byDefinition.get(key);
+      if (ids) ids.push(row.id);
+      else byDefinition.set(key, [row.id]);
+    }
+    for (const ids of byDefinition.values()) {
+      if (ids.length > 1) {
+        for (const id of ids) {
+          issues.push({
+            level: 'error',
+            wordId: id,
+            field: 'definition',
+            message: `duplicate definition shared by ${ids.length} words (${ids.join(', ')})`,
+          });
+        }
       }
     }
   }
