@@ -120,7 +120,7 @@ These rules + automations exist so work doesn't vanish between sessions. **All t
 | Analytics SDKs (Mixpanel, Amplitude, PostHog, etc.) in production | Privacy commitment — offline-first, no tracking. (Dev/test only with env gating.) |
 | Any external crash SDK in production | Privacy: on-device reporter only. Dev tools (Sentry, etc.) are OK if gated by env var. |
 | `console.log` persistent writes in production | Logger must no-op in production |
-| Hardcoded secrets or `.env` committed to git | Use EAS secrets for production; local `.env` only (in `.gitignore`) |
+| Hardcoded secrets or `.env` committed to git | Local dev: `.env` (in .gitignore). Production builds: configure EAS secrets in eas.json. Never commit any secrets. |
 
 ---
 
@@ -151,9 +151,14 @@ These rules + automations exist so work doesn't vanish between sessions. **All t
 
 ## Release Process
 
+**Pre-release (before first app store launch):**
+- All changes → store review (5–6 weeks lead time).
+
+**Post-release (after first store launch):**
 - **JS/TypeScript-only fixes, UI changes, logic:** Ship via EAS Update immediately (same day).
 - **Native changes, new permissions, build config, version bumps:** Store release required (5–6 weeks lead time for app store review).
-- **Versioning:** Patch-only (`0.0.1`, `0.0.2`, …) — match app.config.ts.
+
+**Versioning:** Patch-only (`0.0.1`, `0.0.2`, …) — match app.config.ts.
 
 ---
 
