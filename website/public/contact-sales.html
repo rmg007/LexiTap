@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact Sales — LexiTap for Schools</title>
+  <meta name="description" content="Bring LexiTap to your school or organization. Contact our team to discuss licensing, bulk deployment, and custom integration options." />
+  <meta name="theme-color" content="#0E1112" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#FBFCFC" media="(prefers-color-scheme: light)" />
+  <link rel="canonical" href="https://lexitap.app/contact-sales.html" />
+
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <script>(function(){try{var t=localStorage.getItem("lexitap-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+  <style>
+    /* Contact form specific styles */
+    .contact-hero {
+      padding: var(--s12) 0 var(--s8);
+      text-align: center;
+    }
+    .contact-hero h1 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(32px, 6vw, 48px);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: var(--s4);
+    }
+    .contact-hero p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 50ch;
+      margin: 0 auto;
+    }
+
+    .form-section {
+      padding: var(--s8) 0 var(--s12);
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .form-container {
+      max-width: var(--content-max);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s6);
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--s2);
+    }
+    label {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 15px;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    textarea {
+      padding: var(--s3) var(--s4);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface-raised);
+      color: var(--text-primary);
+      font-family: var(--font-ui);
+      font-size: 15px;
+      line-height: 1.5;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="number"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-subtle);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    button[type="submit"] {
+      padding: var(--s4) var(--s6);
+      background: var(--accent);
+      color: var(--on-accent);
+      border: none;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    button[type="submit"]:hover {
+      background: var(--accent-pressed);
+      transform: translateY(-1px);
+    }
+    button[type="submit"]:active {
+      transform: translateY(0);
+    }
+
+    .form-status {
+      padding: var(--s4);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      text-align: center;
+      display: none;
+    }
+    .form-status.success {
+      background: var(--accent-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--accent);
+      display: block;
+    }
+    .form-status.error {
+      background: #3d1818;
+      color: #ffb3b3;
+      border: 1px solid #7a3333;
+      display: block;
+    }
+
+    .info-grid {
+      display: grid;
+      gap: var(--s6);
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      margin-top: var(--s8);
+      padding: var(--s6);
+      background: var(--bg-surface-sunken);
+      border-radius: var(--radius-md);
+    }
+    .info-item h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--s2);
+    }
+    .info-item p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+    .info-item a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .info-item a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/">Lexi<span class="dot">Tap</span></a>
+      <nav class="nav" aria-label="Primary">
+        <a href="/">Home</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <button class="theme-toggle" type="button" aria-label="Switch theme">☀</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="contact-hero">
+      <div class="wrap">
+        <h1>LexiTap for Schools</h1>
+        <p>Bring offline-first vocabulary learning to your institution. Contact our team to explore licensing, bulk deployment, and integration options.</p>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="wrap form-container">
+        <form id="contactForm" action="https://formspree.io/f/mwpodwwj" method="POST">
+          <div class="form-group">
+            <label for="name">School / Organization Name <span aria-label="required">*</span></label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="e.g., Lincoln High School"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Contact Email <span aria-label="required">*</span></label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="your-email@school.edu"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="seats">Number of Students / Seats <span aria-label="required">*</span></label>
+            <input
+              type="number"
+              id="seats"
+              name="seats"
+              placeholder="e.g., 150"
+              min="1"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea
+              id="message"
+              name="message"
+              placeholder="Tell us about your needs, grade levels, language proficiency, or any integration requirements…"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone (optional)</label>
+            <input
+              type="text"
+              id="phone"
+              name="phone"
+              placeholder="+1 (555) 123-4567"
+            />
+          </div>
+
+          <button type="submit">Send Inquiry</button>
+          <div class="form-status" role="status" aria-live="polite"></div>
+        </form>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <h3>Response Time</h3>
+            <p>We typically respond within 1–2 business days.</p>
+          </div>
+          <div class="info-item">
+            <h3>Support Email</h3>
+            <p><a href="mailto:support@lexitap.app">support@lexitap.app</a></p>
+          </div>
+          <div class="info-item">
+            <h3>Privacy</h3>
+            <p>Your information is confidential and will never be shared.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© 2026 LexiTap</span>
+      <nav class="links" aria-label="Footer">
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="mailto:support@lexitap.app">support@lexitap.app</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/theme-toggle.js" defer></script>
+  <script>
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      const statusEl = document.querySelector('.form-status');
+      const submitBtn = document.querySelector('button[type="submit"]');
+
+      // Clear previous status
+      statusEl.textContent = '';
+      statusEl.className = 'form-status';
+
+      // The form will submit to Formspree which handles the request
+      // Formspree will redirect on success or show an error
+    });
+
+    // Optional: Listen for redirect after successful submission
+    // Formspree handles this automatically, but we can add client feedback
+    window.addEventListener('load', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('status')) {
+        const statusEl = document.querySelector('.form-status');
+        if (urlParams.get('status') === 'success') {
+          statusEl.textContent = '✓ Thank you! Your inquiry has been received. We\'ll be in touch soon.';
+          statusEl.classList.add('success');
+          document.getElementById('contactForm').style.display = 'none';
+        }
+      }
+    });
+  </script>
+</body>
+</html>
