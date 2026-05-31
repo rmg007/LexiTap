@@ -25,6 +25,7 @@ const CSS_INTEROP_PATH = path.join(
   'node_modules/nativewind/node_modules/react-native-css-interop',
 );
 const ROOT_RN = path.join(__dirname, 'node_modules/react-native');
+const ROOT_REACT = path.join(__dirname, 'node_modules/react');
 const NATIVEWIND_DEPS = path.join(__dirname, 'node_modules/nativewind/node_modules');
 const POSTHOG_CORE = path.join(__dirname, 'node_modules/@posthog/core');
 
@@ -62,6 +63,24 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
     const redirected = moduleName === 'react-native'
       ? ROOT_RN
       : path.join(ROOT_RN, moduleName.slice('react-native/'.length));
+    return { type: 'sourceFile', filePath: require.resolve(redirected) };
+  }
+
+  // Same problem, different package: nativewind bundles its OWN react@19 (it pairs
+  // with the RN 0.85 it drags in). The Babel JSX transform routes every component
+  // through react-native-css-interop's jsx-runtime, which imports `react/jsx-runtime`
+  // — and from inside nativewind's nested node_modules that resolves to react@19,
+  // NOT the project-root react@18.3.1 that actually renders the tree. The element
+  // factories then stamp a $$typeof React 18 doesn't recognise → every screen dies
+  // with "Objects are not valid as a React child". Redirect react (and react/jsx-*)
+  // imports that originate inside nativewind's deps back to the single root react.
+  if (
+    origin.startsWith(NATIVEWIND_DEPS) &&
+    (moduleName === 'react' || moduleName.startsWith('react/'))
+  ) {
+    const redirected = moduleName === 'react'
+      ? ROOT_REACT
+      : path.join(ROOT_REACT, moduleName.slice('react/'.length));
     return { type: 'sourceFile', filePath: require.resolve(redirected) };
   }
   if (_prevResolve) return _prevResolve(context, moduleName, platform);
