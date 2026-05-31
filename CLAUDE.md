@@ -67,7 +67,8 @@ These files can still be edited, but Claude Code **pauses and asks for explicit 
 | `mobile/src/domain/srs/` | SRS scheduling logic | Wrong changes break spaced repetition algorithm or learner progress |
 | `mobile/src/infrastructure/iap/` | IAP/entitlement adapter (StubIapService) | Wrong changes lock users out of premium or leak trial state |
 | `mobile/src/infrastructure/storage/` | State persistence (AsyncStorage adapter) | Wrong changes lose user progress |
-| `mobile/app.json` | Expo/EAS config, permissions, secrets | Wrong changes break builds or expose secrets |
+| `mobile/src/infrastructure/crash/` | Sentry PII scrub (`beforeSend`/`beforeBreadcrumb`) | Wrong changes leak user PII (email/tokens/URLs/device name) off-device |
+| `mobile/app.config.ts` / `mobile/app.json` | Expo/EAS config, permissions, secrets (active config is `app.config.ts`) | Wrong changes break builds or expose secrets |
 | `.env*` files | Secrets | Never commit; never log |
 
 ---
@@ -119,7 +120,7 @@ These rules + automations exist so work doesn't vanish between sessions. **All t
 | Pattern | Reason |
 |---|---|
 | Analytics SDKs (Mixpanel, Amplitude, PostHog, etc.) in production | Privacy commitment — offline-first, no tracking. (Dev/test only with env gating.) |
-| Any external crash SDK in production | Privacy: on-device reporter only. Dev tools (Sentry, etc.) are OK if gated by env var. |
+| Crash SDK (Sentry) **unscrubbed**, or sending identity, in production | Crash reporting IS allowed in prod — but ONLY via `infrastructure/crash/` with: env-gated DSN (inert if unset), `beforeSend`/`beforeBreadcrumb` PII scrub (strip user id/email/ip/server-name/tokens/URLs; drop network + `sync` breadcrumbs), no tracing/replay/screenshots, privacy-policy disclosure. Any crash SDK that skips the scrub or sends identity is forbidden. |
 | `console.log` persistent writes in production | Logger must no-op in production |
 | Hardcoded secrets or `.env` committed to git | Local dev: `.env` (in .gitignore). Production builds: configure EAS secrets in eas.json. Never commit any secrets. |
 
@@ -159,11 +160,11 @@ These rules + automations exist so work doesn't vanish between sessions. **All t
 - **JS/TypeScript-only fixes, UI changes, logic:** Ship via EAS Update immediately (same day).
 - **Native changes, new permissions, build config, version bumps:** Store release required (5–6 weeks lead time for app store review).
 
-**Versioning:** match `mobile/app.json` `version` (currently `0.1.0`).
+**Versioning:** match `mobile/app.config.ts` `version` (currently `0.1.0`).
 
 ---
 
-*Last updated: 2026-05-31 — Doc/config integrity sweep: corrected deny-list, high-risk paths, broken cross-refs, root commands, versioning*
+*Last updated: 2026-05-31 — Sentry crash reporting (B1 + PII scrub) shipped; Forbidden-Patterns crash rule rewritten (scrubbed, env-gated crash reporting allowed in prod; analytics still not); `infrastructure/crash/` added to high-risk paths; app.json refs → app.config.ts*
 
 ---
 

@@ -109,7 +109,7 @@ Full mapping in [GDPR_COPPA_COMPLIANCE.md](./GDPR_COPPA_COMPLIANCE.md).
 | Supabase | Auth + Postgres + Storage | Account, content errors, encrypted user.db backup (Phase 3+) |
 | Apple App Store | iOS payments / IAP | Purchase + receipt (Apple is merchant of record) |
 | Google Play | Android payments / IAP | Purchase + receipt (Google is merchant of record) |
-| Error-monitoring provider (e.g. Sentry) | Crash/error reporting | Diagnostics, pseudonymous user/session id |
+| Error-monitoring provider (e.g. Sentry) | Crash/error reporting | Diagnostics only (error traces, app/OS version, device model). Email, tokens, URLs, and message bodies are scrubbed on-device before any event is sent. Pseudonymous session id; no account id or email. |
 | Neural TTS (Amazon Polly / Google) | Universal free TTS audio (build-time only) | None about end users — used in content production, not at runtime |
 Note: the neural TTS provider is a build-time content tool. Audio files are baked into the app
 bundle; the running app never transmits learner data to the TTS provider. Flagged because it is a

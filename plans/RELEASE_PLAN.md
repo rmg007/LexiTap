@@ -48,7 +48,7 @@ One scannable list. Each phase has an ordered task set and a single measurable e
 - ☐ **Prove C0 on a physical device** (the gate for trusting everything else)
 - ☐ Foundation content to 3,000 words: C3 source → C4 OpenAI enrich adapter → C5 sampled QA → C6 synonyms → C7 validate → C8 release pipeline *(the long pole — runs continuously)*
 - ☐ Real onboarding + Home: H-1 Home progress → O-1 persist `onboarding_state` → O-2 goal → O-3 proficiency(confirm/cut) → O-4 diagnostic (DIAG-B) → O-5 knowledge map; P-1 empty states; P-2 a11y
-- ☐ Instrumentation: A1–A5 PostHog + `event_log` flush, B1–B2 Sentry *(without this P2's gate is unmeasurable)*
+- ◐ Instrumentation: A1–A5 PostHog + `event_log` flush; **B1 Sentry ✅ + B2 scrub ✅** (B2 enrichment tags pending A2) *(without this P2's gate is unmeasurable)*
 - ☐ Build infra: eas init, `app.json→app.config.ts`, eas.json profiles, CI two-job, signing (build-infra #1–14) · **start Apple+Google enrollment day 1**
 
 **P2 — Beta + retention** *(exit: D7 ≥ 30% on `anon_id` cohorts; 20–30% → fix loop; <20% → pivot/kill)*
@@ -374,9 +374,9 @@ Verified: `event_log` is local, append-only, INSERT-only, written synchronously 
 
 ### Track B — Crash monitoring (before external beta)
 
-- **B1 · `@sentry/react-native` + Expo plugin** — M. (`sentry-expo` is deprecated for SDK 50+ — ERROR_MONITORING_PLAN predates this; correct it.) DSN via EAS secret; init in `_layout.tsx`; offline disk cache verified.
-- **B2 · `beforeSend` PII scrub + tags + breadcrumbs** — S. Strip bodies/email/name/token/promo; set `anon_id`/`session_id`/release/free-paid/locale/online; domains `db`/`srs`/`ui` (`auth`→P3, `iap`→P3, **drop `sync`**); breadcrumbs for last DB op + nav. *Deps:* B1, A2.
-- **B3 · Source maps + release health + alerts** — M. EAS uploads source maps; release-health populated; the 5 alerts configured. Crash-free feeds A7. *Deps:* B1, eas.json (build-infra #4), Sentry token in EAS secrets.
+- ✅ **B1 · `@sentry/react-native` v6.10 + init** — DONE. SDK installed; `initCrashReporting()` at `_layout.tsx` module top (catches startup crashes); `Sentry.wrap` root; auto-session-tracking on (feeds crash-free rate); no tracing/replay/screenshots; env-gated by `EXPO_PUBLIC_SENTRY_DSN` (inert until set). Adapter isolated in `src/infrastructure/crash/`. Expo source-map plugin deferred to B3 (no creds yet). *Offline disk cache = SDK default; device-verify pending.*
+- ◐ **B2 · `beforeSend` PII scrub + breadcrumbs** — SCRUB DONE; tags pending. Done: strip user id/email/ip/server-name + redact email/JWT/bearer in messages; drop `http`/`xhr`/`fetch`/`sync` breadcrumbs; drop console data; fail-closed; unit-tested (`scrub.test.ts`). Pending: enrichment tags `anon_id`/`session_id`/release/free-paid/locale/online — `getOrCreateAnonId` exists, but wiring requires whitelisting a pseudonymous id through the scrub (which currently deletes all `event.user`). *Deps:* B1 ✅, A2.
+- ☐ **B3 · Source maps + release health + alerts** — NOT STARTED. Blocked on a real Sentry org/project + `SENTRY_AUTH_TOKEN` EAS secret. To activate: set `SENTRY_ORG`/`SENTRY_PROJECT` (eas.json env) + token (EAS secret) → add the `@sentry/react-native` Expo plugin to `app.config.ts` `plugins` (conditional on those env vars). *Deps:* B1 ✅, eas.json (build-infra #4), Sentry token in EAS secrets.
 
 ### Track C — Beta distribution
 
