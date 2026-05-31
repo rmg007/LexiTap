@@ -3,5 +3,7 @@
 // test-doubles are trivial.
 export interface AnalyticsPort {
   // Fire-and-forget: best-effort telemetry. Implementations must never throw.
-  track(event: string, properties?: Record<string, unknown>): void;
+  // Async to support opt-out checks (PostHogAnalyticsService checks the opt-out
+  // flag before capture). Noop implementations can return resolved promises.
+  track(event: string, properties?: Record<string, unknown>): void | Promise<void>;
 }
