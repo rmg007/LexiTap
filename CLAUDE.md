@@ -68,6 +68,7 @@ These files can still be edited, but Claude Code **pauses and asks for explicit 
 | `mobile/src/infrastructure/iap/` | IAP/entitlement adapter (StubIapService) | Wrong changes lock users out of premium or leak trial state |
 | `mobile/src/infrastructure/storage/` | State persistence (AsyncStorage adapter) | Wrong changes lose user progress |
 | `mobile/src/infrastructure/crash/` | Sentry PII scrub (`beforeSend`/`beforeBreadcrumb`) | Wrong changes leak user PII (email/tokens/URLs/device name) off-device |
+| `mobile/src/infrastructure/analytics/` | PostHog adapter, `anon_id`, env-gate (PII boundary; prod-allowed) | Wrong changes leak identity/PII off-device (email/Supabase-id misuse, autocapture-on, ungated send, non-EU host) |
 | `mobile/app.config.ts` / `mobile/app.json` | Expo/EAS config, permissions, secrets (active config is `app.config.ts`) | Wrong changes break builds or expose secrets |
 | `.env*` files | Secrets | Never commit; never log |
 
@@ -119,7 +120,7 @@ These rules + automations exist so work doesn't vanish between sessions. **All t
 
 | Pattern | Reason |
 |---|---|
-| Analytics SDKs (Mixpanel, Amplitude, PostHog, etc.) in production | Privacy commitment — offline-first, no tracking. (Dev/test only with env gating.) |
+| Analytics SDK (PostHog, etc.) sending **PII/identity**, autocapture-on, or used for anything **beyond app improvement**, in production | Product analytics IS allowed in prod — but ONLY via `infrastructure/analytics/` with: env-gated key (`EXPO_PUBLIC_POSTHOG_API_KEY`, **Noop if unset**), **`anon_id` pseudonymity only** (never email/Supabase id), **no PII** in payloads, **autocapture off** (explicit events only), **EU host**, in-Settings **opt-out**, and privacy-policy sub-processor disclosure. **Purpose-limited to app improvement** (retention/conversion/funnel health) — never advertising, ad-SDK coupling, cross-app tracking, IDFA/AAID, or selling data. Any analytics SDK that sends identity/PII, autocaptures, tracks for ads, or serves a non-improvement purpose is forbidden. |
 | Crash SDK (Sentry) **unscrubbed**, or sending identity, in production | Crash reporting IS allowed in prod — but ONLY via `infrastructure/crash/` with: env-gated DSN (inert if unset), `beforeSend`/`beforeBreadcrumb` PII scrub (strip user id/email/ip/server-name/tokens/URLs; drop network + `sync` breadcrumbs), no tracing/replay/screenshots, privacy-policy disclosure. Any crash SDK that skips the scrub or sends identity is forbidden. |
 | `console.log` persistent writes in production | Logger must no-op in production |
 | Hardcoded secrets or `.env` committed to git | Local dev: `.env` (in .gitignore). Production builds: configure EAS secrets in eas.json. Never commit any secrets. |
@@ -164,7 +165,7 @@ These rules + automations exist so work doesn't vanish between sessions. **All t
 
 ---
 
-*Last updated: 2026-05-31 — Sentry crash reporting (B1 + PII scrub) shipped; Forbidden-Patterns crash rule rewritten (scrubbed, env-gated crash reporting allowed in prod; analytics still not); `infrastructure/crash/` added to high-risk paths; app.json refs → app.config.ts*
+*Last updated: 2026-05-31 — Analytics policy reconciled: PostHog **allowed in production**, env-gated + `anon_id`-only + no-PII + autocapture-off + EU-host + opt-out + disclosed, **purpose-limited to app improvement** (Forbidden-Patterns analytics row rewritten from flat ban → conditional allow; `infrastructure/analytics/` added to high-risk paths). Prior: Sentry crash reporting (B1 + PII scrub) shipped; crash rule rewritten (scrubbed, env-gated, prod-allowed); `infrastructure/crash/` high-risk; app.json refs → app.config.ts*
 
 ---
 

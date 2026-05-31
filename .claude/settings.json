@@ -83,6 +83,7 @@
       "Edit(mobile/src/infrastructure/iap/**)",
       "Edit(mobile/src/infrastructure/storage/**)",
       "Edit(mobile/src/infrastructure/crash/**)",
+      "Edit(mobile/src/infrastructure/analytics/**)",
       "Edit(mobile/app.json)",
       "Edit(mobile/app.config.ts)",
       "Edit(**/.env)",

@@ -111,6 +111,11 @@ and no raw teacher/promo codes; properties are a flat, typed key set per event.
 
 - **Primary (recommended): PostHog** — generous free tier, open-source, EU-hosting option,
   reverse-proxy-able, autocapture-off (explicit events only). Fits privacy posture.
+  **Allowed in production** under the analytics policy: env-gated key (Noop if unset),
+  **EU host** (`https://eu.i.posthog.com` — not the US host), `anon_id`-only, no PII,
+  autocapture-off, in-app opt-out, disclosed as a sub-processor, and used **only for
+  app improvement** (retention/conversion/funnel) — never ads, cross-app tracking, or
+  selling data.
 - **Lowest-cost / zero-vendor fallback:** the on-device `event_log` is the source of truth.
   Periodically roll up aggregate counts and `upsert` them to a Supabase `metrics_daily` table; query
   with SQL. No third party at all, $0, but manual dashboards.
@@ -139,6 +144,6 @@ and no raw teacher/promo codes; properties are a flat, typed key set per event.
 
 ## Open Questions
 
-- `unresolved` — PostHog vs. pure Supabase-rollup for v1. Lean PostHog for funnels; confirm free-tier event volume headroom at 1,000 users before wiring.
-- `requires-external-validation` — Consent gating: opt-out (legitimate interest) vs. opt-in in GDPR regions. Align with [GDPR_COPPA_COMPLIANCE.md](./GDPR_COPPA_COMPLIANCE.md) and counsel.
-- `deferred` — Retention-cohort computation: in-tool vs. SQL rollup. Decide when analytics sink is chosen.
+- ✅ `resolved` (2026-05-31) — PostHog vs. pure Supabase-rollup for v1 → **PostHog**, and it is **allowed in production** (env-gated, `anon_id`-only, no PII, autocapture-off, **EU host**, in-app opt-out, sub-processor disclosure, **purpose-limited to app improvement**). The CLAUDE.md analytics ban was rewritten to this conditional allow; the Supabase-rollup remains the documented zero-vendor fallback but is not the v1 path. Confirm free-tier event-volume headroom at 1,000 users before scaling. See [PRIVACY_POLICY_TERMS_OF_SERVICE.md](./PRIVACY_POLICY_TERMS_OF_SERVICE.md) §2/§5 + [../../memory/2026-05-31_analytics_posthog_policy.md](../../memory/2026-05-31_analytics_posthog_policy.md).
+- ✅ `resolved` (2026-05-31) — Retention-cohort computation: **PostHog Retention** (in-tool) on `anon_id`, not a hand-rolled SQL rollup.
+- `requires-external-validation` — Consent gating: opt-out (legitimate interest) vs. opt-in in GDPR regions. Align with [GDPR_COPPA_COMPLIANCE.md](./GDPR_COPPA_COMPLIANCE.md) and counsel. **Hard pre-EU-beta gate** now that PostHog ships to prod — the in-app opt-out toggle must exist before any EU tester.

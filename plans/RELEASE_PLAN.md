@@ -357,16 +357,29 @@ The "Phase 3 IAP vs Phase 5 auth" conflict exists only in the **stale root ROADM
 - **"Test cloud sync via device switch" / "free cloud sync" in P2 — sync was deleted, deferred to P3+.** Cannot run in P2. **Strike it; move to a P3 acceptance test** gated on backup landing. Fix the P1 deliverable line "free cloud sync" → "free Foundation tier."
 - **"Phase 2 = no coding" is false.** The D7 gate is unmeasurable without analytics + an off-device `event_log` flush + Sentry — all coding. **Relabel P2 "instrumentation + beta" and pull analytics/Sentry into the tail of P1.**
 - **Auth is P3, so `account_created` can't fire in P2 and there's no server identity. Retention cohorts MUST be keyed on the device `anon_id`** — a reinstall = new cohort member. Document it.
-- **`ANALYTICS_PLAN.md` retention "Open Question" (in-tool vs SQL rollup) is unresolved** — the >30% gate has no owner/query until A7. Highest-risk gap.
+- ✅ **`ANALYTICS_PLAN.md` retention "Open Question" (in-tool vs SQL rollup) — RESOLVED 2026-05-31 → PostHog** (allowed in prod, conditioned; see Track A callout). The >30% gate's owner/query is PostHog Retention (A7); the Supabase-rollup fallback is kept documented but not the prod path.
 - **`ERROR_MONITORING_PLAN.md` lists `sync` errors as P0** — sync doesn't exist. Drop the `sync` tag now; re-add P3.
 
 Verified: `event_log` is local, append-only, INSERT-only, written synchronously in the answer transaction. Only `answer_recorded` exists. **No analytics SDK, no flush, no Sentry.** AGENTS.md is right that `event_log` is the local source-of-truth to flush, not the analytics sink.
 
 ### Track A — Analytics (before beta)
 
+> ✅ **POLICY RESOLVED 2026-05-31 — PostHog allowed in production.** The
+> CLAUDE.md-vs-this-plan contradiction (flat analytics ban vs A7's prod retention
+> gate) is settled: PostHog **may run in prod**, env-gated + `anon_id`-only + no
+> PII + autocapture-off + EU-host + in-Settings opt-out + privacy-policy
+> disclosure, **purpose-limited to app improvement** (retention/conversion/funnel)
+> — never ads, cross-app tracking, or selling data. So A7's D7 gate stands on
+> PostHog (no Supabase-rollup detour needed). CLAUDE.md Forbidden-Patterns row +
+> `.env.example` + privacy policy §2/§5 aligned; see
+> [../memory/2026-05-31_analytics_posthog_policy.md](../memory/2026-05-31_analytics_posthog_policy.md).
+> **Two hard pre-EU-beta gates remain:** (1) the A6 opt-out toggle must exist; (2)
+> the shipped adapter currently uses the **US** PostHog host — must move to **EU**
+> (A3) before any EU tester.
+
 - **A1 · `AnalyticsPort` + emit seam** — S. Pure-TS `AnalyticsPort` (`capture`/`identifyAnon`/`optOut`/`flush`) + `NoopAnalytics`; use cases emit, domain stays pure. *Touches:* `domain/analytics/AnalyticsPort.ts`, `container.ts`, quiz use cases.
 - **A2 · `anon_id` + `session_id`** — S. Device-scoped UUIDv4 `anon_id` once on first launch (never email/Supabase id); per-session `session_id`; both in every payload. *Touches:* `infrastructure/identity/AnonId.ts`.
-- **A3 · PostHog impl** — M. `posthog-react-native`, autocapture OFF, EU host (GDPR), no PII. **Resolves the open question → PostHog** (free built-in funnels/retention; don't hand-roll SQL). *Deps:* A1, A2.
+- **A3 · PostHog impl** — M. `posthog-react-native`, autocapture OFF, EU host (GDPR), no PII. **Resolves the open question → PostHog** (free built-in funnels/retention; don't hand-roll SQL). ⚠️ **Code drift:** the shipped `PostHogAnalyticsService` is wired but hardcodes `host: 'https://us.i.posthog.com'` (**US**) — must change to the **EU** host (`https://eu.i.posthog.com`) before any EU tester; tracked in the analytics-policy memo. *Deps:* A1, A2.
 - **A4 · Offline flush `event_log` → PostHog (idempotent)** — M. Batch unsent rows on foreground/background/session-end with retry; client-generated event id prevents double-count; preserve `occurred_at`. **Schema touch:** add nullable `synced_at` (migration 003) — additive only, no payload UPDATE. *Deps:* A3.
 - **A5 · Emit the planned events** — M. `session_started/completed`, `streak_incremented/broken`, `srs_backlog_reanchored`, `analytics_opt_out`, `app_opened` (first-open, days-since-install). Defer paywall/purchase to P3, `account_created` to P3-auth. *Deps:* A1, A3.
 - **A6 · Opt-out toggle + consent** — S. Settings "Share anonymous usage data"; off → local log still writes, no off-device send. **Flag:** opt-out vs opt-in for EU is unresolved (ANALYTICS_PLAN + GDPR doc) — decide before EU external beta; opt-out OK for internal testers. *Deps:* A4.
@@ -415,7 +428,7 @@ A beta with no instrumentation forfeits the whole phase. **D3 → (A1→A2→A3�
 
 - **LEGAL-1 · Age-gate + COPPA decision** — S. Lock 16+ global, neutral DOB, no parental consent, delete-on-discovery. (= D5.) *Touches:* GDPR doc.
 - **LEGAL-2 · Privacy policy + ToS finalized + hosted** — M (counsel turnaround). Fill template, **get a paid counsel review** (the one place to spend money), publish at `lexitap.app/privacy` + `/terms`. *Deps:* LEGAL-1, WEB-1.
-- **LEGAL-3 · Sub-processor DPAs + data region** — S. Supabase DPA + region (pick **EU** unless latency forces US) + SCCs; Sentry DPA with PII scrub. *Deps:* none.
+- **LEGAL-3 · Sub-processor DPAs + data region** — S. Supabase DPA + region (pick **EU** unless latency forces US) + SCCs; Sentry DPA with PII scrub; **PostHog DPA + EU host** (pseudonymous `anon_id` analytics). *Deps:* none.
 - **ACCT-1 · Developer accounts** — S+wait. Apple ($99, + Small Business Program 30%→15%), Google ($25), Expo, RevenueCat. **Start immediately** (enrollment latency).
 - **BUILD-1 · `app.json` → `app.config.ts` + `eas.json`** — M. Env injection via `extra`; profiles + `ascAppId`/`appleTeamId`/Android SA; `expo-doctor` clean. *Deps:* ACCT-1.
 - **BUILD-2 · words.db bundling verification** — M (= C0). Release blocker — a store build shipping an empty word list is dead on arrival. *Deps:* BUILD-1.
