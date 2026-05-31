@@ -6,7 +6,7 @@ status: active
 
 # LexiTap Roadmap
 
-> **⚠️ Ordering superseded (2026-05-30):** A code+docs audit found this file's phase *ordering* and status claims are stale — auth is a Phase 3 dependency (not Phase 5), `words.db` content delivery is currently broken, content is ~7% sourced (216 words, not 3,000), per-table sync was deleted, and Phase 2 requires instrumentation coding. The authoritative, task-level execution plan is **[plans/RELEASE_PLAN.md](plans/RELEASE_PLAN.md)**. This file remains the high-level phase mirror; trust RELEASE_PLAN.md where they conflict.
+> **⚠️ Ordering superseded (2026-05-30):** A code+docs audit found this file's phase *ordering* and status claims are stale — auth is a Phase 3 dependency (not Phase 5), `words.db` content delivery is currently broken, content is ~8% sourced (241 words, not 3,000), per-table sync was deleted, and Phase 2 requires instrumentation coding. The authoritative, task-level execution plan is **[plans/RELEASE_PLAN.md](plans/RELEASE_PLAN.md)**. This file remains the high-level phase mirror; trust RELEASE_PLAN.md where they conflict.
 
 **21 weeks from validation to 1,000 active users.**
 Solo founder. $194 Year 1 budget. **One-time consumer IAP (exam packs + bundle) via RevenueCat — no subscriptions.** B2B licensing and teacher referrals deferred (door left open). See [pricing model](lexitap-docs/08-financial-legal/REVENUE_MODEL_PRICING.md).
@@ -20,7 +20,7 @@ This root file is the at-a-glance mirror. The canonical product roadmap is [lexi
 | Item | Value |
 |------|-------|
 | Phase | **1 — Build** (active; ~30% to launch, not 85% — see [plans/RELEASE_PLAN.md](plans/RELEASE_PLAN.md)) |
-| Code written | Domain logic done + tested (SRS, scheduling, mastery, quiz session, DB, 2 widgets). **Fixed 2026-05-30:** words.db delivery (was loading empty on device), `tiers.ts` monetization model, broken Jest harness. Per-table sync was deleted. Auth is a **Phase 3** dependency (not 5). Content is ~7% sourced (216 words). |
+| Code written | Domain logic done + tested (SRS, scheduling, mastery, quiz session, DB, 2 widgets). **Fixed 2026-05-30:** words.db delivery (was loading empty on device), `tiers.ts` monetization model, broken Jest harness. Per-table sync was deleted. Auth is a **Phase 3** dependency (not 5). Content is ~8% sourced (241 unique words / 246 tier memberships across 9 tiers; restored 2026-05-31 from a downsized sample — see [memory note](memory/2026-05-31_content_count_regression.md)). |
 | Stack | React Native (Expo) + TypeScript + SQLite + Supabase |
 | Target | Global ESL learners (cram schools & test prep individuals) |
 | Last updated | 2026-05-30 |

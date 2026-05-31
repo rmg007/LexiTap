@@ -18,7 +18,7 @@ The detailed product roadmap: 6 phases across 21 weeks, two parallel build track
 | Item | Value |
 |------|-------|
 | Phase | **1 — Build** (active; ~30% to launch — see [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md)) |
-| Code written | Track A CLI exists but content is ~7% sourced (216 words). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. |
+| Code written | Track A CLI exists but content is ~8% sourced (241 unique words / 246 tier memberships across 9 tiers; restored 2026-05-31). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. |
 | Last updated | 2026-05-30 |
 
 ## Table of Contents
