@@ -5,6 +5,9 @@ import type { QuizSession } from '@/domain/quiz/types';
 import type { UserProgress } from '@/domain/user/UserProgress';
 import type { AnswerWriter, AnswerWrite } from '@/domain/quiz/AnswerWriter';
 import type { UserProgressRepository } from '@/domain/user/UserProgressRepository';
+import type { AnalyticsPort } from '@/domain/analytics/AnalyticsPort';
+
+const noopAnalytics: AnalyticsPort = { track: () => {} };
 import type { Word } from '@/domain/vocabulary/Word';
 import { asSessionId, asTierId, asWordId, type WordId } from '@/domain/vocabulary/ids';
 
@@ -69,7 +72,7 @@ describe('AnswerQuestionUseCase', () => {
       totalCorrect: 2,
       schedulerVersion: 'v1-fixed',
     });
-    const uc = new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler);
+    const uc = new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler, noopAnalytics);
 
     const out = await uc.execute({
       session: session([word('a'), word('b')]),
@@ -123,7 +126,7 @@ describe('AnswerQuestionUseCase', () => {
   it('handles a first-time word (no existing progress) on an incorrect answer', async () => {
     const answerWriter = new MockAnswerWriter();
     const progress = new MockProgress();
-    const uc = new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler);
+    const uc = new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler, noopAnalytics);
 
     const out = await uc.execute({
       session: session([word('a')]),
@@ -147,6 +150,7 @@ describe('AnswerQuestionUseCase', () => {
       new MockAnswerWriter(),
       new MockProgress(),
       v1FixedScheduler,
+      noopAnalytics,
     );
     await expect(
       uc.execute({

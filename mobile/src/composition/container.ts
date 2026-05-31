@@ -10,6 +10,8 @@ import {
 import { buildDailyProgressQueries } from '@/infrastructure/db/queries/dailyProgressQueries';
 import { AsyncStorageAdapter } from '@/infrastructure/storage';
 import { StubIapService } from '@/infrastructure/iap/StubIapService';
+import { createAnalyticsService } from '@/infrastructure/analytics/createAnalyticsService';
+import { getOrCreateAnonId } from '@/infrastructure/analytics/AnonIdStore';
 
 import { v1FixedScheduler } from '@/domain/srs/v1-fixed';
 import type { TierId } from '@/domain/vocabulary/ids';
@@ -77,6 +79,22 @@ function buildReadQueries(
         };
       }
     },
+    async getContentDbHealth() {
+      try {
+        const countRow = await db.first<{ word_count: number }>(
+          'SELECT COUNT(*) as word_count FROM contentdb.words',
+          [],
+        );
+        const verRow = await db.first<{ user_version: number }>(
+          'PRAGMA contentdb.user_version',
+          [],
+        );
+        return { wordCount: countRow?.word_count ?? 0, dbVersion: verRow?.user_version ?? 0 };
+      } catch (error) {
+        logger.warn('getContentDbHealth failed', { error: String(error) });
+        return { wordCount: 0, dbVersion: 0 };
+      }
+    },
   };
 }
 
@@ -89,6 +107,9 @@ export interface Container {
 export async function createContainer(): Promise<Container> {
   const db = await openDatabase();
   const storage = new AsyncStorageAdapter();
+
+  const anonId = await getOrCreateAnonId();
+  const analytics = createAnalyticsService(anonId);
 
   const words = new SQLiteWordRepository(db);
   const tiers = new SQLiteContentTierRepository(db);
@@ -103,8 +124,8 @@ export async function createContainer(): Promise<Container> {
   void tiers;
 
   const services: Services = {
-    startQuiz: new StartQuizUseCase(words, progress, sessions),
-    answerQuestion: new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler),
+    startQuiz: new StartQuizUseCase(words, progress, sessions, analytics),
+    answerQuestion: new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler, analytics),
     runDiagnostic: new RunDiagnosticUseCase(words, progress, v1FixedScheduler),
     saveOnboardingProfile: new SaveOnboardingProfileUseCase(stats),
     onboarding: {

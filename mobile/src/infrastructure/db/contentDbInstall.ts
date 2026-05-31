@@ -18,7 +18,7 @@
 // words.db is bundled; on the next launch the gate below re-copies it, so a
 // content update shipped in an app update is not masked by the stale copy left
 // over from the previous install.
-export const BUNDLED_CONTENT_DB_VERSION = 8;
+export const BUNDLED_CONTENT_DB_VERSION = 2;
 
 // File name expo-sqlite will ATTACH; the copy target shares it.
 export const CONTENT_DB_FILE_NAME = 'words.db';

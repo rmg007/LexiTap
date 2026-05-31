@@ -4,6 +4,7 @@ import type { UserProgressRepository } from '@/domain/user/UserProgressRepositor
 import type { AnswerWriter } from '@/domain/quiz/AnswerWriter';
 import type { AssessmentType, QuizResult, QuizSession } from '@/domain/quiz/types';
 import type { Scheduler } from '@/domain/srs/Scheduler';
+import type { AnalyticsPort } from '@/domain/analytics/AnalyticsPort';
 import { advanceSession, currentWord } from '@/domain/quiz/QuizSession';
 import { WordNotInSessionError } from '@/domain/quiz/errors';
 
@@ -33,6 +34,7 @@ export class AnswerQuestionUseCase {
     private readonly answerWriter: AnswerWriter,
     private readonly progress: UserProgressRepository,
     private readonly scheduler: Scheduler,
+    private readonly analytics: AnalyticsPort,
   ) {}
 
   async execute(input: AnswerQuestionInput): Promise<AnswerQuestionOutput> {
@@ -93,6 +95,16 @@ export class AnswerQuestionUseCase {
         }),
         occurredAt: nowMs,
       },
+    });
+
+    this.analytics.track('answer_recorded', {
+      wordId,
+      sessionId: session.id,
+      assessmentType: input.assessmentType,
+      isCorrect,
+      preMastery,
+      postMastery: next.masteryLevel,
+      tierId: session.tierId,
     });
 
     // Advance the session.

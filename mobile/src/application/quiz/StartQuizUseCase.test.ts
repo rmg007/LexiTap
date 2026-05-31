@@ -6,6 +6,9 @@ import type { UserProgressRepository } from '@/domain/user/UserProgressRepositor
 import type { QuizSessionRepository } from '@/domain/quiz/repositories';
 import type { QuizSession } from '@/domain/quiz/types';
 import { asSessionId, asTierId, asWordId, type SessionId, type TierId } from '@/domain/vocabulary/ids';
+import type { AnalyticsPort } from '@/domain/analytics/AnalyticsPort';
+
+const noopAnalytics: AnalyticsPort = { track: () => {} };
 
 const TZ = 'UTC';
 const NOW = Date.UTC(2026, 4, 24, 12, 0, 0);
@@ -87,7 +90,7 @@ describe('StartQuizUseCase — review mode', () => {
     const words = new MockWords(due);
     const progress = new MockProgress(100); // > base cap -> effective cap 60
     const sessions = new MockSessions();
-    const uc = new StartQuizUseCase(words, progress, sessions);
+    const uc = new StartQuizUseCase(words, progress, sessions, noopAnalytics);
 
     const session = await uc.execute({ tierId: TIER, mode: 'review', nowMs: NOW, tz: TZ });
 
@@ -98,7 +101,7 @@ describe('StartQuizUseCase — review mode', () => {
 
   it('uses the base cap of 40 in steady state', async () => {
     const due = Array.from({ length: 50 }, (_, i) => wp(`w${i}`, 3, i));
-    const uc = new StartQuizUseCase(new MockWords(due), new MockProgress(50), new MockSessions());
+    const uc = new StartQuizUseCase(new MockWords(due), new MockProgress(50), new MockSessions(), noopAnalytics);
     const session = await uc.execute({ tierId: TIER, mode: 'review', nowMs: NOW, tz: TZ });
     // dueCount 50 > 40 actually triggers catch-up; verify the selector respects cap
     expect(session.words.length).toBeLessThanOrEqual(60);
@@ -106,13 +109,13 @@ describe('StartQuizUseCase — review mode', () => {
 
   it('returns all due when fewer than the cap', async () => {
     const due = [wp('a', 1, 2), wp('b', 2, 1)];
-    const uc = new StartQuizUseCase(new MockWords(due), new MockProgress(2), new MockSessions());
+    const uc = new StartQuizUseCase(new MockWords(due), new MockProgress(2), new MockSessions(), noopAnalytics);
     const session = await uc.execute({ tierId: TIER, mode: 'review', nowMs: NOW, tz: TZ });
     expect(session.words).toHaveLength(2);
   });
 
   it('throws NoWordsAvailableError when nothing is due', async () => {
-    const uc = new StartQuizUseCase(new MockWords([]), new MockProgress(0), new MockSessions());
+    const uc = new StartQuizUseCase(new MockWords([]), new MockProgress(0), new MockSessions(), noopAnalytics);
     await expect(
       uc.execute({ tierId: TIER, mode: 'review', nowMs: NOW, tz: TZ }),
     ).rejects.toBeInstanceOf(NoWordsAvailableError);
@@ -122,14 +125,14 @@ describe('StartQuizUseCase — review mode', () => {
 describe('StartQuizUseCase — learn mode', () => {
   it('pulls a fresh-word batch', async () => {
     const fresh = Array.from({ length: 20 }, (_, i) => word(`n${i}`));
-    const uc = new StartQuizUseCase(new MockWords([], fresh), new MockProgress(0), new MockSessions());
+    const uc = new StartQuizUseCase(new MockWords([], fresh), new MockProgress(0), new MockSessions(), noopAnalytics);
     const session = await uc.execute({ tierId: TIER, mode: 'learn', nowMs: NOW, tz: TZ });
     expect(session.mode).toBe('learn');
     expect(session.words).toHaveLength(10); // NEW_WORDS_PER_DAY
   });
 
   it('throws when there are no new words', async () => {
-    const uc = new StartQuizUseCase(new MockWords([], []), new MockProgress(0), new MockSessions());
+    const uc = new StartQuizUseCase(new MockWords([], []), new MockProgress(0), new MockSessions(), noopAnalytics);
     await expect(
       uc.execute({ tierId: TIER, mode: 'learn', nowMs: NOW, tz: TZ }),
     ).rejects.toBeInstanceOf(NoWordsAvailableError);

@@ -24,6 +24,11 @@ export interface DailyProgressMetrics {
   newWordsBudget: number;
 }
 
+export interface ContentDbHealth {
+  wordCount: number;
+  dbVersion: number;
+}
+
 export interface ReadQueries {
   // Aggregate stats for Home / Progress (streak, totals, mastered count).
   getUserStats(): Promise<UserStats | null>;
@@ -31,6 +36,8 @@ export interface ReadQueries {
   getMasteryLevels(tierId: TierId): Promise<readonly number[]>;
   // Daily progress: reviews completed vs cap, new words learned vs budget.
   getDailyProgress(tierId: TierId): Promise<DailyProgressMetrics>;
+  // Content DB health: word count + schema version (for device verification).
+  getContentDbHealth(): Promise<ContentDbHealth>;
 }
 
 export interface Services {
