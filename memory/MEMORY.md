@@ -4,6 +4,7 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ## Index
 
+- **[🎯 2026-05-31 Sprint Summary](2026-05-31_sprint_summary.md) — COMPREHENSIVE SESSION RECORD** — 67 commits, 15+ agents, P-2 audit complete, Phase 1 critical path (C0 sim proven, O-1→O-5 complete, EAS setup, 4 decisions, 222 tests green)
 - [AsterKit Integration (2026-05-31)](2026-05-31_asterkit_integration.md) — Rules, patterns, and workflows adopted from AsterKit; what fit, what didn't
 - [Repo State Reconciliation (2026-05-31)](2026-05-31_repo_state_reconciliation.md) — Merged the unmerged fix branch (words.db delivery + 3-SKU tiers + green tests); content VOLUME (~7%) + device-verify are the remaining blockers; integrity-sweep doc fixes
 - [words.db 43-vs-216 NOT a regression (2026-05-31)](2026-05-31_content_count_regression.md) — 43 was **deliberate downsizing** (commit `5c190d2`, 9 tiers × 5 stubs), NOT lost by the m2m refactor (`a85d8d9` innocent). Real 216 (foundation 200/advanced 10/toefl 6) recovered from git `5c190d2~1`. Pipeline healthy (CSV→working.db→words.db→cp). **DONE on master: restored CSVs + rebuilt → 241 words / 246 memberships, 9 tiers, integrity ok; content-tool 43 + mobile 163 tests green.** ⚠️ **SUPERSEDED same day** by concurrent C3 content sourcing (commits `f8a9ddd`/`4526bb6`/`eccf83d`): words.db now holds **2,881 words / 2,894 memberships** (foundation 2,848). The 241 restore is historical; docs synced to 2,881.
