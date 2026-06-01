@@ -188,7 +188,6 @@ ACCT-1 (Apple/Google enrollment) ───────────────�
 
 1. ◐ **C0 physical device test** — `cd mobile && eas build --platform ios --profile preview` then install on real iOS. Simulator proven 2026-05-31; physical device is the remaining gate. All infra ready: eas.json, app.config.ts, secrets, icon.png, words.db in bundle. Android on hold.
 2. **ACCT-1 banking/tax** — Apple Paid Apps agreement + banking/tax forms. Apple Team ID W8FZGT253G known; confirm accounts active and Paid Apps signed (silent IAP blocker).
-3. **A1–A5 + B2** — PostHog emit seam (A1–A5) + Sentry `anon_id`/`session_id` enrichment tags (B2). Both needed before beta; P2 D7 gate is unmeasurable without.
 
 **Deferred to pre-submission (last before App Store):**
 - ⏸ **AU2 Google Sign-In** — `@react-native-google-signin/google-signin` + adapter + Google Cloud Console OAuth creds. Auth does not gate any core feature; defer until app is otherwise ready for store.
@@ -213,6 +212,8 @@ ACCT-1 (Apple/Google enrollment) ───────────────�
 - ✅ AU1 magic-link auth UI + deep-link handler + session restore (`dd104b9`, `7029bd2`)
 - ✅ BK1.1/BK1.2 + BK2 encrypted backup service + upload trigger + restore gate (`c3a60cc`)
 - ✅ R4–R6 RevenueCat purchase flow + PaywallScreen + TierLockedError gating (`86cdaad`)
+- ✅ A1–A5 PostHog events wired (lesson_started, answer_recorded, quiz_submitted, lesson_completed, streak_event, paywall_viewed, purchase_initiated/completed, backup events)
+- ✅ B2 Sentry enrichment tags — `anon_id` + `session_id` set in container init via `setSentryTags()`
 - ✅ 41 test suites / 381 tests green
 
 ---
