@@ -6,8 +6,9 @@ import { Text, Button, ProgressBar } from '@/presentation/components';
 import { MultipleChoice, DragDrop } from '@/presentation/components/assessments';
 import type { AssessmentAnswer } from '@/presentation/components/assessments/types';
 import { useServices } from '@/presentation/services';
-import { hapticsSessionComplete, hapticsStreakIncrement } from '@/presentation/services/haptics';
+import { hapticsSessionComplete } from '@/presentation/services/haptics';
 import { buildQuestion } from '@/presentation/screens/quizQuestion';
+import { SessionCompleteScreen } from '@/presentation/screens/SessionCompleteScreen';
 import {
   currentWord,
   NoWordsAvailableError,
@@ -33,8 +34,14 @@ export interface QuizScreenProps {
 type Phase =
   | { kind: 'loading' }
   | { kind: 'empty' }
-  | { kind: 'active'; session: QuizSession; startedAt: number }
-  | { kind: 'complete'; correct: number; total: number };
+  | { kind: 'active'; session: QuizSession; startedAt: number; preSessionStreak: number }
+  | {
+      kind: 'complete';
+      wordsReviewed: number;
+      streakIncremented: boolean;
+      currentStreak: number;
+      moreItemsAvailable: boolean;
+    };
 
 // MVP widget rotation: alternate the two shipped widgets by question index.
 function widgetFor(index: number): AssessmentType {
@@ -50,6 +57,10 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
 
   const start = useCallback(async () => {
     try {
+      // Snapshot streak before session so we can detect increment on completion.
+      const preStats = await services.queries.getUserStats().catch(() => null);
+      const preSessionStreak = preStats?.streak.currentStreak ?? 0;
+
       const session = await services.startQuiz.execute({
         tierId: asTierId(tierId),
         mode,
@@ -61,7 +72,7 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
         tier_id: tierId,
         mode,
       });
-      setPhase({ kind: 'active', session, startedAt: Date.now() });
+      setPhase({ kind: 'active', session, startedAt: Date.now(), preSessionStreak });
     } catch (error) {
       if (error instanceof NoWordsAvailableError) {
         setPhase({ kind: 'empty' });
@@ -103,8 +114,8 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
         questionKey.current += 1;
         if (out.result.isSessionComplete) {
           hapticsSessionComplete();
-          hapticsStreakIncrement();
-          // Fire lesson_completed event.
+          // Fire lesson_completed event (no accuracy in the event — only totals
+          // for aggregate funnel health; the UI never surfaces accuracy to user).
           const durationSec = phase.startedAt ? Math.round((Date.now() - phase.startedAt) / 1000) : 0;
           void services.analytics.track('lesson_completed', {
             tier_id: tierId,
@@ -113,18 +124,49 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
             total_attempts: out.session.words.length,
             duration_sec: durationSec,
           });
+
+          // Resolve post-session streak and "more items available" flag.
+          // Both calls are best-effort: failure falls back to safe defaults.
+          const [postStats, dailyProgress] = await Promise.all([
+            services.queries.getUserStats().catch(() => null),
+            services.queries
+              .getDailyProgress(asTierId(tierId))
+              .catch(() => null),
+          ]);
+
+          const postStreak = postStats?.streak.currentStreak ?? phase.preSessionStreak;
+          const streakIncremented = postStreak > phase.preSessionStreak;
+
+          // "more items available" = daily cap not yet hit.
+          const moreItemsAvailable =
+            dailyProgress !== null
+              ? dailyProgress.reviewsCompletedToday < dailyProgress.effectiveDailyCap
+              : false;
+
           setPhase({
             kind: 'complete',
-            correct: out.result.totalCorrect,
-            total: out.session.words.length,
+            wordsReviewed: out.session.words.length,
+            streakIncremented,
+            currentStreak: postStreak,
+            moreItemsAvailable,
           });
         } else {
-          setPhase({ kind: 'active', session: out.session, startedAt: phase.startedAt });
+          setPhase({
+            kind: 'active',
+            session: out.session,
+            startedAt: phase.startedAt,
+            preSessionStreak: phase.preSessionStreak,
+          });
         }
       } catch {
         // Never block the quiz path on a write failure: advance locally.
         questionKey.current += 1;
-        setPhase({ kind: 'active', session: phase.session, startedAt: phase.startedAt });
+        setPhase({
+          kind: 'active',
+          session: phase.session,
+          startedAt: phase.startedAt,
+          preSessionStreak: phase.preSessionStreak,
+        });
       }
     },
     [phase, services, tierId, mode],
@@ -158,17 +200,17 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
 
   if (phase.kind === 'complete') {
     return (
-      <Screen scroll={false}>
-        <View style={{ gap: spacing.s4, flex: 1, justifyContent: 'center' }}>
-          <Text variant="title" color="textPrimary" accessibilityRole="header">
-            Session complete
-          </Text>
-          <Text variant="bodyLg" color="textSecondary" tabularNums>
-            {`${phase.correct} of ${phase.total} correct`}
-          </Text>
-          <Button label="Back to Home" variant="primary" fullWidth onPress={onExit} />
-        </View>
-      </Screen>
+      <SessionCompleteScreen
+        wordsReviewed={phase.wordsReviewed}
+        streakIncremented={phase.streakIncremented}
+        currentStreak={phase.currentStreak}
+        moreItemsAvailable={phase.moreItemsAvailable}
+        onDone={onExit}
+        onKeepPracticing={() => {
+          // Re-start the quiz in the same tier: loads remaining due words.
+          void start();
+        }}
+      />
     );
   }
 
