@@ -76,45 +76,15 @@ type: action_plan
 
 ---
 
-### Task 4: C4 Enrichment Completion (PARALLEL)
+### ~~Task 4: C4 Enrichment Completion~~ ✅ DONE
 
-**What:** Fill definitions + grammar rules for 3K words via Claude API.
-
-**Action:**
-1. Use `content-tool/src/commands/enrich.ts` (Claude API adapter, built in sprint)
-2. Run batch for Foundation 2,848 words (Advanced + TOEFL skip for now)
-3. Cost: ~$0.30 (using Claude 3 Haiku, batched)
-4. Collect results into `working.db` enrichment columns
-5. Verify sample rows (10 random words) have definitions + grammar rules
-6. Log enrichment stats to session notes (% coverage, avg tokens, cost)
-
-**Expected outcome:** ✓ 2,848+ words enriched, ≥95% coverage, <$1 total cost
-**Blocker if:** API quota exceeded or definitions incomplete
-**Time:** ~1 hr (mostly waiting for API)
-**Effort:** Low (automated)
+**Completed:** commit `0cc4d45` — DeepSeek-chat enriched 2,790 stubs (3 passes) + 10 manual fixes. 2,881 words / 0 TBD stubs. `validate --strict` clean.
 
 ---
 
-### Task 5: C5 Full Validation Run (DEPENDENT ON C4)
+### ~~Task 5: C5 Full Validation Run~~ ✅ DONE
 
-**What:** Post-enrichment integrity check + audio file validation.
-
-**Action:**
-1. After C4 completes, re-run `npm run release -- --validate`
-   - Verify definitions present (null check)
-   - Verify grammar rules parsed correctly
-   - Verify audio file refs resolve (if audio bundled)
-2. Rebuild `words.db` from enriched `working.db`
-   - `npm run build` (default)
-   - Check for schema upgrade warnings
-3. Copy `words.db` to `mobile/assets/words.db`
-4. Run `mobile/npm run check` (155 tests) to verify DB schema compatibility
-5. Log results to `memory/2026-06-01_c5_validation.md`
-
-**Expected outcome:** ✓ All enrichment data valid, 155 tests green, db copy succeeds
-**Blocker if:** Schema mismatch or test failures
-**Time:** ~1 hr
-**Effort:** Low
+**Completed:** commit `0cc4d45` — `validate --strict` clean (0 errors, 2,802 known warnings). `words.db` (1.18 MB) copied to `mobile/assets/vocab/`. 41 test suites / 381 tests green.
 
 ---
 
@@ -188,10 +158,10 @@ PHASE 1 VALIDATION:
   ✓ Build infra locked (EAS profiles, Apple Team ID)
 
 CRITICAL PATH (C0–C5):
-  ⏳ NEW EAS build (week 1)
-  ⏳ C0 device test (week 1)
-  ⏳ C4 enrichment completion (week 1)
-  ⏳ C5 validation run (week 1–2)
+  ⏳ NEW EAS build (week 1) — still pending
+  ⏳ C0 device test (week 1) — still pending (physical iOS + Android)
+  ✓ C4 enrichment completion — DONE (commit 0cc4d45)
+  ✓ C5 validation run — DONE (0 errors, words.db in bundle)
 
 LAUNCH GATE:
   ⏳ P-2 beta recruitment starts (week 1–2)
@@ -240,7 +210,7 @@ NOT ON CRITICAL PATH:
 ## Session Continuation Notes
 
 - **Current master branch status:** All Phase 1 work merged. Ready for C0–C5 tasks.
-- **Test baseline:** 366 tests green (no regressions expected).
+- **Test baseline:** 381 tests green (41 suites).
 - **Config locked:** app.config.ts, eas.json, metro.config.js, .env.example all in repo.
 - **Decision lock:** D1–D8 all committed. No scope change without documented ADR.
 - **Memory:** 14 dated session notes + this plan. MEMORY.md auto-loads into CLAUDE.md.
