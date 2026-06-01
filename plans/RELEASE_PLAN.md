@@ -1,7 +1,7 @@
 ---
 title: LexiTap Master Release Plan
 status: active
-updated: 2026-05-31
+updated: 2026-06-01
 supersedes-ordering-in: ROADMAP.md, lexitap-docs/02-product-definition/ROADMAP.md
 phase: P1 (Phase 1 of 6 — tail)
 ---
@@ -40,6 +40,15 @@ The audit's code-level bugs were verified against current `master` and **fixed**
 
 **Not fixed (out of a code session's reach — these are the plan, not bugs):** content enrichment to 3k words, Apple/Google enrollment, EAS dev client, RevenueCat/auth/backup wiring, store submission. See the phase plan below.
 
+**Additional fixes — 2026-06-01:**
+
+| # | Fix | State | Evidence |
+|---|---|---|---|
+| **C4** | AI enrichment adapter (Anthropic) | ✅ **Code done** (`ed6791c`) — `AnthropicDefinitionProvider` batches 60 words/call to `claude-3-5-sonnet-20241022`; sets `definition_license='ai-original'`; CI-safe Noop default. **Enrichment RUN still pending** — 91 words founder-authored (`definition_license='original'`); 2,790 still TBD stubs. Run: `ANTHROPIC_API_KEY=... npm run cli -- enrich --tier foundation --add-definitions --provider anthropic`. Est. cost ~$0.35–0.75. **Do not copy to mobile until enrichment + release pass.** | `providers/anthropicDefinitionProvider.ts`, `commands/enrich.ts` (commit `ed6791c`) |
+| **C7/C8** | Release pipeline unblocked | ✅ **`npm run release --no-copy` → "release complete: 2,881 words, user_version=1"** — 3 root causes fixed: (1) `definition_license` column migration moved to `applyWorkingDbMigrations` (not DDL-only, was silently skipped for existing working.db); (2) stale `audio_path` rows cleared (241 words had paths from a prior Noop TTS run); (3) 5 CSV stub sentences fixed (the/is/answer rows leaked the answer word). **`npm run release` (copy to mobile) gated on C4 enrichment run first.** Tests: 96 content-tool + 338 mobile green. | `content-tool/src/lib/db.ts`, `commands/export.ts`, `data/input/foundation.csv` (commit `4461b88`) |
+| **WEB-1** | lexitap.app static site + B2B contact form | ✅ **Done early** (commits `5452a82` + `49ec0bd`). Site live with B2B contact form, privacy/terms pages. P5 task completed in P1 tail. | `website/` (plan archived: `WEB-1_STATIC_SITE.md`) |
+| **ASSET-1** | App icon PNG variants | ✅ **Done** — all sizes: `mobile/assets/icon.png` + `adaptive-icon.png`; `website/assets/lexitap-icon-{1024,512,180,120}.png` + SVG source. **ASSET-2 screenshots still TODO** (P5, after paywall + home finalized). | `website/assets/`, `mobile/assets/` |
+
 ## Phase plan at a glance (now → live on both stores)
 
 One scannable list. Each phase has an ordered task set and a single measurable exit gate. IDs map to the detailed domain plans in §A–F. **✅ = done this session.**
@@ -47,7 +56,7 @@ One scannable list. Each phase has an ordered task set and a single measurable e
 **P1 — Make the app real** *(exit: cold-launches on real iOS + Android, loads real Foundation words, completes onboarding→quiz→progress, emits retention events)*
 - ✅ C0 words.db delivery (code) · ✅ A1 tiers model · ✅ C2 tier activation · ✅ test harness green
 - ◐ **Prove C0 on a physical device** — ✅ proven on iOS **simulator** (after fixing dual-React + bare-name-ATTACH bugs); physical iOS + low-end Android still pending (fresh EAS build in flight)
-- ☐ Foundation content to 3,000 words: C3 source → C4 OpenAI enrich adapter → C5 sampled QA → ✅C6 synonyms → ✅C7 validate --strict → ✅C8 release pipeline *(the long pole — runs continuously; C6–C8 code DONE + tested, the remaining long pole is the paid AI-enrich RUN over 3k words)*
+- ◐ Foundation content to 3,000 words: ◐ C3 source (2,848/3,000 ≈ 95%) → ✅ C4 Anthropic enrich adapter (code `ed6791c`; **RUN pending**, 2,790 TBD stubs, ~$0.35–0.75) → C5 sampled QA → ✅C6 synonyms → ✅C7 validate --strict → ✅C8 release pipeline *(pipeline verified: `npm run release --no-copy` → "2,881 words, user_version=1"; copy to mobile gated on C4 run)*
 - ◐ Real onboarding + Home: **H-1 Home progress ✅ → O-1 persist `onboarding_state` ✅ → O-2 goal ✅ → O-4 diagnostic ✅ → O-5 knowledge map ✅ → P-1 empty states ✅**; P-2 a11y polish *(O-3 proficiency screen cut)*
 - ◐ Instrumentation: A1–A5 PostHog + `event_log` flush; **B1 Sentry ✅ + B2 scrub ✅** (B2 enrichment tags pending A2) *(without this P2's gate is unmeasurable)*
 - ☐ Build infra: eas init, `app.json→app.config.ts`, eas.json profiles, CI two-job, signing (build-infra #1–14) · **start Apple+Google enrollment day 1**
@@ -64,7 +73,7 @@ One scannable list. Each phase has an ordered task set and a single measurable e
 - ☐ C11 IELTS / Business / Common3K tiers · W-1 Classification widget · UX polish · (W-2 ImageMatch + C10 images only if curation pays off — likely deferred)
 
 **P5 — Launch** *(exit: live on both stores)*
-- ☐ ASSET-1/2 store assets · LEGAL-1…5 (age gate, account deletion 5.1.1(v), privacy labels, DPAs) · WEB-1 static site (B2B = contact form, no checkout) · REVIEW-1 App-Review battle plan · SUBMIT-1/2/3 — **iOS submission gated on SIWA + account deletion**
+- ✅ ASSET-1 icons (all PNG variants done) · ☐ ASSET-2 screenshots · ☐ LEGAL-1…5 (age gate, account deletion 5.1.1(v), privacy labels, DPAs) · ✅ WEB-1 static site done (early, `49ec0bd`) · ☐ REVIEW-1 App-Review battle plan · ☐ SUBMIT-1/2/3 — **iOS submission gated on SIWA + account deletion**
 
 **P6 — Growth** *(exit: 1,000 active users)*
 - ☐ Reddit/ASO · store-approved trial referrals · monthly content drops via the C8 pipeline (as store builds — they add IAP, not OTA-safe) · institutional seat tokens fast-follow
@@ -134,7 +143,7 @@ The chain that determines the ship date (everything else parallelizes around it)
 
 ```
 C0 (fix words.db delivery, prove on device)         ← URGENT, gates the whole app
-   └─> C3→C4→C5→C6→C7→C8 (Foundation content: source→AI-enrich→sampled QA→export)   ← LONG POLE
+   └─> ◐C3(2,848 done)→✅C4(adapter done, **RUN pending**)→C5→✅C6→✅C7→✅C8(pipeline passes)   ← long pole: run C4 enrichment + copy
 H-1, O-1✅→O-2✅→O-4✅→O-5✅ (Home + onboarding real)                ← gates P2 beta credibility *(O-3 cut)*
    └─> A1→A2→A3→A4→A5 + B1→B2 (instrumentation)      ← gates P2 measurability
         └─> [P2 beta: ≥1 week data] → D7 gate
@@ -173,16 +182,28 @@ ACCT-1 (Apple/Google enrollment) ───────────────�
 
 ---
 
-## 6. Immediate next actions (first ~2 weeks, in order)
+## 6. Immediate next actions (as of 2026-06-01)
 
-1. ◐ **C0 (PROVEN on iOS simulator 2026-05-31)** — `words.db` delivery fixed + unit-tested AND verified on the sim (cold launch → ATTACH → 43 rows at the time → UI renders; DB since expanded to 2,881 words), after fixing two runtime bugs `npm run check` missed (dual React; bare-name ATTACH). **Remaining: confirm on a physical iOS + low-end Android build** (fresh EAS build in flight; `0324f457` is stale). New harness: `cd mobile && npm run smoke`.
-2. **ACCT-1 / build-infra #8–9** — start Apple ($99) + Google ($25) enrollment *today* (external latency). **Top remaining priority.**
-3. ✅ **D2/D3/D4/D7 resolved**; ✅ **D1/D5/D6/D8 also resolved** (diagnostic scope→DIAG-B, age gate→16+ neutral, B2B model→pure-B2C launch, Common3K→free). All blocking decisions settled.
-4. ✅ **A1 (done)** — `tiers.ts` is now the one-time exam-pack entitlement model (exam packs $9.99, All-Exams bundle $29.99, upgrade SKUs, free Foundation/Advanced/Common3K); empty tiers `isActive:false`.
-5. ✅ **H-1 + O-1 (done)** — Home shows real daily progress (`dailyProgressQueries` → container injects now/tz → `HomeScreen`, no hardcoded `0`, offline→zero-state, unit-tested); `onboarding_state` persists end-to-end (`SaveOnboardingProfileUseCase` + defensive parse). Both already on `master` (commit `5808079`). **O-2 (goal screen) is now the head of the onboarding chain** — it's what actually populates `goal`/`band`/`frontierRank`.
-6. **eas init + eas.json + migrate app.json → app.config.ts** (build-infra #1, #4; needed for env injection).
-7. **C3 + build the OpenAI enrichment adapter (C4)** — kick off the content long pole early; it runs for weeks behind everything else.
-8. **Correct the two ROADMAP files** — they are actively misleading (auth timing, sync, content scope, "Phase 2 no coding"). Either point them at this plan or fix the specific lines flagged here.
+*Updated to reflect current state. Done items collapsed; only unfinished actions listed.*
+
+1. **Run C4 enrichment** — **the current blocker.** `ANTHROPIC_API_KEY=sk-ant-... npm run cli -- enrich --tier foundation --add-definitions --provider anthropic` → spot-check 5 random words → `npm run release` (copies enriched DB to `mobile/assets/vocab/words.db`). Est. ~$0.35–0.75, ~47 batches. Mobile bundle currently has TBD stubs — do not build for device until this runs.
+2. **C5 sampled QA gate** — after C4, run `npm run release --validate`. Manually review random 10–15% + 100% validator-flagged. Gate: sample pass-rate ≥80%.
+3. ◐ **C0 physical device test** — `cd mobile && eas build --platform ios --profile preview` (all infra ready: eas.json, app.config.ts, secrets, icon.png). Build proves C0 on real hardware. Simulator was proven 2026-05-31; physical iOS + low-end Android still pending.
+4. **ACCT-1 banking/tax** — Apple Paid Apps agreement + banking/tax forms. Apple Team ID W8FZGT253G known; confirm accounts active and Paid Apps signed (silent IAP blocker).
+5. **A1–A5 + B2** — PostHog emit seam (A1–A5) + Sentry `anon_id`/`session_id` enrichment tags (B2). Both needed before beta; P2 D7 gate is unmeasurable without.
+6. **ACCT-1 Google** — confirm Google Play account + closed-test 20-tester/14-day gate. Start early if not done.
+7. **Correct the two ROADMAP files** — auth timing, sync deletion, content scope, "Phase 2 no coding" still stale. Doc cleanup, not blocking.
+
+**Previously done (collapsed):**
+- ✅ All D1–D8 decisions settled
+- ✅ A1 tiers.ts (exam-pack model)
+- ✅ H-1 + O-1→O-5 onboarding chain
+- ✅ B1 + B2 scrub + B3 wired (EAS secret set, source maps pending build verify)
+- ✅ eas init + eas.json + app.config.ts + build infra #1–5
+- ✅ C4 adapter code (Anthropic)
+- ✅ C6 synonyms / C7 validate --strict / C8 release pipeline (pipeline passes)
+- ✅ WEB-1 lexitap.app static site (B2B contact form live)
+- ✅ ASSET-1 icons (all PNG variants + SVG + mobile icon.png)
 
 ---
 
@@ -196,7 +217,7 @@ All phase 2–5 work is detailed in these task-ordered plans, each self-containe
 | **P3** | [P3_REVENUECAT_PLAN.md](P3_REVENUECAT_PLAN.md) | Store products (R1–R2) · RevenueCat integration (R3–R7) · paywall wiring · tier gating | 10 paying users |
 | **P3** | [P3_AUTH_PLAN.md](P3_AUTH_PLAN.md) | Magic-link (AU1) · Google Sign-In (AU2) · Sign in with Apple (AU3) · account deletion · entitlement alias to RevenueCat | All three providers shipped |
 | **P3** | [P3_BACKUP_PLAN.md](P3_BACKUP_PLAN.md) | Encrypted backup upload (BK1) · restore/device-switch (BK2) · Supabase Storage + RLS | Verified on real device |
-| **P5** | [WEB-1_STATIC_SITE.md](WEB-1_STATIC_SITE.md) | Static marketing site (lexitap.app) · B2B contact form · privacy/terms pages · no B2C checkout | Live at lexitap.app |
+| **P5** ✅ | ~~[WEB-1_STATIC_SITE.md](WEB-1_STATIC_SITE.md)~~ (archived) | Static marketing site (lexitap.app) · B2B contact form · privacy/terms pages · no B2C checkout | ✅ Live at lexitap.app (done early `49ec0bd`) |
 | **P2** | [P2_RECRUITMENT_CHECKLIST.md](P2_RECRUITMENT_CHECKLIST.md) | Channel-by-channel recruitment script · Discord/Reddit/email templates · A/B messaging | 50+ active testers |
 | **P2** | [RETENTION_DASHBOARD.md](RETENTION_DASHBOARD.md) | PostHog Retention cohort config · D7/D30/D1 reads · funnel + crash-free stack | A7 ready for read |
 
@@ -272,7 +293,7 @@ Scope: onboarding screens, Home daily-progress, Settings, ImageMatch/Classificat
 - **C1 · content-version → rebundle contract** — S. App reads `PRAGMA user_version`, re-copies when bundled > installed; `build-manifest.json content_version` is the source of truth; CI fails if bundled version ≠ manifest. *Deps:* C0.
 - **C2 · Reconcile config tiers vs shipped tiers** — S. Ship only tiers with real content (Foundation for P1) or flag others `is_active:0`. Confirm `SQLiteContentTierRepository` respects it. *Deps:* none.
 - **C3 · Source + ingest full Foundation 3,000** — M (sourcing). Real top-3,000 frequency list (word, pos, cefr, theme), stable IDs, zero in-tier dup surface-forms. Definitions/sentences are NOT NULL at export. *Deps:* C2.
-- **C4 · Build the AI definition/sentence enrichment adapter (the bottleneck)** — L. *Done:* real OpenAI adapter behind `--provider openai` + `--add-definitions/--add-examples`, generating ESL-register definitions + single-blank example sentences per SEED_DATA_SPEC, passing `validate --strict`. *Why not hand-author:* 3,000 entries ≈ weeks. Cost: ~$0.01–0.03/word → **~$30–90 for 3,000.** *Files:* new `providers/openaiProvider.ts`, `commands/enrich.ts`, `defaultProviders.ts`. *Deps:* C3.
+- **C4 · AI definition/sentence enrichment adapter** — ✅ **Code done** (`ed6791c`). `AnthropicDefinitionProvider` batches 60 words/call to `claude-3-5-sonnet-20241022`; generates ESL-register definitions + single-blank example sentences per SEED_DATA_SPEC; sets `definition_license='ai-original'`; fail-closed on API errors; CI-safe Noop default. **Enrichment RUN still pending** — 91 words are founder-authored (`definition_license='original'`); 2,790 still TBD stubs. Run cost: ~$0.35–0.75 total (~$0.00013–0.00027/word). *Files:* `providers/anthropicDefinitionProvider.ts`, `providers/defaultProviders.ts`, `commands/enrich.ts`. *Deps:* C3. **Why not hand-author:** 3,000 entries ≈ weeks at 20s/word.
 - **C5 · Human review at realistic scale** — M (CLI) + L (review time). **100% manual review of 3k–6k words is not realistic solo** (~17h/3k at an optimistic 20s/word). *Done:* build the `review-definitions` CLI the docs reference; ship P1 on a **sampled QA gate** (random 10–15% + 100% of validator-flagged), log pass-rate, gate export on sample-pass threshold; wire in-app content-error reporting as the long-tail fix. Adds `definition_status` to working.db only (must not leak to shipped words.db — export projects an explicit column list). *Deps:* C4.
 - ✅ **C6 · Synonyms/antonyms for Foundation** — DONE. Synonyms/antonyms already wired through `enrich --add-synonyms` + validator rule #6 (JSON-array check on both); the missing piece — an env-gated `OpenAiSynonymProvider` (`providers/openaiSynonymProvider.ts`) — now exists, fail-closed/Noop without `OPENAI_API_KEY`, network as injected seam (zero paid calls in tests). `selectProviders('openai')` swaps it in. *Running* it at scale still costs OpenAI $ + needs the key. Valid JSON arrays per rule #6. *Deps:* C4.
 - ✅ **C7 · Tighten validation + provenance (backlog #41)** — DONE. `validate --strict` adds dup-leak (#10 `exampleLeaksAnswer` whole-token) + cross-row duplicate-definition (#12) + provenance/license (#11): new `words.definition_license` column (allow-set {original, ai-original, cc0, cc-by-sa}, default `original` at import). Orphan checks were already always-on (structural invariants, stricter-than-strict). Export aborts under `--strict` (fail-closed, proven against real working.db: 2,884 provenance errors → mobile words.db md5 UNCHANGED). *Deps:* C4.
@@ -435,7 +456,7 @@ A beta with no instrumentation forfeits the whole phase. **D3 → (A1→A2→A3�
 
 ## F. Store Submission, Legal/Compliance & Go-To-Market
 
-**Current reality: nothing built.** No `eas.json`, no icon/splash (`assets/` has only `vocab/`), no account-deletion/export/age-gate code. The docs are good target specs; this is from zero.
+**Current reality (2026-06-01):** `eas.json` ✅, `app.config.ts` ✅, icons ✅ (ASSET-1 done), WEB-1 ✅, EAS secrets set ✅. Still TODO: ASSET-2 screenshots, LEGAL-1…5 code, RevenueCat (P3), account-deletion/export/age-gate code, App Review prep, store submission.
 
 ### Flags first
 
@@ -455,12 +476,12 @@ A beta with no instrumentation forfeits the whole phase. **D3 → (A1→A2→A3�
 - **BUILD-1 · `app.json` → `app.config.ts` + `eas.json`** — M. Env injection via `extra`; profiles + `ascAppId`/`appleTeamId`/Android SA; `expo-doctor` clean. *Deps:* ACCT-1.
 - **BUILD-2 · words.db bundling verification** — M (= C0). Release blocker — a store build shipping an empty word list is dead on arrival. *Deps:* BUILD-1.
 - **LEGAL-4 · Account deletion + data export + age gate (CODE)** — L. Settings "Delete account" (**Apple-mandated once accounts exist, 5.1.1(v)** — cascades Supabase + clears device, irreversible), "Export my data" (JSON), neutral DOB 16+ block. *Deps:* auth domain (accounts must exist), LEGAL-1. **Highest-coupling legal item — blocked on unwired auth.**
-- **ASSET-1 · Icon + splash + store icons** — M. 1024² iOS (no alpha/rounding), Android adaptive, 512² Play, splash. None exist. *Deps:* none.
+- **ASSET-1 · Icon + splash + store icons** — ✅ **Done.** All icon variants exist: `mobile/assets/icon.png` (1024×1024, Expo), `mobile/assets/adaptive-icon.png` (Android), `website/assets/lexitap-icon-{1024,512,180,120}.png` + SVG source. Teal `#20B2AA` background, "LT" monogram. *Deps:* none.
 - **ASSET-2 · Screenshots** — M. 6 × iPhone 6.9" (1320×2868) showing no-typing recognition (MC + DragDrop only), SRS, TOEFL/IELTS, Premium "cancel anytime," Knowledge Map; **Screen 3 = offline messaging, not sync**; Android feature graphic 1024×500. *Deps:* BUILD-2, H-1 (no `0` progress).
 - **ASO-1 · Listing copy + metadata** — M. iOS name "LexiTap: TOEFL & IELTS Vocab", subtitle "Offline vocabulary review. No typing.", 100-char keywords, 4000-char desc; Android short(80)+full; category; age rating general/teen (NOT Kids); English-only at launch. *Deps:* none.
 - **LEGAL-5 · Privacy nutrition labels + Data Safety** — S. Both forms per GDPR doc map, Tracking=No, **match each other and runtime SDK behavior**, do NOT declare sync. Privacy URL entered. *Deps:* LEGAL-2/3 + final SDK list.
 - **REVCAT-1 · Store IAP products + RevenueCat wiring** — L. 3 SKUs in ASC+Play, `premium` entitlement + `default` offering, keys as EAS secrets, paywall lists terms/price/auto-renewal + ToS/Privacy per 3.1.2. (Cross-domain with §D.) *Deps:* ACCT-1.
-- **WEB-1 · lexitap.app static site + B2B sales-contact** — M. Hosts privacy/terms; B2B = contact form only, **no B2C checkout / price list / steering** (Apple reviews the site). Manual invoice. *Deps:* LEGAL-1/2.
+- **WEB-1 · lexitap.app static site + B2B sales-contact** — ✅ **Done early** (commits `5452a82` + `49ec0bd`). Site live with B2B contact form, privacy/terms. No B2C checkout. Plan archived: `WEB-1_STATIC_SITE.md`.
 - **REVIEW-1 · App Review battle plan (3.1.3(c))** — M. 2 pre-provisioned seat tokens + 1 teacher demo + private video (student enters token → unlocks TOEFL offline) + verbatim 3.1.3(c) notes + exact redemption-field copy. **Risk HIGH — depends on B2B1 existing; if seat redemption was deleted (D7), the institutional story is vapor — rebuild or drop B2B.** *Deps:* B2B1, LEGAL-2, REVCAT-1.
 - **SUBMIT-1 · TestFlight + Play Internal** — M. Production build both platforms; founder + cohort install + run offline; `expo-doctor` clean. *Deps:* BUILD-1/2, ASSET-1/2, REVCAT-1, LEGAL-4, **auth+SIWA shipped.**
 - **SUBMIT-2 · iOS App Store** — S to submit, **1–2wk review buffer.** Pre-empt the six rejection causes: 3.1.3(c) (REVIEW-1), missing SIWA (AU3), paywall terms (REVCAT-1), privacy/behavior mismatch (kill sync claims), account deletion (LEGAL-4), website B2C undercut (WEB-1). *Deps:* all above + SIWA + REVIEW-1.
