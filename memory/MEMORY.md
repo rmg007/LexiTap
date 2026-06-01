@@ -23,6 +23,8 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ## Session Detail Index (2026-05-31)
 
+**[AU1 + BK1 Service Layer (2026-05-31_au1_bk1_service_layer.md)](2026-05-31_au1_bk1_service_layer.md)** — Phase-3 auth + backup **code** (not plans) landed @ `9c3232a`, 326 tests green. Supabase magic-link auth (`infrastructure/auth/`) + Storage backup of user.db (`infrastructure/backup/`), env-gated + Noop fallbacks, service-layer only (no UI/wiring yet). ⚠️ **Next-wave traps:** (1) backup MUST share auth's *authenticated* client or RLS silently fails; (2) container.ts unwired (no consumer yet); (3) two duplicated env seams to converge; (4) **babel inlines `EXPO_PUBLIC_*` at build** → Jest env-gate needs an injectable seam (applies to ALL env-gated services); (5) human must create `user-backups` bucket + RLS. Concurrent-tree lesson repeated: shared barrels (`domain/index.ts`) need a single owner.
+
 **[Sprint Summary (2026-05-31_sprint_summary.md)](2026-05-31_sprint_summary.md)** — Original mega-sprint summary
 - 67 commits, 15+ agents, P-2 audit complete, Phase 1 critical path (C0 sim proven, O-1→O-5 complete, EAS setup, 4 decisions, 222 tests green)
 - [AsterKit Integration (2026-05-31)](2026-05-31_asterkit_integration.md) — Rules, patterns, and workflows adopted from AsterKit; what fit, what didn't
