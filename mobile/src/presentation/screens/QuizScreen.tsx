@@ -6,9 +6,10 @@ import { Text, Button, ProgressBar } from '@/presentation/components';
 import { MultipleChoice, DragDrop } from '@/presentation/components/assessments';
 import type { AssessmentAnswer } from '@/presentation/components/assessments/types';
 import { useServices } from '@/presentation/services';
-import { hapticsCorrect, hapticsSessionComplete, hapticsStreakIncrement } from '@/presentation/services/haptics';
+import { hapticsCorrect, hapticsSessionComplete } from '@/presentation/services/haptics';
 import { buildQuestion } from '@/presentation/screens/quizQuestion';
 import { FeedbackLayer } from '@/presentation/screens/FeedbackLayer';
+import { SessionCompleteScreen } from '@/presentation/screens/SessionCompleteScreen';
 import {
   currentWord,
   NoWordsAvailableError,
@@ -37,18 +38,25 @@ export interface QuizScreenProps {
 type Phase =
   | { kind: 'loading' }
   | { kind: 'empty' }
-  | { kind: 'active'; session: QuizSession; startedAt: number }
+  | { kind: 'active'; session: QuizSession; startedAt: number; preSessionStreak: number }
   | {
       kind: 'feedback';
       session: QuizSession;
       startedAt: number;
+      preSessionStreak: number;
       wasCorrect: boolean;
       chosenValue: string;
       correctValue: string;
       gloss: string;
       assessmentType: AssessmentType;
     }
-  | { kind: 'complete'; correct: number; total: number };
+  | {
+      kind: 'complete';
+      wordsReviewed: number;
+      streakIncremented: boolean;
+      currentStreak: number;
+      moreItemsAvailable: boolean;
+    };
 
 // MVP widget rotation: alternate the two shipped widgets by question index.
 function widgetFor(index: number): AssessmentType {
@@ -64,25 +72,23 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
 
   const start = useCallback(async () => {
     try {
+      // Snapshot streak before session so we can detect increment on completion.
+      const preStats = await services.queries.getUserStats().catch(() => null);
+      const preSessionStreak = preStats?.streak.currentStreak ?? 0;
+
       const session = await services.startQuiz.execute({
         tierId: asTierId(tierId),
         mode,
         nowMs: Date.now(),
         tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
-      // Fire lesson_started event.
-      void services.analytics.track('lesson_started', {
-        tier_id: tierId,
-        mode,
-      });
-      setPhase({ kind: 'active', session, startedAt: Date.now() });
+      void services.analytics.track('lesson_started', { tier_id: tierId, mode });
+      setPhase({ kind: 'active', session, startedAt: Date.now(), preSessionStreak });
     } catch (error) {
       if (error instanceof NoWordsAvailableError) {
         setPhase({ kind: 'empty' });
         return;
       }
-      // Offline-first: any other start failure also lands on the calm empty
-      // state rather than a blocking error screen.
       setPhase({ kind: 'empty' });
     }
   }, [services, tierId, mode]);
@@ -100,16 +106,14 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
       if (word === null) return;
 
       const isCorrect = answer.value === correctValue;
-
       // Haptic: soft success on correct only — no error haptic on incorrect.
-      if (isCorrect) {
-        hapticsCorrect();
-      }
+      if (isCorrect) hapticsCorrect();
 
       setPhase({
         kind: 'feedback',
         session: phase.session,
         startedAt: phase.startedAt,
+        preSessionStreak: phase.preSessionStreak,
         wasCorrect: isCorrect,
         chosenValue: answer.value,
         correctValue,
@@ -136,7 +140,6 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
         isCorrect: phase.wasCorrect,
         nowMs: Date.now(),
       });
-      // Fire quiz_submitted analytics event.
       void services.analytics.track('quiz_submitted', {
         tier_id: tierId,
         assessment_type: phase.assessmentType,
@@ -145,7 +148,6 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
       questionKey.current += 1;
       if (out.result.isSessionComplete) {
         hapticsSessionComplete();
-        hapticsStreakIncrement();
         const durationSec = phase.startedAt
           ? Math.round((Date.now() - phase.startedAt) / 1000)
           : 0;
@@ -156,18 +158,41 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
           total_attempts: out.session.words.length,
           duration_sec: durationSec,
         });
+        // Resolve post-session streak and "more items" flag (best-effort).
+        const [postStats, dailyProgress] = await Promise.all([
+          services.queries.getUserStats().catch(() => null),
+          services.queries.getDailyProgress(asTierId(tierId)).catch(() => null),
+        ]);
+        const postStreak = postStats?.streak.currentStreak ?? phase.preSessionStreak;
+        const streakIncremented = postStreak > phase.preSessionStreak;
+        const moreItemsAvailable =
+          dailyProgress !== null
+            ? dailyProgress.reviewsCompletedToday < dailyProgress.effectiveDailyCap
+            : false;
         setPhase({
           kind: 'complete',
-          correct: out.result.totalCorrect,
-          total: out.session.words.length,
+          wordsReviewed: out.session.words.length,
+          streakIncremented,
+          currentStreak: postStreak,
+          moreItemsAvailable,
         });
       } else {
-        setPhase({ kind: 'active', session: out.session, startedAt: phase.startedAt });
+        setPhase({
+          kind: 'active',
+          session: out.session,
+          startedAt: phase.startedAt,
+          preSessionStreak: phase.preSessionStreak,
+        });
       }
     } catch {
       // Never block the quiz path on a write failure: advance locally.
       questionKey.current += 1;
-      setPhase({ kind: 'active', session: phase.session, startedAt: phase.startedAt });
+      setPhase({
+        kind: 'active',
+        session: phase.session,
+        startedAt: phase.startedAt,
+        preSessionStreak: phase.preSessionStreak,
+      });
     }
   }, [phase, services, tierId, mode]);
 
@@ -199,17 +224,14 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
 
   if (phase.kind === 'complete') {
     return (
-      <Screen scroll={false}>
-        <View style={{ gap: spacing.s4, flex: 1, justifyContent: 'center' }}>
-          <Text variant="title" color="textPrimary" accessibilityRole="header">
-            Session complete
-          </Text>
-          <Text variant="bodyLg" color="textSecondary" tabularNums>
-            {`${phase.correct} of ${phase.total} correct`}
-          </Text>
-          <Button label="Back to Home" variant="primary" fullWidth onPress={onExit} />
-        </View>
-      </Screen>
+      <SessionCompleteScreen
+        wordsReviewed={phase.wordsReviewed}
+        streakIncremented={phase.streakIncremented}
+        currentStreak={phase.currentStreak}
+        moreItemsAvailable={phase.moreItemsAvailable}
+        onDone={onExit}
+        onKeepPracticing={() => void start()}
+      />
     );
   }
 
@@ -221,7 +243,6 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
 
   const word = currentWord(activeSession);
   if (word === null) {
-    // Defensive: index past the end without a complete result.
     return (
       <Screen scroll={false}>
         <Button label="Back to Home" variant="primary" fullWidth onPress={onExit} />
@@ -235,55 +256,40 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
   const position = activeSession.currentIndex + 1;
 
   return (
-    <Screen
-      scroll={false}
-      contentStyle={{
-        flex: 1,
-        padding: 0,
-        // Override Screen's default padding so we can control layout precisely.
-        paddingHorizontal: 0,
-        paddingVertical: 0,
-      }}
-    >
-      <View style={{ flex: 1, paddingHorizontal: spacing.s4, paddingTop: spacing.s4, gap: spacing.s3 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.s3 }}>
-          <Button label="Back" variant="tertiary" onPress={onExit} />
-          <View style={{ flex: 1 }}>
-            <ProgressBar progress={position / total} label="Session progress" />
-          </View>
-          <Text variant="mono" color="textTertiary" tabularNums>
-            {`${position}/${total}`}
-          </Text>
+    <Screen scroll={false}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.s3 }}>
+        <Button label="Back" variant="tertiary" onPress={onExit} />
+        <View style={{ flex: 1 }}>
+          <ProgressBar progress={position / total} label="Session progress" />
         </View>
-
-        {/* Assessment widget — frozen during feedback phase so taps are blocked */}
-        <View pointerEvents={isFeedback ? 'none' : 'auto'} style={{ flex: 1 }}>
-          {question.assessmentType === 'multiple_choice' ? (
-            <MultipleChoice
-              key={questionKey.current}
-              prompt={question.prompt}
-              context={question.context}
-              options={question.options}
-              correctValue={question.correctValue}
-              onAnswer={(a) =>
-                handleAnswer(a, question.correctValue, word.definition)
-              }
-            />
-          ) : (
-            <DragDrop
-              key={questionKey.current}
-              sentence={question.sentence}
-              options={question.options}
-              correctValue={question.correctValue}
-              onAnswer={(a) =>
-                handleAnswer(a, question.correctValue, word.definition)
-              }
-            />
-          )}
-        </View>
+        <Text variant="mono" color="textTertiary" tabularNums>
+          {`${position}/${total}`}
+        </Text>
       </View>
 
-      {/* FeedbackLayer: slides up from frame bottom, rendered after answer */}
+      {/* Assessment widget — frozen during feedback phase so taps are blocked */}
+      <View pointerEvents={isFeedback ? 'none' : 'auto'} style={{ flex: 1 }}>
+        {question.assessmentType === 'multiple_choice' ? (
+          <MultipleChoice
+            key={questionKey.current}
+            prompt={question.prompt}
+            context={question.context}
+            options={question.options}
+            correctValue={question.correctValue}
+            onAnswer={(a) => handleAnswer(a, question.correctValue, word.definition)}
+          />
+        ) : (
+          <DragDrop
+            key={questionKey.current}
+            sentence={question.sentence}
+            options={question.options}
+            correctValue={question.correctValue}
+            onAnswer={(a) => handleAnswer(a, question.correctValue, word.definition)}
+          />
+        )}
+      </View>
+
+      {/* FeedbackLayer: slides up from frame bottom after answer */}
       {isFeedback && (
         <FeedbackLayer
           wasCorrect={phase.wasCorrect}

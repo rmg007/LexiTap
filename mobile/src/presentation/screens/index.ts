@@ -3,6 +3,10 @@ export { HomeScreen, type HomeScreenProps } from '@/presentation/screens/HomeScr
 export { QuizScreen, type QuizScreenProps } from '@/presentation/screens/QuizScreen';
 export { LearnCardScreen, type LearnCardScreenProps } from '@/presentation/screens/LearnCardScreen';
 export { FeedbackLayer, type FeedbackLayerProps } from '@/presentation/screens/FeedbackLayer';
+export {
+  SessionCompleteScreen,
+  type SessionCompleteScreenProps,
+} from '@/presentation/screens/SessionCompleteScreen';
 export { ProgressScreen } from '@/presentation/screens/ProgressScreen';
 export { SettingsScreen } from '@/presentation/screens/SettingsScreen';
 export { PaywallScreen, type PaywallScreenProps } from '@/presentation/screens/PaywallScreen';
