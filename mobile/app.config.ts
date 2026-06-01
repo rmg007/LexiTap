@@ -33,6 +33,12 @@ const config: ExpoConfig = {
   scheme: 'lexitap',
   userInterfaceStyle: 'dark',
   newArchEnabled: true,
+  icon: './assets/icon.png',
+  splash: {
+    image: './assets/splash.png',
+    resizeMode: 'contain',
+    backgroundColor: '#0D1B2A',
+  },
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'com.lexitap.app',
@@ -44,6 +50,10 @@ const config: ExpoConfig = {
   },
   android: {
     package: 'com.lexitap.app',
+    adaptiveIcon: {
+      foregroundImage: './assets/adaptive-icon.png',
+      backgroundColor: '#0D1B2A',
+    },
   },
   plugins,
   runtimeVersion: { policy: 'appVersion' },

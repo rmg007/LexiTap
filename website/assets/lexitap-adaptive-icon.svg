@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Transparent background — Android supplies its own shaped mask -->
+  <!-- Teal square centered, scaled to 80% for Android safe zone -->
+  <rect x="102" y="102" width="820" height="820" rx="145" ry="145" fill="#20B2AA"/>
+  <!-- Monogram "LT" in white -->
+  <text
+    x="512"
+    y="680"
+    font-family="system-ui, -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif"
+    font-size="490"
+    font-weight="600"
+    text-anchor="middle"
+    fill="#F2F5F6"
+    dominant-baseline="middle"
+  >LT</text>
+</svg>

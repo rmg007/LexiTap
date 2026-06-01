@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1284" height="2778" viewBox="0 0 1284 2778">
+  <!-- Dark background matching app dark mode -->
+  <rect width="1284" height="2778" fill="#0D1B2A"/>
+  <!-- Centered teal rounded square icon (320x320) -->
+  <rect x="482" y="1189" width="320" height="320" rx="57" ry="57" fill="#20B2AA"/>
+  <!-- Monogram "LT" -->
+  <text
+    x="642"
+    y="1390"
+    font-family="system-ui, -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif"
+    font-size="180"
+    font-weight="600"
+    text-anchor="middle"
+    fill="#F2F5F6"
+    dominant-baseline="middle"
+  >LT</text>
+</svg>
