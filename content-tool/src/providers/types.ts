@@ -34,8 +34,21 @@ export interface ImageProvider {
   assignImage(word: WordRow): Promise<string | null>;
 }
 
+export interface DefinitionResult {
+  definition: string;
+  exampleSentence: string;
+}
+
+/** Generates an ESL-register definition + single-blank example sentence. */
+export interface DefinitionProvider {
+  readonly name: string;
+  /** Returns null if the word should be skipped (e.g. API failure for a batch). */
+  generate(words: WordRow[]): Promise<Map<string, DefinitionResult>>;
+}
+
 export interface ProviderRegistry {
   synonyms: SynonymProvider;
   audio: AudioProvider;
   image: ImageProvider;
+  definitions: DefinitionProvider;
 }

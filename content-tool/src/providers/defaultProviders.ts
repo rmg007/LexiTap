@@ -13,12 +13,15 @@
 import type { WordRow } from '@/schema/types';
 import type {
   AudioProvider,
+  DefinitionProvider,
+  DefinitionResult,
   ImageProvider,
   ProviderRegistry,
   SynonymProvider,
   SynonymSet,
 } from '@/providers/types';
 import { OpenAiSynonymProvider } from '@/providers/openaiSynonymProvider';
+import { AnthropicDefinitionProvider } from '@/providers/anthropicDefinitionProvider';
 
 export class NoopSynonymProvider implements SynonymProvider {
   readonly name = 'noop';
@@ -43,11 +46,19 @@ export class NoopImageProvider implements ImageProvider {
   }
 }
 
+export class NoopDefinitionProvider implements DefinitionProvider {
+  readonly name = 'noop';
+  async generate(_words: WordRow[]): Promise<Map<string, DefinitionResult>> {
+    return new Map();
+  }
+}
+
 export function defaultProviders(): ProviderRegistry {
   return {
     synonyms: new NoopSynonymProvider(),
     audio: new DeterministicAudioProvider(),
     image: new NoopImageProvider(),
+    definitions: new NoopDefinitionProvider(),
   };
 }
 
@@ -60,6 +71,7 @@ export function defaultProviders(): ProviderRegistry {
  */
 export const KNOWN_PROVIDERS: ReadonlySet<string> = new Set([
   'openai', // synonyms/antonyms (text)
+  'anthropic', // definitions + example sentences (text)
   'elevenlabs', // audio
   'google', // audio (alt)
   'unsplash', // images
@@ -83,6 +95,9 @@ export function selectProviders(provider?: string): ProviderRegistry {
   const registry = defaultProviders();
   if (provider === 'openai') {
     registry.synonyms = new OpenAiSynonymProvider();
+  }
+  if (provider === 'anthropic') {
+    registry.definitions = new AnthropicDefinitionProvider();
   }
   return registry;
 }

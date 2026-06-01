@@ -30,6 +30,8 @@ export interface EnrichOptions {
   addSynonyms?: boolean;
   addAudio?: boolean;
   addImages?: boolean;
+  /** Enrich definitions + example sentences (C4). Requires --provider anthropic. */
+  addDefinitions?: boolean;
   force?: boolean;
   limit?: number;
   /** Provider name requested via --provider (validated by selectProviders). */
@@ -55,6 +57,7 @@ export interface EnrichSummary {
   synonyms: number;
   audio: number;
   images: number;
+  definitions: number;
 }
 
 /** Parse CSV with word and pos columns. */
@@ -219,7 +222,7 @@ export async function runEnrich(
   providers: ProviderRegistry,
   options: EnrichOptions,
 ): Promise<EnrichSummary> {
-  const summary: EnrichSummary = { synonyms: 0, audio: 0, images: 0 };
+  const summary: EnrichSummary = { synonyms: 0, audio: 0, images: 0, definitions: 0 };
   if (!options.tier) throw new Error('runEnrich: tier required');
   let rows = loadTierRows(db, options.tier);
   if (options.limit !== undefined) rows = rows.slice(0, options.limit);
@@ -227,6 +230,9 @@ export async function runEnrich(
   const setSynonyms = db.prepare(`UPDATE words SET synonyms = ?, antonyms = ? WHERE id = ?`);
   const setAudio = db.prepare(`UPDATE words SET audio_path = ? WHERE id = ?`);
   const setImage = db.prepare(`UPDATE words SET image_path = ? WHERE id = ?`);
+  const setDefinition = db.prepare(
+    `UPDATE words SET definition = ?, example_sentence = ?, definition_license = 'ai-original' WHERE id = ?`,
+  );
 
   for (const row of rows) {
     if (options.addSynonyms && (options.force || row.synonyms === null)) {
@@ -249,6 +255,26 @@ export async function runEnrich(
       }
     }
   }
+
+  // Definition enrichment batches all eligible rows at once (not per-row) to
+  // minimise API round-trips. Rows are eligible when force=true or when the
+  // definition is a TBD stub (starts with "(TBD:").
+  if (options.addDefinitions) {
+    const toEnrich = options.force
+      ? rows
+      : rows.filter((r) => !r.definition || r.definition.startsWith('(TBD:'));
+    if (toEnrich.length > 0) {
+      const definitionMap = await providers.definitions.generate(toEnrich);
+      for (const row of toEnrich) {
+        const result = definitionMap.get(row.word.toLowerCase());
+        if (result) {
+          setDefinition.run(result.definition, result.exampleSentence, row.id);
+          summary.definitions += 1;
+        }
+      }
+    }
+  }
+
   return summary;
 }
 
@@ -288,6 +314,7 @@ export async function enrichCommand(args: string[]): Promise<void> {
     addSynonyms: args.includes('--add-synonyms'),
     addAudio: args.includes('--add-audio'),
     addImages: args.includes('--add-images'),
+    addDefinitions: args.includes('--add-definitions'),
     force: args.includes('--force'),
     limit: limitRaw ? Number.parseInt(limitRaw, 10) : undefined,
     provider,
@@ -306,7 +333,7 @@ export async function enrichCommand(args: string[]): Promise<void> {
   try {
     const summary = await runEnrich(db, providers, options);
     logger.print(
-      `enriched${via} synonyms ${summary.synonyms} / audio ${summary.audio} / images ${summary.images}`,
+      `enriched${via} definitions ${summary.definitions} / synonyms ${summary.synonyms} / audio ${summary.audio} / images ${summary.images}`,
     );
   } finally {
     db.close();
