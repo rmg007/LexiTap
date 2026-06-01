@@ -4,6 +4,17 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 🔧 Session: Auth UI — AU1 Magic-Link + Deep-Link (2026-06-01)
+
+- **AU1 magic-link flow complete** (commits `dd104b9`, `7029bd2`): `AuthContext` + `useAuth` hook, `SignInScreen` (two-phase: email → 6-digit OTP), `app/auth/sign-in.tsx` route, `AuthProvider` in `_layout.tsx`, `SettingsScreen` Account card (sign-in/sign-out/restore)
+- **AU1.4 deep-link**: `AuthPort.verifyOtpLink(tokenHash)` — `lexitap://auth/callback?token_hash=…` → session + `router.replace('/')`. Wired via `Linking.addEventListener` + `getInitialURL()` inside `AuthProvider`
+- **AU4.4 session refresh**: `AppState` listener in `AuthProvider` syncs session on foreground resume
+- **Test baseline: 41 suites / 381 tests green**
+- ⚠️ **Blocked (need A0 EAS dev client + external setup):** AU2 Google Sign-In (`@react-native-google-signin`), AU3 SIWA (`@react-native-apple-authentication`), RevenueCat `Purchases.logIn(userId)` alias after sign-in
+- ⚠️ **Ryan manual steps remaining:** Supabase `user-backups` bucket + RLS; deploy `delete-account` Edge Function
+
+---
+
 ## ✅ Session: C5 Validation Run + Validator Fix (2026-05-31)
 
 **[C5 Validation Run (2026-05-31_c5_validation_run.md)](2026-05-31_c5_validation_run.md)**
@@ -27,16 +38,15 @@ This directory contains session notes, architectural decisions, and lessons lear
 **[Content Pipeline Fix + C4 Enrichment (2026-06-01_content_pipeline_and_c4.md)](2026-06-01_content_pipeline_and_c4.md)**
 - `npm run release --no-copy` now passes: 2,881 words / user_version=1 (was blocked by 3,125 validate --strict errors)
 - **Root causes fixed:** C7 `definition_license` column migration (`openWorkingDb` → `applyWorkingDbMigrations`); stale audio_path cleared; 3 stub example sentences in foundation.csv fixed; `bootstrapWorkingForRelease` no longer runs audio enrich
-- **C4 enrichment DB mode added** (commit `ed6791c`): `enrich --tier foundation --add-definitions --provider anthropic` → Claude API → `definition_license='ai-original'`; 96 content-tool + 338 mobile tests green
-- ⚠️ **Action needed (Ryan):** Run C4 with `ANTHROPIC_API_KEY=sk-ant-...` then `npm run release` (see note for exact commands). Do NOT copy words.db to mobile until after C4 — current bundle has TBD stubs.
-- ⚠️ **EAS build ready:** `cd mobile && eas build --platform ios --profile preview`
+- **C4 enrichment DB mode added** (commit `ed6791c`); **enrichment RUN complete** (commit `0cc4d45`): DeepSeek-chat enriched 2,790 TBD stubs in 3 passes + 10 manual fixes; `validate --strict` clean; `words.db` (1.18 MB, 2,881 real defs) copied to `mobile/assets/vocab/` — ✅ no further action needed
+- ⚠️ **EAS build still needed:** `cd mobile && eas build --platform ios --profile preview` (gates C0 physical device test)
 
 ---
 
 ## 🎯 Mega-Sprint Summary (2026-05-31)
 
 **[Mega-Sprint Final (2026-05-31_mega_sprint_final.md)](2026-05-31_mega_sprint_final.md)** — AUTHORITATIVE SESSION RECORD
-- 30+ production commits, 40+ spawned tasks, 366 total tests (all green)
+- 30+ production commits, 40+ spawned tasks, 366 tests at time of writing (now 381 green)
 - **Phase 1 complete:** Accessibility audit (WCAG AA) + Onboarding (O-1→O-5) + Build infra (EAS locked) + Analytics/Crash (prod-ready) + Monetization (SKU tiers locked)
 - **Phase 2-3 blueprints:** P2_BETA_PLAN.md, P3_REVENUECAT_PLAN.md, P3_AUTH_PLAN.md, P3_BACKUP_PLAN.md + 4 decision records (D1–D8)
 - **Launch blockers:** C0 device test, C4 enrichment, C5 validation, P-2 beta recruitment (all explicit + prioritized)
