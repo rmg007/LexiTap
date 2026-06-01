@@ -189,4 +189,27 @@ export class SupabaseAuthService implements AuthPort {
       data.subscription.unsubscribe();
     };
   }
+
+  async deleteAccount(): Promise<Result> {
+    if (!this.client) return NOT_CONFIGURED;
+    try {
+      const { error } = await this.client.functions.invoke('delete-account');
+      if (error) {
+        // Map 404 (edge function not yet deployed) as network so the UI shows
+        // retry rather than a confusing "invalid code" message.
+        const status = (error as { status?: number })?.status;
+        if (!status || status === 404 || status >= 500) {
+          return err({ kind: 'network', message: 'Network error. Check your connection.' });
+        }
+        if (status === 429) {
+          return err({ kind: 'rate_limited', message: 'Too many attempts. Try again later.' });
+        }
+        return err({ kind: 'unknown', message: 'Something went wrong. Please try again.' });
+      }
+      await this.signOut();
+      return ok();
+    } catch {
+      return err({ kind: 'network', message: 'Network error. Check your connection.' });
+    }
+  }
 }

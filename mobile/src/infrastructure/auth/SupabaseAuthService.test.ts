@@ -1,6 +1,9 @@
 // Mock SecureStore (native) and the Supabase SDK before importing the service.
 jest.mock("expo-secure-store");
 
+const mockFunctions = {
+  invoke: jest.fn(),
+};
 const mockAuth = {
   signInWithOtp: jest.fn(),
   verifyOtp: jest.fn(),
@@ -8,7 +11,7 @@ const mockAuth = {
   getSession: jest.fn(),
   onAuthStateChange: jest.fn(),
 };
-const mockCreateClient = jest.fn((..._args: unknown[]) => ({ auth: mockAuth }));
+const mockCreateClient = jest.fn((..._args: unknown[]) => ({ auth: mockAuth, functions: mockFunctions }));
 const mockIsRetryable = jest.fn((_e: unknown) => false);
 
 jest.mock("@supabase/supabase-js", () => ({
@@ -68,6 +71,7 @@ describe("SupabaseAuthService", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsRetryable.mockReturnValue(false);
+    mockAuth.signOut.mockResolvedValue({ error: null });
   });
 
   describe("construction / env-gate", () => {
@@ -116,6 +120,10 @@ describe("SupabaseAuthService", () => {
       const unsub = service.onAuthStateChange(() => {});
       expect(typeof unsub).toBe("function");
       expect(mockAuth.onAuthStateChange).not.toHaveBeenCalled();
+
+      const del = await service.deleteAccount();
+      expect(del.ok).toBe(false);
+      if (!del.ok) expect(del.error.kind).toBe("not_configured");
     });
   });
 
@@ -287,6 +295,45 @@ describe("SupabaseAuthService", () => {
     it("swallows SDK errors (never throws)", async () => {
       mockAuth.signOut.mockRejectedValue(new Error("network"));
       await expect(makeService().signOut()).resolves.toBeUndefined();
+    });
+  });
+
+  describe("deleteAccount", () => {
+    it("invokes the delete-account edge function and signs out on success", async () => {
+      mockFunctions.invoke.mockResolvedValue({ data: null, error: null });
+      const result = await makeService().deleteAccount();
+      expect(result.ok).toBe(true);
+      expect(mockFunctions.invoke).toHaveBeenCalledWith("delete-account");
+      expect(mockAuth.signOut).toHaveBeenCalledTimes(1);
+    });
+
+    it("maps a 404 (function not yet deployed) to network", async () => {
+      mockFunctions.invoke.mockResolvedValue({ data: null, error: { status: 404, message: "Not Found" } });
+      const result = await makeService().deleteAccount();
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.error.kind).toBe("network");
+      expect(mockAuth.signOut).not.toHaveBeenCalled();
+    });
+
+    it("maps a 429 to rate_limited", async () => {
+      mockFunctions.invoke.mockResolvedValue({ data: null, error: { status: 429, message: "Too Many Requests" } });
+      const result = await makeService().deleteAccount();
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.error.kind).toBe("rate_limited");
+    });
+
+    it("maps a 5xx to network", async () => {
+      mockFunctions.invoke.mockResolvedValue({ data: null, error: { status: 503, message: "Service Unavailable" } });
+      const result = await makeService().deleteAccount();
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.error.kind).toBe("network");
+    });
+
+    it("maps a thrown error to network (never throws)", async () => {
+      mockFunctions.invoke.mockRejectedValue(new Error("fetch failed"));
+      const result = await makeService().deleteAccount();
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.error.kind).toBe("network");
     });
   });
 

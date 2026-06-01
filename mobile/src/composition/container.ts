@@ -8,10 +8,12 @@ import {
   SQLiteAnswerWriter,
 } from '@/infrastructure/db';
 import { buildDailyProgressQueries } from '@/infrastructure/db/queries/dailyProgressQueries';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AsyncStorageAdapter } from '@/infrastructure/storage';
 import { StubIapService } from '@/infrastructure/iap/StubIapService';
 import { createAnalyticsService } from '@/infrastructure/analytics/createAnalyticsService';
 import { getOrCreateAnonId } from '@/infrastructure/analytics/AnonIdStore';
+import { createAuthService } from '@/infrastructure/auth/createAuthService';
 
 import { v1FixedScheduler } from '@/domain/srs/v1-fixed';
 import type { TierId } from '@/domain/vocabulary/ids';
@@ -104,12 +106,22 @@ export interface Container {
   storage: AsyncStorageAdapter;
 }
 
+// All AsyncStorage keys owned by this app — mirrored from AsyncStorageAdapter
+// KEYS constant. Used by clearUserData to wipe everything on account deletion.
+const ASYNC_STORAGE_KEYS = [
+  'lexitap.timezone',
+  'lexitap.sync.cursor',
+  'lexitap.forgiveness.config.version',
+  'lexitap.onboarding.completed',
+] as const;
+
 export async function createContainer(): Promise<Container> {
   const db = await openDatabase();
   const storage = new AsyncStorageAdapter();
 
   const anonId = await getOrCreateAnonId();
   const analytics = createAnalyticsService(anonId);
+  const auth = createAuthService();
 
   const words = new SQLiteWordRepository(db);
   const tiers = new SQLiteContentTierRepository(db);
@@ -129,11 +141,23 @@ export async function createContainer(): Promise<Container> {
     runDiagnostic: new RunDiagnosticUseCase(words, progress, v1FixedScheduler),
     saveOnboardingProfile: new SaveOnboardingProfileUseCase(stats),
     analytics,
+    auth,
     onboarding: {
       isComplete: () => storage.isOnboardingComplete(),
       markComplete: () => storage.setOnboardingComplete(),
     },
     queries: buildReadQueries(db, words, progress, stats),
+    async clearUserData() {
+      await db.transaction(async (tx) => {
+        await tx.run('DELETE FROM user_progress', []);
+        await tx.run('DELETE FROM quiz_sessions', []);
+        await tx.run('DELETE FROM quiz_attempts', []);
+        await tx.run('DELETE FROM event_log', []);
+        await tx.run('DELETE FROM user_stats', []);
+        await tx.run('DELETE FROM notification_schedule', []);
+      });
+      await AsyncStorage.multiRemove([...ASYNC_STORAGE_KEYS]);
+    },
   };
 
   return { services, db, storage };

@@ -41,6 +41,11 @@ export class StubAuthService implements AuthPort {
     this.emit();
   }
 
+  async deleteAccount(): Promise<Result> {
+    await this.signOut();
+    return ok();
+  }
+
   async getSession(): Promise<AuthSession | null> {
     return this.session;
   }

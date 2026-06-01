@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Pressable, View, type ViewStyle, Switch, Linking } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Modal, Pressable, View, type ViewStyle, Switch, Linking } from 'react-native';
+import { router } from 'expo-router';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme, useThemePreference, type ThemePreference } from '@/presentation/theme';
 import { Text, Card } from '@/presentation/components';
@@ -17,22 +18,72 @@ const THEME_OPTIONS: ReadonlyArray<{ value: ThemePreference; label: string }> = 
   { value: 'light', label: 'Light' },
 ];
 
+const DELETE_COUNTDOWN_SECS = 30;
+
 export function SettingsScreen(): React.JSX.Element {
   const { colors, radii, spacing } = useTheme();
   const { preference, setPreference } = useThemePreference();
-  const { queries } = useServices();
+  const services = useServices();
+  const { queries } = services;
   const [dbHealth, setDbHealth] = useState<ContentDbHealth | null>(null);
   const [hoverState, setHoverState] = useState<ThemePreference | null>(null);
   const [analyticsOptOut, setAnalyticsOptOutLocal] = useState(false);
+
+  // Delete-account modal state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteCountdown, setDeleteCountdown] = useState(DELETE_COUNTDOWN_SECS);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     queries.getContentDbHealth().then(setDbHealth).catch(() => undefined);
     getAnalyticsOptOut().then(setAnalyticsOptOutLocal).catch(() => undefined);
   }, [queries]);
 
+  useEffect(() => {
+    if (!showDeleteModal) {
+      if (countdownRef.current) clearInterval(countdownRef.current);
+      return;
+    }
+    setDeleteCountdown(DELETE_COUNTDOWN_SECS);
+    setDeleteError(null);
+    countdownRef.current = setInterval(() => {
+      setDeleteCountdown((prev) => {
+        if (prev <= 1) {
+          if (countdownRef.current) clearInterval(countdownRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => {
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    };
+  }, [showDeleteModal]);
+
   const handleAnalyticsToggle = async (value: boolean) => {
     setAnalyticsOptOutLocal(value);
     await setAnalyticsOptOut(value);
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      const result = await services.auth.deleteAccount();
+      // not_configured means no real backend — still wipe local data.
+      if (!result.ok && result.error.kind !== 'not_configured') {
+        setDeleteError(result.error.message);
+        setDeleting(false);
+        return;
+      }
+      await services.clearUserData();
+      router.replace('/onboarding');
+    } catch {
+      setDeleteError('Failed to delete account. Please try again.');
+      setDeleting(false);
+    }
   };
 
   return (
@@ -152,10 +203,7 @@ export function SettingsScreen(): React.JSX.Element {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Delete account"
-            onPress={() => {
-              // TODO: Implement account deletion flow
-              // Should show confirmation sheet with 30-second grace period
-            }}
+            onPress={() => setShowDeleteModal(true)}
             style={{
               paddingVertical: spacing.s2,
               paddingHorizontal: spacing.s1,
@@ -186,6 +234,118 @@ export function SettingsScreen(): React.JSX.Element {
           </Text>
         </View>
       )}
+
+      <Modal
+        visible={showDeleteModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => !deleting && setShowDeleteModal(false)}
+        accessibilityViewIsModal
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: spacing.s4,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: colors.bgSurface,
+              borderRadius: radii.lg,
+              padding: spacing.s4,
+              width: '100%',
+              maxWidth: 360,
+              gap: spacing.s3,
+            }}
+          >
+            <Text variant="headline" color="destructive" accessibilityRole="header">
+              Delete Account
+            </Text>
+            <Text variant="body" color="textPrimary">
+              This will permanently delete your account and all learning progress. This cannot be undone.
+            </Text>
+
+            {deleteCountdown > 0 ? (
+              <View
+                style={{
+                  alignItems: 'center',
+                  paddingVertical: spacing.s2,
+                  borderRadius: radii.md,
+                  backgroundColor: colors.bgSurfaceRaised,
+                }}
+              >
+                <Text variant="caption" color="textTertiary">
+                  Please wait
+                </Text>
+                <Text variant="title" color="textSecondary">
+                  {String(deleteCountdown)}
+                </Text>
+              </View>
+            ) : null}
+
+            {deleteError !== null ? (
+              <Text variant="caption" color="destructive">
+                {deleteError}
+              </Text>
+            ) : null}
+
+            <View style={{ flexDirection: 'row', gap: spacing.s2, marginTop: spacing.s1 }}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Cancel account deletion"
+                onPress={() => setShowDeleteModal(false)}
+                disabled={deleting}
+                style={{
+                  flex: 1,
+                  minHeight: 48,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: radii.md,
+                  backgroundColor: colors.bgSurfaceRaised,
+                  borderWidth: 1,
+                  borderColor: colors.borderSubtle,
+                  opacity: deleting ? 0.5 : 1,
+                }}
+              >
+                <Text variant="label" color="textPrimary">Cancel</Text>
+              </Pressable>
+
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Confirm account deletion"
+                accessibilityState={{ disabled: deleteCountdown > 0 || deleting }}
+                onPress={handleDeleteAccount}
+                disabled={deleteCountdown > 0 || deleting}
+                style={{
+                  flex: 1,
+                  minHeight: 48,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: radii.md,
+                  backgroundColor: colors.bgSurfaceRaised,
+                  borderWidth: 1,
+                  borderColor: deleteCountdown > 0 || deleting ? colors.borderSubtle : colors.destructive,
+                  opacity: deleteCountdown > 0 ? 0.4 : 1,
+                }}
+              >
+                {deleting ? (
+                  <ActivityIndicator size="small" color={colors.destructive} />
+                ) : (
+                  <Text
+                    variant="label"
+                    color={deleteCountdown > 0 ? 'textTertiary' : 'destructive'}
+                  >
+                    Delete Account
+                  </Text>
+                )}
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </Screen>
   );
 }

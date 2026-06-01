@@ -40,6 +40,14 @@ describe("StubAuthService", () => {
     expect(await service.getSession()).toBeNull();
   });
 
+  it("deleteAccount signs out and returns ok", async () => {
+    await service.verifyOtp("learner@example.com", "123456");
+    expect(await service.getSession()).not.toBeNull();
+    const result = await service.deleteAccount();
+    expect(result.ok).toBe(true);
+    expect(await service.getSession()).toBeNull();
+  });
+
   it("onAuthStateChange fires on sign-in and sign-out, and stops after unsubscribe", async () => {
     const sessions: Array<unknown> = [];
     const unsubscribe = service.onAuthStateChange((s) => sessions.push(s));

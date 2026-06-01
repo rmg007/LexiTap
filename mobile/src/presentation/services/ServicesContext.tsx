@@ -4,6 +4,7 @@ import type { AnswerQuestionUseCase } from '@/application/quiz/AnswerQuestionUse
 import type { RunDiagnosticUseCase } from '@/application/onboarding/RunDiagnosticUseCase';
 import type { SaveOnboardingProfileUseCase } from '@/application/onboarding/SaveOnboardingProfileUseCase';
 import type { AnalyticsPort } from '@/domain/analytics/AnalyticsPort';
+import type { AuthPort } from '@/domain/auth/AuthPort';
 import type { TierId } from '@/domain/index';
 import type { UserStats } from '@/domain/index';
 
@@ -51,6 +52,8 @@ export interface Services {
   readonly saveOnboardingProfile: SaveOnboardingProfileUseCase;
   // Analytics port for screen-level events (lesson_started, quiz_submitted, etc).
   readonly analytics: AnalyticsPort;
+  // Auth port — sign-in, sign-out, delete account.
+  readonly auth: AuthPort;
   // First-run gate flag, backed by device storage (not learning data).
   readonly onboarding: {
     isComplete(): Promise<boolean>;
@@ -58,6 +61,8 @@ export interface Services {
   };
   // Read queries for dashboards.
   readonly queries: ReadQueries;
+  // Wipe all user data from SQLite + AsyncStorage — called on account deletion.
+  clearUserData(): Promise<void>;
 }
 
 const ServicesContext = createContext<Services | null>(null);

@@ -80,4 +80,10 @@ export interface AuthPort {
   onAuthStateChange(
     callback: (session: AuthSession | null) => void,
   ): () => void;
+
+  // Delete the authenticated account on the server, then sign out locally.
+  // ok: account deleted (or deletion scheduled) and session cleared.
+  // not_configured: Supabase env vars absent — caller should still clear local data.
+  // network / rate_limited / unknown: surface to UI for retry.
+  deleteAccount(): Promise<Result>;
 }
