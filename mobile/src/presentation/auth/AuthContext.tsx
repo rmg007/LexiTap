@@ -6,8 +6,18 @@ import React, {
   useState,
   type ReactNode,
 } from 'react';
+import { AppState, Linking } from 'react-native';
+import { router } from 'expo-router';
 import type { AuthSession, Result } from '@/domain/auth/AuthPort';
 import { useServices } from '@/presentation/services';
+
+// Extract ?token_hash=... from a lexitap://auth/callback deep-link URL.
+// Regex avoids URL constructor which is unreliable in some RN versions.
+function parseTokenHash(url: string): string | null {
+  const match = /[?&]token_hash=([^&#]+)/.exec(url);
+  const group = match?.[1];
+  return group ? decodeURIComponent(group) : null;
+}
 
 // Auth state + actions surfaced to the presentation layer.
 // Lives here (not on Services) because it manages React state (session,
@@ -47,6 +57,41 @@ export function AuthProvider({ children }: { children: ReactNode }): React.JSX.E
       cancelled = true;
       unsub();
     };
+  }, [auth]);
+
+  // Re-sync session when the app returns to the foreground. The Supabase SDK
+  // refreshes the JWT automatically (autoRefreshToken: true) but React state
+  // may lag if the app was backgrounded for a long time before the event fires.
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (next) => {
+      if (next === 'active') {
+        auth.getSession().then((s) => setSession(s)).catch(() => {});
+      }
+    });
+    return () => sub.remove();
+  }, [auth]);
+
+  // Deep-link handler for lexitap://auth/callback?token_hash=…&type=email.
+  // Supabase sends this link in the magic-link email alongside the 6-digit code;
+  // tapping it exchanges the token_hash for a full session without entering a code.
+  useEffect(() => {
+    const handleUrl = (url: string): void => {
+      if (!url.includes('auth/callback')) return;
+      const tokenHash = parseTokenHash(url);
+      if (!tokenHash) return;
+      auth.verifyOtpLink(tokenHash).then((result) => {
+        if (result.ok) {
+          setSession(result.value);
+          router.replace('/');
+        }
+      }).catch(() => {});
+    };
+
+    // Cold-start: app was not running when the link was tapped.
+    Linking.getInitialURL().then((url) => { if (url) handleUrl(url); }).catch(() => {});
+    // Warm: app already running (background or foreground).
+    const sub = Linking.addEventListener('url', ({ url }) => handleUrl(url));
+    return () => sub.remove();
   }, [auth]);
 
   const signInWithOtp = useCallback(

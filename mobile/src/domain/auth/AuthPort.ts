@@ -81,6 +81,11 @@ export interface AuthPort {
     callback: (session: AuthSession | null) => void,
   ): () => void;
 
+  // Exchange a token_hash from a magic-link deep link for a session.
+  // Called when the app handles lexitap://auth/callback?token_hash=…&type=email.
+  // Unlike verifyOtp, no email is required — Supabase derives it from the hash.
+  verifyOtpLink(tokenHash: string): Promise<Result<AuthSession>>;
+
   // Delete the authenticated account on the server, then sign out locally.
   // ok: account deleted (or deletion scheduled) and session cleared.
   // not_configured: Supabase env vars absent — caller should still clear local data.

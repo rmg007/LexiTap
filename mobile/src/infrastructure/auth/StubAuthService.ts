@@ -36,6 +36,13 @@ export class StubAuthService implements AuthPort {
     return ok(this.session);
   }
 
+  async verifyOtpLink(_tokenHash: string): Promise<Result<AuthSession>> {
+    // Deep-link flow: no email in the URL, use a stub email.
+    this.session = this.makeSession('stub-deeplink@example.com');
+    this.emit();
+    return ok(this.session);
+  }
+
   async signOut(): Promise<void> {
     this.session = null;
     this.emit();

@@ -190,6 +190,23 @@ export class SupabaseAuthService implements AuthPort {
     };
   }
 
+  async verifyOtpLink(tokenHash: string): Promise<Result<AuthSession>> {
+    if (!this.client) return NOT_CONFIGURED;
+    try {
+      const { data, error } = await this.client.auth.verifyOtp({
+        token_hash: tokenHash,
+        type: 'email',
+      });
+      if (error) return mapError(error);
+      if (!data.session) {
+        return err({ kind: 'invalid_otp', message: 'That link is invalid or has expired.' });
+      }
+      return ok(toSession(data.session));
+    } catch (caught) {
+      return mapError(caught);
+    }
+  }
+
   async deleteAccount(): Promise<Result> {
     if (!this.client) return NOT_CONFIGURED;
     try {

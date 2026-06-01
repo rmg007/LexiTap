@@ -54,6 +54,34 @@ describe('AuthContext session management contract', () => {
   });
 });
 
+describe('AuthContext verifyOtpLink contract', () => {
+  it('verifyOtpLink resolves to a session without requiring an email', async () => {
+    const svc = new StubAuthService();
+    const result = await svc.verifyOtpLink('some-token-hash');
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(typeof result.value.user.id).toBe('string');
+    expect(result.value.accessToken).toBeTruthy();
+  });
+
+  it('getSession reflects verifyOtpLink success', async () => {
+    const svc = new StubAuthService();
+    await svc.verifyOtpLink('some-token-hash');
+    const session = await svc.getSession();
+    expect(session).not.toBeNull();
+  });
+
+  it('verifyOtpLink fires onAuthStateChange', async () => {
+    const svc = new StubAuthService();
+    const events: Array<string | null> = [];
+    const unsub = svc.onAuthStateChange((s) => events.push(s?.user.email ?? null));
+    await svc.verifyOtpLink('some-token-hash');
+    unsub();
+    expect(events).toHaveLength(1);
+    expect(events[0]).toBeTruthy();
+  });
+});
+
 // SignInScreen input validation logic (extracted for unit testing).
 describe('SignInScreen validation', () => {
   it('rejects blank email', () => {

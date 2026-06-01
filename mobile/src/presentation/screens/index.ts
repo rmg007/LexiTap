@@ -10,6 +10,7 @@ export {
 } from '@/presentation/screens/SessionCompleteScreen';
 export { ProgressScreen } from '@/presentation/screens/ProgressScreen';
 export { SettingsScreen } from '@/presentation/screens/SettingsScreen';
+export { SignInScreen } from '@/presentation/screens/SignInScreen';
 export { PaywallScreen, type PaywallScreenProps } from '@/presentation/screens/PaywallScreen';
 export { buildQuestion, type BuiltQuestion, type BuildQuestionInput } from '@/presentation/screens/quizQuestion';
 export { OnboardingDiagnosticScreen, type OnboardingDiagnosticScreenProps } from '@/presentation/screens/onboarding';

@@ -41,7 +41,7 @@ export function OnboardingDiagnosticScreen({
   partialProfile,
 }: OnboardingDiagnosticScreenProps): React.JSX.Element {
   const { spacing } = useTheme();
-  const { runDiagnostic, saveOnboardingProfile } = useServices();
+  const { runDiagnostic, saveOnboardingProfile, analytics } = useServices();
 
   const [phase, setPhase] = useState<Phase>({ kind: 'loading' });
   // Re-mount the widget per question so internal selection state resets.
@@ -59,6 +59,12 @@ export function OnboardingDiagnosticScreen({
         // Persist the full onboarding profile: goal + band from earlier steps,
         // frontierRank estimated from diagnostic results, completedAt now.
         const frontierRank = estimateFrontierFromResults(results);
+        void analytics.track('onboarding_diagnostic_completed', {
+          frontier_rank: frontierRank,
+          correct_count: results.filter((r) => r.isCorrect).length,
+          total_count: results.length,
+          ...(partialProfile?.goal !== undefined && { goal: partialProfile.goal }),
+        });
         await saveOnboardingProfile.execute({
           ...partialProfile,
           frontierRank,
