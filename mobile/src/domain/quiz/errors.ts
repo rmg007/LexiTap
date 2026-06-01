@@ -29,3 +29,10 @@ export class WordNotInSessionError extends Error {
     this.name = 'WordNotInSessionError';
   }
 }
+
+export class TierLockedError extends Error {
+  constructor(public readonly tierId: string) {
+    super(`Tier ${tierId} is locked`);
+    this.name = 'TierLockedError';
+  }
+}

@@ -7,6 +7,8 @@ module.exports = {
     '^@sentry/react-native$': '<rootDir>/src/__mocks__/@sentry/react-native.ts',
     // Never load the native AsyncStorage module in tests (see src/__mocks__).
     '^@react-native-async-storage/async-storage$': '<rootDir>/src/__mocks__/@react-native-async-storage/async-storage.ts',
+    // Never load the native RevenueCat SDK in tests (see src/__mocks__).
+    '^react-native-purchases$': '<rootDir>/src/__mocks__/react-native-purchases.ts',
   },
   transformIgnorePatterns: [
     'node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@supabase/.*))',

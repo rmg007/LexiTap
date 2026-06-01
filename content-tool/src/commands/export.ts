@@ -37,7 +37,7 @@ import { defaultProviders } from '@/providers/defaultProviders';
 import type { ProviderRegistry } from '@/providers/types';
 import { logger } from '@/lib/logger';
 import { flagValue } from '@/commands/validate';
-import type { TierRow, WordRow, WordTierRow } from '@/schema/types';
+import type { TierRow, WordRow, WordTierRow, PseudoWordRow } from '@/schema/types';
 
 const INSERT_TIER = `
 INSERT INTO content_tiers (
@@ -50,11 +50,11 @@ INSERT INTO content_tiers (
 const INSERT_WORD = `
 INSERT INTO words (
   id, word, definition, pos, cefr_level, grade_level, word_type,
-  difficulty, theme, example_sentence, image_path, audio_path, synonyms,
+  difficulty, frequency_rank, theme, example_sentence, image_path, audio_path, synonyms,
   antonyms, usage_notes, definition_license, created_at, deleted_at
 ) VALUES (
   @id, @word, @definition, @pos, @cefr_level, @grade_level, @word_type,
-  @difficulty, @theme, @example_sentence, @image_path, @audio_path, @synonyms,
+  @difficulty, @frequency_rank, @theme, @example_sentence, @image_path, @audio_path, @synonyms,
   @antonyms, @usage_notes, @definition_license, @created_at, @deleted_at
 )
 `.trim();
@@ -63,8 +63,21 @@ const INSERT_WORD_TIER = `
 INSERT INTO word_tiers (word_id, tier_id) VALUES (@word_id, @tier_id)
 `.trim();
 
+const INSERT_PSEUDO_WORD = `
+INSERT INTO pseudo_words (id, word, phoneme_similarity_score)
+VALUES (@id, @word, @phoneme_similarity_score)
+`.trim();
+
 function activeWords(working: DB): WordRow[] {
   return working.prepare(`SELECT * FROM words WHERE deleted_at IS NULL`).all() as WordRow[];
+}
+
+function allPseudoWords(working: DB): PseudoWordRow[] {
+  const hasPseudo = working
+    .prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='pseudo_words'`)
+    .get();
+  if (!hasPseudo) return [];
+  return working.prepare(`SELECT * FROM pseudo_words ORDER BY id`).all() as PseudoWordRow[];
 }
 
 /** Memberships for active words only (a soft-deleted word's tags are dropped). */
@@ -160,6 +173,7 @@ export function buildOutputDb(
 ): ExportResult {
   const words = activeWords(working);
   const memberships = activeMemberships(working);
+  const pseudoWords = allPseudoWords(working);
 
   // Final validation against the OUTPUT data; abort on any error. Under --strict
   // the extra C7 checks (dup-leak, provenance) also gate the build (fail-closed:
@@ -185,6 +199,7 @@ export function buildOutputDb(
   const insertTier = output.prepare(INSERT_TIER);
   const insertWord = output.prepare(INSERT_WORD);
   const insertWordTier = output.prepare(INSERT_WORD_TIER);
+  const insertPseudo = output.prepare(INSERT_PSEUDO_WORD);
 
   const tx = output.transaction(() => {
     for (const tier of config.tiers) {
@@ -195,6 +210,9 @@ export function buildOutputDb(
     }
     for (const m of memberships) {
       insertWordTier.run(m);
+    }
+    for (const p of pseudoWords) {
+      insertPseudo.run(p);
     }
   });
   tx();

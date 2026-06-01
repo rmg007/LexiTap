@@ -36,7 +36,7 @@ function computeSegments(frontierRank: number | undefined): SegmentCounts {
 
 export default function KnowledgeMapRevealRoute(): React.JSX.Element {
   const { colors, spacing } = useTheme();
-  const { queries } = useServices();
+  const { queries, analytics } = useServices();
 
   const [segments, setSegments] = useState<SegmentCounts>({ known: 0, learning: 0, new: 0 });
 
@@ -50,6 +50,12 @@ export default function KnowledgeMapRevealRoute(): React.JSX.Element {
         const frontier = userStats?.onboardingState?.frontierRank;
         const computed = computeSegments(frontier);
         setSegments(computed);
+        void analytics.track('onboarding_km_revealed', {
+          frontier_rank: frontier ?? null,
+          known_count: computed.known,
+          learning_count: computed.learning,
+          new_count: computed.new,
+        });
 
         // Animate bar fill on mount.
         const total = computed.known + computed.learning + computed.new;

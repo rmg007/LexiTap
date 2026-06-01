@@ -48,6 +48,31 @@ function applyWorkingDbMigrations(db: DB): void {
     db.exec(`UPDATE words SET definition_license = 'original' WHERE definition_license IS NULL`);
     db.exec(`UPDATE words SET audio_path = NULL`);
   }
+
+  // DIAG-A migration: add frequency_rank column if schema pre-dates DIAG-A.
+  const hasFrequencyRank = db
+    .prepare(`SELECT name FROM pragma_table_info('words') WHERE name='frequency_rank'`)
+    .get();
+  if (!hasFrequencyRank) {
+    db.exec(`ALTER TABLE words ADD COLUMN frequency_rank INTEGER`);
+    db.exec(
+      `CREATE INDEX IF NOT EXISTS idx_words_frequency ON words(frequency_rank) WHERE deleted_at IS NULL`,
+    );
+  }
+
+  // DIAG-A migration: create pseudo_words table if it doesn't exist yet.
+  const hasPseudo = db
+    .prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='pseudo_words'`)
+    .get();
+  if (!hasPseudo) {
+    db.exec(`
+      CREATE TABLE pseudo_words (
+        id                       TEXT PRIMARY KEY,
+        word                     TEXT NOT NULL UNIQUE,
+        phoneme_similarity_score REAL
+      )
+    `);
+  }
 }
 
 /**

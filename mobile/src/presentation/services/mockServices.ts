@@ -3,6 +3,8 @@ import type { AnswerQuestionOutput } from '@/application/quiz/AnswerQuestionUseC
 import type { QuizSession, UserStats, OnboardingState } from '@/domain/index';
 import { NoopAnalyticsService } from '@/infrastructure/analytics/NoopAnalyticsService';
 import { StubAuthService } from '@/infrastructure/auth/StubAuthService';
+import { CheckTierAccessUseCase } from '@/application/tier/CheckTierAccessUseCase';
+import type { IapPort } from '@/domain/iap/IapPort';
 
 // Typed mock factory for tests / Storybook. The real use-case classes hold
 // private repository fields, so we build structurally-shaped stubs and assert
@@ -19,6 +21,8 @@ export interface MockServiceHandlers {
   getMasteryLevels?: () => Promise<readonly number[]>;
   getDailyProgress?: () => Promise<DailyProgressMetrics>;
   getContentDbHealth?: () => Promise<{ wordCount: number; dbVersion: number }>;
+  backupTriggerIfNeeded?: (nowMs: number) => Promise<void>;
+  backupForceRestore?: () => Promise<'ok' | 'no_backup' | 'error'>;
 }
 
 const notImplemented =
@@ -26,6 +30,14 @@ const notImplemented =
   (): never => {
     throw new Error(`mockServices: ${name} was called but not provided`);
   };
+
+const noopIap: IapPort = {
+  getProducts: async () => [],
+  purchase: async () => ({ sku: '', status: 'cancelled' }),
+  restorePurchases: async () => [],
+  validateReceipt: async () => ({ isValid: false, entitledSkus: [] }),
+  getActiveEntitlements: async () => [],
+};
 
 export function createMockServices(handlers: MockServiceHandlers = {}): Services {
   const services = {
@@ -36,6 +48,16 @@ export function createMockServices(handlers: MockServiceHandlers = {}): Services
     },
     analytics: new NoopAnalyticsService(),
     auth: new StubAuthService(),
+    session: {
+      start: async () => undefined,
+      end: async () => undefined,
+    },
+    backup: {
+      triggerIfNeeded: handlers.backupTriggerIfNeeded ?? (async () => undefined),
+      forceRestore: handlers.backupForceRestore ?? (async () => 'ok' as const),
+    },
+    iap: noopIap,
+    checkTierAccess: new CheckTierAccessUseCase(noopIap),
     clearUserData: async () => undefined,
     queries: {
       getUserStats: handlers.getUserStats ?? (async () => null),

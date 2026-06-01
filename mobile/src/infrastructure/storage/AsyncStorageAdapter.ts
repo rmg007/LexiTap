@@ -15,6 +15,7 @@ const KEYS = {
   syncCursor: 'lexitap.sync.cursor',
   forgivenessConfigVersion: 'lexitap.forgiveness.config.version',
   onboardingComplete: 'lexitap.onboarding.completed',
+  lastBackupAtMs: 'lexitap.backup.lastBackupAtMs',
 } as const;
 
 export class AsyncStorageAdapter {
@@ -61,5 +62,18 @@ export class AsyncStorageAdapter {
 
   async setOnboardingComplete(): Promise<void> {
     await AsyncStorage.setItem(KEYS.onboardingComplete, '1');
+  }
+
+  // Epoch ms of the last successful backup upload. Stored per-device (not in
+  // user.db) so a restore from backup does not reset the per-device throttle.
+  async getLastBackupAtMs(): Promise<number | null> {
+    const raw = await AsyncStorage.getItem(KEYS.lastBackupAtMs);
+    if (raw === null) return null;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  async setLastBackupAtMs(ms: number): Promise<void> {
+    await AsyncStorage.setItem(KEYS.lastBackupAtMs, String(ms));
   }
 }

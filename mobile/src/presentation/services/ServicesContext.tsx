@@ -5,6 +5,8 @@ import type { RunDiagnosticUseCase } from '@/application/onboarding/RunDiagnosti
 import type { SaveOnboardingProfileUseCase } from '@/application/onboarding/SaveOnboardingProfileUseCase';
 import type { AnalyticsPort } from '@/domain/analytics/AnalyticsPort';
 import type { AuthPort } from '@/domain/auth/AuthPort';
+import type { IapPort } from '@/domain/iap/IapPort';
+import type { CheckTierAccessUseCase } from '@/application/tier/CheckTierAccessUseCase';
 import type { TierId } from '@/domain/index';
 import type { UserStats } from '@/domain/index';
 
@@ -61,6 +63,22 @@ export interface Services {
   };
   // Read queries for dashboards.
   readonly queries: ReadQueries;
+  // Session lifecycle — fired by useSessionLifecycle on AppState changes.
+  readonly session: {
+    start(): Promise<void>;
+    end(): Promise<void>;
+  };
+  // Backup: periodic upload (6h throttle) + manual restore from Settings.
+  readonly backup: {
+    // Fire-and-forget. Called on session.start() and after quiz completion.
+    triggerIfNeeded(nowMs: number): Promise<void>;
+    // Manual restore from Settings. Returns discriminated outcome, never throws.
+    forceRestore(): Promise<'ok' | 'no_backup' | 'error'>;
+  };
+  // IAP port — purchase exam packs, restore purchases, check entitlements.
+  readonly iap: IapPort;
+  // Checks whether the current user has access to a content tier.
+  readonly checkTierAccess: CheckTierAccessUseCase;
   // Wipe all user data from SQLite + AsyncStorage — called on account deletion.
   clearUserData(): Promise<void>;
 }

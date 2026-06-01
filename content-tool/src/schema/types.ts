@@ -40,6 +40,7 @@ export interface WordRow {
   grade_level: number | null;
   word_type: string | null;
   difficulty: number | null;
+  frequency_rank: number | null;
   theme: string | null;
   example_sentence: string;
   image_path: string | null;
@@ -62,4 +63,11 @@ export interface WordRow {
 export interface WordTierRow {
   word_id: string;
   tier_id: string;
+}
+
+/** One row of the `pseudo_words` table — non-words for DIAG-A false-alarm detection. */
+export interface PseudoWordRow {
+  id: string;
+  word: string;
+  phoneme_similarity_score: number | null;
 }

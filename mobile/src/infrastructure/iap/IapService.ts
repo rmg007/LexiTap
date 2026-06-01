@@ -43,4 +43,6 @@ export interface IapService {
   restorePurchases(): Promise<PurchaseResult[]>;
   // Validate a store receipt (server-side validation handled by RevenueCat).
   validateReceipt(receiptToken: string): Promise<ReceiptValidation>;
+  // Active RevenueCat entitlement ids for the current user. Throws when offline.
+  getActiveEntitlements(): Promise<readonly string[]>;
 }

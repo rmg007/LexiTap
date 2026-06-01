@@ -4,7 +4,7 @@
  * Run via `tsx src/cli.ts <command>` (see package.json scripts `cli`/`build:db`).
  */
 
-import { importCommand } from '@/commands/import';
+import { importCommand, importPseudoWordsCommand } from '@/commands/import';
 import { validateCommand } from '@/commands/validate';
 import { enrichCommand } from '@/commands/enrich';
 import { reviewCommand, reviewFinalizeCommand } from '@/commands/review';
@@ -16,6 +16,7 @@ const USAGE = `lexitap-tool <command> [options]
 
 Commands:
   import           --source <path> --tier <slug> [--type t] [--on-conflict update|skip|error] [--dry-run]
+  import-pseudo    --source <path>   (import pseudo_words CSV for DIAG-A false-alarm detection)
   validate         [--tier <slug>] [--strict]
   enrich           (DB mode)  --tier <slug> [--add-definitions] [--add-synonyms] [--add-audio] [--add-images] [--limit n] [--force] [--dry-run]
                    (CSV mode) --input <path> --output <path> [--budget usd] [--dry-run]
@@ -30,6 +31,9 @@ async function main(): Promise<void> {
   switch (command) {
     case 'import':
       importCommand([secondArg ?? '', ...rest].filter(Boolean));
+      break;
+    case 'import-pseudo':
+      importPseudoWordsCommand([secondArg ?? '', ...rest].filter(Boolean));
       break;
     case 'validate':
       validateCommand([secondArg ?? '', ...rest].filter(Boolean));

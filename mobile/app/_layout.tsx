@@ -6,7 +6,9 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider } from '@/presentation/theme';
 import { ServicesProvider, type Services } from '@/presentation/services';
+import { AuthProvider } from '@/presentation/auth';
 import { createContainer } from '@/composition/container';
+import { useSessionLifecycle } from '@/presentation/hooks/useSessionLifecycle';
 import { logger } from '@/lib/logger';
 import { captureException, initCrashReporting, wrapRoot } from '@/infrastructure/crash';
 import '../global.css';
@@ -39,6 +41,8 @@ function RootLayout(): React.JSX.Element {
     };
   }, []);
 
+  useSessionLifecycle(services);
+
   // First-run gate: once services resolve, send a brand-new user (no completion
   // flag yet) into the onboarding diagnostic before the tabs mount.
   useEffect(() => {
@@ -68,7 +72,9 @@ function RootLayout(): React.JSX.Element {
             </View>
           ) : (
             <ServicesProvider value={services}>
-              <Stack screenOptions={{ headerShown: false }} />
+              <AuthProvider>
+                <Stack screenOptions={{ headerShown: false }} />
+              </AuthProvider>
             </ServicesProvider>
           )}
         </ThemeProvider>

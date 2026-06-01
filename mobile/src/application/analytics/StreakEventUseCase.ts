@@ -1,7 +1,7 @@
 import type { AnalyticsPort } from '@/domain/analytics/AnalyticsPort';
 
-// Emits streak_incremented or streak_broken events when streak state changes.
-// Used for gamification funnel analysis and engagement tracking.
+// Emits unified streak_event (event_type: 'incremented' | 'broken') when streak
+// state changes. Single event name lets PostHog retention queries use one filter.
 
 export interface StreakEventInput {
   event: 'incremented' | 'broken';
@@ -13,8 +13,8 @@ export class StreakEventUseCase {
   constructor(private readonly analytics: AnalyticsPort) {}
 
   async execute(input: StreakEventInput): Promise<void> {
-    const eventName = input.event === 'incremented' ? 'streak_incremented' : 'streak_broken';
-    this.analytics.track(eventName, {
+    this.analytics.track('streak_event', {
+      event_type: input.event,
       current_streak: input.newStreak,
       longest_streak: input.longestStreak,
     });

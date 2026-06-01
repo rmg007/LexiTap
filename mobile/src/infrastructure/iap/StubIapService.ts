@@ -33,4 +33,9 @@ export class StubIapService implements IapService {
     // Nothing to validate against yet; treat as invalid (grants no access).
     return { isValid: false, entitledSkus: [] };
   }
+
+  async getActiveEntitlements(): Promise<readonly string[]> {
+    // No store connected; user owns nothing.
+    return [];
+  }
 }

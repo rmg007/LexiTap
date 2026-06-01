@@ -37,6 +37,7 @@ CREATE TABLE words (
   grade_level      INTEGER,
   word_type        TEXT,
   difficulty       INTEGER,
+  frequency_rank   INTEGER,
   theme            TEXT,
   example_sentence TEXT NOT NULL,
   image_path       TEXT,
@@ -65,12 +66,28 @@ CREATE TABLE word_tiers (
 );
 `.trim();
 
+/**
+ * Non-words (pseudo-words) for DIAG-A false-alarm detection. Presented
+ * identically to real words during the adaptive diagnostic; a Yes answer
+ * contributes to the false-alarm rate used by applyPseudoWordCorrection().
+ * Populate via `content-tool import --source pseudo_words.csv --tier pseudo`.
+ * Phoneme similarity scores are curated content, not generated.
+ */
+export const CREATE_PSEUDO_WORDS = `
+CREATE TABLE pseudo_words (
+  id                       TEXT PRIMARY KEY,
+  word                     TEXT NOT NULL UNIQUE,
+  phoneme_similarity_score REAL
+);
+`.trim();
+
 export const CREATE_WORDS_INDEXES = [
   `CREATE INDEX idx_words_cefr          ON words(cefr_level);`,
   `CREATE INDEX idx_words_active        ON words(deleted_at) WHERE deleted_at IS NULL;`,
-  // Alphabetical keyset browse (DATABASE_SCHEMA.md §Keyset Pagination). Tier is
-  // applied via the word_tiers join now, so the order key is the bare `word`.
+  // Alphabetical keyset browse (DATABASE_SCHEMA.md §Keyset Pagination).
   `CREATE INDEX idx_words_alphabetical  ON words(word) WHERE deleted_at IS NULL;`,
+  // DIAG-A band-walk: select words near a target frequency rank.
+  `CREATE INDEX idx_words_frequency     ON words(frequency_rank) WHERE deleted_at IS NULL;`,
 ];
 
 export const CREATE_WORD_TIERS_INDEXES = [
@@ -79,11 +96,12 @@ export const CREATE_WORD_TIERS_INDEXES = [
   `CREATE INDEX idx_word_tiers_tier ON word_tiers(tier_id, word_id);`,
 ];
 
-/** Full ordered DDL for building a fresh content DB (tiers, words, junction, indexes). */
+/** Full ordered DDL for building a fresh content DB (tiers, words, junction, pseudo_words, indexes). */
 export const CONTENT_DB_DDL: readonly string[] = [
   CREATE_CONTENT_TIERS,
   CREATE_WORDS,
   CREATE_WORD_TIERS,
+  CREATE_PSEUDO_WORDS,
   ...CREATE_WORDS_INDEXES,
   ...CREATE_WORD_TIERS_INDEXES,
 ];

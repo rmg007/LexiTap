@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { router } from 'expo-router';
 import { Screen } from '@/presentation/screens/Screen';
 import { Text, Button, SelectionCard } from '@/presentation/components';
+import { useServices } from '@/presentation/services';
 import type { LearningGoal } from '@/domain/index';
 
 const GOALS: { value: LearningGoal; label: string; icon: string }[] = [
@@ -13,6 +14,7 @@ const GOALS: { value: LearningGoal; label: string; icon: string }[] = [
 ];
 
 export default function GoalSelectionRoute(): React.JSX.Element {
+  const { analytics } = useServices();
   const [selected, setSelected] = useState<LearningGoal | null>(null);
 
   return (
@@ -48,6 +50,7 @@ export default function GoalSelectionRoute(): React.JSX.Element {
           disabled={selected === null}
           onPress={() => {
             if (selected) {
+              void analytics.track('onboarding_goal_selected', { goal: selected });
               router.push({
                 pathname: '/onboarding/diagnostic',
                 params: { goal: selected },

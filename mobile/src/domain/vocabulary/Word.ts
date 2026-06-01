@@ -16,6 +16,7 @@ export interface Word {
   cefrLevel?: CefrLevel;
   wordType: WordType;
   difficulty?: number; // 1-5
+  frequencyRank?: number; // DIAG-A band-walk target; absent for words imported before PA-1
   theme?: string;
   exampleSentence: string; // contains exactly one "_" blank
   imagePath?: string;

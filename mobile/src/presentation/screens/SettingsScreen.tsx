@@ -6,6 +6,7 @@ import { useTheme, useThemePreference, type ThemePreference } from '@/presentati
 import { Text, Card } from '@/presentation/components';
 import { APP_ID } from '@/config/app';
 import { useServices, type ContentDbHealth } from '@/presentation/services';
+import { useAuth } from '@/presentation/auth';
 import { getAnalyticsOptOut, setAnalyticsOptOut } from '@/infrastructure/analytics/AnalyticsOptOutStore';
 
 // Settings: theme override (system / dark / light), analytics opt-out toggle, and
@@ -25,6 +26,7 @@ export function SettingsScreen(): React.JSX.Element {
   const { preference, setPreference } = useThemePreference();
   const services = useServices();
   const { queries } = services;
+  const { session, signOut } = useAuth();
   const [dbHealth, setDbHealth] = useState<ContentDbHealth | null>(null);
   const [hoverState, setHoverState] = useState<ThemePreference | null>(null);
   const [analyticsOptOut, setAnalyticsOptOutLocal] = useState(false);
@@ -35,6 +37,11 @@ export function SettingsScreen(): React.JSX.Element {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Restore-from-backup modal state
+  const [showRestoreModal, setShowRestoreModal] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  const [restoreResult, setRestoreResult] = useState<'ok' | 'no_backup' | 'error' | null>(null);
 
   useEffect(() => {
     queries.getContentDbHealth().then(setDbHealth).catch(() => undefined);
@@ -67,6 +74,14 @@ export function SettingsScreen(): React.JSX.Element {
     await setAnalyticsOptOut(value);
   };
 
+  const handleRestore = async () => {
+    setRestoring(true);
+    setRestoreResult(null);
+    const result = await services.backup.forceRestore();
+    setRestoreResult(result);
+    setRestoring(false);
+  };
+
   const handleDeleteAccount = async () => {
     setDeleting(true);
     setDeleteError(null);
@@ -91,6 +106,55 @@ export function SettingsScreen(): React.JSX.Element {
       <Text variant="title" color="textPrimary" accessibilityRole="header">
         Settings
       </Text>
+
+      <Card>
+        <View style={{ gap: spacing.s3 }}>
+          <Text variant="headline" color="textPrimary">
+            Account
+          </Text>
+          {session !== null ? (
+            <View style={{ gap: spacing.s2 }}>
+              <Text variant="body" color="textSecondary">
+                {session.user.email ?? 'Signed in'}
+              </Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Restore progress from backup"
+                onPress={() => { setRestoreResult(null); setShowRestoreModal(true); }}
+                style={{ paddingVertical: spacing.s2, paddingHorizontal: spacing.s1, borderRadius: 8 }}
+              >
+                <Text variant="body" color="accent">
+                  Restore from backup
+                </Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Sign out"
+                onPress={() => signOut()}
+                style={{ paddingVertical: spacing.s2, paddingHorizontal: spacing.s1, borderRadius: 8 }}
+              >
+                <Text variant="body" color="accent">
+                  Sign out
+                </Text>
+              </Pressable>
+            </View>
+          ) : (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Sign in to sync your progress"
+              onPress={() => router.push('/auth/sign-in')}
+              style={{ paddingVertical: spacing.s2, paddingHorizontal: spacing.s1, borderRadius: 8 }}
+            >
+              <Text variant="body" color="accent">
+                Sign in
+              </Text>
+              <Text variant="caption" color="textTertiary" style={{ marginTop: spacing.s1 }}>
+                Sync and back up your learning progress
+              </Text>
+            </Pressable>
+          )}
+        </View>
+      </Card>
 
       <Card>
         <View style={{ gap: spacing.s3 }}>
@@ -342,6 +406,110 @@ export function SettingsScreen(): React.JSX.Element {
                   </Text>
                 )}
               </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={showRestoreModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => !restoring && setShowRestoreModal(false)}
+        accessibilityViewIsModal
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: spacing.s4,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: colors.bgSurface,
+              borderRadius: radii.lg,
+              padding: spacing.s4,
+              width: '100%',
+              maxWidth: 360,
+              gap: spacing.s3,
+            }}
+          >
+            <Text variant="headline" color="textPrimary" accessibilityRole="header">
+              Restore from backup
+            </Text>
+
+            {restoreResult === null ? (
+              <Text variant="body" color="textPrimary">
+                This will overwrite your current local progress with the cloud backup. Continue?
+              </Text>
+            ) : restoreResult === 'ok' ? (
+              <Text variant="body" color="success">
+                Restore complete. Restart the app to load your restored data.
+              </Text>
+            ) : restoreResult === 'no_backup' ? (
+              <Text variant="body" color="textSecondary">
+                No backup found for your account.
+              </Text>
+            ) : (
+              <Text variant="body" color="destructive">
+                Restore failed. Check your connection and try again.
+              </Text>
+            )}
+
+            <View style={{ flexDirection: 'row', gap: spacing.s2, marginTop: spacing.s1 }}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Cancel restore"
+                onPress={() => setShowRestoreModal(false)}
+                disabled={restoring}
+                style={{
+                  flex: 1,
+                  minHeight: 48,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: radii.md,
+                  backgroundColor: colors.bgSurfaceRaised,
+                  borderWidth: 1,
+                  borderColor: colors.borderSubtle,
+                  opacity: restoring ? 0.5 : 1,
+                }}
+              >
+                <Text variant="label" color="textPrimary">
+                  {restoreResult !== null ? 'Close' : 'Cancel'}
+                </Text>
+              </Pressable>
+
+              {restoreResult === null && (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Confirm restore from backup"
+                  accessibilityState={{ disabled: restoring }}
+                  onPress={handleRestore}
+                  disabled={restoring}
+                  style={{
+                    flex: 1,
+                    minHeight: 48,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: radii.md,
+                    backgroundColor: colors.bgSurfaceRaised,
+                    borderWidth: 1,
+                    borderColor: colors.accent,
+                    opacity: restoring ? 0.5 : 1,
+                  }}
+                >
+                  {restoring ? (
+                    <ActivityIndicator size="small" color={colors.accent} />
+                  ) : (
+                    <Text variant="label" color="accent">
+                      Restore
+                    </Text>
+                  )}
+                </Pressable>
+              )}
             </View>
           </View>
         </View>

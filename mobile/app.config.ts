@@ -12,6 +12,10 @@ const plugins: NonNullable<ExpoConfig['plugins']> = [
   'expo-router',
   'expo-sqlite',
   ['expo-asset', { assets: ['./assets/vocab/words.db'] }],
+  // R1.3: RevenueCat native plugin. Requires `npx expo prebuild --clean` after
+  // adding. API keys are EAS secrets (EXPO_PUBLIC_REVENUECAT_API_KEY_IOS /
+  // EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID); no key → SDK silently disabled.
+  'react-native-purchases',
 ];
 
 if (sentryConfigured) {

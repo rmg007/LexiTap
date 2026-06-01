@@ -46,6 +46,7 @@ export function toWordRow(parsed: ParsedInputRow, createdAt: number): WordRow {
     grade_level: null,
     word_type: parsed.word_type,
     difficulty: parsed.difficulty,
+    frequency_rank: parsed.frequency_rank,
     theme: parsed.theme,
     example_sentence: parsed.example_sentence,
     image_path: null,
@@ -64,11 +65,11 @@ export function toWordRow(parsed: ParsedInputRow, createdAt: number): WordRow {
 const INSERT_SQL = `
 INSERT INTO words (
   id, word, definition, pos, cefr_level, grade_level, word_type,
-  difficulty, theme, example_sentence, image_path, audio_path, synonyms,
+  difficulty, frequency_rank, theme, example_sentence, image_path, audio_path, synonyms,
   antonyms, usage_notes, definition_license, created_at, deleted_at
 ) VALUES (
   @id, @word, @definition, @pos, @cefr_level, @grade_level, @word_type,
-  @difficulty, @theme, @example_sentence, @image_path, @audio_path, @synonyms,
+  @difficulty, @frequency_rank, @theme, @example_sentence, @image_path, @audio_path, @synonyms,
   @antonyms, @usage_notes, @definition_license, @created_at, @deleted_at
 )
 ON CONFLICT(id) DO UPDATE SET
@@ -78,6 +79,7 @@ ON CONFLICT(id) DO UPDATE SET
   cefr_level = excluded.cefr_level,
   word_type = excluded.word_type,
   difficulty = excluded.difficulty,
+  frequency_rank = excluded.frequency_rank,
   theme = excluded.theme,
   example_sentence = excluded.example_sentence,
   usage_notes = excluded.usage_notes
@@ -134,6 +136,55 @@ export function importRows(db: DB, parsed: ParsedInputRow[], options: ImportOpti
   });
   tx(parsed);
   return summary;
+}
+
+const INSERT_PSEUDO_SQL = `
+INSERT INTO pseudo_words (id, word, phoneme_similarity_score)
+VALUES (@id, @word, @phoneme_similarity_score)
+ON CONFLICT(id) DO UPDATE SET
+  word = excluded.word,
+  phoneme_similarity_score = excluded.phoneme_similarity_score
+`.trim();
+
+/** Import pseudo-words CSV into the `pseudo_words` table in the working DB. */
+export function importPseudoWordsCommand(args: string[]): void {
+  const source = flagValue(args, '--source');
+  if (!source) throw new Error('import-pseudo requires --source <path>');
+
+  const text = readFileSync(source, 'utf8');
+  const db = openWorkingDb();
+  try {
+    const { parse } = require('csv-parse/sync') as typeof import('csv-parse/sync');
+    const records = parse(text, { columns: true, skip_empty_lines: true, trim: true }) as Record<
+      string,
+      string
+    >[];
+    const stmt = db.prepare(INSERT_PSEUDO_SQL);
+    let imported = 0;
+    let skipped = 0;
+    const tx = db.transaction(() => {
+      for (const r of records) {
+        const word = (r['word'] ?? '').trim();
+        if (!word) {
+          skipped += 1;
+          continue;
+        }
+        const score = r['phoneme_similarity_score']
+          ? Number.parseFloat(r['phoneme_similarity_score'])
+          : null;
+        stmt.run({
+          id: `pseudo_${makeWordId(word)}`,
+          word,
+          phoneme_similarity_score: Number.isFinite(score as number) ? score : null,
+        });
+        imported += 1;
+      }
+    });
+    tx();
+    logger.print(`import-pseudo: ${imported} rows imported / ${skipped} skipped`);
+  } finally {
+    db.close();
+  }
 }
 
 /** CLI entry for `import`. */

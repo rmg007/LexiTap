@@ -10,10 +10,21 @@ import {
 import { buildDailyProgressQueries } from '@/infrastructure/db/queries/dailyProgressQueries';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AsyncStorageAdapter } from '@/infrastructure/storage';
-import { StubIapService } from '@/infrastructure/iap/StubIapService';
+import { createRevenueCatIapService } from '@/infrastructure/iap/RevenueCatIapService';
+import { CheckTierAccessUseCase } from '@/application/tier/CheckTierAccessUseCase';
 import { createAnalyticsService } from '@/infrastructure/analytics/createAnalyticsService';
-import { getOrCreateAnonId } from '@/infrastructure/analytics/AnonIdStore';
+import { getOrCreateAnonId, getCurrentSessionId } from '@/infrastructure/analytics/AnonIdStore';
+import { setSentryTags } from '@/infrastructure/crash';
+import { getOrSetInstallDate, daysSince } from '@/infrastructure/analytics/InstallDateStore';
+import { SessionTracker } from '@/infrastructure/analytics/SessionTracker';
+import { SessionStartedUseCase } from '@/application/analytics/SessionStartedUseCase';
+import { SessionCompletedUseCase } from '@/application/analytics/SessionCompletedUseCase';
 import { createAuthService } from '@/infrastructure/auth/createAuthService';
+import { createBackupService } from '@/infrastructure/backup/createBackupService';
+import { PerformBackupUseCase } from '@/application/backup/PerformBackupUseCase';
+import * as FileSystem from 'expo-file-system';
+import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
 import { v1FixedScheduler } from '@/domain/srs/v1-fixed';
 import type { TierId } from '@/domain/vocabulary/ids';
@@ -72,7 +83,6 @@ function buildReadQueries(
         return await dailyProgressQueries.getDailyProgress(tierId, nowMs, userTz);
       } catch (error) {
         logger.warn('getDailyProgress failed; returning zero-state', { error: String(error) });
-        // Return zero-state on any error (including timezone issues)
         return {
           reviewsCompletedToday: 0,
           effectiveDailyCap: 40,
@@ -113,15 +123,61 @@ const ASYNC_STORAGE_KEYS = [
   'lexitap.sync.cursor',
   'lexitap.forgiveness.config.version',
   'lexitap.onboarding.completed',
+  'lexitap.install_date',
+  'lexitap.backup.lastBackupAtMs',
 ] as const;
 
 export async function createContainer(): Promise<Container> {
-  const db = await openDatabase();
+  // Phase 1: DB-free setup. Auth + backup are constructed first so the BK2
+  // hydration gate can run BEFORE openDatabase(). Migrations must run on any
+  // restored schema — never on an empty DB that then gets clobbered.
   const storage = new AsyncStorageAdapter();
+  const auth = createAuthService();
+  const backupService = createBackupService();
+
+  // BK2 hydration gate: if the user has a persisted session but no local
+  // user.db (fresh install / re-install after device wipe), attempt to restore
+  // their backup so migrations run on the recovered schema, not an empty one.
+  try {
+    const authSession = await auth.getSession();
+    if (authSession) {
+      const docDir = FileSystem.documentDirectory ?? '';
+      const userDbUri = `${docDir}SQLite/user.db`;
+      const fileInfo = await FileSystem.getInfoAsync(userDbUri);
+      // Only restore when the local file is missing or effectively empty (<= 512 B).
+      // A present, non-trivial file means the device is authoritative — skip.
+      const localExists = fileInfo.exists && fileInfo.size > 512;
+      if (!localExists) {
+        const result = await backupService.restore(authSession.user.id);
+        if (result.ok) {
+          logger.info('BK2: restored user.db from remote backup');
+        } else if (result.reason !== 'no_backup' && result.reason !== 'not_configured') {
+          logger.warn('BK2: restore failed', { reason: result.reason });
+        }
+      }
+    }
+  } catch (err) {
+    // Never block app launch — fresh schema will initialise below.
+    logger.warn('BK2: hydration gate error', { error: String(err) });
+  }
+
+  // Phase 2: open the database (after potential restore).
+  const db = await openDatabase();
 
   const anonId = await getOrCreateAnonId();
-  const analytics = createAnalyticsService(anonId);
-  const auth = createAuthService();
+  setSentryTags(anonId, getCurrentSessionId());
+  const rawAnalytics = createAnalyticsService(anonId);
+  const tracker = new SessionTracker();
+
+  // Wrap analytics to auto-count lesson_completed events for session metrics.
+  const analytics = {
+    track(event: string, properties?: Record<string, unknown>) {
+      if (event === 'lesson_completed') tracker.incrementLesson();
+      return rawAnalytics.track(event, properties);
+    },
+  };
+
+  const installDateMs = await getOrSetInstallDate();
 
   const words = new SQLiteWordRepository(db);
   const tiers = new SQLiteContentTierRepository(db);
@@ -130,18 +186,64 @@ export async function createContainer(): Promise<Container> {
   const answerWriter = new SQLiteAnswerWriter(db);
   const stats = new SQLiteUserStatsRepository(db);
 
-  // Stub IAP: no store SDK wired yet (Phase 3). Bound but not yet surfaced
-  // through Services; the paywall consumes it once RevenueCat replaces the stub.
-  void new StubIapService();
   void tiers;
 
+  // RevenueCat IAP (env-gated: no-op when EXPO_PUBLIC_REVENUECAT_API_KEY_* absent).
+  const iap = createRevenueCatIapService();
+  const checkTierAccess = new CheckTierAccessUseCase(iap);
+
+  const sessionStartedUC = new SessionStartedUseCase(analytics, stats);
+  const sessionCompletedUC = new SessionCompletedUseCase(analytics);
+  const appVersion = Constants.expoConfig?.version ?? '0.0.0';
+
+  // BK1.2: periodic backup use case. Throttle (6h) + upload + timestamp persist.
+  const performBackup = new PerformBackupUseCase(
+    backupService,
+    auth,
+    () => storage.getLastBackupAtMs(),
+    (ms) => storage.setLastBackupAtMs(ms),
+    analytics,
+  );
+
   const services: Services = {
-    startQuiz: new StartQuizUseCase(words, progress, sessions, analytics),
+    startQuiz: new StartQuizUseCase(words, progress, sessions, analytics, checkTierAccess),
     answerQuestion: new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler, analytics),
     runDiagnostic: new RunDiagnosticUseCase(words, progress, v1FixedScheduler),
     saveOnboardingProfile: new SaveOnboardingProfileUseCase(stats),
     analytics,
     auth,
+    session: {
+      async start() {
+        tracker.start();
+        await sessionStartedUC.execute({
+          appVersion,
+          platform: Platform.OS,
+          daysSinceInstall: daysSince(installDateMs),
+        });
+        // Trigger backup check on every foreground (6h throttle; no-op if recent).
+        void performBackup.triggerIfNeeded(Date.now());
+      },
+      async end() {
+        const metrics = tracker.end();
+        await sessionCompletedUC.execute(metrics);
+      },
+    },
+    backup: {
+      triggerIfNeeded: (nowMs: number) => performBackup.triggerIfNeeded(nowMs),
+      async forceRestore() {
+        try {
+          const session = await auth.getSession();
+          if (!session) return 'error';
+          const result = await backupService.restore(session.user.id);
+          if (result.ok) return 'ok';
+          return result.reason === 'no_backup' ? 'no_backup' : 'error';
+        } catch {
+          return 'error';
+        }
+      },
+    },
+    iap,
+    checkTierAccess,
     onboarding: {
       isComplete: () => storage.isOnboardingComplete(),
       markComplete: () => storage.setOnboardingComplete(),

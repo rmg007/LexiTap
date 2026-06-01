@@ -20,6 +20,7 @@ export interface ParsedInputRow {
   cefr_level: string | null;
   theme: string | null;
   difficulty: number;
+  frequency_rank: number | null;
   word_type: WordType;
   /** Present only from JSON input; CSV leaves these null for `enrich` to fill. */
   synonyms: string[] | null;
@@ -52,6 +53,12 @@ function coerceDifficulty(value: unknown): number {
   if (value === undefined || value === null || value === '') return DEFAULT_DIFFICULTY;
   const n = typeof value === 'number' ? value : Number.parseInt(String(value), 10);
   return Number.isFinite(n) ? n : DEFAULT_DIFFICULTY;
+}
+
+function coerceFrequencyRank(value: unknown): number | null {
+  if (value === undefined || value === null || value === '') return null;
+  const n = typeof value === 'number' ? value : Number.parseInt(String(value), 10);
+  return Number.isFinite(n) && n > 0 ? n : null;
 }
 
 function coerceWordType(value: unknown, fallback: WordType): WordType {
@@ -95,6 +102,7 @@ function buildRow(
       cefr_level: emptyToNull(asString(record.cefr_level)),
       theme: emptyToNull(asString(record.theme)),
       difficulty: coerceDifficulty(record.difficulty),
+      frequency_rank: coerceFrequencyRank(record.frequency_rank),
       word_type: coerceWordType(record.word_type, defaultWordType),
       synonyms: coerceStringArray(record.synonyms),
       antonyms: coerceStringArray(record.antonyms),

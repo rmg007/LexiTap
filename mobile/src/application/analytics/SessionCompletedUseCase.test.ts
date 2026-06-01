@@ -10,17 +10,30 @@ describe('SessionCompletedUseCase', () => {
     useCase = new SessionCompletedUseCase(mockAnalytics);
   });
 
-  it('emits session_completed with duration', async () => {
-    await useCase.execute({ durationMs: 300000 });
+  it('emits session_completed with duration_sec and lesson_count', async () => {
+    await useCase.execute({ durationMs: 300000, lessonCount: 3 });
 
     expect(mockAnalytics.track).toHaveBeenCalledWith('session_completed', {
-      duration_ms: 300000,
+      duration_sec: 300,
+      lesson_count: 3,
     });
   });
 
-  it('handles zero duration', async () => {
-    await useCase.execute({ durationMs: 0 });
+  it('rounds duration to nearest second', async () => {
+    await useCase.execute({ durationMs: 90500, lessonCount: 1 });
 
-    expect(mockAnalytics.track).toHaveBeenCalledWith('session_completed', { duration_ms: 0 });
+    expect(mockAnalytics.track).toHaveBeenCalledWith('session_completed', {
+      duration_sec: 91,
+      lesson_count: 1,
+    });
+  });
+
+  it('handles zero duration and no lessons', async () => {
+    await useCase.execute({ durationMs: 0, lessonCount: 0 });
+
+    expect(mockAnalytics.track).toHaveBeenCalledWith('session_completed', {
+      duration_sec: 0,
+      lesson_count: 0,
+    });
   });
 });

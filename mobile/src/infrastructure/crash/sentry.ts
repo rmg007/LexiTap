@@ -54,3 +54,10 @@ export const wrapRoot = Sentry.wrap;
 export function captureException(error: unknown): void {
   Sentry.captureException(error);
 }
+// Wire pseudonymous tags so events are groupable by device/session without
+// identifying the user. Call once after anon_id resolves (container init).
+// Tags survive scrubEvent — scrub deletes user/server_name/request/extra, not tags.
+export function setSentryTags(anonId: string, sessionId: string): void {
+  Sentry.setTag('anon_id', anonId);
+  Sentry.setTag('session_id', sessionId);
+}

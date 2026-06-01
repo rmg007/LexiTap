@@ -5,7 +5,8 @@ import type { UserProgressRepository } from '@/domain/user/UserProgressRepositor
 import type { QuizSessionRepository } from '@/domain/quiz/repositories';
 import type { QuizMode, QuizSession } from '@/domain/quiz/types';
 import type { AnalyticsPort } from '@/domain/analytics/AnalyticsPort';
-import { NoWordsAvailableError } from '@/domain/quiz/errors';
+import { NoWordsAvailableError, TierLockedError } from '@/domain/quiz/errors';
+import type { CheckTierAccessUseCase } from '@/application/tier/CheckTierAccessUseCase';
 import {
   FORGIVENESS,
   effectiveDailyCap,
@@ -30,10 +31,15 @@ export class StartQuizUseCase {
     private readonly progress: UserProgressRepository,
     private readonly sessions: QuizSessionRepository,
     private readonly analytics: AnalyticsPort,
+    private readonly tierAccess?: CheckTierAccessUseCase,
   ) {}
 
   async execute(input: StartQuizInput): Promise<QuizSession> {
     const { tierId, mode, nowMs, tz } = input;
+
+    if (this.tierAccess && !(await this.tierAccess.canAccessTier(tierId))) {
+      throw new TierLockedError(tierId);
+    }
 
     const selected =
       mode === 'review'
@@ -58,11 +64,11 @@ export class StartQuizUseCase {
     const id = await this.sessions.save(draft);
     const session = { ...draft, id };
 
-    this.analytics.track('session_started', {
-      sessionId: session.id,
-      tierId,
+    this.analytics.track('lesson_started', {
+      session_id: session.id,
+      tier_id: tierId,
       mode,
-      wordCount: selected.length,
+      word_count: selected.length,
     });
 
     return session;

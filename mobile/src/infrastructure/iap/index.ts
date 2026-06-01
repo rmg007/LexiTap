@@ -7,3 +7,4 @@ export type {
   ReceiptValidation,
 } from '@/infrastructure/iap/IapService';
 export { StubIapService } from '@/infrastructure/iap/StubIapService';
+export { RevenueCatIapService, createRevenueCatIapService } from '@/infrastructure/iap/RevenueCatIapService';
