@@ -4,6 +4,15 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## ✅ Session: C5 Validation Run + Validator Fix (2026-05-31)
+
+**[C5 Validation Run (2026-05-31_c5_validation_run.md)](2026-05-31_c5_validation_run.md)**
+- **C5 = PASS**: `validate --strict` on C4-enriched DB → `2881 rows, 0 errors, 2802 warnings`. DB release-eligible (warnings never block).
+- Fixed `hasInTokenUnderscore` false-positive regex (`/\S_|_\S/` flagged "eat _." like "cataly_t") → warnings 3141→2802, +1 test, 97 green.
+- ⚠️ **Remaining 2802 warnings = KNOWN content debt, triaged (do NOT re-investigate):** 2798× `theme='General'` (bulk 3k expansion placeholder — content decision for Ryan) + 4× AI-generated `_s` glue sentences (minor). Re-running C5 → expect `0 errors, ~2802 warnings` (known-good baseline).
+
+---
+
 ## 🔧 Session: BK1.2 + BK2 Backup (2026-06-01)
 
 **[BK1.2 + BK2 Backup Implementation (2026-06-01_bk1_2_bk2_backup.md)](2026-06-01_bk1_2_bk2_backup.md)**
