@@ -1,8 +1,8 @@
 ---
 title: Phase 3 Auth Implementation Plan (AU1–AU3)
-status: active
+status: partially-complete
 priority: P3
-updated: 2026-05-31
+updated: 2026-06-01
 blocks: BK1 (encrypted backup), B2B1 (seat activation), SUBMIT-2 (iOS App Review)
 ---
 
@@ -453,19 +453,20 @@ No additional setup beyond `app.config.ts` entitlements. Xcode auto-provisioning
 
 ## 11. Deliverables Checklist
 
-- [ ] `AuthContext` provider + `useAuth` hook
-- [ ] Magic-link flow end-to-end (email → OTP → sign-in)
-- [ ] Google Sign-In native integration + Supabase OAuth
-- [ ] Sign in with Apple + Supabase OAuth
-- [ ] Deep-link callback handler (`lexitap://auth/callback`)
-- [ ] Account deletion UI + API integration
-- [ ] RevenueCat alias on sign-in
-- [ ] Protected routes (Quiz, Paywall gated)
-- [ ] Session persistence + restore on launch
-- [ ] Tests: unit + integration (E2E via mock Supabase)
-- [ ] Documentation: `mobile/AUTH_INTEGRATION.md` (templates + setup)
-- [ ] EAS + environment variable configuration
-- [ ] Manual test plan: AU1 (email), AU2 (Google sandbox), AU3 (physical iOS device)
+- [x] `AuthContext` provider + `useAuth` hook (`dd104b9`)
+- [x] Magic-link flow end-to-end (email → OTP → sign-in) (`dd104b9`)
+- [ ] Google Sign-In native integration + Supabase OAuth — **BLOCKED**: requires `@react-native-google-signin/google-signin` native module + Google Cloud Console OAuth creds + EAS rebuild (gates on A0)
+- [ ] Sign in with Apple + Supabase OAuth — **BLOCKED**: requires `@react-native-apple-authentication` native module + Apple Developer Sign in with Apple enrollment + EAS rebuild (mandatory per App Store 4.8 once Google ships)
+- [x] Deep-link callback handler (`lexitap://auth/callback?token_hash=…`) (`dd104b9`)
+- [x] Account deletion UI + API integration (`59554c8` — Supabase Edge Function not yet deployed)
+- [ ] RevenueCat alias on sign-in (`Purchases.logIn(supabaseUserId)`) — **BLOCKED**: requires RC native module (A0)
+- [ ] Protected routes (Quiz, Paywall gated) — **DEFERRED**: product decision needed; app is offline-first and quiz must work without auth; current design = auth is for backup/sync only, surfaced in Settings
+- [x] Session persistence + restore on launch (keychain via `secureStoreAdapter`, `autoRefreshToken:true`) (`dd104b9`)
+- [x] Session refresh on app resume (AppState listener) (`dd104b9`)
+- [x] Tests: unit (AuthContext contract, StubAuthService, SupabaseAuthService) — 41 suites / 381 tests green
+- [ ] Documentation: `mobile/AUTH_INTEGRATION.md` (templates + setup) — deferred, not blocking
+- [ ] EAS + environment variable configuration — `EXPO_PUBLIC_SUPABASE_URL` / `EXPO_PUBLIC_SUPABASE_ANON_KEY` needed in EAS secrets (add when A0 build runs)
+- [ ] Manual test plan: AU1 (email), AU2 (Google sandbox), AU3 (physical iOS device) — AU1 ready to test once A0 EAS build is live
 
 ---
 
