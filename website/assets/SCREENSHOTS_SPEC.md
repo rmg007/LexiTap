@@ -12,130 +12,116 @@ LexiTap app store screenshots must reflect **real app state** (simulator capture
 **Title/overlay:** Plain white text, left-aligned or centered, max 170 characters per store rules  
 **Naming:** `ios-screenshot-1.png` through `ios-screenshot-N.png`
 
-### Screenshot 1: Welcome + Age Gate
+### Screenshot 1: Quiz → Multiple Choice (lead with the differentiator)
 
 **What to show:**
-- Age gate confirmation (if still in onboarding flow)
-- Welcome screen with LexiTap logo + tagline
-- "Get Started" or equivalent CTA button
-- Dark theme with teal accents visible
+- Quiz in progress: English word or phrase being quizzed
+- 4 multiple-choice options (one highlighted/selected in teal)
+- Immediate feedback state (green checkmark visible)
+- Question number (e.g., "3 of 10") + progress bar
+- Large, readable text (non-native speaker POV, no keyboard anywhere)
 
 **Title overlay:**
 ```
-Get English right. Start today.
+No typing. Tap to answer. Instant feedback.
 ```
 
 **Subtitle (optional):**
 ```
-Vocabulary through spaced repetition.
+Multiple choice quizzes. Zero keyboard stress.
 ```
 
 **Why this screen:**
-- First impression: greet the user, show brand identity
-- Trust signal: age gate confirms app is for 13+ learners
+- Leads with the #1 UX differentiator: no typing friction
+- Immediately distinguishes LexiTap from Duolingo/Quizlet typing flows
+- Non-native speakers see themselves getting answers — low anxiety
 
 ---
 
-### Screenshot 2: Home → Ready for Today + Streak
+### Screenshot 2: Spaced Repetition in Action
 
 **What to show:**
-- Home screen with date + greeting ("Welcome back, [Name]" if applicable)
-- Quiz card(s) showing:
-  - Topic (e.g., "Science," "Daily Vocab")
-  - Difficulty level (e.g., "Intermediate")
-  - "Start Quiz" CTA
-- Visible streak counter (days, fire icon)
-- Progress summary (e.g., "Ready for today's lesson")
+- Quiz or review card showing SRS context ("See you in 3 days" / interval label)
+- OR: home screen with "Next review: tomorrow" messaging
+- Streak counter visible (daily habit signal)
 - Teal color scheme prominent
 
 **Title overlay:**
 ```
-Learn a little every day. Build your streak.
+Studies what you forget. Skips what you know.
 ```
 
 **Subtitle (optional):**
 ```
-Consistent practice beats cramming.
+Proven by 100 years of cognitive science.
 ```
 
 **Why this screen:**
-- Hook: daily habit motivation
-- Shows engagement mechanism (streaks, progress)
+- Explains the mechanism without jargon (skips what you know = no wasted time)
+- "100 years of cognitive science" = credibility for serious learners
+- Differentiates from rote flashcard apps
 
 ---
 
-### Screenshot 3: Quiz in Progress → Multiple Choice
+### Screenshot 3: Offline — No Wi-Fi Required
 
 **What to show:**
-- Quiz header with current question number (e.g., "3 of 10")
-- English word or phrase being quizzed
-- 4 multiple-choice options:
-  - One option **highlighted/selected** (teal background or border)
-  - Show the feedback state (green checkmark or red X if answer shown)
-- Word definition or image clue (if shown in quiz)
-- Progress bar at bottom (optional)
-- Visual hierarchy: large, readable text (non-native speaker POV)
+- App actively in use (quiz or home screen) with no connectivity indicator
+- OR: a visual showing "Offline" badge / airplane-mode state
+- Progress rings or stats visible (proving real content works offline)
 
 **Title overlay:**
 ```
-Multiple choice. No typing stress. Instant feedback.
+No Wi-Fi needed. Download once, learn forever.
 ```
 
 **Subtitle (optional):**
 ```
-See the right answer immediately.
+No data plan, no interruptions.
 ```
 
 **Why this screen:**
-- Core UX: zero friction learning (no keyboard, no guessing)
-- Accessibility: shows answer immediately (confidence boost)
+- Core competitive advantage for global learners (unreliable internet markets)
+- Directly addresses a real user fear ("will it work without Wi-Fi?")
+- "Download once, learn forever" echoes the one-time purchase model
 
 ---
 
-### Screenshot 4: Progress Dashboard → Mastery Rings
+### Screenshot 4: TOEFL / IELTS Exam Focus
 
 **What to show:**
-- Concentric progress rings representing CEFR levels:
-  - A1 (innermost, darkest teal)
-  - A2
-  - B1
-  - B2
-  - C1 (outermost, brightest or less-filled)
-- Each ring color-filled proportional to % words mastered in that tier
-- Legend showing "20/100 words mastered in A1" style text
-- Optional: animated state (if possible to screenshot)
-- Total words mastered stat (e.g., "342 words mastered")
+- Quiz screen specifically showing TOEFL or IELTS tier content
+- OR: locked tier cards for TOEFL/IELTS packs with unlock CTA
+- Content that's clearly exam-specific (academic vocabulary, formal register)
+- Teal "locked" vs "unlocked" visual contrast
 
 **Title overlay:**
 ```
-Watch your knowledge grow. See growth across levels.
+Exam-ready vocabulary. 1000+ words per pack.
 ```
 
 **Subtitle (optional):**
 ```
-Master English vocabulary tier by tier.
+TOEFL, IELTS, GRE, GMAT, Business English.
 ```
 
 **Why this screen:**
-- Hook: intrinsic motivation (visual progress)
-- Shows app's grading system (CEFR—credible to teachers)
+- Directly targets the primary search intent (TOEFL vocabulary, IELTS vocab)
+- Shows breadth of exam coverage (5 packs)
+- Specific word count = credible promise vs vague "thousands of words"
 
 ---
 
-### Screenshot 5: Paywall → Exam Packs (Premium)
+### Screenshot 5: Paywall → One-Time Purchase
 
 **What to show:**
-- Paywall headline (e.g., "Unlock Exam Prep")
-- Card(s) showing available exam packs:
-  - **TOEFL Mastery** — $9.99 (1000+ words specific to TOEFL)
-  - **IELTS Mastery** — $9.99 (1000+ words specific to IELTS)
-  - **All-Exams Bundle** — $29.99 (both + future packs)
-- Feature bullets under each:
-  - "1000+ exam-specific words"
-  - "Full pronunciation audio"
-  - "Lifetime access (one-time purchase)"
+- Paywall with exam pack cards:
+  - **TOEFL** — $9.99
+  - **IELTS** — $9.99
+  - **All-Exams Bundle** — $29.99
+- Feature bullets: "1000+ exam-specific words", "Lifetime access (one-time)"
 - CTA buttons ("Unlock" or "Buy Now")
-- Teal theme, professional tone (not salesy)
+- No subscription language anywhere — absence of "per month" is itself a signal
 
 **Title overlay:**
 ```
@@ -148,38 +134,35 @@ Ace your English exams with focused vocabulary.
 ```
 
 **Why this screen:**
-- Monetization + perceived value
-- Reassures user: no subscription trap ("one-time")
+- Converts the monetization anxiety into a selling point: no subscription trap
+- Price transparency builds trust with deal-conscious international learners
 
 ---
 
-### Optional: Screenshot 6 (Progress Summary)
+### Optional: Screenshot 6 (Knowledge Map Reveal)
 
 **What to show:**
-- Settings / Profile page (if designed)
-- User stats: total words learned, current streak, mastery level
-- Optional: about, privacy/terms links, logout
-
-**Title:**
-```
-Track your stats. Own your progress.
-```
-
----
-
-### Optional: Screenshot 7 (Knowledge Map Reveal)
-
-**What to show:**
-- Knowledge Map screen showing animated reveal of:
-  - Known words (green)
-  - Learning words (yellow/amber)
-  - New words (grey)
-- Segment labels with counts
-- "Start learning" CTA linking to quiz
+- Knowledge Map animated reveal: Known / Learning / New segments
+- Endowed progress copy ("You already know ~X words")
+- "Start learning" CTA
 
 **Title:**
 ```
 See what you know. Plan what's next.
+```
+
+---
+
+### Optional: Screenshot 7 (Progress Rings)
+
+**What to show:**
+- Concentric CEFR rings (A1–C1), color-filled by % mastered
+- Legend: "20/100 words mastered in A1"
+- Total words mastered stat
+
+**Title:**
+```
+Watch your knowledge grow. Tier by tier.
 ```
 
 ---

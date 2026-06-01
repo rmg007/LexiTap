@@ -9,6 +9,10 @@
 | File | Purpose |
 |------|---------|
 | **`lexitap-icon.svg`** | Master icon source (editable vector) |
+| **`lexitap-icon-1024.png`** | Store submission icon (1024×1024) ✅ |
+| **`lexitap-icon-512.png`** | Google Play icon (512×512) ✅ |
+| **`lexitap-icon-180.png`** | iOS App Store icon (180×180) ✅ |
+| **`lexitap-icon-120.png`** | iOS home screen icon (120×120) ✅ |
 | **`README.md`** | How to generate PNG icon variants + submit to stores |
 | **`SCREENSHOTS_SPEC.md`** | Detailed spec for 5 core app store screenshots |
 | **`STORE_COPY.md`** | App store listing copy (name, description, keywords) |

@@ -6,8 +6,8 @@ Copy to use when submitting to iOS App Store and Google Play Store.
 
 | Field | Value |
 |-------|-------|
-| **App Name** | `LexiTap` |
-| **Subtitle** (iOS only, ≤30 chars) | `Learn English offline, anytime` |
+| **App Name** | `LexiTap: TOEFL & IELTS Vocab` |
+| **Subtitle** (iOS only, ≤30 chars) | `No typing. Learn offline.` |
 | **Support URL** | `https://lexitap.app` |
 | **Privacy URL** | `https://lexitap.app/privacy` |
 | **Terms URL** | `https://lexitap.app/terms` |
@@ -108,7 +108,7 @@ Download today. Own your English journey.
 
 ### iOS App Store
 
-- Subtitle (30 chars max): `Learn English offline, anytime`
+- Subtitle (30 chars max): `No typing. Learn offline.` (25 chars ✓)
 - Age rating: **17+** or **12+** (confirm in App Store Connect)
 - Category: **Education**
 - Content rating: **None** (app is G-rated)
@@ -127,11 +127,11 @@ Download today. Own your English journey.
 See `SCREENSHOTS_SPEC.md` for full screenshot spec.  
 Screenshot overlay titles (each ≤170 chars):
 
-1. **Welcome** → `Get English right. Start today.`
-2. **Home + Streak** → `Learn a little every day. Build your streak.`
-3. **Quiz** → `Multiple choice. No typing stress. Instant feedback.`
-4. **Progress Rings** → `Watch your knowledge grow. See growth across levels.`
-5. **Paywall** → `One-time purchase. Lifetime access. No subscriptions.`
+1. **Quiz (multiple choice)** → `No typing. Tap to answer. Instant feedback.`
+2. **Spaced repetition** → `Studies what you forget. Skips what you know.`
+3. **Offline** → `No Wi-Fi needed. Download once, learn forever.`
+4. **TOEFL / IELTS focus** → `Exam-ready vocabulary. 1000+ words per pack.`
+5. **Exam packs paywall** → `One-time purchase. Lifetime access. No subscriptions.`
 
 ---
 
