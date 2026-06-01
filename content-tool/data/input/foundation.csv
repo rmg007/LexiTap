@@ -1,10 +1,10 @@
 word,pos,cefr,theme,definition,example_sentence
-the,determiner,A2,General,(TBD: the),The answer is _ .
+the,determiner,A2,General,(TBD: the),She opened _ door and walked inside.
 of,preposition,A2,General,(TBD: of),The answer is _ .
 and,conjunction,A2,General,(TBD: and),The answer is _ .
 to,particle,A2,General,(TBD: to),The answer is _ .
 in,preposition,A2,General,(TBD: in),The answer is _ .
-is,verb,A2,General,(TBD: is),The answer is _ .
+is,verb,A2,General,(TBD: is),My cat _ very small and quiet.
 for,preposition,A2,General,(TBD: for),The answer is _ .
 it,pronoun,A2,General,(TBD: it),The answer is _ .
 with,preposition,A2,General,(TBD: with),The answer is _ .
@@ -194,7 +194,7 @@ fact,noun,B1,General,(TBD: fact),The answer is _ .
 value,noun,B1,General,(TBD: value),The answer is _ .
 education,noun,B1,General,(TBD: education),The answer is _ .
 last,adjective,B1,General,(TBD: last),The answer is _ .
-the,noun,A2,General,(TBD: the),The answer is _ .
+the,noun,A2,General,(TBD: the),She opened _ door and walked inside.
 come,verb,A2,General,(TBD: come),The answer is _ .
 back,adverb,A2,General,(TBD: back),The answer is _ .
 period,noun,A2,General,(TBD: period),The answer is _ .
@@ -1037,7 +1037,7 @@ estate,noun,C1,General,(TBD: estate),The answer is _ .
 machine,noun,A2,General,(TBD: machine),The answer is _ .
 fine,adjective,A2,General,(TBD: fine),The answer is _ .
 front,noun,B1,General,(TBD: front),The answer is _ .
-answer,noun,A2,General,(TBD: answer),The answer is _ .
+answer,noun,A2,General,(TBD: answer),She looked for _ to her difficult question.
 smith,noun,A2,General,(TBD: smith),The answer is _ .
 parents,noun,A2,General,(TBD: parents),The answer is _ .
 prepared,verb,B2,General,(TBD: prepared),The answer is _ .
@@ -2857,7 +2857,7 @@ representing,verb,B1,General,(TBD: representing),The answer is _ .
 revealed,verb,B1,General,(TBD: revealed),The answer is _ .
 advantages,noun,B1,General,(TBD: advantages),The answer is _ .
 guard,noun,B1,General,(TBD: guard),The answer is _ .
-answer,verb,A2,General,(TBD: answer),The answer is _ .
+answer,verb,A2,General,(TBD: answer),He could not _ in time during class.
 struggle,noun,B2,General,(TBD: struggle),The answer is _ .
 on,noun,A2,General,(TBD: on),The answer is _ .
 acting,verb,B1,General,(TBD: acting),The answer is _ .

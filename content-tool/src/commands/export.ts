@@ -306,12 +306,13 @@ export async function bootstrapWorkingForRelease(
         onConflict: 'update',
         now: () => Date.now(),
       });
-      // Offline enrichment: synonyms (no-op arrays) everywhere; audio for
-      // tiers configured to ship audio (TOEFL).
+      // Offline enrichment: synonyms (no-op arrays) only. Audio is deferred
+      // to C9 (Phase 3) — DeterministicAudioProvider sets paths without real
+      // files, which causes validate --strict to abort the release pipeline.
       await runEnrich(working, providers, {
         tier: tier.slug,
         addSynonyms: true,
-        addAudio: tier.audio,
+        addAudio: false,
         addImages: false,
         force: false,
       });

@@ -31,6 +31,26 @@ export function applyContentSchema(db: DB): void {
 }
 
 /**
+ * Idempotent schema migrations for the working DB. Runs after applyContentSchema
+ * so a freshly-created DB is already current. Each migration is a no-op if the
+ * target state already exists.
+ */
+function applyWorkingDbMigrations(db: DB): void {
+  // C7 migration: add definition_license column if schema pre-dates C7.
+  // Also clears stale audio_path values written by DeterministicAudioProvider
+  // before real TTS files existed — those paths referenced non-existent assets
+  // and caused validate --strict to abort the release pipeline.
+  const hasLicense = db
+    .prepare(`SELECT name FROM pragma_table_info('words') WHERE name='definition_license'`)
+    .get();
+  if (!hasLicense) {
+    db.exec(`ALTER TABLE words ADD COLUMN definition_license TEXT`);
+    db.exec(`UPDATE words SET definition_license = 'original' WHERE definition_license IS NULL`);
+    db.exec(`UPDATE words SET audio_path = NULL`);
+  }
+}
+
+/**
  * Open (creating if needed) the mutable working DB and ensure its schema.
  *
  * Foreign keys are intentionally OFF here: the working DB stages `words` rows
@@ -42,6 +62,7 @@ export function openWorkingDb(path: string = WORKING_DB_PATH): DB {
   const db = new Database(path);
   db.pragma('foreign_keys = OFF');
   applyContentSchema(db);
+  applyWorkingDbMigrations(db);
   return db;
 }
 
