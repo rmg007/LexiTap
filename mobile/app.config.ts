@@ -1,5 +1,30 @@
 import type { ExpoConfig } from 'expo/config';
 
+// B3 — Sentry source-map upload (build-time only). The Expo plugin is added
+// ONLY when SENTRY_ORG + SENTRY_PROJECT are set, so credential-less builds and
+// Expo Go don't break. authToken is read from the SENTRY_AUTH_TOKEN env var
+// (an EAS secret) at build time — never hardcoded here.
+const sentryConfigured = Boolean(
+  process.env.SENTRY_ORG && process.env.SENTRY_PROJECT,
+);
+
+const plugins: NonNullable<ExpoConfig['plugins']> = [
+  'expo-router',
+  'expo-sqlite',
+  ['expo-asset', { assets: ['./assets/vocab/words.db'] }],
+];
+
+if (sentryConfigured) {
+  plugins.push([
+    '@sentry/react-native/expo',
+    {
+      organization: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      url: 'https://sentry.io/',
+    },
+  ]);
+}
+
 const config: ExpoConfig = {
   name: 'LexiTap',
   slug: 'lexitap',
@@ -20,11 +45,7 @@ const config: ExpoConfig = {
   android: {
     package: 'com.lexitap.app',
   },
-  plugins: [
-    'expo-router',
-    'expo-sqlite',
-    ['expo-asset', { assets: ['./assets/vocab/words.db'] }],
-  ],
+  plugins,
   runtimeVersion: { policy: 'appVersion' },
   experiments: {
     typedRoutes: true,
