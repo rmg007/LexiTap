@@ -85,7 +85,6 @@
       "Edit(mobile/src/infrastructure/crash/**)",
       "Edit(mobile/app.json)",
       "Edit(**/.env)",
-      "Edit(**/.env.local)",
       "Edit(**/.env.development)",
       "Edit(**/.env.development.local)",
       "Edit(**/.env.production)",
