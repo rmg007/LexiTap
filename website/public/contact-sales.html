@@ -63,7 +63,7 @@
     }
     input[type="text"],
     input[type="email"],
-    input[type="number"],
+    select,
     textarea {
       padding: var(--s3) var(--s4);
       border: 1px solid var(--border-strong);
@@ -75,9 +75,16 @@
       line-height: 1.5;
       transition: border-color 0.15s, box-shadow 0.15s;
     }
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right var(--s3) center;
+      padding-right: var(--s8);
+    }
     input[type="text"]:focus,
     input[type="email"]:focus,
-    input[type="number"]:focus,
+    select:focus,
     textarea:focus {
       outline: none;
       border-color: var(--accent);
@@ -196,6 +203,19 @@
               name="name"
               placeholder="e.g., Lincoln High School"
               required
+              aria-required="true"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="contact_name">Your Name <span aria-label="required">*</span></label>
+            <input
+              type="text"
+              id="contact_name"
+              name="contact_name"
+              placeholder="e.g., Jane Smith"
+              required
+              aria-required="true"
             />
           </div>
 
@@ -207,38 +227,40 @@
               name="email"
               placeholder="your-email@school.edu"
               required
+              aria-required="true"
             />
           </div>
 
           <div class="form-group">
-            <label for="seats">Number of Students / Seats <span aria-label="required">*</span></label>
-            <input
-              type="number"
-              id="seats"
-              name="seats"
-              placeholder="e.g., 150"
-              min="1"
-              required
-            />
+            <label for="learner_count">Estimated Learners <span aria-label="required">*</span></label>
+            <select id="learner_count" name="learner_count" required aria-required="true">
+              <option value="">Select…</option>
+              <option value="10-50">10–50</option>
+              <option value="51-100">51–100</option>
+              <option value="101-500">101–500</option>
+              <option value="500+">500+</option>
+            </select>
           </div>
 
           <div class="form-group">
-            <label for="message">Message</label>
+            <label for="use_case">Primary Use Case <span aria-label="required">*</span></label>
+            <select id="use_case" name="use_case" required aria-required="true">
+              <option value="">Select…</option>
+              <option value="toefl-prep">TOEFL Prep</option>
+              <option value="ielts-prep">IELTS Prep</option>
+              <option value="general-esl">General ESL</option>
+              <option value="business-english">Business English</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Additional Notes</label>
             <textarea
               id="message"
               name="message"
-              placeholder="Tell us about your needs, grade levels, language proficiency, or any integration requirements…"
+              placeholder="Tell us about your program, timeline, or any integration requirements…"
             ></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="phone">Phone (optional)</label>
-            <input
-              type="text"
-              id="phone"
-              name="phone"
-              placeholder="+1 (555) 123-4567"
-            />
           </div>
 
           <button type="submit">Send Inquiry</button>
@@ -276,29 +298,44 @@
 
   <script src="/theme-toggle.js" defer></script>
   <script>
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
-      const statusEl = document.querySelector('.form-status');
-      const submitBtn = document.querySelector('button[type="submit"]');
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const statusEl = form.querySelector('.form-status');
 
-      // Clear previous status
       statusEl.textContent = '';
       statusEl.className = 'form-status';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
 
-      // The form will submit to Formspree which handles the request
-      // Formspree will redirect on success or show an error
-    });
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' }
+        });
 
-    // Optional: Listen for redirect after successful submission
-    // Formspree handles this automatically, but we can add client feedback
-    window.addEventListener('load', function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.has('status')) {
-        const statusEl = document.querySelector('.form-status');
-        if (urlParams.get('status') === 'success') {
-          statusEl.textContent = '✓ Thank you! Your inquiry has been received. We\'ll be in touch soon.';
-          statusEl.classList.add('success');
-          document.getElementById('contactForm').style.display = 'none';
+        if (res.ok) {
+          form.querySelectorAll('.form-group, button[type="submit"]').forEach(function(el) {
+            el.style.display = 'none';
+          });
+          statusEl.textContent = '✓ Thank you! We\'ll be in touch within 1–2 business days.';
+          statusEl.className = 'form-status success';
+        } else {
+          const data = await res.json().catch(function() { return {}; });
+          const msg = (data.errors || []).map(function(err) { return err.message; }).join(' ') ||
+            'Something went wrong. Please try again or email support@lexitap.app.';
+          statusEl.textContent = msg;
+          statusEl.className = 'form-status error';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send Inquiry';
         }
+      } catch (_err) {
+        statusEl.textContent = 'Network error. Please check your connection and try again.';
+        statusEl.className = 'form-status error';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Inquiry';
       }
     });
   </script>
