@@ -4,6 +4,17 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 🔧 Session: Content Pipeline + C4 Enrichment (2026-06-01)
+
+**[Content Pipeline Fix + C4 Enrichment (2026-06-01_content_pipeline_and_c4.md)](2026-06-01_content_pipeline_and_c4.md)**
+- `npm run release --no-copy` now passes: 2,881 words / user_version=1 (was blocked by 3,125 validate --strict errors)
+- **Root causes fixed:** C7 `definition_license` column migration (`openWorkingDb` → `applyWorkingDbMigrations`); stale audio_path cleared; 3 stub example sentences in foundation.csv fixed; `bootstrapWorkingForRelease` no longer runs audio enrich
+- **C4 enrichment DB mode added** (commit `ed6791c`): `enrich --tier foundation --add-definitions --provider anthropic` → Claude API → `definition_license='ai-original'`; 96 content-tool + 338 mobile tests green
+- ⚠️ **Action needed (Ryan):** Run C4 with `ANTHROPIC_API_KEY=sk-ant-...` then `npm run release` (see note for exact commands). Do NOT copy words.db to mobile until after C4 — current bundle has TBD stubs.
+- ⚠️ **EAS build ready:** `cd mobile && eas build --platform ios --profile preview`
+
+---
+
 ## 🎯 Mega-Sprint Summary (2026-05-31)
 
 **[Mega-Sprint Final (2026-05-31_mega_sprint_final.md)](2026-05-31_mega_sprint_final.md)** — AUTHORITATIVE SESSION RECORD
