@@ -61,15 +61,15 @@ updated: 2026-05-31
 
 | # | Screen | Hook | Elements to show | Title (≤170 chars) |
 |---|--------|------|-----|-----------------|
-| 1 | **Onboarding Age Gate + Welcome** | First impression + personalization | Age gate (confirm 13+), Welcome copy (headline), LexiTap logo, friendly emoji | Get English right. Start today. |
-| 2 | **Home → "Ready for Today" + Streak** | Daily habit friction | Quiz card (topic + difficulty), Streak counter, Progress %,Quick start CTA | One quiz a day. Streak unlocked. |
-| 3 | **Quiz → Multiple Choice** | No friction learning | Question, 4 options (one highlighted as selected), Immediate feedback (green checkmark), Word definition below | Multiple choice. Instant feedback. |
-| 4 | **Progress Rings → Tier Mastery** | Growth visualization | Concentric rings (CEFR tiers A1–C1), Color-coded fill (% mastered), Legend | Track growth across tiers. |
-| 5 | **Paywall → Exam Packs** | Monetization + perceived value | Exam pack cards (TOEFL / IELTS), Price ($9.99–$29.99), Feature bullets (1000+ words, etc.), CTA button | Unlock exam prep. 1000+ words. |
+| 1 | **Quiz → Multiple Choice** | Lead with the differentiator | 4 options, teal highlight, green checkmark, no keyboard visible, question #/progress bar | No typing. Tap to answer. Instant feedback. |
+| 2 | **Spaced Repetition** | Explains the mechanism | SRS interval label or "Next review" + streak counter | Studies what you forget. Skips what you know. |
+| 3 | **Offline in action** | Key competitive advantage | App rendering without Wi-Fi, no connectivity indicator, stats/rings visible | No Wi-Fi needed. Download once, learn forever. |
+| 4 | **TOEFL / IELTS focus** | Primary search intent | Exam-specific vocabulary, locked tier cards, "1000+ words per pack" | Exam-ready vocabulary. 1000+ words per pack. |
+| 5 | **Paywall → Exam Packs** | Monetization + no-subscription | TOEFL/IELTS/Bundle cards with prices, "one-time" language, no "per month" visible | One-time purchase. Lifetime access. No subscriptions. |
 
 **Optional 6th + 7th (if time):**
-- 6: Settings/Progress dashboard (shows total streak, profile, about)
-- 7: Knowledge Map (animated reveal of known/learning/new segments)
+- 6: Knowledge Map (animated known/learning/new reveal)
+- 7: Progress Rings (CEFR tier mastery visualization)
 
 ### Capture method
 
@@ -101,11 +101,11 @@ adb exec-out screencap -p > /tmp/screen.png      # capture
 
 ## 3. Store Listing Copy
 
-**App name:** `LexiTap`
+**App name:** `LexiTap: TOEFL & IELTS Vocab` (29 chars — fits iOS 30-char limit)
 
 **Subtitle/tagline (≤30 chars):**
 ```
-Learn English offline, anytime
+No typing. Learn offline.
 ```
 
 **Short description (≤80 chars):**
@@ -181,10 +181,14 @@ Download today. No ads. No subscription. One language, real fluency.
 
 | File | What | Status |
 |------|------|--------|
-| `website/assets/lexitap-icon-*.png` | Icon in 4 sizes | TODO (P5) |
-| `website/assets/ios-screenshot-{1..5}.png` | iOS screenshots | TODO (P5, after UI stable) |
+| `mobile/assets/icon.png` | App icon (1024×1024) | ✅ Done |
+| `mobile/assets/adaptive-icon.png` | Android adaptive foreground | ✅ Done |
+| `website/assets/lexitap-icon-1024.png` | Icon 1024×1024 | ✅ Done |
+| `website/assets/lexitap-icon-512.png` | Icon 512×512 | ✅ Done |
+| `website/assets/lexitap-icon-180.png` | Icon 180×180 | ✅ Done |
+| `website/assets/lexitap-icon-120.png` | Icon 120×120 | ✅ Done |
+| `website/assets/ios-screenshot-{1..5}.png` | iOS screenshots | TODO (P5, after paywall + home finalized) |
 | `website/assets/android-screenshot-{1..5}.png` | Android screenshots | TODO (P5, after UI stable) |
-| `mobile/app.config.ts` | Update icon ref in expo config | TODO (P5) |
 | Store metadata (Apple + Google) | Copy + keywords + screenshots | TODO (P5, via store dashboards) |
 
 ---

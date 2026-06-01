@@ -337,7 +337,7 @@ Recommendation: Re-seed Reddit, Discord channels with updated link
   - [ ] `session_completed`
   - [ ] `lesson_completed`
   - [ ] `streak_event`
-  - [ ] `paywall_view`
+  - [ ] `paywall_viewed`
   - [ ] `srs_backlog_reanchored`
 
 ### Cohorts Created
@@ -468,7 +468,7 @@ ORDER BY hours_to_first_quiz ASC
 | Duplicate distinct_id if user reinstalls | Add `DISTINCT` to all count queries; manually filter in cohort definition |
 | `session_completed` not logged if app crashes | Complement with `session_started` count; retention = users with ≥1 event on day 7 (not necessarily completed) |
 | PostHog Cohort Retention widget has max 30-day lookback | Create manual dashboard with custom SQL queries instead (see Widget 2 above) |
-| Missing property `platform` (iOS vs Android) | Add property in app code before launching beta (already done in `PostHogAnalyticsService.ts`; confirm `system_os` is in properties) |
+| `platform` property (iOS vs Android) | Sent as `platform` on every `session_started` event via `SessionStartedUseCase` (wired in container.ts). Use `properties.platform` in PostHog cohort filters. |
 
 ---
 

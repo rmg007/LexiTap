@@ -2,7 +2,7 @@
 title: "P2 — Recruitment & QA Checklist"
 status: active
 phase: "P2"
-updated: 2026-05-31
+updated: 2026-06-01
 ---
 
 # P2 — Recruitment & QA Checklist
@@ -16,7 +16,7 @@ Operational runbook for beta launch: build setup, distribution, manual QA matrix
 ### Build & Distribution Setup
 
 - [ ] **TestFlight Build (iOS)**
-  - [ ] Run `eas build --platform ios --profile beta` (or `production`, check which matches App Store signing cert)
+  - [ ] Run `eas build --platform ios --profile beta` (store-signed; required for TestFlight external testing)
   - [ ] Upload to App Store Connect
   - [ ] Set TestFlight testers to "External Testing" (not Internal)
   - [ ] Generate public link: `https://testflight.apple.com/join/...` and save to password manager / team wiki
@@ -80,6 +80,46 @@ Operational runbook for beta launch: build setup, distribution, manual QA matrix
   ```
 
 - [ ] **Create shared doc for feature requests / feedback** (Google Doc or Notion for synthesis; share read-only link in channel)
+
+---
+
+## Beta Consent & Terms (Day -2)
+
+All testers must accept before accessing the TestFlight/Play link. Keep it short — one screen, no lawyer-speak.
+
+**Template (plain-text, embed in Typeform / Google Form pre-screening):**
+
+```
+LexiTap Beta Testing Agreement
+
+By joining the LexiTap beta you agree to:
+
+1. Keep the app confidential — don't share screenshots publicly or discuss features
+   on public forums before launch.
+
+2. Provide honest feedback — bugs, crashes, confusing UX, wrong definitions. Use the
+   bug report template in #beta-feedback.
+
+3. Usage data — the app collects anonymous usage analytics (no name, email, or
+   device ID — a random device UUID only) and crash reports (PII-scrubbed).
+   You can opt out in app Settings → Privacy.
+
+4. No guarantees — this is a pre-release build. It may crash. Data may be wiped
+   between builds. Content (definitions, audio) may be incomplete.
+
+In return: early access, direct influence on the product, launch-day credit
+in the app's About screen.
+
+Questions? beta-feedback@lexitap.app
+```
+
+**Checkbox items on the form:**
+- [ ] I agree to keep the beta confidential
+- [ ] I understand the app is pre-release and may lose data between builds
+- [ ] I agree to provide feedback (at minimum one bug report or survey response)
+- [ ] I am 16 years of age or older (required — app age gate enforces this)
+
+**Save accepted responses** (date + form answer) — needed for GDPR legitimate-interest basis.
 
 ---
 
@@ -234,6 +274,177 @@ If ≥3 testers report the same crash or blocker:
 
 ---
 
+## Tester Onboarding Email Sequence
+
+Send via personal email or Mailchimp list. Plain-text tone — no marketing fluff.
+
+### Email 1 — Welcome (send on install confirmation)
+
+```
+Subject: Welcome to LexiTap beta 👋
+
+Hi [name],
+
+You're in. Here's your install link:
+
+  iOS (TestFlight): [link]
+  Android (Play): [link]
+
+What to expect:
+• Foundation vocabulary — 2,800+ words with spaced-repetition
+• Offline-first — works without WiFi
+• This is a pre-release build. Crashes are possible. Please report them.
+
+How to report a bug:
+  Post in #beta-feedback (Discord) or reply to this email with:
+  - Device + OS version
+  - Steps to reproduce
+  - Screenshot if possible
+
+Questions? Just reply.
+
+— Ryan @ LexiTap
+```
+
+### Email 2 — Bug Reporting Guide (Day 2)
+
+```
+Subject: How to report bugs (and why it matters)
+
+Hi [name],
+
+Two days in — thanks for testing. One quick ask:
+
+If something breaks, the fastest way to help us fix it is:
+
+1. Note your device + iOS/Android version
+2. Write the steps you took right before the crash
+3. Post it in #beta-feedback or reply here
+
+You don't need to be technical. "I tapped the quiz card and the app closed" is 
+perfect — that's enough for us to find it in Sentry.
+
+The #1 bug we're hunting: database errors on first launch (especially Android).
+If the app shows a blank screen after the age gate, that's the one — please report it.
+
+— Ryan @ LexiTap
+```
+
+### Email 3 — Feature Requests (Day 4)
+
+```
+Subject: What would make LexiTap stick?
+
+Hi [name],
+
+Quick question — no essay required:
+
+What's the one thing that would make you open LexiTap every day?
+
+Reply in one sentence. We read every response and it directly shapes what we build next.
+
+What's coming (already locked for launch):
+✓ 2,800+ Foundation words (A1–B2 CEFR)
+✓ Spaced-repetition scheduling
+✓ Exam packs — TOEFL, IELTS, GRE, GMAT (one-time purchase, ~$9.99)
+✓ Offline-first, no subscription
+
+What's not in scope for launch (but on the list):
+• Audio pronunciation for every word
+• Sentence examples with fill-in-the-blank
+• Flashcard export
+
+If you have a specific ask, say it — we want to know.
+
+— Ryan @ LexiTap
+```
+
+### Email 4 — Mid-Beta Pulse (Day 7)
+
+```
+Subject: Quick 3-question check-in (2 min)
+
+Hi [name],
+
+Week 1 done. Three questions — answer as many or as few as you want:
+
+1. How many days did you open the app this week?
+   [ ] 0  [ ] 1-2  [ ] 3-4  [ ] 5-7
+
+2. What's the most annoying thing about the app right now?
+   [free text]
+
+3. Would you recommend LexiTap to a friend learning English?
+   [ ] Yes  [ ] Maybe  [ ] No — [why?]
+
+Reply to this email or use the form: [Google Form link]
+
+Takes 2 minutes. Genuinely helps.
+
+— Ryan @ LexiTap
+```
+
+### Email 5 — Beta Exit Survey (Day 13)
+
+```
+Subject: Beta wrapping up — 5-question survey
+
+Hi [name],
+
+Beta closes in 24 hours. Before we move to launch, one more ask:
+
+Please fill out this exit survey (5 questions, 3 minutes):
+[Google Form link]
+
+Topics: overall rating, content quality, quiz UX, feature gaps, likelihood to pay.
+
+Your feedback shapes the launch roadmap. We'll publish a summary of findings
+(anonymized) in the beta-feedback channel after launch.
+
+Thank you for your time. Seriously — this wouldn't be possible without you.
+
+— Ryan @ LexiTap
+
+P.S. — If you had a crash that was never fixed, reply now. We want to know before
+we close the beta window.
+```
+
+### Email 6 — Launch Announcement (on store approval)
+
+```
+Subject: LexiTap is live — thank you
+
+Hi [name],
+
+We launched.
+
+App Store: [link]
+Google Play: [link]
+
+You helped shape this. Seriously.
+
+The [N] bugs you reported: fixed.
+The feedback on [feature]: shipped.
+The honest "this was confusing" on [screen]: redesigned.
+
+As a beta tester, you're credited in the About screen under "Beta Contributors."
+
+If you leave a review on the App Store / Play Store, it makes a huge difference
+for discoverability. No pressure — but it helps more than you know.
+
+Thank you,
+Ryan @ LexiTap
+```
+
+**Email sequence checklist:**
+- [ ] Email 1 drafted + ready to send on TestFlight link distribution
+- [ ] Emails 2–5 queued (Mailchimp / ConvertKit / manual) with scheduled dates
+- [ ] Day-7 pulse form created (Google Form, 3 questions)
+- [ ] Day-13 exit survey created (Google Form, 5 questions)
+- [ ] Email 6 drafted, held for store approval confirmation
+
+---
+
 ## Retention Data Harvest (Days 8–14)
 
 ### PostHog Cohort Extraction
@@ -345,4 +556,4 @@ Upon gate decision (pass or re-run), save:
 
 ---
 
-*Last updated: 2026-05-31 — Pre-launch checklist (build setup, feedback channel, analytics validation), Week 1 manual QA matrix, hotfix cycle, Week 2 retention harvest, Day 14 decision gate, and documentation rollover.*
+*Last updated: 2026-06-01 — Added: beta consent/terms template; tester onboarding email sequence (6 emails: welcome, bug guide, feature request, mid-beta pulse, exit survey, launch announcement); `eas.json` `beta` profile (store-signed, required for TestFlight external testing); fixed `--profile beta` command note. Original: pre-launch checklist, Week 1 QA matrix, hotfix cycle, retention harvest, Day 14 gate, documentation rollover.*
