@@ -22,6 +22,7 @@ export default function TabsLayout(): React.JSX.Element {
       }}
     >
       <Tabs.Screen name="study-session" options={{ title: 'Study' }} />
+      <Tabs.Screen name="progress" options={{ title: 'Progress' }} />
       <Tabs.Screen name="settings" options={{ title: 'Settings' }} />
     </Tabs>
   );
