@@ -26,9 +26,13 @@ Mirrors the Sentry *method* (let the operational plan + drafted privacy policy s
 - **PRIVACY_POLICY_TERMS_OF_SERVICE.md** — §2 usage-analytics row rewritten (pseudonymous events go to PostHog EU unless opted out); §5 **adds PostHog (EU) sub-processor**; §3/§4 wording made accurate + app-improvement-only.
 - **Sentry memo** — superseding note appended to the "analytics still not" line + the flagged-PostHog note marked resolved.
 
-## NOT done — code follow-ups (need explicit go-ahead; analytics/ is now deny-listed)
-1. **US→EU host bug (priority 1, GDPR).** `PostHogAnalyticsService.ts:12` hardcodes `host: 'https://us.i.posthog.com'` — RELEASE_PLAN A3 + EU posture require `https://eu.i.posthog.com`. Must fix before any EU tester. **Behavior change → not touched this session.**
-2. **Stale comment** in `createAnalyticsService.ts` still says "dev/staging only — CLAUDE.md forbids… in production". Comment-only fix was **blocked by the new deny rule** (working as designed). Update when next touching analytics/.
+## Code follow-up status (analytics/ is deny-listed — confirm before editing)
+
+### ✅ DONE (verified in code, not re-attempt)
+1. **~~US→EU host bug~~** — ~~`PostHogAnalyticsService.ts:12` hardcoded `https://us.i.posthog.com`~~ — **Already fixed.** Line 17 reads `host: 'https://eu.i.posthog.com'`. Do not re-apply.
+2. **~~Stale comment~~** in `createAnalyticsService.ts` — **Already fixed.** Comment now correctly says "prod-allowed if key is configured, compliant with GDPR + opt-out". No "dev/staging only" text remains.
+
+### Still open
 3. **A6 opt-out toggle** ("Share anonymous usage data") does not exist yet — **hard pre-EU-beta gate**.
 4. Code today: `track()` only (no `identify`/opt-out/flush in the port); per-event `anon_id`/`session_id` enrichment (A2/A4) still pending.
 
