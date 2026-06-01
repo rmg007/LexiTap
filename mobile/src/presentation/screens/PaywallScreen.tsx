@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect } from 'react';
-import { View, ScrollView, Pressable } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { useTheme } from '@/presentation/theme';
 import type { ColorTokens, Radii, Spacing } from '@/presentation/theme/tokens';
@@ -28,7 +28,9 @@ export interface PaywallScreenProps {
 
 export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: PaywallScreenProps): React.JSX.Element {
   const { colors, spacing, radii } = useTheme();
-  const { analytics } = useServices();
+  const { analytics, iap } = useServices();
+  // sku of the in-progress purchase (null = idle)
+  const [purchasing, setPurchasing] = useState<string | null>(null);
 
   // Fire paywall_viewed event on mount.
   useEffect(() => {
@@ -44,23 +46,44 @@ export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: Pa
   }, [onDismiss]);
 
   const handleSubscribe = useCallback(
-    (pack: TierConfigEntry) => {
-      // Fire purchase_initiated event.
+    async (pack: TierConfigEntry) => {
       const unlock = pack.unlock;
-      if (unlock.kind === 'exam_pack') {
-        void analytics.track('purchase_initiated', {
-          tier_id: pack.id,
-          amount: unlock.listPriceUsd,
-        });
-      }
+      if (unlock.kind !== 'exam_pack') return;
+
+      const sku = unlock.sku;
+
       if (onSubscribe) {
+        // Delegate to parent (used in onboarding route).
+        void analytics.track('purchase_initiated', { tier_id: pack.id, sku, amount: unlock.listPriceUsd });
         onSubscribe(pack.id);
-      } else {
-        // R1 TBD: RevenueCat integration
-        // TODO: implement RevenueCat purchase initiation (R1 task)
+        return;
+      }
+
+      void analytics.track('purchase_initiated', { tier_id: pack.id, sku, amount: unlock.listPriceUsd });
+      setPurchasing(sku);
+      try {
+        const result = await iap.purchase(sku);
+        switch (result.status) {
+          case 'purchased':
+            void analytics.track('purchase_completed', { sku, tier_id: pack.id, amount: unlock.listPriceUsd });
+            if (onDismiss) onDismiss(); else router.back();
+            break;
+          case 'cancelled':
+            void analytics.track('purchase_cancelled', { sku, tier_id: pack.id });
+            break;
+          case 'pending':
+            // Ask-to-Buy: parental approval pending — inform user, no dismiss.
+            void analytics.track('purchase_pending', { sku, tier_id: pack.id });
+            break;
+          case 'error':
+            void analytics.track('purchase_error', { sku, tier_id: pack.id });
+            break;
+        }
+      } finally {
+        setPurchasing(null);
       }
     },
-    [onSubscribe, analytics],
+    [onSubscribe, onDismiss, analytics, iap],
   );
 
   // Filter to paid exam packs + bundle only (unlock.kind === 'exam_pack')
@@ -112,7 +135,8 @@ export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: Pa
               key={pack.id}
               tier={pack}
               isBundle={false}
-              onPress={() => handleSubscribe(pack)}
+              onPress={() => void handleSubscribe(pack)}
+              isLoading={purchasing === (pack.unlock.kind === 'exam_pack' ? pack.unlock.sku : null)}
               spacing={spacing}
               colors={colors}
               radii={radii}
@@ -143,7 +167,8 @@ export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: Pa
               key={bundle.id}
               tier={bundle}
               isBundle={true}
-              onPress={() => handleSubscribe(bundle)}
+              onPress={() => void handleSubscribe(bundle)}
+              isLoading={purchasing === (bundle.unlock.kind === 'exam_pack' ? bundle.unlock.sku : null)}
               spacing={spacing}
               colors={colors}
               radii={radii}
@@ -172,6 +197,7 @@ export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: Pa
 interface ProductCardProps {
   tier: TierConfigEntry;
   isBundle: boolean;
+  isLoading: boolean;
   onPress: () => void;
   spacing: Spacing;
   colors: ColorTokens;
@@ -181,6 +207,7 @@ interface ProductCardProps {
 function ProductCard({
   tier,
   isBundle,
+  isLoading,
   onPress,
   spacing: sp,
   colors,
@@ -236,12 +263,20 @@ function ProductCard({
               ${price.toFixed(2)}
             </Text>
           )}
-          <Button
-            label="Subscribe"
-            variant="primary"
-            onPress={onPress}
-            accessibilityLabel={`Subscribe to ${tier.displayName} for $${price?.toFixed(2) ?? 'contact'}`}
-          />
+          {isLoading ? (
+            <ActivityIndicator
+              size="small"
+              color={colors.accent}
+              accessibilityLabel="Purchase in progress"
+            />
+          ) : (
+            <Button
+              label="Subscribe"
+              variant="primary"
+              onPress={onPress}
+              accessibilityLabel={`Subscribe to ${tier.displayName} for $${price?.toFixed(2) ?? 'contact'}`}
+            />
+          )}
         </View>
       </View>
     </Card>
