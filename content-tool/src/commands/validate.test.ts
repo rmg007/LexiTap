@@ -45,6 +45,7 @@ function row(overrides: Partial<WordRow> = {}): WordRow {
     grade_level: null,
     word_type: 'vocabulary',
     difficulty: 2,
+    frequency_rank: null,
     theme: 'Daily Life',
     example_sentence: 'Can I _ your pen?',
     image_path: null,

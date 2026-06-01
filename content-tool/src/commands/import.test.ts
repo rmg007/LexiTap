@@ -14,6 +14,7 @@ function parsed(overrides: Partial<ParsedInputRow> = {}): ParsedInputRow {
     cefr_level: 'A2',
     theme: 'Daily Life',
     difficulty: 2,
+    frequency_rank: null,
     word_type: 'vocabulary',
     synonyms: null,
     antonyms: null,

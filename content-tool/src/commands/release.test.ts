@@ -32,6 +32,7 @@ function parsed(word: string, overrides: Partial<ParsedInputRow> = {}): ParsedIn
     cefr_level: 'A2',
     theme: 'Daily Life',
     difficulty: 2,
+    frequency_rank: null,
     word_type: 'vocabulary',
     synonyms: null,
     antonyms: null,

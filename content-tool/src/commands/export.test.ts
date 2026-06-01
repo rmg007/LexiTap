@@ -43,6 +43,7 @@ function parsed(word: string, theme: string | null = 'Daily Life'): ParsedInputR
     cefr_level: 'A2',
     theme,
     difficulty: 2,
+    frequency_rank: null,
     word_type: 'vocabulary',
     synonyms: null,
     antonyms: null,
