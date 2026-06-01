@@ -10,6 +10,8 @@ import { hapticsCorrect, hapticsSessionComplete } from '@/presentation/services/
 import { buildQuestion } from '@/presentation/screens/quizQuestion';
 import { FeedbackLayer } from '@/presentation/screens/FeedbackLayer';
 import { SessionCompleteScreen } from '@/presentation/screens/SessionCompleteScreen';
+import { ForgivenessSheet } from '@/presentation/screens/ForgivenessSheet';
+import { FORGIVENESS } from '@/domain/srs/forgiveness';
 import {
   currentWord,
   NoWordsAvailableError,
@@ -25,7 +27,7 @@ import {
 // "no words" resolves to a calm caught-up state, not an error.
 //
 // Flow: answer tap → feedback phase (FeedbackLayer overlay) → Continue tap →
-// SRS write → next word or complete.
+// SRS write → next word or complete. At soft daily cap → ForgivenessSheet.
 //
 // NO TextInput anywhere in this flow (hard invariant).
 
@@ -67,14 +69,27 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
   const { spacing } = useTheme();
   const services = useServices();
   const [phase, setPhase] = useState<Phase>({ kind: 'loading' });
-  // Re-mount widgets per question so internal selection state resets cleanly.
   const questionKey = useRef(0);
+
+  // Forgiveness sheet state.
+  const [showForgiveness, setShowForgiveness] = useState(false);
+  const forgivenessShownThisSession = useRef(false);
+  const answersThisSession = useRef(0);
+  const [forgivenessStreak, setForgivenessStreak] = useState(0);
 
   const start = useCallback(async () => {
     try {
-      // Snapshot streak before session so we can detect increment on completion.
-      const preStats = await services.queries.getUserStats().catch(() => null);
-      const preSessionStreak = preStats?.streak.currentStreak ?? 0;
+      // Fetch everything needed before session starts (non-blocking best-effort).
+      const [stats, daily] = await Promise.all([
+        services.queries.getUserStats().catch(() => null),
+        services.queries.getDailyProgress(asTierId(tierId)).catch(() => null),
+      ]);
+
+      const preSessionStreak = stats?.streak.currentStreak ?? 0;
+      setForgivenessStreak(preSessionStreak);
+      // Seed local counter from today's already-completed reviews so the cap
+      // fires correctly even if this is a continuation session.
+      answersThisSession.current = daily?.reviewsCompletedToday ?? 0;
 
       const session = await services.startQuiz.execute({
         tierId: asTierId(tierId),
@@ -106,7 +121,6 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
       if (word === null) return;
 
       const isCorrect = answer.value === correctValue;
-      // Haptic: soft success on correct only — no error haptic on incorrect.
       if (isCorrect) hapticsCorrect();
 
       setPhase({
@@ -146,6 +160,17 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
         is_correct: phase.wasCorrect,
       });
       questionKey.current += 1;
+      answersThisSession.current += 1;
+
+      // Soft daily cap check — show forgiveness sheet once per session.
+      if (
+        !forgivenessShownThisSession.current &&
+        answersThisSession.current >= FORGIVENESS.BASE_DAILY_CAP
+      ) {
+        forgivenessShownThisSession.current = true;
+        setShowForgiveness(true);
+      }
+
       if (out.result.isSessionComplete) {
         hapticsSessionComplete();
         const durationSec = phase.startedAt
@@ -185,7 +210,6 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
         });
       }
     } catch {
-      // Never block the quiz path on a write failure: advance locally.
       questionKey.current += 1;
       setPhase({
         kind: 'active',
@@ -195,6 +219,15 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
       });
     }
   }, [phase, services, tierId, mode]);
+
+  const handleStopHere = useCallback(() => {
+    setShowForgiveness(false);
+    onExit();
+  }, [onExit]);
+
+  const handleKeepGoing = useCallback(() => {
+    setShowForgiveness(false);
+  }, []);
 
   if (phase.kind === 'loading') {
     return (
@@ -235,9 +268,6 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
     );
   }
 
-  // feedback and active phases both render the assessment widget.
-  // In feedback phase the widget is frozen (pointer-events:none) and
-  // FeedbackLayer overlays it at the bottom.
   const activeSession = phase.session;
   const isFeedback = phase.kind === 'feedback';
 
@@ -267,7 +297,6 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
         </Text>
       </View>
 
-      {/* Assessment widget — frozen during feedback phase so taps are blocked */}
       <View pointerEvents={isFeedback ? 'none' : 'auto'} style={{ flex: 1 }}>
         {question.assessmentType === 'multiple_choice' ? (
           <MultipleChoice
@@ -289,7 +318,6 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
         )}
       </View>
 
-      {/* FeedbackLayer: slides up from frame bottom after answer */}
       {isFeedback && (
         <FeedbackLayer
           wasCorrect={phase.wasCorrect}
@@ -299,6 +327,13 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
           onContinue={() => void handleContinue()}
         />
       )}
+
+      <ForgivenessSheet
+        currentStreak={forgivenessStreak}
+        visible={showForgiveness}
+        onStopHere={handleStopHere}
+        onKeepGoing={handleKeepGoing}
+      />
     </Screen>
   );
 }
