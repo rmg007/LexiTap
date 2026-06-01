@@ -20,3 +20,4 @@ export * from '@/domain/gamification/mastery';
 export * from '@/domain/time/civilDate';
 export * from '@/domain/onboarding/diagnostic';
 export * from '@/domain/onboarding/OnboardingState';
+export * from '@/domain/auth/AuthPort';
