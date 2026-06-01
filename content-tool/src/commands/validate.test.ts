@@ -84,6 +84,17 @@ describe('helper functions', () => {
     expect(hasInTokenUnderscore('cataly_t reaction')).toBe(true);
   });
 
+  it('hasInTokenUnderscore treats a blank next to punctuation as a bare blank (not glue)', () => {
+    // Terminal/clause punctuation right after the blank is normal English.
+    expect(hasInTokenUnderscore('She had eggs and toast for _.')).toBe(false);
+    expect(hasInTokenUnderscore('Can you help _?')).toBe(false);
+    expect(hasInTokenUnderscore('First _, then we go.')).toBe(false);
+    expect(hasInTokenUnderscore('Put it in the "_" box.')).toBe(false);
+    // ...but an alphanumeric fused to the blank is still in-token glue.
+    expect(hasInTokenUnderscore('She _s in a hospital.')).toBe(true);
+    expect(hasInTokenUnderscore('water is made of two _s')).toBe(true);
+  });
+
   it('isJsonStringArray validates JSON arrays of strings', () => {
     expect(isJsonStringArray(null)).toBe(true);
     expect(isJsonStringArray('["a","b"]')).toBe(true);

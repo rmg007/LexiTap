@@ -54,9 +54,11 @@ export function countBlanks(sentence: string): number {
 
 /** True when an "_" sits inside a word token rather than standing alone. */
 export function hasInTokenUnderscore(sentence: string): boolean {
-  // A bare blank is whitespace/boundary delimited: " _ ", "_ ...", "... _".
-  // An underscore glued to a non-space character (e.g. "cataly_t") is in-token.
-  return /\S_|_\S/.test(sentence);
+  // A bare blank stands alone, delimited by whitespace OR punctuation:
+  // " _ ", "_ ...", "... _", and crucially "eat _." / "help _?" / "the _, ..."
+  // (a terminal/clause mark right after the blank is normal English, NOT a glue).
+  // Only an underscore fused to an alphanumeric is in-token: "cataly_t", "_s", "work_s".
+  return /[A-Za-z0-9]_|_[A-Za-z0-9]/.test(sentence);
 }
 
 /**
