@@ -70,7 +70,7 @@ These files can still be edited, but Claude Code **pauses and asks for explicit 
 | `mobile/src/infrastructure/storage/` | State persistence (AsyncStorage adapter) | Wrong changes lose user progress |
 | `mobile/src/infrastructure/crash/` | Sentry PII scrub (`beforeSend`/`beforeBreadcrumb`) | Wrong changes leak user PII (email/tokens/URLs/device name) off-device |
 | `mobile/src/infrastructure/analytics/` | PostHog adapter, `anon_id`, env-gate (PII boundary; prod-allowed) | Wrong changes leak identity/PII off-device (email/Supabase-id misuse, autocapture-on, ungated send, non-EU host) |
-| `mobile/app.config.ts` / `mobile/app.json` | Expo/EAS config, permissions, secrets (active config is `app.config.ts`) | Wrong changes break builds or expose secrets |
+| `mobile/app.json` | Expo/EAS config, permissions, secrets | Wrong changes break builds or expose secrets. **Note:** active config is `app.config.ts`, which is intentionally NOT confirmation-gated (frequent EAS/plugin edits) — review its diffs carefully since it carries no guardrail. |
 | `.env*` files | Secrets | Never commit; never log |
 
 ---
@@ -166,7 +166,7 @@ These rules + automations exist so work doesn't vanish between sessions. **All t
 
 ---
 
-*Last updated: 2026-05-31 — Analytics policy reconciled: PostHog **allowed in production**, env-gated + `anon_id`-only + no-PII + autocapture-off + EU-host + opt-out + disclosed, **purpose-limited to app improvement** (Forbidden-Patterns analytics row rewritten from flat ban → conditional allow; `infrastructure/analytics/` added to high-risk paths). Prior: Sentry crash reporting (B1 + PII scrub) shipped; crash rule rewritten (scrubbed, env-gated, prod-allowed); `infrastructure/crash/` high-risk; app.json refs → app.config.ts*
+*Last updated: 2026-05-31 — `app.config.ts` removed from High-Risk confirmation table (Ryan's call: frequent EAS/Sentry/plugin edits; it was never actually in the settings.json deny list, so the table overstated the guardrail — doc now matches enforcement). B3 Sentry source-map plugin wired here. Prior: Analytics policy reconciled: PostHog **allowed in production**, env-gated + `anon_id`-only + no-PII + autocapture-off + EU-host + opt-out + disclosed, **purpose-limited to app improvement** (Forbidden-Patterns analytics row rewritten from flat ban → conditional allow; `infrastructure/analytics/` added to high-risk paths). Prior: Sentry crash reporting (B1 + PII scrub) shipped; crash rule rewritten (scrubbed, env-gated, prod-allowed); `infrastructure/crash/` high-risk; app.json refs → app.config.ts*
 
 ---
 
