@@ -1,6 +1,8 @@
 ---
 title: WEB-1 — Static Site + B2B Contact Form
-status: ready
+status: done
+archived: 2026-05-31
+implemented_in: "5452a82, 49ec0bd"
 decision: D6 (manual B2B invoice model, no self-serve portal)
 updated: 2026-05-31
 ---
@@ -340,12 +342,12 @@ Use [Formspree.io](https://formspree.io) (free tier covers institutional forms):
 
 ## Testing
 
-- [ ] Form loads + responds to input (desktop + mobile)
-- [ ] Submit → Formspree delivers email to `support@lexitap.app`
-- [ ] Theme toggle works on /contact-sales.html
-- [ ] Links to /privacy.html, /terms.html work
-- [ ] Accessibility: form labels + required attributes + keyboard nav work
-- [ ] No hardcoded pricing or "buy now" language on the site
+- [x] Form loads + responds to input (desktop + mobile)
+- [x] Submit → Formspree delivers email to `support@lexitap.app`
+- [x] Theme toggle works on /contact-sales.html
+- [x] Links to /privacy.html, /terms.html work
+- [x] Accessibility: form labels + required attributes + keyboard nav work
+- [x] No hardcoded pricing or "buy now" language on the site
 
 ---
 
