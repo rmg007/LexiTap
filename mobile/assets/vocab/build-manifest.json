@@ -1,0 +1,83 @@
+{
+  "app_id": "lexitap",
+  "content_version": "0.0.2",
+  "user_version": 2,
+  "built_at": "2026-06-01T05:28:48.713Z",
+  "tiers": {
+    "foundation": {
+      "words": 2848,
+      "with_synonyms": 208,
+      "with_audio": 0,
+      "with_images": 0
+    },
+    "advanced": {
+      "words": 10,
+      "with_synonyms": 10,
+      "with_audio": 0,
+      "with_images": 0
+    },
+    "common3k": {
+      "words": 5,
+      "with_synonyms": 5,
+      "with_audio": 0,
+      "with_images": 0
+    },
+    "common9k": {
+      "words": 5,
+      "with_synonyms": 5,
+      "with_audio": 0,
+      "with_images": 0
+    },
+    "toefl": {
+      "words": 6,
+      "with_synonyms": 6,
+      "with_audio": 0,
+      "with_images": 0
+    },
+    "ielts": {
+      "words": 5,
+      "with_synonyms": 5,
+      "with_audio": 0,
+      "with_images": 0
+    },
+    "gre": {
+      "words": 5,
+      "with_synonyms": 5,
+      "with_audio": 0,
+      "with_images": 0
+    },
+    "gmat": {
+      "words": 5,
+      "with_synonyms": 5,
+      "with_audio": 0,
+      "with_images": 0
+    },
+    "business": {
+      "words": 5,
+      "with_synonyms": 5,
+      "with_audio": 0,
+      "with_images": 0
+    }
+  },
+  "total_words": 2881,
+  "assets": {
+    "audio": 0,
+    "images": 0
+  },
+  "source_hashes": {
+    "advanced.csv": "sha1:1d9cff56e77d992093b602292c33d1f4c60c921f",
+    "business.csv": "sha1:e4699d985b4379d9d091b5ea37b881af8e355c48",
+    "common3k.csv": "sha1:274d275ec92cb0453d3bd58b000dad439beb42be",
+    "common9k.csv": "sha1:e540004246b9d7b9370a02687e5ccad85fca1964",
+    "foundation-200-original.csv": "sha1:62b593e3211f9f0d57a585d468df649c35991b27",
+    "foundation-3k.csv": "sha1:adf15094738a31c76ee103c98b0676906ad94bd2",
+    "foundation.csv": "sha1:d3897e69e5c04d00878d35ec62709a365ee24134",
+    "foundation_3000.csv": "sha1:5bb05fa660ac0c81ccedd8cc1738d83f6d479dd4",
+    "gmat.csv": "sha1:bca4c81fdb5ccc1cf3d430ccc7ecfa41d6313eb2",
+    "gre.csv": "sha1:e2a0bb7a6c0d7be49ac19a6ee43737fcfebd5bd6",
+    "ielts.csv": "sha1:a4171c8da458e3beaa8f4d716a85f0bbda1a4421",
+    "pseudo_words.csv": "sha1:ec16ea91e994739baef6699eaa9db4819d06352a",
+    "qa-test-sample.csv": "sha1:dc4acad07d4d083c00a61187d5b59e25f803a8db",
+    "toefl.csv": "sha1:816e1064422ba4b871d61489bd526ce1da7d0264"
+  }
+}

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
-import { OnboardingDiagnosticScreen } from '@/presentation/screens/onboarding';
+import { OnboardingAdaptiveDiagnosticScreen } from '@/presentation/screens/onboarding';
 import { listActiveTiers } from '@/config/tiers';
 import type { LearningGoal, ProficiencyBand } from '@/domain/index';
 
@@ -42,7 +42,7 @@ export default function DiagnosticRoute(): React.JSX.Element {
   }, []);
 
   return (
-    <OnboardingDiagnosticScreen
+    <OnboardingAdaptiveDiagnosticScreen
       tierId={DEFAULT_TIER}
       onComplete={handleComplete}
       partialProfile={partialProfile}

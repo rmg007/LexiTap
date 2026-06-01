@@ -17,6 +17,7 @@ export interface WordRow {
   grade_level: number | null;
   word_type: string | null;
   difficulty: number | null;
+  frequency_rank: number | null;
   theme: string | null;
   example_sentence: string;
   image_path: string | null;
@@ -26,6 +27,13 @@ export interface WordRow {
   usage_notes: string | null;
   created_at: number;
   deleted_at: number | null;
+}
+
+// DIAG-A pseudo-word row from the read-only content DB (`contentdb.pseudo_words`).
+export interface PseudoWordRow {
+  id: string;
+  word: string;
+  phoneme_similarity_score: number | null;
 }
 
 export interface ContentTierRow {

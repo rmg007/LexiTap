@@ -40,6 +40,24 @@ describe('parseCsv', () => {
     const { rows } = parseCsv(csv, 'idiom');
     expect(rows[0]!.word_type).toBe('idiom');
   });
+
+  it('parses frequency_rank when present (DIAG-A PA-1) and null otherwise', () => {
+    const csv = `word,definition,example_sentence,frequency_rank
+the,article,_ cat,1
+rareword,obscure,a _ thing,`;
+    const { rows } = parseCsv(csv);
+    expect(rows[0]!.frequency_rank).toBe(1);
+    expect(rows[1]!.frequency_rank).toBeNull();
+  });
+
+  it('treats a non-positive or non-numeric frequency_rank as null', () => {
+    const csv = `word,definition,example_sentence,frequency_rank
+a,def,_ x,0
+b,def,_ y,abc`;
+    const { rows } = parseCsv(csv);
+    expect(rows[0]!.frequency_rank).toBeNull();
+    expect(rows[1]!.frequency_rank).toBeNull();
+  });
 });
 
 describe('parseJson', () => {

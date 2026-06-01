@@ -1,5 +1,10 @@
 import type { DatabaseHandle } from '@/infrastructure/db/database';
-import type { WordRow, ContentTierRow, UserProgressRow } from '@/infrastructure/db/rows';
+import type {
+  WordRow,
+  ContentTierRow,
+  UserProgressRow,
+  PseudoWordRow,
+} from '@/infrastructure/db/rows';
 
 // Named, parameterized query functions for content (words.db, ATTACHed as
 // `contentdb`) joined with user_progress. The ONLY place these SQL strings
@@ -12,7 +17,7 @@ import type { WordRow, ContentTierRow, UserProgressRow } from '@/infrastructure/
 
 const WORD_COLUMNS = `
   w.id, w.word, w.definition, w.pos, w.cefr_level, w.grade_level,
-  w.word_type, w.difficulty, w.theme, w.example_sentence, w.image_path,
+  w.word_type, w.difficulty, w.frequency_rank, w.theme, w.example_sentence, w.image_path,
   w.audio_path, w.synonyms, w.antonyms, w.usage_notes, w.created_at, w.deleted_at
 `;
 
@@ -120,6 +125,20 @@ export function selectWordsByTierAlphabeticalPage(
      ORDER BY w.word ASC
      LIMIT ?`,
     [tierId, afterWord, afterWord, limit],
+  );
+}
+
+// DIAG-A: read up to `limit` pseudo-words (non-words) for the adaptive
+// diagnostic's false-alarm detection. Deterministic order by id so a run is
+// reproducible; the caller interleaves them. Tolerates an absent table on older
+// content DBs via the repository's catch (a build predating the DIAG-A schema).
+export function selectPseudoWords(db: DatabaseHandle, limit: number): Promise<PseudoWordRow[]> {
+  return db.all<PseudoWordRow>(
+    `SELECT id, word, phoneme_similarity_score
+     FROM contentdb.pseudo_words
+     ORDER BY id ASC
+     LIMIT ?`,
+    [limit],
   );
 }
 

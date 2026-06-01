@@ -6,10 +6,12 @@ import { Screen } from '@/presentation/screens/Screen';
 import { Text, Button } from '@/presentation/components';
 import { useTheme } from '@/presentation/theme';
 import { useServices } from '@/presentation/services';
+import { estimateKnownCount } from '@/domain/index';
 
 // Onboarding step 5: Knowledge Map Reveal.
-// Computes estimated known-word count from diagnostic frontier rank. Animated
-// endowed-progress reveal (the single celebratory motion moment in onboarding).
+// Computes estimated known-word count from the diagnostic frontier rank (DIAG-A,
+// already corrected for over-claiming). Animated endowed-progress reveal (the
+// single celebratory motion moment in onboarding).
 
 interface SegmentCounts {
   known: number;
@@ -18,19 +20,21 @@ interface SegmentCounts {
 }
 
 const LEARNING_BAND = 500; // Word band width for "Learning" segment
+const DEFAULT_FREE_POOL = 3000; // Fallback free-pool size if content health read fails
 
-function computeSegments(frontierRank: number | undefined): SegmentCounts {
-  // DIAG-B crude estimate: frontier rank ≈ known word count. Learning band is
-  // ~500 words around frontier. New is the remainder within Foundation tier.
+function computeSegments(frontierRank: number | undefined, freePoolSize: number): SegmentCounts {
+  const pool = freePoolSize > 0 ? freePoolSize : DEFAULT_FREE_POOL;
   if (frontierRank === undefined) {
-    // Fallback for missing frontier (shouldn't happen post-O-4, but defensive).
-    return { known: 1500, learning: 500, new: 1000 };
+    // Fallback for a missing frontier (shouldn't happen post-diagnostic, but defensive).
+    const known = Math.min(1500, pool);
+    return { known, learning: Math.min(LEARNING_BAND, pool - known), new: Math.max(0, pool - known - LEARNING_BAND) };
   }
-  const known = Math.round(frontierRank);
-  const learningStart = known;
-  const learningEnd = Math.min(known + LEARNING_BAND, 3000); // Foundation ≈ 3000 words
-  const learning = learningEnd - learningStart;
-  const new_ = Math.max(0, 3000 - learningEnd);
+  // Frontier rank → known count (everything more common than the frontier),
+  // capped by the real free-pool size (PB-5 estimateKnownCount).
+  const known = estimateKnownCount(frontierRank, pool);
+  const learningEnd = Math.min(known + LEARNING_BAND, pool);
+  const learning = Math.max(0, learningEnd - known);
+  const new_ = Math.max(0, pool - learningEnd);
   return { known, learning, new: new_ };
 }
 
@@ -48,7 +52,9 @@ export default function KnowledgeMapRevealRoute(): React.JSX.Element {
       try {
         const userStats = await queries.getUserStats();
         const frontier = userStats?.onboardingState?.frontierRank;
-        const computed = computeSegments(frontier);
+        // Real free-pool size for the known-count cap; falls back if unavailable.
+        const health = await queries.getContentDbHealth();
+        const computed = computeSegments(frontier, health.wordCount);
         setSegments(computed);
         void analytics.track('onboarding_km_revealed', {
           frontier_rank: frontier ?? null,
@@ -66,7 +72,7 @@ export default function KnowledgeMapRevealRoute(): React.JSX.Element {
         barLearningWidth.value = withTiming(learningPct, { duration: 360 });
       } catch {
         // Defensive: use fallback counts if read fails.
-        const fallback = computeSegments(undefined);
+        const fallback = computeSegments(undefined, DEFAULT_FREE_POOL);
         setSegments(fallback);
       }
     };

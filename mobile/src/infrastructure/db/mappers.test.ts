@@ -4,6 +4,7 @@ import {
   mapUserProgressRow,
   mapQuizAttemptRow,
   mapUserStatsRow,
+  mapPseudoWordRow,
 } from '@/infrastructure/db/mappers';
 import type {
   WordRow,
@@ -11,6 +12,7 @@ import type {
   UserProgressRow,
   QuizAttemptRow,
   UserStatsRow,
+  PseudoWordRow,
 } from '@/infrastructure/db/rows';
 
 function wordRow(overrides: Partial<WordRow> = {}): WordRow {
@@ -24,6 +26,7 @@ function wordRow(overrides: Partial<WordRow> = {}): WordRow {
     grade_level: null,
     word_type: 'phrasal_verb',
     difficulty: 3,
+    frequency_rank: 1200,
     theme: 'Daily Life',
     example_sentence: 'I _ my mentor.',
     image_path: null,
@@ -46,6 +49,11 @@ describe('mapWordRow', () => {
     expect(w.synonyms).toEqual(['admire', 'respect']);
     expect(w.antonyms).toEqual(['despise']);
     expect(w.isDeleted).toBe(false);
+    expect(w.frequencyRank).toBe(1200);
+  });
+
+  it('maps a null frequency_rank to undefined (pre-DIAG-A content)', () => {
+    expect(mapWordRow(wordRow({ frequency_rank: null })).frequencyRank).toBeUndefined();
   });
 
   it('derives isDeleted from deleted_at and tolerates null/optional columns', () => {
@@ -66,6 +74,21 @@ describe('mapWordRow', () => {
   it('ignores non-string entries inside a JSON array', () => {
     const w = mapWordRow(wordRow({ synonyms: '["ok", 3, null, "fine"]' }));
     expect(w.synonyms).toEqual(['ok', 'fine']);
+  });
+});
+
+describe('mapPseudoWordRow', () => {
+  it('maps a pseudo-word row, score present', () => {
+    const row: PseudoWordRow = { id: 'pseudo_1', word: 'blurp', phoneme_similarity_score: 0.72 };
+    const p = mapPseudoWordRow(row);
+    expect(p.id).toBe('pseudo_1');
+    expect(p.word).toBe('blurp');
+    expect(p.phonemeSimilarityScore).toBe(0.72);
+  });
+
+  it('maps a null score to undefined', () => {
+    const row: PseudoWordRow = { id: 'pseudo_2', word: 'frobble', phoneme_similarity_score: null };
+    expect(mapPseudoWordRow(row).phonemeSimilarityScore).toBeUndefined();
   });
 });
 

@@ -5,6 +5,7 @@
  */
 
 import { readFileSync } from 'node:fs';
+import { parse } from 'csv-parse/sync';
 import type { DB } from '@/lib/db';
 import { openWorkingDb } from '@/lib/db';
 import { parseByExtension, type ParsedInputRow } from '@/lib/csv';
@@ -154,7 +155,6 @@ export function importPseudoWordsCommand(args: string[]): void {
   const text = readFileSync(source, 'utf8');
   const db = openWorkingDb();
   try {
-    const { parse } = require('csv-parse/sync') as typeof import('csv-parse/sync');
     const records = parse(text, { columns: true, skip_empty_lines: true, trim: true }) as Record<
       string,
       string

@@ -11,6 +11,7 @@ export {
 export { SQLiteAnswerWriter } from '@/infrastructure/db/SQLiteAnswerWriter';
 
 export { SQLiteWordRepository } from '@/infrastructure/db/repositories/SQLiteWordRepository';
+export { SQLitePseudoWordRepository } from '@/infrastructure/db/repositories/SQLitePseudoWordRepository';
 export { SQLiteContentTierRepository } from '@/infrastructure/db/repositories/SQLiteContentTierRepository';
 export { SQLiteUserProgressRepository } from '@/infrastructure/db/repositories/SQLiteUserProgressRepository';
 export { SQLiteQuizSessionRepository } from '@/infrastructure/db/repositories/SQLiteQuizSessionRepository';

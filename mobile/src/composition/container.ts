@@ -1,6 +1,7 @@
 import { openDatabase, type DatabaseHandle } from '@/infrastructure/db';
 import {
   SQLiteWordRepository,
+  SQLitePseudoWordRepository,
   SQLiteContentTierRepository,
   SQLiteUserProgressRepository,
   SQLiteQuizSessionRepository,
@@ -32,6 +33,7 @@ import type { TierId } from '@/domain/vocabulary/ids';
 import { StartQuizUseCase } from '@/application/quiz/StartQuizUseCase';
 import { AnswerQuestionUseCase } from '@/application/quiz/AnswerQuestionUseCase';
 import { RunDiagnosticUseCase } from '@/application/onboarding/RunDiagnosticUseCase';
+import { RunAdaptiveDiagnosticUseCase } from '@/application/onboarding/RunAdaptiveDiagnosticUseCase';
 import { SaveOnboardingProfileUseCase } from '@/application/onboarding/SaveOnboardingProfileUseCase';
 
 import type { Services, ReadQueries } from '@/presentation/services';
@@ -180,6 +182,7 @@ export async function createContainer(): Promise<Container> {
   const installDateMs = await getOrSetInstallDate();
 
   const words = new SQLiteWordRepository(db);
+  const pseudoWords = new SQLitePseudoWordRepository(db);
   const tiers = new SQLiteContentTierRepository(db);
   const progress = new SQLiteUserProgressRepository(db);
   const sessions = new SQLiteQuizSessionRepository(db);
@@ -209,6 +212,12 @@ export async function createContainer(): Promise<Container> {
     startQuiz: new StartQuizUseCase(words, progress, sessions, analytics, checkTierAccess),
     answerQuestion: new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler, analytics),
     runDiagnostic: new RunDiagnosticUseCase(words, progress, v1FixedScheduler),
+    runAdaptiveDiagnostic: new RunAdaptiveDiagnosticUseCase(
+      words,
+      pseudoWords,
+      progress,
+      v1FixedScheduler,
+    ),
     saveOnboardingProfile: new SaveOnboardingProfileUseCase(stats),
     analytics,
     auth,

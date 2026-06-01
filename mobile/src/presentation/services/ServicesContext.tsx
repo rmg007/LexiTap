@@ -2,6 +2,7 @@ import React, { createContext, useContext, type ReactNode } from 'react';
 import type { StartQuizUseCase } from '@/application/quiz/StartQuizUseCase';
 import type { AnswerQuestionUseCase } from '@/application/quiz/AnswerQuestionUseCase';
 import type { RunDiagnosticUseCase } from '@/application/onboarding/RunDiagnosticUseCase';
+import type { RunAdaptiveDiagnosticUseCase } from '@/application/onboarding/RunAdaptiveDiagnosticUseCase';
 import type { SaveOnboardingProfileUseCase } from '@/application/onboarding/SaveOnboardingProfileUseCase';
 import type { AnalyticsPort } from '@/domain/analytics/AnalyticsPort';
 import type { AuthPort } from '@/domain/auth/AuthPort';
@@ -48,8 +49,12 @@ export interface Services {
   // Quiz flow.
   readonly startQuiz: StartQuizUseCase;
   readonly answerQuestion: AnswerQuestionUseCase;
-  // First-run onboarding diagnostic (samples words, seeds initial mastery).
+  // First-run onboarding diagnostic — DIAG-B stride sampler (legacy; retained for
+  // its tests and as a fallback). The onboarding route now uses DIAG-A below.
   readonly runDiagnostic: RunDiagnosticUseCase;
+  // DIAG-A adaptive band-walk diagnostic (loads word + pseudo-word pools, seeds
+  // frontier-based initial mastery). Replaces runDiagnostic in the onboarding UI.
+  readonly runAdaptiveDiagnostic: RunAdaptiveDiagnosticUseCase;
   // Persists goal / band / frontier rank after the onboarding flow completes.
   readonly saveOnboardingProfile: SaveOnboardingProfileUseCase;
   // Analytics port for screen-level events (lesson_started, quiz_submitted, etc).

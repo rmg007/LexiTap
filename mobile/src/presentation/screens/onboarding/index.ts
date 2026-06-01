@@ -6,3 +6,7 @@ export {
   OnboardingDiagnosticScreen,
   type OnboardingDiagnosticScreenProps,
 } from '@/presentation/screens/onboarding/OnboardingDiagnosticScreen';
+export {
+  OnboardingAdaptiveDiagnosticScreen,
+  type OnboardingAdaptiveDiagnosticScreenProps,
+} from '@/presentation/screens/onboarding/OnboardingAdaptiveDiagnosticScreen';

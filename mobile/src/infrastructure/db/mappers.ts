@@ -1,4 +1,5 @@
 import type { Word, ContentTier, WordType, CefrLevel } from '@/domain/vocabulary/Word';
+import type { PseudoWord } from '@/domain/onboarding/PseudoWord';
 import { asWordId, asTierId } from '@/domain/vocabulary/ids';
 import type { UserProgress, MasteryLevel } from '@/domain/user/UserProgress';
 import type { QuizAttempt, AssessmentType } from '@/domain/quiz/types';
@@ -12,6 +13,7 @@ import type {
   UserProgressRow,
   QuizAttemptRow,
   UserStatsRow,
+  PseudoWordRow,
 } from '@/infrastructure/db/rows';
 
 // Pure row -> domain mappers. The ONLY place DB nullability quirks, 0/1
@@ -67,6 +69,7 @@ export function mapWordRow(row: WordRow): Word {
     cefrLevel: toCefrLevel(row.cefr_level),
     wordType: toWordType(row.word_type),
     difficulty: row.difficulty ?? undefined,
+    frequencyRank: row.frequency_rank ?? undefined,
     theme: row.theme ?? undefined,
     exampleSentence: row.example_sentence,
     imagePath: row.image_path ?? undefined,
@@ -75,6 +78,14 @@ export function mapWordRow(row: WordRow): Word {
     antonyms: parseStringArray(row.antonyms),
     usageNotes: row.usage_notes ?? undefined,
     isDeleted: row.deleted_at !== null,
+  };
+}
+
+export function mapPseudoWordRow(row: PseudoWordRow): PseudoWord {
+  return {
+    id: row.id,
+    word: row.word,
+    phonemeSimilarityScore: row.phoneme_similarity_score ?? undefined,
   };
 }
 

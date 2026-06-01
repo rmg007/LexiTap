@@ -1,6 +1,6 @@
 ---
 title: DIAG-A Implementation Plan (Post-Launch)
-status: deferred
+status: implemented
 priority: P1
 trigger: "After Phase 1 launch, once Foundation content (C3–C8) is complete and pseudo-word library is sourced"
 ---
@@ -10,6 +10,34 @@ trigger: "After Phase 1 launch, once Foundation content (C3–C8) is complete an
 **Locked commitment:** DIAG-B ships at launch. DIAG-A must replace it post-launch once blocking content/data dependencies are resolved.
 
 **Specification:** `lexitap-docs/03-ux-design/ONBOARDING_FLOW_SPEC.md` (complete, detailed, locked).
+
+---
+
+## ✅ Implementation Status (2026-05-31)
+
+DIAG-A is **implemented and wired as the live onboarding diagnostic** (route
+`app/onboarding/diagnostic.tsx` now mounts `OnboardingAdaptiveDiagnosticScreen`).
+DIAG-B (`diagnostic.ts` + `OnboardingDiagnosticScreen` + `RunDiagnosticUseCase`)
+is retained as a tested fallback, not deleted.
+
+| Phase | Item | Where | State |
+|-------|------|-------|-------|
+| A | `frequency_rank` column + `pseudo_words` table + indexes | `content-tool/src/schema/ddl.ts`, `lib/db.ts` migrations | ✅ |
+| A | CSV parse + import + export of both | `lib/csv.ts`, `commands/import.ts` (+`import-pseudo`), `commands/export.ts` | ✅ |
+| B-1/2 | `DiagnosticState` + band-walk engine (pure) | `mobile/src/domain/onboarding/adaptiveDiagnostic.ts` | ✅ 34 tests |
+| B-3 | Confirm-on-Yes flow | in the screen (Yes → 3-option meaning check) | ✅ |
+| B-4 | `RunAdaptiveDiagnosticUseCase` | `mobile/src/application/onboarding/` | ✅ 9 tests |
+| B-5/6 | Frontier seeding + known-count (pure) | `mobile/src/domain/onboarding/frontierSeeding.ts` | ✅ 16 tests |
+| C-1 | Adaptive `DiagnosticRunner` screen | `OnboardingAdaptiveDiagnosticScreen.tsx` | ✅ |
+| C-2 | Knowledge Map uses real corrected frontier + pool size | `app/onboarding/knowledge-map-reveal.tsx` | ✅ |
+| — | Pseudo-word repo (port + SQLite) | `domain/onboarding/PseudoWord.ts`, `infrastructure/db/repositories/SQLitePseudoWordRepository.ts` | ✅ |
+| — | Bundled `words.db` rebuilt: 2790/2881 ranked, 10 pseudo-words | `mobile/assets/vocab/words.db` (user_version 2) | ✅ |
+
+**Remaining (genuine content/tuning work, not code):**
+- **91 Foundation words still lack a rank** (no match in `foundation_3000.csv`); band-walk falls back to any-unused word for those. Extend the rank source to close the gap.
+- **Pseudo-word library is a 10-word placeholder** (`content-tool/data/input/pseudo_words.csv`) — needs a real curated set (50–100 vetted non-words) before relying on the false-alarm signal.
+- **PC-3 resume flow** (quit/resume mid-diagnostic) is NOT built — the run is in-memory only. Add `DiagnosticState` persistence if mid-onboarding abandonment proves common.
+- **PD-3 beta tuning** of `DEFAULT_BAND_WALK_CONFIG` (start ranks, steps, item cap) + seed mastery ratios — post-launch from real data, as planned.
 
 ---
 

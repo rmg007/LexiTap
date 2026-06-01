@@ -1,6 +1,10 @@
 import type { Services, DailyProgressMetrics } from '@/presentation/services/ServicesContext';
 import type { AnswerQuestionOutput } from '@/application/quiz/AnswerQuestionUseCase';
 import type { QuizSession, UserStats, OnboardingState } from '@/domain/index';
+import type {
+  AdaptiveDiagnosticPool,
+  SeedAdaptiveDiagnosticInput,
+} from '@/application/onboarding/RunAdaptiveDiagnosticUseCase';
 import { NoopAnalyticsService } from '@/infrastructure/analytics/NoopAnalyticsService';
 import { StubAuthService } from '@/infrastructure/auth/StubAuthService';
 import { CheckTierAccessUseCase } from '@/application/tier/CheckTierAccessUseCase';
@@ -17,6 +21,8 @@ export interface MockServiceHandlers {
   startQuiz?: (...args: never[]) => Promise<QuizSession>;
   answerQuestion?: (...args: never[]) => Promise<AnswerQuestionOutput>;
   saveOnboardingProfile?: (state: OnboardingState) => Promise<void>;
+  adaptiveLoadPool?: () => Promise<AdaptiveDiagnosticPool>;
+  adaptiveSeed?: (input: SeedAdaptiveDiagnosticInput) => Promise<void>;
   getUserStats?: () => Promise<UserStats | null>;
   getMasteryLevels?: () => Promise<readonly number[]>;
   getDailyProgress?: () => Promise<DailyProgressMetrics>;
@@ -45,6 +51,12 @@ export function createMockServices(handlers: MockServiceHandlers = {}): Services
     answerQuestion: { execute: handlers.answerQuestion ?? notImplemented('answerQuestion') },
     saveOnboardingProfile: {
       execute: handlers.saveOnboardingProfile ?? (async () => undefined),
+    },
+    runAdaptiveDiagnostic: {
+      loadPool:
+        handlers.adaptiveLoadPool ??
+        (async () => ({ pool: [], pseudoWords: [], freePoolSize: 0 })),
+      seed: handlers.adaptiveSeed ?? (async () => undefined),
     },
     analytics: new NoopAnalyticsService(),
     auth: new StubAuthService(),
