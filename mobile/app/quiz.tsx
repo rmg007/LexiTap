@@ -31,6 +31,7 @@ export default function QuizRoute(): React.JSX.Element {
           router.replace('/');
         }
       }}
+      onTierLocked={() => router.push('/onboarding/paywall')}
     />
   );
 }

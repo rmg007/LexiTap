@@ -15,6 +15,7 @@ import { FORGIVENESS } from '@/domain/srs/forgiveness';
 import {
   currentWord,
   NoWordsAvailableError,
+  TierLockedError,
   asTierId,
   type QuizSession,
   type QuizMode,
@@ -35,6 +36,8 @@ export interface QuizScreenProps {
   tierId: string;
   mode: QuizMode;
   onExit: () => void;
+  // Called when quiz is blocked because the tier requires a purchase.
+  onTierLocked?: () => void;
 }
 
 type Phase =
@@ -65,7 +68,7 @@ function widgetFor(index: number): AssessmentType {
   return index % 2 === 0 ? 'multiple_choice' : 'drag_drop';
 }
 
-export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX.Element {
+export function QuizScreen({ tierId, mode, onExit, onTierLocked }: QuizScreenProps): React.JSX.Element {
   const { spacing } = useTheme();
   const services = useServices();
   const [phase, setPhase] = useState<Phase>({ kind: 'loading' });
@@ -100,6 +103,12 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
       void services.analytics.track('lesson_started', { tier_id: tierId, mode });
       setPhase({ kind: 'active', session, startedAt: Date.now(), preSessionStreak });
     } catch (error) {
+      if (error instanceof TierLockedError) {
+        // Tier requires purchase — let the parent route open the paywall.
+        if (onTierLocked) onTierLocked();
+        else onExit();
+        return;
+      }
       if (error instanceof NoWordsAvailableError) {
         setPhase({ kind: 'empty' });
         return;
@@ -190,6 +199,12 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
         ]);
         const postStreak = postStats?.streak.currentStreak ?? phase.preSessionStreak;
         const streakIncremented = postStreak > phase.preSessionStreak;
+        if (streakIncremented) {
+          void services.analytics.track('streak_event', {
+            streak_days: postStreak,
+            event: 'incremented',
+          });
+        }
         const moreItemsAvailable =
           dailyProgress !== null
             ? dailyProgress.reviewsCompletedToday < dailyProgress.effectiveDailyCap
