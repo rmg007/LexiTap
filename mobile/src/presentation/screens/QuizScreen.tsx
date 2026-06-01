@@ -8,6 +8,8 @@ import type { AssessmentAnswer } from '@/presentation/components/assessments/typ
 import { useServices } from '@/presentation/services';
 import { hapticsSessionComplete, hapticsStreakIncrement } from '@/presentation/services/haptics';
 import { buildQuestion } from '@/presentation/screens/quizQuestion';
+import { ForgivenessSheet } from '@/presentation/screens/ForgivenessSheet';
+import { FORGIVENESS } from '@/domain/srs/forgiveness';
 import {
   currentWord,
   NoWordsAvailableError,
@@ -48,14 +50,36 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
   // Re-mount widgets per question so internal selection state resets cleanly.
   const questionKey = useRef(0);
 
+  // Forgiveness sheet — shown once when soft daily cap is hit mid-session.
+  const [showForgiveness, setShowForgiveness] = useState(false);
+  // Guards against showing more than once per session (even if "Keep going").
+  const forgivenessShownThisSession = useRef(false);
+  // Local count of answers submitted this session; used to trigger the cap check
+  // without an async DB read on every answer (fast path, eventually consistent).
+  const answersThisSession = useRef(0);
+  // Streak for the forgiveness sheet — fetched once on mount.
+  const [currentStreak, setCurrentStreak] = useState(0);
+
   const start = useCallback(async () => {
     try {
-      const session = await services.startQuiz.execute({
-        tierId: asTierId(tierId),
-        mode,
-        nowMs: Date.now(),
-        tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      });
+      // Fetch streak + daily progress in parallel (non-blocking for session start).
+      const [session, stats, daily] = await Promise.all([
+        services.startQuiz.execute({
+          tierId: asTierId(tierId),
+          mode,
+          nowMs: Date.now(),
+          tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        }),
+        services.queries.getUserStats().catch(() => null),
+        services.queries.getDailyProgress(asTierId(tierId)).catch(() => null),
+      ]);
+
+      setCurrentStreak(stats?.streak.currentStreak ?? 0);
+
+      // Seed the local answer counter from today's already-completed reviews.
+      // This ensures the cap fires correctly even if the session is a continuation.
+      answersThisSession.current = daily?.reviewsCompletedToday ?? 0;
+
       // Fire lesson_started event.
       void services.analytics.track('lesson_started', {
         tier_id: tierId,
@@ -101,6 +125,17 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
           is_correct: isCorrect,
         });
         questionKey.current += 1;
+        answersThisSession.current += 1;
+
+        // Soft daily cap check — show forgiveness sheet once per session.
+        if (
+          !forgivenessShownThisSession.current &&
+          answersThisSession.current >= FORGIVENESS.BASE_DAILY_CAP
+        ) {
+          forgivenessShownThisSession.current = true;
+          setShowForgiveness(true);
+        }
+
         if (out.result.isSessionComplete) {
           hapticsSessionComplete();
           hapticsStreakIncrement();
@@ -129,6 +164,17 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
     },
     [phase, services, tierId, mode],
   );
+
+  // Forgiveness handlers.
+  const handleStopHere = useCallback(() => {
+    setShowForgiveness(false);
+    onExit();
+  }, [onExit]);
+
+  const handleKeepGoing = useCallback(() => {
+    setShowForgiveness(false);
+    // forgivenessShownThisSession.current stays true → won't show again this session.
+  }, []);
 
   if (phase.kind === 'loading') {
     return (
@@ -217,6 +263,15 @@ export function QuizScreen({ tierId, mode, onExit }: QuizScreenProps): React.JSX
           onAnswer={(a) => void handleAnswer(a, question.correctValue)}
         />
       )}
+
+      {/* Forgiveness sheet — rendered outside phase conditionals so the Modal
+          lifecycle persists through phase state updates. */}
+      <ForgivenessSheet
+        visible={showForgiveness}
+        currentStreak={currentStreak}
+        onStopHere={handleStopHere}
+        onKeepGoing={handleKeepGoing}
+      />
     </Screen>
   );
 }

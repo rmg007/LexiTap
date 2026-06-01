@@ -1,4 +1,5 @@
 export { Screen, type ScreenProps } from '@/presentation/screens/Screen';
+export { ForgivenessSheet, type ForgivenessSheetProps } from '@/presentation/screens/ForgivenessSheet';
 export { HomeScreen, type HomeScreenProps } from '@/presentation/screens/HomeScreen';
 export { QuizScreen, type QuizScreenProps } from '@/presentation/screens/QuizScreen';
 export { ProgressScreen } from '@/presentation/screens/ProgressScreen';
