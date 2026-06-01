@@ -27,7 +27,9 @@
       "env": {
         "SENTRY_ORG": "rg007",
         "SENTRY_PROJECT": "lexitap",
-        "EXPO_PUBLIC_SENTRY_DSN": "https://45b3451c5b141eafe863053420bae36e@o4510829827915776.ingest.us.sentry.io/4511487299485696"
+        "EXPO_PUBLIC_SENTRY_DSN": "https://45b3451c5b141eafe863053420bae36e@o4510829827915776.ingest.us.sentry.io/4511487299485696",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://xippwvtmkpskldlmouro.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpcHB3dnRta3Bza2xkbG1vdXJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNDcwMzgsImV4cCI6MjA5MzkyMzAzOH0.JtY8c7AZiyDN1MhfyALUACeXdAQoegkMteIp1ziSomU"
       },
       "ios": {
         "resourceClass": "m-medium"
@@ -41,7 +43,9 @@
       "env": {
         "SENTRY_ORG": "rg007",
         "SENTRY_PROJECT": "lexitap",
-        "EXPO_PUBLIC_SENTRY_DSN": "https://45b3451c5b141eafe863053420bae36e@o4510829827915776.ingest.us.sentry.io/4511487299485696"
+        "EXPO_PUBLIC_SENTRY_DSN": "https://45b3451c5b141eafe863053420bae36e@o4510829827915776.ingest.us.sentry.io/4511487299485696",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://xippwvtmkpskldlmouro.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpcHB3dnRta3Bza2xkbG1vdXJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNDcwMzgsImV4cCI6MjA5MzkyMzAzOH0.JtY8c7AZiyDN1MhfyALUACeXdAQoegkMteIp1ziSomU"
       },
       "ios": {
         "resourceClass": "m-medium"
@@ -56,7 +60,9 @@
       "env": {
         "SENTRY_ORG": "rg007",
         "SENTRY_PROJECT": "lexitap",
-        "EXPO_PUBLIC_SENTRY_DSN": "https://45b3451c5b141eafe863053420bae36e@o4510829827915776.ingest.us.sentry.io/4511487299485696"
+        "EXPO_PUBLIC_SENTRY_DSN": "https://45b3451c5b141eafe863053420bae36e@o4510829827915776.ingest.us.sentry.io/4511487299485696",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://xippwvtmkpskldlmouro.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpcHB3dnRta3Bza2xkbG1vdXJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNDcwMzgsImV4cCI6MjA5MzkyMzAzOH0.JtY8c7AZiyDN1MhfyALUACeXdAQoegkMteIp1ziSomU"
       },
       "ios": {
         "resourceClass": "m-medium"
