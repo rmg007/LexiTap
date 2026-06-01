@@ -385,6 +385,14 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
+# delete-account: user-initiated account + data erasure (LEGAL-4). verify_jwt
+# stays ON so the Edge gateway rejects unauthenticated calls before the function
+# runs; the function additionally re-derives the caller from the verified JWT,
+# so a user can only ever delete their own account.
+[functions.delete-account]
+enabled = true
+verify_jwt = true
+
 [analytics]
 enabled = true
 port = 54327
