@@ -44,8 +44,8 @@ The audit's code-level bugs were verified against current `master` and **fixed**
 
 | # | Fix | State | Evidence |
 |---|---|---|---|
-| **C4** | AI enrichment adapter (Anthropic) | ✅ **Code done** (`ed6791c`) — `AnthropicDefinitionProvider` batches 60 words/call to `claude-3-5-sonnet-20241022`; sets `definition_license='ai-original'`; CI-safe Noop default. **Enrichment RUN still pending** — 91 words founder-authored (`definition_license='original'`); 2,790 still TBD stubs. Run: `ANTHROPIC_API_KEY=... npm run cli -- enrich --tier foundation --add-definitions --provider anthropic`. Est. cost ~$0.35–0.75. **Do not copy to mobile until enrichment + release pass.** | `providers/anthropicDefinitionProvider.ts`, `commands/enrich.ts` (commit `ed6791c`) |
-| **C7/C8** | Release pipeline unblocked | ✅ **`npm run release --no-copy` → "release complete: 2,881 words, user_version=1"** — 3 root causes fixed: (1) `definition_license` column migration moved to `applyWorkingDbMigrations` (not DDL-only, was silently skipped for existing working.db); (2) stale `audio_path` rows cleared (241 words had paths from a prior Noop TTS run); (3) 5 CSV stub sentences fixed (the/is/answer rows leaked the answer word). **`npm run release` (copy to mobile) gated on C4 enrichment run first.** Tests: 96 content-tool + 338 mobile green. | `content-tool/src/lib/db.ts`, `commands/export.ts`, `data/input/foundation.csv` (commit `4461b88`) |
+| **C4** | AI enrichment adapter + enrichment run | ✅ **DONE** (`0cc4d45`) — DeepSeek-chat enriched 2,790 TBD stubs (3 passes); 10 strict-validation fixes applied manually (4 leak-answer, 2 double-blank, 4 duplicate proper-noun defs). `validate --strict` clean. 2,881 words all have real definitions. `words.db` (1.18 MB) copied to `mobile/assets/vocab/`. Adapter code: `AnthropicDefinitionProvider` (`ed6791c`). | `mobile/assets/vocab/words.db`, `providers/anthropicDefinitionProvider.ts` |
+| **C7/C8** | Release pipeline + words.db in bundle | ✅ **DONE** — pipeline fixes (`4461b88`) + C4 run + `npm run release` (`0cc4d45`) copied enriched DB to mobile. 41 test suites / 381 tests green. `mobile/assets/vocab/words.db` = 2,881 words, schema v1, zero TBD stubs. | `content-tool/src/lib/db.ts`, `mobile/assets/vocab/words.db` |
 | **WEB-1** | lexitap.app static site + B2B contact form | ✅ **Done early** (commits `5452a82` + `49ec0bd`). Site live with B2B contact form, privacy/terms pages. P5 task completed in P1 tail. | `website/` (plan archived: `WEB-1_STATIC_SITE.md`) |
 | **ASSET-1** | App icon PNG variants | ✅ **Done** — all sizes: `mobile/assets/icon.png` + `adaptive-icon.png`; `website/assets/lexitap-icon-{1024,512,180,120}.png` + SVG source. **ASSET-2 screenshots still TODO** (P5, after paywall + home finalized). | `website/assets/`, `mobile/assets/` |
 
@@ -56,7 +56,7 @@ One scannable list. Each phase has an ordered task set and a single measurable e
 **P1 — Make the app real** *(exit: cold-launches on real iOS + Android, loads real Foundation words, completes onboarding→quiz→progress, emits retention events)*
 - ✅ C0 words.db delivery (code) · ✅ A1 tiers model · ✅ C2 tier activation · ✅ test harness green
 - ◐ **Prove C0 on a physical device** — ✅ proven on iOS **simulator** (after fixing dual-React + bare-name-ATTACH bugs); physical iOS + low-end Android still pending (fresh EAS build in flight)
-- ◐ Foundation content to 3,000 words: ◐ C3 source (2,848/3,000 ≈ 95%) → ✅ C4 Anthropic enrich adapter (code `ed6791c`; **RUN pending**, 2,790 TBD stubs, ~$0.35–0.75) → C5 sampled QA → ✅C6 synonyms → ✅C7 validate --strict → ✅C8 release pipeline *(pipeline verified: `npm run release --no-copy` → "2,881 words, user_version=1"; copy to mobile gated on C4 run)*
+- ✅ Foundation content: C3 (2,848/3,000 sourced) → ✅C4 enrichment run done (2,881 real defs, `0cc4d45`) → ✅C5 validate --strict clean → ✅C6 synonyms → ✅C7 validate --strict → ✅C8 release pipeline + words.db copied to mobile bundle
 - ◐ Real onboarding + Home: **H-1 Home progress ✅ → O-1 persist `onboarding_state` ✅ → O-2 goal ✅ → O-4 diagnostic ✅ → O-5 knowledge map ✅ → P-1 empty states ✅**; P-2 a11y polish *(O-3 proficiency screen cut)*
 - ◐ Instrumentation: A1–A5 PostHog + `event_log` flush; **B1 Sentry ✅ + B2 scrub ✅** (B2 enrichment tags pending A2) *(without this P2's gate is unmeasurable)*
 - ☐ Build infra: eas init, `app.json→app.config.ts`, eas.json profiles, CI two-job, signing (build-infra #1–14) · **start Apple+Google enrollment day 1**
@@ -143,7 +143,7 @@ The chain that determines the ship date (everything else parallelizes around it)
 
 ```
 C0 (fix words.db delivery, prove on device)         ← URGENT, gates the whole app
-   └─> ◐C3(2,848 done)→✅C4(adapter done, **RUN pending**)→C5→✅C6→✅C7→✅C8(pipeline passes)   ← long pole: run C4 enrichment + copy
+   └─> ✅C3(2,848)→✅C4(enriched, 2,881 real defs)→✅C5(strict clean)→✅C6→✅C7→✅C8(words.db in bundle)   ← DONE
 H-1, O-1✅→O-2✅→O-4✅→O-5✅ (Home + onboarding real)                ← gates P2 beta credibility *(O-3 cut)*
    └─> A1→A2→A3→A4→A5 + B1→B2 (instrumentation)      ← gates P2 measurability
         └─> [P2 beta: ≥1 week data] → D7 gate
@@ -156,7 +156,7 @@ ACCT-1 (Apple/Google enrollment) ───────────────�
 **The five things that actually move the date:**
 
 1. **C0 — words.db delivery.** A live bug, not a future task. Until proven on a *physical device build* (not Metro/simulator), every other claim is unverified. Do first.
-2. **Foundation content enrichment (C3–C8).** Sourcing a 3k frequency list is hours; producing 3,000 ESL-register definitions + single-blank example sentences is the bottleneck. Hand-authoring ≈ weeks; even *reviewing* AI drafts at 20s/word ≈ 17 hours. **Plan = AI-draft (OpenAI adapter, ~$30–90) + sampled QA (10–15% + 100% of validator-flagged) + in-app error reporting as the long-tail fix.** 100% manual review of 3k–6k words is not realistic solo — don't pretend it is.
+2. ~~**Foundation content enrichment (C3–C8).**~~ ✅ **DONE** — 2,881 words with real definitions, `validate --strict` clean, `words.db` in mobile bundle (`0cc4d45`). No longer a date-mover.
 3. **Leaving Expo Go (A0).** RevenueCat, Google Sign-In, Apple auth are all native modules — none run in Expo Go. All of P3 is blocked on the EAS dev client + signing existing.
 4. **Apple/Google enrollment + Apple review (ACCT-1, SUBMIT-2).** External latency: Apple ~24–48h enroll; Google's new-account closed-test rule can add **14 days** before production; iOS first review 1–3 days + budget a **1–2 week rejection/resubmit buffer**. Start enrollment on day one.
 5. **Auth (AU1–AU3) as the iOS submission gate.** Account deletion (Apple-mandated once accounts exist) and SIWA both block iOS submission. If auth slips, the store launch slips 1:1. Fallback: descope to pure-B2C launch, add institutional tokens fast-follow.
@@ -186,24 +186,29 @@ ACCT-1 (Apple/Google enrollment) ───────────────�
 
 *Updated to reflect current state. Done items collapsed; only unfinished actions listed.*
 
-1. **Run C4 enrichment** — **the current blocker.** `ANTHROPIC_API_KEY=sk-ant-... npm run cli -- enrich --tier foundation --add-definitions --provider anthropic` → spot-check 5 random words → `npm run release` (copies enriched DB to `mobile/assets/vocab/words.db`). Est. ~$0.35–0.75, ~47 batches. Mobile bundle currently has TBD stubs — do not build for device until this runs.
-2. **C5 sampled QA gate** — after C4, run `npm run release --validate`. Manually review random 10–15% + 100% validator-flagged. Gate: sample pass-rate ≥80%.
-3. ◐ **C0 physical device test** — `cd mobile && eas build --platform ios --profile preview` (all infra ready: eas.json, app.config.ts, secrets, icon.png). Build proves C0 on real hardware. Simulator was proven 2026-05-31; physical iOS + low-end Android still pending.
-4. **ACCT-1 banking/tax** — Apple Paid Apps agreement + banking/tax forms. Apple Team ID W8FZGT253G known; confirm accounts active and Paid Apps signed (silent IAP blocker).
-5. **A1–A5 + B2** — PostHog emit seam (A1–A5) + Sentry `anon_id`/`session_id` enrichment tags (B2). Both needed before beta; P2 D7 gate is unmeasurable without.
-6. **ACCT-1 Google** — confirm Google Play account + closed-test 20-tester/14-day gate. Start early if not done.
-7. **Correct the two ROADMAP files** — auth timing, sync deletion, content scope, "Phase 2 no coding" still stale. Doc cleanup, not blocking.
+1. ◐ **C0 physical device test** — `cd mobile && eas build --platform ios --profile preview` then install on real iOS + low-end Android. Simulator proven 2026-05-31; physical device is the remaining gate. All infra ready: eas.json, app.config.ts, secrets, icon.png, words.db in bundle.
+2. **ACCT-1 banking/tax** — Apple Paid Apps agreement + banking/tax forms. Apple Team ID W8FZGT253G known; confirm accounts active and Paid Apps signed (silent IAP blocker).
+3. **A1–A5 + B2** — PostHog emit seam (A1–A5) + Sentry `anon_id`/`session_id` enrichment tags (B2). Both needed before beta; P2 D7 gate is unmeasurable without.
+4. **ACCT-1 Google** — confirm Google Play account + closed-test 20-tester/14-day gate. Start early if not done.
+5. **A0 EAS dev client** — exit Expo Go; run `npx expo prebuild --clean`; confirm RevenueCat + Google/Apple auth libs build on New Arch (`newArchEnabled:true`). Gates all of P3.
+6. **Supabase bucket + RLS** — create `user-backups` bucket + RLS policy in Supabase console (manual step). Gates BK1 integration test on real device.
+7. **Supabase `delete-account` Edge Function** — deploy to Supabase. Gates App Store 5.1.1 account-deletion compliance.
 
 **Previously done (collapsed):**
 - ✅ All D1–D8 decisions settled
 - ✅ A1 tiers.ts (exam-pack model)
 - ✅ H-1 + O-1→O-5 onboarding chain
-- ✅ B1 + B2 scrub + B3 wired (EAS secret set, source maps pending build verify)
+- ✅ B1 Sentry + B2 scrub + B3 wired (EAS secret set, source maps pending build verify)
 - ✅ eas init + eas.json + app.config.ts + build infra #1–5
-- ✅ C4 adapter code (Anthropic)
-- ✅ C6 synonyms / C7 validate --strict / C8 release pipeline (pipeline passes)
+- ✅ C4 enrichment RUN complete (2,881 real defs, DeepSeek, `0cc4d45`)
+- ✅ C5 validate --strict clean
+- ✅ C6 synonyms / C7 validate --strict / C8 release pipeline + words.db copied to bundle
 - ✅ WEB-1 lexitap.app static site (B2B contact form live)
 - ✅ ASSET-1 icons (all PNG variants + SVG + mobile icon.png)
+- ✅ AU1 magic-link auth UI + deep-link handler + session restore (`dd104b9`, `7029bd2`)
+- ✅ BK1.1/BK1.2 + BK2 encrypted backup service + upload trigger + restore gate (`c3a60cc`)
+- ✅ R4–R6 RevenueCat purchase flow + PaywallScreen + TierLockedError gating (`86cdaad`)
+- ✅ 41 test suites / 381 tests green
 
 ---
 
