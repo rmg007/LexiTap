@@ -1,6 +1,8 @@
 import { clampProgress } from '@/presentation/components/ProgressBar';
 import { resolveStreakVisualState } from '@/presentation/components/StreakBadge';
 import { buildQuestion } from '@/presentation/screens/quizQuestion';
+import { AFFIRM_BANK, CORRECTION_BANK, pickRandom } from '@/presentation/screens/FeedbackLayer';
+import { darkColors } from '@/presentation/theme';
 import { asTierId, asWordId } from '@/domain/index';
 import type { Word } from '@/domain/index';
 
@@ -90,5 +92,59 @@ describe('buildQuestion', () => {
       random: rng,
     });
     expect(q.options).toHaveLength(2);
+  });
+});
+
+describe('FeedbackLayer copy banks', () => {
+  it('affirm bank is non-empty and each entry is a non-empty string', () => {
+    expect(AFFIRM_BANK.length).toBeGreaterThan(0);
+    for (const entry of AFFIRM_BANK) {
+      expect(typeof entry).toBe('string');
+      expect(entry.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('correction bank is non-empty and each entry is a non-empty string', () => {
+    expect(CORRECTION_BANK.length).toBeGreaterThan(0);
+    for (const entry of CORRECTION_BANK) {
+      expect(typeof entry).toBe('string');
+      expect(entry.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('pickRandom always returns a member of the bank', () => {
+    // Run many times — probabilistic but effectively deterministic.
+    for (let i = 0; i < 100; i++) {
+      const pick = pickRandom(AFFIRM_BANK);
+      expect(AFFIRM_BANK).toContain(pick);
+    }
+    for (let i = 0; i < 100; i++) {
+      const pick = pickRandom(CORRECTION_BANK);
+      expect(CORRECTION_BANK).toContain(pick);
+    }
+  });
+
+  it('affirm bank contains no red color token (#E5484D)', () => {
+    for (const entry of AFFIRM_BANK) {
+      expect(entry).not.toContain('#E5484D');
+    }
+  });
+
+  it('correction bank contains no scolding copy (Wrong / Incorrect / Try again)', () => {
+    const banned = ['Wrong', 'Incorrect', 'Try again'];
+    for (const entry of CORRECTION_BANK) {
+      for (const word of banned) {
+        expect(entry).not.toContain(word);
+      }
+    }
+  });
+
+  it('design tokens do not include red (#E5484D) in assessment color path', () => {
+    // success and caution tokens must not be the forbidden red.
+    const red = '#E5484D';
+    expect(darkColors.success).not.toBe(red);
+    expect(darkColors.successSubtle).not.toBe(red);
+    expect(darkColors.caution).not.toBe(red);
+    expect(darkColors.cautionSubtle).not.toBe(red);
   });
 });
