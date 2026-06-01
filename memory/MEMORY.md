@@ -4,6 +4,15 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 🔧 Session: BK1.2 + BK2 Backup (2026-06-01)
+
+**[BK1.2 + BK2 Backup Implementation (2026-06-01_bk1_2_bk2_backup.md)](2026-06-01_bk1_2_bk2_backup.md)**
+- Upload trigger (`PerformBackupUseCase`, 6h throttle, fired on `session.start()`), hydration gate in `createContainer()` BEFORE `openDatabase()`, manual restore in Settings (commit `c3a60cc`, 378 tests green)
+- ⚠️ **Ryan still needs:** create `user-backups` Supabase bucket + RLS policy, then integration test on real devices
+- `last_backup_ms` in AsyncStorage (NOT user_stats) so restores don't reset per-device throttle
+
+---
+
 ## 🔧 Session: Content Pipeline + C4 Enrichment (2026-06-01)
 
 **[Content Pipeline Fix + C4 Enrichment (2026-06-01_content_pipeline_and_c4.md)](2026-06-01_content_pipeline_and_c4.md)**

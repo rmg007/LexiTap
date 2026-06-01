@@ -545,21 +545,20 @@ BK2 (Restore + hydration gate)
 
 ## Implementation Checklist
 
-- [ ] **BK1:** Create `user-backups` bucket in Supabase
-- [ ] **BK1:** Create RLS policy (test with curl + known UIDs)
-- [ ] **BK1.1:** Write `BackupPort` + `SupabaseBackupService` + tests
-- [ ] **BK1.1:** Register in container
-- [ ] **BK1.2:** Write `ScheduleBackupUseCase` + tests
-- [ ] **BK1.2:** Add migration 004 (last_backup_ms)
-- [ ] **BK1.2:** Hook quiz completion + app foreground
-- [ ] **BK1.2:** Add analytics events
-- [ ] **BK2:** Write `RestoreBackupUseCase` + tests
-- [ ] **BK2:** Add hydration gate to `database.ts` (CRITICAL)
-- [ ] **BK2:** Add manual restore to Settings
-- [ ] **BK2:** Integration test on real Supabase + devices
-- [ ] **Integration:** Verify `npm run check` passes (all new tests)
-- [ ] **Commit:** "feat(p3-bk1-bk2): encrypted backup (upload + restore, RLS-scoped)"
-- [ ] **Update RELEASE_PLAN.md:** Mark BK1/BK2 complete
+- [ ] **BK1:** Create `user-backups` bucket in Supabase  ← **Ryan: manual Supabase console step**
+- [ ] **BK1:** Create RLS policy (test with curl + known UIDs)  ← **Ryan: manual Supabase console step**
+- [x] **BK1.1:** Write `BackupPort` + `SupabaseBackupService` + tests (commit `9c3232a` + prior session)
+- [x] **BK1.1:** Register in container (commit `c3a60cc`)
+- [x] **BK1.2:** Write `ScheduleBackupUseCase` + tests (`shouldBackup` pure fn + `PerformBackupUseCase`)
+- [x] **BK1.2:** `last_backup_ms` stored in AsyncStorage (not user_stats; restores don't reset per-device throttle)
+- [x] **BK1.2:** Hook app foreground (via `session.start()` in container); quiz-completion via `services.backup.triggerIfNeeded`
+- [x] **BK1.2:** Add analytics events (`backup_completed`, `backup_failed`)
+- [x] **BK2:** Restore logic inline in `createContainer()` hydration gate + `services.backup.forceRestore()` for manual trigger
+- [x] **BK2:** Hydration gate in `container.ts` before `openDatabase()` (CRITICAL path preserved)
+- [x] **BK2:** Manual restore in SettingsScreen — confirmation modal, ok/no_backup/error states
+- [ ] **BK2:** Integration test on real Supabase + devices  ← **deferred to beta device test**
+- [x] **Integration:** `npm run check` passes (378 tests, 41 suites — commit `c3a60cc`)
+- [x] **Commit:** `c3a60cc` feat(p3-bk1.2-bk2): encrypted backup — upload trigger, restore gate, Settings UI
 
 ---
 
