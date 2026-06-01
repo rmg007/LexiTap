@@ -12,10 +12,12 @@ const plugins: NonNullable<ExpoConfig['plugins']> = [
   'expo-router',
   'expo-sqlite',
   ['expo-asset', { assets: ['./assets/vocab/words.db'] }],
-  // R1.3: RevenueCat native plugin. Requires `npx expo prebuild --clean` after
-  // adding. API keys are EAS secrets (EXPO_PUBLIC_REVENUECAT_API_KEY_IOS /
-  // EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID); no key → SDK silently disabled.
-  'react-native-purchases',
+  // R1.3: RevenueCat — native dep wired via autolinking + Pods (Podfile.lock has
+  // RNPurchases/RevenueCat/PurchasesHybridCommon). Plugin string removed because
+  // react-native-purchases@10.2.0 has no app.plugin.js, so Expo falls back to
+  // loading the package main which imports react-native (Flow syntax) → crashes
+  // the [CP-User] Generate app.config build phase. No plugin entry needed; Pods
+  // wire the native code. Re-evaluate if upgrading to a version with app.plugin.js.
 ];
 
 if (sentryConfigured) {
