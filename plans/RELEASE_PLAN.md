@@ -186,13 +186,15 @@ ACCT-1 (Apple/Google enrollment) ───────────────�
 
 *Updated to reflect current state. Done items collapsed; only unfinished actions listed.*
 
-1. ◐ **C0 physical device test** — `cd mobile && eas build --platform ios --profile preview` then install on real iOS + low-end Android. Simulator proven 2026-05-31; physical device is the remaining gate. All infra ready: eas.json, app.config.ts, secrets, icon.png, words.db in bundle.
+1. ◐ **C0 physical device test** — `cd mobile && eas build --platform ios --profile preview` then install on real iOS. Simulator proven 2026-05-31; physical device is the remaining gate. All infra ready: eas.json, app.config.ts, secrets, icon.png, words.db in bundle. Android on hold.
 2. **ACCT-1 banking/tax** — Apple Paid Apps agreement + banking/tax forms. Apple Team ID W8FZGT253G known; confirm accounts active and Paid Apps signed (silent IAP blocker).
 3. **A1–A5 + B2** — PostHog emit seam (A1–A5) + Sentry `anon_id`/`session_id` enrichment tags (B2). Both needed before beta; P2 D7 gate is unmeasurable without.
-4. **ACCT-1 Google** — confirm Google Play account + closed-test 20-tester/14-day gate. Start early if not done.
-5. **A0 EAS dev client** — exit Expo Go; run `npx expo prebuild --clean`; confirm RevenueCat + Google/Apple auth libs build on New Arch (`newArchEnabled:true`). Gates all of P3.
-6. **Supabase bucket + RLS** — create `user-backups` bucket + RLS policy in Supabase console (manual step). Gates BK1 integration test on real device.
-7. **Supabase `delete-account` Edge Function** — deploy to Supabase. Gates App Store 5.1.1 account-deletion compliance.
+
+**Deferred to pre-submission (last before App Store):**
+- ⏸ **AU2 Google Sign-In** — `@react-native-google-signin/google-signin` + adapter + Google Cloud Console OAuth creds. Auth does not gate any core feature; defer until app is otherwise ready for store.
+- ⏸ **AU3 SIWA** — `@react-native-apple-authentication` + adapter + Apple Developer enrollment. Mandatory per Guideline 4.8 once Google ships; ships in the same build as AU2.
+- ⏸ **`delete-account` Edge Function** — write `supabase/functions/delete-account/index.ts` + `supabase functions deploy`. Required for App Store 5.1.1 compliance; defer with AU2/AU3.
+- ⏸ **Android** — on hold.
 
 **Previously done (collapsed):**
 - ✅ All D1–D8 decisions settled
@@ -200,6 +202,9 @@ ACCT-1 (Apple/Google enrollment) ───────────────�
 - ✅ H-1 + O-1→O-5 onboarding chain
 - ✅ B1 Sentry + B2 scrub + B3 wired (EAS secret set, source maps pending build verify)
 - ✅ eas init + eas.json + app.config.ts + build infra #1–5
+- ✅ iOS prebuild run (`ios/` dir committed); A0 EAS dev client ready
+- ✅ Supabase project init, `user-backups` bucket + RLS, keys in eas.json (`3f73a8e`)
+- ✅ App Store Connect app registered (`ascAppId: 6775245619`)
 - ✅ C4 enrichment RUN complete (2,881 real defs, DeepSeek, `0cc4d45`)
 - ✅ C5 validate --strict clean
 - ✅ C6 synonyms / C7 validate --strict / C8 release pipeline + words.db copied to bundle

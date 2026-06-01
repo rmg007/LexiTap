@@ -10,8 +10,9 @@ This directory contains session notes, architectural decisions, and lessons lear
 - **AU1.4 deep-link**: `AuthPort.verifyOtpLink(tokenHash)` — `lexitap://auth/callback?token_hash=…` → session + `router.replace('/')`. Wired via `Linking.addEventListener` + `getInitialURL()` inside `AuthProvider`
 - **AU4.4 session refresh**: `AppState` listener in `AuthProvider` syncs session on foreground resume
 - **Test baseline: 41 suites / 381 tests green**
-- ⚠️ **Blocked (need A0 EAS dev client + external setup):** AU2 Google Sign-In (`@react-native-google-signin`), AU3 SIWA (`@react-native-apple-authentication`), RevenueCat `Purchases.logIn(userId)` alias after sign-in
-- ⚠️ **Ryan manual steps remaining:** Supabase `user-backups` bucket + RLS; deploy `delete-account` Edge Function
+- ⏸ **AU2/AU3/delete-account deferred to pre-submission** (Ryan's decision 2026-06-01): auth doesn't gate any core feature; no login friction during testing. AU2 + AU3 + Edge Function ship together in one final EAS build before App Store submission.
+- ⏸ **Android on hold** — iOS-only path for now.
+- ✅ Supabase `user-backups` bucket + RLS done (`3f73a8e`); iOS prebuild done (`ios/` dir present)
 
 ---
 
