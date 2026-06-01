@@ -1,0 +1,158 @@
+---
+# Template for implementing a Builder.io design into the website
+# Copy this file, rename to PLAN_001_<feature>.yaml, and fill in the blanks
+# Example: PLAN_001_privacy_policy.yaml
+
+plan_id: "PLAN_001"
+title: "Implement [Page Name] from Builder.io"
+intent: |
+  Translate the Builder.io design for [Page Name] into semantic HTML and CSS.
+  Goal: pixel-perfect layout match, WCAG AA compliant, mobile-first responsive.
+
+status: "draft"  # draft → ready → in_progress → completed
+
+# Files this plan creates or modifies
+declares:
+  - public/[page-name].html
+  - public/assets/css/[page-name].css
+  - public/assets/img/[any new images]
+  - public/assets/fonts/[any new fonts]
+
+# What must exist first
+depends_on:
+  - public/assets/css/global.css (design system baseline)
+  - AGENTS.md (coding conventions)
+
+# Agent's read/write scope
+target_paths:
+  - public/[page-name].html
+  - public/assets/css/[page-name].css
+  - public/assets/img/
+  - public/assets/fonts/
+  - docs/ (documentation updates only)
+
+# Builder.io Design Spec (provided by Ryan)
+builder_spec:
+  preview_url: "https://builder.io/c/[preview-link]"
+  design_tokens:
+    colors:
+      primary: "#..."
+      secondary: "#..."
+      text_primary: "#..."
+      background: "#..."
+    typography:
+      font_family: "..."  # or system stack
+      font_sizes:
+        body: "1rem"
+        heading_1: "2rem"
+        heading_2: "1.5rem"
+    spacing:
+      section_gap: "2rem"
+      padding_page: "1.5rem"
+  layout_notes: |
+    [Describe the layout from the Builder.io design]
+    E.g.: "Hero banner at top with background image, then 3 feature cards stacked on mobile,
+           3-column grid on desktop. Footer with links + copyright."
+  content_elements:
+    - type: "hero"
+      headline: "[from Builder.io]"
+      subheading: "[from Builder.io]"
+      cta_text: "[from Builder.io]"
+      cta_href: "[target: email, external link, or app store]"
+    - type: "feature_card"
+      title: "[feature 1]"
+      description: "[description]"
+    # ... repeat for each element
+
+# What the agent will build
+acceptance_criteria:
+  - "[ ] HTML is semantic (no divitis); uses `<header>`, `<nav>`, `<main>`, `<section>`, `<footer>`, etc."
+  - "[ ] CSS is mobile-first; base styles for mobile, @media queries for tablet (768px+) and desktop (1024px+)"
+  - "[ ] All text content matches Builder.io spec exactly (no paraphrasing)"
+  - "[ ] All images are present in `public/assets/img/` with descriptive filenames"
+  - "[ ] All images have alt text; decorative images have aria-label or role='presentation'"
+  - "[ ] All links are tested and work (internal links don't 404, external links open in new tab)"
+  - "[ ] Color contrast is ≥4.5:1 for body text, ≥3:1 for large text (WCAG AA)"
+  - "[ ] All interactive elements are ≥48×48px on mobile, ≥44×44px on tablet/desktop"
+  - "[ ] All interactive elements are reachable via keyboard (Tab order logical)"
+  - "[ ] Dev server runs without errors: `npm run dev` → http://localhost:8788"
+  - "[ ] Page renders correctly in mobile (375px), tablet (768px), and desktop (1440px) viewports"
+  - "[ ] Lighthouse audit passes (score ≥90; check Performance, Accessibility, Best Practices, SEO)"
+  - "[ ] No console errors or warnings in browser DevTools"
+  - "[ ] All custom fonts are self-hosted (not external CDN)"
+  - "[ ] Deployment test passes: `npm run deploy` without errors"
+
+# Responsive breakpoints
+responsive_strategy:
+  mobile: "320px and up (base)"
+  tablet: "@media (min-width: 768px)"
+  desktop: "@media (min-width: 1024px)"
+  notes: "Use mobile-first approach: write base styles for mobile, then add tablet/desktop overrides."
+
+# Edge cases and ambiguities
+edge_cases:
+  - "If [edge case 1], then [expected behavior]"
+  - "If the Builder.io spec shows an interaction that can't be done in static HTML (e.g., animated modal), defer to static fallback or ask Ryan"
+  - "If copy is missing from Builder.io, use placeholder text (e.g., '[Headline TBD]') and note it in a comment"
+  - "If images are low-res or missing, ask Ryan before proceeding; do not use Lorem Picsum or external image services"
+
+# What NOT to build
+out_of_scope:
+  - Form submission (CTA buttons may link to email or external service, but no form backend)
+  - JavaScript interactions (animation, modals, carousels — use CSS only, or defer to future)
+  - Dynamic content (no templating, no CMS; all content is hardcoded HTML)
+  - Custom fonts not provided by Ryan (use system font stack as fallback)
+  - Analytics instrumentation (PostHog tracking added separately by Ryan if needed)
+
+# Testing strategy
+test_strategy: |
+  1. Run `npm run dev` and open http://localhost:8788/[page-name]
+  2. Test on mobile (DevTools: 375px width), tablet (768px), desktop (1440px)
+  3. Verify all images load, all links work
+  4. Run Lighthouse audit (DevTools) — target ≥90 across all categories
+  5. Manual accessibility check:
+     - Keyboard nav: Tab through all interactive elements, order should be logical
+     - Screen reader (if available): major headings, links, button labels should be announced
+     - Color contrast: use DevTools color picker or Wave browser extension to verify ≥4.5:1
+  6. Commit with message: "feat: [Page Name] from Builder.io design"
+
+# Dependencies & blocking issues
+blockers: []  # E.g., "Awaiting Builder.io spec export", "Images pending from Ryan"
+
+# Notes for the agent
+notes: |
+  - Start by exporting the Builder.io design (Ryan may provide a link or an HTML/CSS export)
+  - If Builder.io exports include vendor prefixes or CSS-in-JS, convert to plain CSS
+  - If Builder.io includes JavaScript (interactions, form validation), implement the HTML/CSS layout only; defer JS to Ryan
+  - Use global.css design tokens (colors, typography, spacing); don't hardcode values
+  - Keep CSS simple and readable; prefer semantic selectors over complex nesting
+  - Add comments for non-obvious CSS (e.g., "Flexbox centers items vertically on desktop only")
+
+---
+
+# Instructions for the Agent
+
+**Before starting:**
+1. Review `docs/AGENTS.md` (conventions, patterns)
+2. Review `docs/architecture.md` (how the website fits together)
+3. Review this plan fully
+
+**During implementation:**
+1. Open `npm run dev` in one terminal; start editing in another
+2. Save CSS/HTML → browser auto-refreshes (no build step)
+3. Use DevTools to verify layout, colors, accessibility in real-time
+4. Test across mobile, tablet, desktop viewports
+5. When complete, run Lighthouse audit
+
+**Before committing:**
+1. Verify all acceptance criteria are checked
+2. Run `npm run dev` one more time; spot-check the page
+3. Test one more time in actual browser (not just simulator)
+4. Commit with the message in test_strategy section
+5. Push to feature branch → Cloudflare auto-deploys to staging
+6. Share staging URL with Ryan for final review
+
+**If blocked:**
+- Missing images? → Ask Ryan (don't use external image services)
+- Spec is ambiguous? → Ask Ryan (don't guess the intent)
+- Can't implement in static HTML/CSS? → Note it and ask if JS is acceptable
