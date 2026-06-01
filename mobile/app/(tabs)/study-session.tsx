@@ -17,7 +17,7 @@ export default function StudySessionRoute(): React.JSX.Element {
         router.push({ pathname: '/quiz', params: { tierId: DEFAULT_TIER, mode: 'review' } })
       }
       onLearnNewWords={() =>
-        router.push({ pathname: '/quiz', params: { tierId: DEFAULT_TIER, mode: 'learn' } })
+        router.push({ pathname: '/learn', params: { tierId: DEFAULT_TIER } })
       }
     />
   );
