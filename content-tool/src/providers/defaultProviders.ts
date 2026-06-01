@@ -22,6 +22,7 @@ import type {
 } from '@/providers/types';
 import { OpenAiSynonymProvider } from '@/providers/openaiSynonymProvider';
 import { AnthropicDefinitionProvider } from '@/providers/anthropicDefinitionProvider';
+import { DeepSeekDefinitionProvider } from '@/providers/deepseekDefinitionProvider';
 
 export class NoopSynonymProvider implements SynonymProvider {
   readonly name = 'noop';
@@ -72,6 +73,7 @@ export function defaultProviders(): ProviderRegistry {
 export const KNOWN_PROVIDERS: ReadonlySet<string> = new Set([
   'openai', // synonyms/antonyms (text)
   'anthropic', // definitions + example sentences (text)
+  'deepseek', // definitions + example sentences (text, OpenAI-compatible)
   'elevenlabs', // audio
   'google', // audio (alt)
   'unsplash', // images
@@ -98,6 +100,9 @@ export function selectProviders(provider?: string): ProviderRegistry {
   }
   if (provider === 'anthropic') {
     registry.definitions = new AnthropicDefinitionProvider();
+  }
+  if (provider === 'deepseek') {
+    registry.definitions = new DeepSeekDefinitionProvider();
   }
   return registry;
 }
