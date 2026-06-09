@@ -64,5 +64,5 @@ Polished column, x=7200/7620/8040, y=10200, 390×880 each. Originals (`101:3`/`1
 
 **Still deferred (NOT this session's scope):**
 - Review and polish of all other Hi-Fi screens beyond 12/14/15 (a dedicated prompt was written for this — see next session).
-- Uncommitted restore-staging-fix work still in working tree (`container.ts`, `BackupPort.ts`, etc.) — needs clean sequenced commit separate from DIAG-A hunks.
+- ~~Uncommitted restore-staging-fix work~~ — ✅ COMMITTED at `0fdbd8a` "fix(backup): stage restore instead of overwriting live user.db"; tree clean, no loss. (Earlier deferral note was stale.)
 - Branding/icon + marketing-website work stream (the gitignored scratch + unwired store badges) — Ryan's domain; wire badges into website HTML when that work resumes.
