@@ -88,7 +88,7 @@ cd mobile && npm run smoke
 # Device testing: TBD (physical iOS + low-end Android)
 ```
 
-**Test gate:** All PRs must pass `npm run check`. Push to any branch; require status check on `master`.
+**Test gate:** All PRs must pass `npm run check`. Push to any branch; require status check on `main`.
 
 ### Build Content
 
@@ -121,7 +121,7 @@ This pipeline is currently stubbed (no OpenAI adapter, no definitions). See RELE
 1. `eas init` + `app.config.ts` (env injection, `expo-updates` channels)
 2. Apple + Google Developer enrollment (start immediately — 24-48h + 14d gate)
 3. EAS signing profiles (`development`, `preview`, `production`)
-4. CI: two GitHub jobs (`mobile-check`, `content-tool-check`), required status on `master`
+4. CI: two GitHub jobs (`mobile-check`, `content-tool-check`), required status on `main`
 5. Internal build → TestFlight + Play Internal (for device-verify of C0)
 6. External beta (TestFlight + Play Closed) with PostHog + Sentry instrumentation
 7. Store submission (iOS + Android) — gated on auth + SIWA + account deletion
@@ -150,7 +150,7 @@ See [RELEASE_PLAN.md §C](plans/RELEASE_PLAN.md#c-build-signing-release--cicd) f
 
 **Workflow:**
 
-1. Create a feature branch from `master`
+1. Create a feature branch from `main`
 2. Make changes; commit frequently
 3. Run `npm run check` locally before pushing (both projects if touched)
 4. Push and open a PR
