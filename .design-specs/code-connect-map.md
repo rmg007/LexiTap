@@ -31,7 +31,7 @@ turn each row into a `*.figma.tsx` once the package is added and the component e
 | `Sheet` | `291:98` | `src/presentation/components/Sheet.tsx` | ⚠️ TO CREATE | — |
 | `Field` | `291:97` | `src/presentation/components/Field.tsx` | ⚠️ TO CREATE | `state`→{default,focus,error}. Non-quiz only. |
 | `EmptyState` | `290:97` | `src/presentation/components/EmptyState.tsx` | ⚠️ TO CREATE | — |
-| `Icon` (Lucide set, 32 glyphs) | `273:2` | `lucide-react-native` | ⚠️ dep NOT installed | `glyph`→icon name (kebab→PascalCase) |
+| `Icon` (Lucide set, 40 glyphs) | `273:2` | `lucide-react-native` | ⚠️ dep NOT installed | `glyph`→icon name (kebab→PascalCase) |
 | `color/*` `type/*` `space/*` `radius/*` | (variables) | `src/presentation/theme/tokens.ts` | ✅ exists | 1:1 token names |
 
 ## To publish (post-stub)
