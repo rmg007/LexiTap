@@ -1,6 +1,9 @@
 # Design Revision Plan — post-finalization review
 
-**Status:** A done · B awaiting Ryan's token decision · C accepted (2026-06-09)
+**Status:** A done · B done (Ryan chose "fix both") · C accepted (2026-06-09)
+
+> **Update 2 (2026-06-09) — B APPLIED.** Ryan chose "fix both." Done in canonical order (tokens.ts → docs → Figma → verify): `textTertiary` dark `#6E777B`→`#838E92` (4.67–5.64:1) + light `#6B7378`→`#676F73` (4.6–5.1:1); added **`accentText`** token (dark `#20B2AA`, light `#0F6E68`) so accent-colored TEXT passes AA while the `accent` *fill* stays the brand teal. `mobile npm run check` GREEN (46 suites / 455 tests). Figma ported 1:1: `text/tertiary` var updated both modes, new `accent/text` var created (TEXT_FILL scope), **all accent-colored text rebound** to it — 12 free nodes + 13 component-master nodes (propagated to instances) + 4 instance overrides = **0 accent-bound text left on any of 10 pages**. Re-audit: **dark mode 0 text AA failures; accent/text passes AA both modes; the only sub-4.5 `accent` rows are the fill role (3.55–3.95:1 ≥ the 3:1 bar for fills/focus rings — correct).** Gate still PASS, screenshots clean.
+
 
 > **Update 2026-06-09:** Section A APPLIED + verified — 8 glyphs added (32→40), 13 instances swapped, gate re-run PASS on all 4 touched pages (0 raw fills), screenshots confirm signal/graduation-cap/accessibility/activity/type/contrast/cloud-download/refresh-cw/user render on the canonical rebuilt screens. The toggle-row Accessibility screen seen mid-verify was an *archived original* (Archive SECTION, excluded from gate) — not a duplicate defect. Minor IA note: that archived original carried "Auto-play audio" + "Haptic feedback" toggles the rebuilt Accessibility screen omits — preserved in Archive, needs a home if still wanted (low priority).
 

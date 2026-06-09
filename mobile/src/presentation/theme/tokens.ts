@@ -17,6 +17,10 @@ export interface ColorTokens {
   readonly accentSubtle: string;
   // Label color used on top of the filled accent button (AA contrast on teal).
   readonly onAccent: string;
+  // Accent color for TEXT/links on page backgrounds. Distinct from `accent`
+  // (a fill) because the light-mode fill teal fails WCAG AA as small text —
+  // this uses the darker pressed teal so accent-colored text passes 4.5:1.
+  readonly accentText: string;
   readonly success: string;
   readonly successSubtle: string;
   readonly caution: string;
@@ -36,11 +40,12 @@ export const darkColors: ColorTokens = {
   borderStrong: '#3A4145',
   textPrimary: '#F2F5F6',
   textSecondary: '#A9B2B6',
-  textTertiary: '#6E777B',
+  textTertiary: '#838E92',
   accent: '#20B2AA',
   accentPressed: '#1A938C',
   accentSubtle: '#13322F',
   onAccent: '#062826',
+  accentText: '#20B2AA',
   success: '#4CAF50',
   successSubtle: '#16301A',
   caution: '#FFC107',
@@ -59,11 +64,12 @@ export const lightColors: ColorTokens = {
   borderStrong: '#C4CBCE',
   textPrimary: '#1A1D1E',
   textSecondary: '#52595C',
-  textTertiary: '#6B7378',
+  textTertiary: '#676F73',
   accent: '#178F88',
   accentPressed: '#0F6E68',
   accentSubtle: '#DCF0EE',
   onAccent: '#FFFFFF',
+  accentText: '#0F6E68',
   success: '#2E7D32',
   successSubtle: '#E3F1E4',
   caution: '#8B5A00',

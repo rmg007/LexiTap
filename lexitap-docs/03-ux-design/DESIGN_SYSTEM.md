@@ -51,10 +51,11 @@ Canonical values are dark mode. The teal primary (#20B2AA) is the LexiTap brand 
 | `border.strong` | `#3A4145` | Selected/decorative outlines (NOT focus rings — fails WCAG 2.4.11 at ~1.5–1.8:1 on dark surfaces) |
 | `text.primary` | `#F2F5F6` | Headlines, word being studied |
 | `text.secondary` | `#A9B2B6` | Definitions, supporting copy |
-| `text.tertiary` | `#6E777B` | Captions, metadata, hints |
-| `accent` | `#20B2AA` | Primary teal, interactive emphasis, **focus rings** (2px, ≥3.8:1 both modes) |
+| `text.tertiary` | `#838E92` | Captions, metadata, hints (AA-corrected 2026-06-09: was `#6E777B`, 3.4:1 on raised — failed) |
+| `accent` | `#20B2AA` | Primary teal, interactive emphasis (fills, **focus rings** 2px), ≥3.8:1 both modes |
 | `accent.pressed` | `#1A938C` | Pressed/active teal |
 | `accent.subtle` | `#13322F` | Teal-tinted fill behind accent text |
+| `accent.text` | `#20B2AA` | Accent-colored **text/links** on backgrounds. Equals `accent` in dark; in light it's the darker pressed teal so small text passes AA 4.5:1 (the light fill teal does not) |
 | `success` | `#4CAF50` | Correct-answer confirmation |
 | `success.subtle` | `#16301A` | Correct-answer fill |
 | `caution` | `#FFC107` | Gentle "review again" state (NOT error) |
@@ -73,8 +74,9 @@ There is intentionally **no `error.red` token in the assessment path.** A destru
 | `border.subtle` | `#E6E9EA` |
 | `text.primary` | `#1A1D1E` |
 | `text.secondary` | `#52595C` |
-| `text.tertiary` | `#6B7378` |
-| `accent` | `#178F88` (darkened teal for AA on white) |
+| `text.tertiary` | `#676F73` (AA-corrected 2026-06-09: was `#6B7378`, 4.3:1 on sunken — failed) |
+| `accent` | `#178F88` (darkened teal for AA on white — fills/icons) |
+| `accent.text` | `#0F6E68` (accent-colored text/links; passes AA 4.5:1 as small text) |
 | `success` | `#2E7D32` |
 | `caution` | `#B58100` |
 
