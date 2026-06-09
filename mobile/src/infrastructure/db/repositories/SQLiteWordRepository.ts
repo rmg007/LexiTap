@@ -1,13 +1,14 @@
 import type { WordRepository, WordWithProgress } from '@/domain/vocabulary/WordRepository';
-import type { Word } from '@/domain/vocabulary/Word';
+import type { Word, WordSense } from '@/domain/vocabulary/Word';
 import type { TierId, WordId } from '@/domain/vocabulary/ids';
 import type { DatabaseHandle } from '@/infrastructure/db/database';
-import { mapWordRow, mapUserProgressRow } from '@/infrastructure/db/mappers';
+import { mapWordRow, mapUserProgressRow, mapSenseRows } from '@/infrastructure/db/mappers';
 import {
   selectWordsDueForReview,
   selectNewWords,
   selectWordById,
   selectWordsByTier,
+  selectSensesForWord,
   joinRowToProgressRow,
 } from '@/infrastructure/db/queries/wordQueries';
 
@@ -39,5 +40,18 @@ export class SQLiteWordRepository implements WordRepository {
   async getWordsByTier(tierId: TierId): Promise<Word[]> {
     const rows = await selectWordsByTier(this.db, tierId);
     return rows.map(mapWordRow);
+  }
+
+  // Fail-soft: a content DB built before the rich-detail schema has no
+  // word_senses/sense_examples tables, so the query throws. Resolve to [] rather
+  // than break the detail screen — it falls back to the flat definition. Same
+  // tolerance as SQLitePseudoWordRepository (DIAG-A).
+  async getSensesForWord(id: WordId): Promise<WordSense[]> {
+    try {
+      const rows = await selectSensesForWord(this.db, id);
+      return mapSenseRows(rows);
+    } catch {
+      return [];
+    }
   }
 }

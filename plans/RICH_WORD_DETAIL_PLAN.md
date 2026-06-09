@@ -74,11 +74,14 @@ CREATE INDEX idx_sense_examples_sense ON sense_examples(sense_id);
 3. Run on **top-N by `frequency_rank`** first (N = Ryan's call, e.g. 300). Cost-gated, reviewable.
 4. `validate --strict`, rebuild `words.db`, re-bundle to `mobile/assets/vocab/`.
 
-### Phase 3 — Mobile read layer (guarded `infrastructure/db/` — additive reads, needs confirmation)
-1. `WordSenseRow` / `SenseExampleRow` row types ([rows.ts](../mobile/src/infrastructure/db/rows.ts)).
-2. Query: `selectSensesForWord(wordId)` + `selectExamplesForSenses(...)` (or one joined query) in [wordQueries.ts](../mobile/src/infrastructure/db/queries/wordQueries.ts). Read-only, parameterized.
-3. Domain: `WordSense` + `SenseExample` types under `domain/vocabulary`; `Word.senses?: WordSense[]` (optional — absence = fall back to flat `definition`/`exampleSentence`, so old data + the quiz still work).
-4. Mappers.
+### Phase 3 — Mobile read layer ✅ DONE (2026-06-09)
+Additive reads only; guarded `infrastructure/db/` (confirmation granted). **No `domain/srs` diff, no `user.db` migration.** `mobile npm run check` GREEN (46 suites / **459 tests**, +4 sense-mapper).
+1. ✅ `WordSenseRow` + `SenseWithExampleRow` (the sense⋈example LEFT-JOIN row) in [rows.ts](../mobile/src/infrastructure/db/rows.ts).
+2. ✅ One joined query `selectSensesForWord(wordId)` in [wordQueries.ts](../mobile/src/infrastructure/db/queries/wordQueries.ts) — `word_senses LEFT JOIN sense_examples`, `deleted_at IS NULL`, `ORDER BY sense_index, example_index`. Read-only, parameterized.
+3. ✅ Domain `WordSense` + `SenseExample` (examples nested in the sense) + `Word.senses?: WordSense[]` ([Word.ts](../mobile/src/domain/vocabulary/Word.ts)). Absence/[] = flat-definition fallback.
+4. ✅ `mapSenseRows()` groups the flat join into `WordSense[]` ([mappers.ts](../mobile/src/infrastructure/db/mappers.ts)); relies on the query ORDER BY.
+5. ✅ Port `WordRepository.getSensesForWord(id)` + impl in [SQLiteWordRepository.ts](../mobile/src/infrastructure/db/repositories/SQLiteWordRepository.ts) — **fail-soft** (catch → `[]`, exactly like `SQLitePseudoWordRepository`: a content DB predating the rich-detail schema has no tables → throws → flat fallback, never breaks the screen).
+6. ✅ Phase-4 seam: `ReadQueries.getWordDetail(id) → { word, senses } | null` ([ServicesContext.tsx](../mobile/src/presentation/services/ServicesContext.tsx)), implemented in [container.ts](../mobile/src/composition/container.ts), defaulted in `mockServices`. One fail-soft call for the detail screen instead of juggling two repo reads.
 
 ### Phase 4 — Detail UI
 1. [LearnCardScreen.tsx](../mobile/src/presentation/screens/LearnCardScreen.tsx): render senses (numbered when >1), each = `explanation` + example list + optional image. Keep hard invariant: **NO TextInput / no assessment widget on this screen.** *(NOT yet done — RN port.)*
@@ -90,7 +93,7 @@ CREATE INDEX idx_sense_examples_sense ON sense_examples(sense_id);
 ## Exit criteria
 - Phase 1: builder emits the two tables; every word has sense 0; content-tool check green.
 - Phase 2: 20-word sample signed off by Ryan; top-N enriched; `validate --strict` clean.
-- Phase 3: mobile reads senses; `npm run check` green; **no `domain/srs` diff**.
+- Phase 3: ✅ mobile reads senses; `npm run check` green (459 tests); **no `domain/srs` diff** (verified — 0 srs files changed).
 - Phase 4: detail screen renders multi-sense + fallback; Figma gate PASS.
 - Docs synced: DATABASE_SCHEMA.md, AGENTS.md (if query patterns change), MEMORY.md.
 

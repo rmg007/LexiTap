@@ -1,4 +1,4 @@
-import type { Word, ContentTier } from '@/domain/vocabulary/Word';
+import type { Word, ContentTier, WordSense } from '@/domain/vocabulary/Word';
 import type { TierId, WordId } from '@/domain/vocabulary/ids';
 import type { UserProgress } from '@/domain/user/UserProgress';
 
@@ -19,6 +19,11 @@ export interface WordRepository {
   getById(id: WordId): Promise<Word | null>;
   // Active words in a tier, for distractor pools and tier browsing.
   getWordsByTier(tierId: TierId): Promise<Word[]>;
+  // Rich detail layer (additive). The distinct senses of a word, each with felt
+  // explanation + teaching examples, ordered by sense_index. Empty for
+  // un-backfilled words OR a content DB predating the rich-detail schema
+  // (fail-soft) — the detail screen then falls back to the flat definition.
+  getSensesForWord(id: WordId): Promise<WordSense[]>;
 }
 
 export interface ContentTierRepository {

@@ -4,6 +4,7 @@ import type {
   ContentTierRow,
   UserProgressRow,
   PseudoWordRow,
+  SenseWithExampleRow,
 } from '@/infrastructure/db/rows';
 
 // Named, parameterized query functions for content (words.db, ATTACHed as
@@ -139,6 +140,29 @@ export function selectPseudoWords(db: DatabaseHandle, limit: number): Promise<Ps
      ORDER BY id ASC
      LIMIT ?`,
     [limit],
+  );
+}
+
+// Rich detail: all active senses of a word, each LEFT JOINed to its teaching
+// examples, for the detail screen only. Read-only, parameterized. Ordered so the
+// mapper can group sequentially (sense_index, then example_index). A sense with
+// no examples still appears (LEFT JOIN → null example columns). The active filter
+// (s.deleted_at IS NULL) applies. May throw on a content DB built before the
+// rich-detail schema (no word_senses/sense_examples tables) — the repository
+// catches that and falls back to the flat definition (fail-soft, like DIAG-A).
+export function selectSensesForWord(
+  db: DatabaseHandle,
+  wordId: string,
+): Promise<SenseWithExampleRow[]> {
+  return db.all<SenseWithExampleRow>(
+    `SELECT s.id, s.sense_index, s.pos, s.short_gloss, s.explanation, s.image_path,
+       e.example_index AS example_index,
+       e.text          AS example_text
+     FROM contentdb.word_senses s
+     LEFT JOIN contentdb.sense_examples e ON e.sense_id = s.id
+     WHERE s.word_id = ? AND s.deleted_at IS NULL
+     ORDER BY s.sense_index ASC, e.example_index ASC`,
+    [wordId],
   );
 }
 

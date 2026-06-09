@@ -1,4 +1,10 @@
-import type { Word, ContentTier, WordType, CefrLevel } from '@/domain/vocabulary/Word';
+import type {
+  Word,
+  ContentTier,
+  WordType,
+  CefrLevel,
+  WordSense,
+} from '@/domain/vocabulary/Word';
 import type { PseudoWord } from '@/domain/onboarding/PseudoWord';
 import { asWordId, asTierId } from '@/domain/vocabulary/ids';
 import type { UserProgress, MasteryLevel } from '@/domain/user/UserProgress';
@@ -14,6 +20,7 @@ import type {
   QuizAttemptRow,
   UserStatsRow,
   PseudoWordRow,
+  SenseWithExampleRow,
 } from '@/infrastructure/db/rows';
 
 // Pure row -> domain mappers. The ONLY place DB nullability quirks, 0/1
@@ -79,6 +86,36 @@ export function mapWordRow(row: WordRow): Word {
     usageNotes: row.usage_notes ?? undefined,
     isDeleted: row.deleted_at !== null,
   };
+}
+
+// Group the flat sense⋈example join (one row per example, or one null-example
+// row for an exampleless sense) into WordSense[]. Relies on the query's
+// ORDER BY sense_index, example_index — rows of one sense arrive contiguously.
+// Pure: no I/O, fully testable. Empty input → [] (the detail screen then falls
+// back to the flat definition).
+export function mapSenseRows(rows: SenseWithExampleRow[]): WordSense[] {
+  const senses: WordSense[] = [];
+  const bySenseId = new Map<string, WordSense>();
+  for (const row of rows) {
+    let sense = bySenseId.get(row.id);
+    if (sense === undefined) {
+      sense = {
+        senseIndex: row.sense_index,
+        pos: row.pos ?? undefined,
+        shortGloss: row.short_gloss,
+        explanation: row.explanation,
+        imagePath: row.image_path ?? undefined,
+        examples: [],
+      };
+      bySenseId.set(row.id, sense);
+      senses.push(sense);
+    }
+    // LEFT JOIN: a sense with no examples yields a single null-example row.
+    if (row.example_text !== null && row.example_index !== null) {
+      sense.examples.push({ exampleIndex: row.example_index, text: row.example_text });
+    }
+  }
+  return senses;
 }
 
 export function mapPseudoWordRow(row: PseudoWordRow): PseudoWord {

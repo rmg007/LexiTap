@@ -30,7 +30,7 @@ import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
 import { v1FixedScheduler } from '@/domain/srs/v1-fixed';
-import type { TierId } from '@/domain/vocabulary/ids';
+import type { TierId, WordId } from '@/domain/vocabulary/ids';
 
 import { StartQuizUseCase } from '@/application/quiz/StartQuizUseCase';
 import { AnswerQuestionUseCase } from '@/application/quiz/AnswerQuestionUseCase';
@@ -109,6 +109,19 @@ function buildReadQueries(
       } catch (error) {
         logger.warn('getContentDbHealth failed', { error: String(error) });
         return { wordCount: 0, dbVersion: 0 };
+      }
+    },
+    async getWordDetail(id: WordId) {
+      try {
+        const word = await words.getById(id);
+        if (word === null) return null;
+        // getSensesForWord is itself fail-soft (returns [] on a pre-rich-detail
+        // content DB); [] → the detail screen uses the flat definition fallback.
+        const senses = await words.getSensesForWord(id);
+        return { word, senses };
+      } catch (error) {
+        logger.warn('getWordDetail failed; returning null', { error: String(error) });
+        return null;
       }
     },
   };

@@ -1,4 +1,8 @@
-import type { Services, DailyProgressMetrics } from '@/presentation/services/ServicesContext';
+import type {
+  Services,
+  DailyProgressMetrics,
+  WordDetail,
+} from '@/presentation/services/ServicesContext';
 import type { AnswerQuestionOutput } from '@/application/quiz/AnswerQuestionUseCase';
 import type { QuizSession, UserStats, OnboardingState } from '@/domain/index';
 import type {
@@ -27,6 +31,7 @@ export interface MockServiceHandlers {
   getMasteryLevels?: () => Promise<readonly number[]>;
   getDailyProgress?: () => Promise<DailyProgressMetrics>;
   getContentDbHealth?: () => Promise<{ wordCount: number; dbVersion: number }>;
+  getWordDetail?: (...args: never[]) => Promise<WordDetail | null>;
   backupTriggerIfNeeded?: (nowMs: number) => Promise<void>;
   backupForceRestore?: () => Promise<'ok' | 'no_backup' | 'error'>;
 }
@@ -81,6 +86,7 @@ export function createMockServices(handlers: MockServiceHandlers = {}): Services
         newWordsBudget: 10,
       })),
       getContentDbHealth: handlers.getContentDbHealth ?? (async () => ({ wordCount: 0, dbVersion: 0 })),
+      getWordDetail: handlers.getWordDetail ?? (async () => null),
     },
   };
   return services as unknown as Services;

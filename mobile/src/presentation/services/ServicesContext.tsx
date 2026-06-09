@@ -8,8 +8,9 @@ import type { AnalyticsPort } from '@/domain/analytics/AnalyticsPort';
 import type { AuthPort } from '@/domain/auth/AuthPort';
 import type { IapPort } from '@/domain/iap/IapPort';
 import type { CheckTierAccessUseCase } from '@/application/tier/CheckTierAccessUseCase';
-import type { TierId } from '@/domain/index';
+import type { TierId, WordId } from '@/domain/index';
 import type { UserStats } from '@/domain/index';
+import type { Word, WordSense } from '@/domain/vocabulary/Word';
 
 // The Services context is the ONLY way the presentation layer reaches the
 // application layer. It imports TYPES ONLY from @/application and @/domain; the
@@ -34,6 +35,14 @@ export interface ContentDbHealth {
   dbVersion: number;
 }
 
+// Word + its rich-detail senses for the detail screen. `senses` is empty for
+// un-backfilled words or a content DB predating the rich-detail schema — the
+// screen then falls back to word.definition / word.exampleSentence.
+export interface WordDetail {
+  word: Word;
+  senses: WordSense[];
+}
+
 export interface ReadQueries {
   // Aggregate stats for Home / Progress (streak, totals, mastered count).
   getUserStats(): Promise<UserStats | null>;
@@ -43,6 +52,9 @@ export interface ReadQueries {
   getDailyProgress(tierId: TierId): Promise<DailyProgressMetrics>;
   // Content DB health: word count + schema version (for device verification).
   getContentDbHealth(): Promise<ContentDbHealth>;
+  // Word + rich-detail senses for the detail screen. Null if the word doesn't
+  // resolve; senses [] if the word has no rich data (flat-definition fallback).
+  getWordDetail(id: WordId): Promise<WordDetail | null>;
 }
 
 export interface Services {

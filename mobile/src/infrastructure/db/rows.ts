@@ -29,6 +29,27 @@ export interface WordRow {
   deleted_at: number | null;
 }
 
+// Rich word-detail rows from the read-only content DB. Additive layer read ONLY
+// by the detail screen — quiz/SRS keep reading words.definition/example_sentence.
+// `word_senses` + `sense_examples` are absent on content DBs built before the
+// rich-detail schema, so the read path is fail-soft (see SQLiteWordRepository).
+export interface WordSenseRow {
+  id: string;
+  sense_index: number;
+  pos: string | null;
+  short_gloss: string;
+  explanation: string;
+  image_path: string | null;
+}
+
+// One row of the sense⋈examples LEFT JOIN: a sense, optionally with one of its
+// teaching examples. A sense with no examples yields a single row with null
+// example columns. The mapper groups these back into WordSense[].
+export interface SenseWithExampleRow extends WordSenseRow {
+  example_index: number | null;
+  example_text: string | null;
+}
+
 // DIAG-A pseudo-word row from the read-only content DB (`contentdb.pseudo_words`).
 export interface PseudoWordRow {
   id: string;

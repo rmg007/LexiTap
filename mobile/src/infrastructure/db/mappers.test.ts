@@ -5,6 +5,7 @@ import {
   mapQuizAttemptRow,
   mapUserStatsRow,
   mapPseudoWordRow,
+  mapSenseRows,
 } from '@/infrastructure/db/mappers';
 import type {
   WordRow,
@@ -13,6 +14,7 @@ import type {
   QuizAttemptRow,
   UserStatsRow,
   PseudoWordRow,
+  SenseWithExampleRow,
 } from '@/infrastructure/db/rows';
 
 function wordRow(overrides: Partial<WordRow> = {}): WordRow {
@@ -89,6 +91,69 @@ describe('mapPseudoWordRow', () => {
   it('maps a null score to undefined', () => {
     const row: PseudoWordRow = { id: 'pseudo_2', word: 'frobble', phoneme_similarity_score: null };
     expect(mapPseudoWordRow(row).phonemeSimilarityScore).toBeUndefined();
+  });
+});
+
+describe('mapSenseRows', () => {
+  function senseRow(over: Partial<SenseWithExampleRow> = {}): SenseWithExampleRow {
+    return {
+      id: 'sense_a',
+      sense_index: 0,
+      pos: 'noun',
+      short_gloss: 'a living organism',
+      explanation: 'A plant grows in soil...',
+      image_path: null,
+      example_index: null,
+      example_text: null,
+      ...over,
+    };
+  }
+
+  it('groups multiple example rows under one sense, preserving order', () => {
+    const senses = mapSenseRows([
+      senseRow({ example_index: 0, example_text: 'She watered the plant.' }),
+      senseRow({ example_index: 1, example_text: 'The plant needs sun.' }),
+    ]);
+    expect(senses).toHaveLength(1);
+    expect(senses[0]?.shortGloss).toBe('a living organism');
+    expect(senses[0]?.pos).toBe('noun');
+    expect(senses[0]?.examples.map((e) => e.text)).toEqual([
+      'She watered the plant.',
+      'The plant needs sun.',
+    ]);
+    expect(senses[0]?.examples.map((e) => e.exampleIndex)).toEqual([0, 1]);
+  });
+
+  it('keeps an exampleless sense with an empty examples array (LEFT JOIN null row)', () => {
+    const senses = mapSenseRows([senseRow()]);
+    expect(senses).toHaveLength(1);
+    expect(senses[0]?.examples).toEqual([]);
+  });
+
+  it('groups multiple distinct senses, mapping null pos/image to undefined', () => {
+    const senses = mapSenseRows([
+      senseRow({ id: 's0', sense_index: 0, example_index: 0, example_text: 'x' }),
+      senseRow({
+        id: 's1',
+        sense_index: 1,
+        pos: null,
+        image_path: 'vocab/plant_2.png',
+        short_gloss: 'a factory',
+        explanation: 'A power plant...',
+        example_index: 0,
+        example_text: 'The plant employs 200 people.',
+      }),
+    ]);
+    expect(senses).toHaveLength(2);
+    expect(senses[0]?.senseIndex).toBe(0);
+    expect(senses[1]?.senseIndex).toBe(1);
+    expect(senses[1]?.pos).toBeUndefined();
+    expect(senses[1]?.imagePath).toBe('vocab/plant_2.png');
+    expect(senses[1]?.examples[0]?.text).toBe('The plant employs 200 people.');
+  });
+
+  it('returns [] for no rows (un-backfilled word → flat fallback)', () => {
+    expect(mapSenseRows([])).toEqual([]);
   });
 });
 

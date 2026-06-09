@@ -44,6 +44,9 @@ class MockWords implements WordRepository {
   async getWordsByTier(): Promise<Word[]> {
     return this.byTier;
   }
+  async getSensesForWord(): Promise<never[]> {
+    return [];
+  }
 }
 
 class MockProgress implements UserProgressRepository {
