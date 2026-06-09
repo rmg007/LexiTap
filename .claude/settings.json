@@ -1,7 +1,25 @@
 {
   "model": "sonnet",
   "effortLevel": "high",
+  "autoMemoryEnabled": false,
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/statusline.sh\"",
+    "padding": 2,
+    "refreshInterval": 5
+  },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/guardrails.mjs\""
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "matcher": "",
@@ -23,7 +41,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'git rev-parse --git-dir >/dev/null 2>&1 && echo \"✓ Git repo ready\" || echo \"Not a git repo\"' || true"
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-context.sh\""
           }
         ]
       }
@@ -73,6 +91,12 @@
       "Bash(echo:*)",
       "Bash(pwd)",
       "Bash(which:*)",
+      "Bash(node scripts/generate-image.js:*)",
+      "Bash(node scripts/generate-icon.js:*)",
+      "Bash(node scripts/optimize-asset.js:*)",
+      "Bash(npm run gen:image:*)",
+      "Bash(npm run gen:icon:*)",
+      "Bash(npm run optimize:*)",
       "Read",
       "Glob",
       "Grep"
@@ -84,7 +108,6 @@
       "Edit(mobile/src/infrastructure/storage/**)",
       "Edit(mobile/src/infrastructure/crash/**)",
       "Edit(mobile/app.json)",
-      "Edit(**/.env)",
       "Edit(**/.env.development)",
       "Edit(**/.env.development.local)",
       "Edit(**/.env.production)",

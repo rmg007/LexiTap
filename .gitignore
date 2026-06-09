@@ -52,6 +52,7 @@ ios
 # Brand-asset exploration scratch (canonical icons live in website/assets/)
 iconikai-icon-pack.zip
 lexitap_svg_assets/
+scripts/out/
 
 # macOS
 .DS_Store

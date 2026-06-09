@@ -2,13 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - 'mobile/**'
       - 'content-tool/**'
       - '.github/workflows/ci.yml'
   pull_request:
-    branches: [master]
+    branches: [main]
     paths:
       - 'mobile/**'
       - 'content-tool/**'

@@ -4,6 +4,18 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 🎨 Session: Asset Operations System (2026-06-09)
+
+**[Asset Operations System (2026-06-09_asset_operations_system.md)](2026-06-09_asset_operations_system.md)** — unified, agent-discoverable system for create/update/delete of designs, CSS, images, icons. Canonical guide = [`scripts/README.md`](../scripts/README.md). New AI raster gen: `scripts/generate-image.js` (OpenAI `gpt-image-1`, dependency-light, `OPENAI_API_KEY` in `.env`). Surfaced in auto-loaded CLAUDE.md + AGENTS.md. **Reconciled the old "never create icons" rule → generate freely for og/marketing/content; final store icon + logo still need Ryan's sign-off + ship as vectors.** Settings: dropped `Edit(**/.env)` deny, allowed the gen scripts. **+ Smoothness:** root `package.json` (pins sharp/svgo, fixes new-laptop bug), `optimize-asset.js` (PNG/SVG shrink, auto-runs on gen), `/gen-image` command, Supabase MCP (`.mcp.json`, read-only). **+ Enforced guardrails:** native `.claude/hooks/guardrails.mjs` (PreToolUse) hard-blocks `git add .env`/`-A`/`commit -a`, TextInput in passive screens, SQL interpolation — chose native hook over hookify plugin (travels in repo). 12/12 self-test. **+ `/aso` skill:** vetted App Store Optimization (`.claude/skills/aso/`, SKILL.md + 5 refs) tailored to LexiTap — keyword/metadata/screenshots/reviews/launch-checklist, no third-party scripts. Built after surveying 4 external skill repos (none worth importing).
+
+---
+
+## 🛠️ Session: Claude Code Infra Hardening (2026-06-09)
+
+**[Claude Code Infra Hardening (2026-06-09_claude_code_infra_hardening.md)](2026-06-09_claude_code_infra_hardening.md)** — audited the actual harness config (not generic advice). **Fixed 2 real bugs:** CI was DEAD since `master→main` rename (`ci.yml` triggered on `[master]` → 0 runs since; fixed → `[main]`), and 4.5 GB of stale locked agent worktrees pruned (all merged into main, dead lock pids). **Automated 3 honor-system rules:** SessionStart hook (`session-context.sh`) injects open issues + git ahead/behind as JSON `additionalContext` (plain stdout is NOT model-visible — verified); status line (`statusline.sh`) shows model · branch · ↑unpushed · PR# · ctx%; `autoMemoryEnabled:false` (home-folder memory banned by policy, facts already in repo). Verified NOT real: `.claude/rules/` paths feature. Also harvested `mobile/EXPO_NOTES.md` (RN/Expo gotchas + unistyles-rejected + barrel-kept) + RTL render-guard gap → [issue #10](https://github.com/rmg007/LexiTap/issues/10). **Meta-lesson: audit your own setup before importing skills** (11+ repo surveys → ~1 note each).
+
+---
+
 ## 🔧 Session: Figma Hi-Fi Redesign + Tooling (2026-06-09)
 
 **[Figma Hi-Fi Redesign + Tooling (2026-06-09_figma_hifi_redesign_and_tooling.md)](2026-06-09_figma_hifi_redesign_and_tooling.md)** — Redesigned word-learning screens 12/14/15 in Figma (new model: multi-meaning, no mandatory image, context quiz, teaching-first feedback). Renamed default branch `master` → `main`. Created `/snip` slash command for session memory extraction. ⚠️ Duplicate Figma frames need manual cleanup. ⚠️ Restore-staging-fix still uncommitted in working tree.

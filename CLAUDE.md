@@ -29,6 +29,21 @@ Each sub-project has its own `package.json` + scripts. "Done" = `npm run check` 
 
 ---
 
+## Asset Operations (designs, CSS, images, icons)
+
+**Any agent creating/updating/deleting a visual asset → read [`scripts/README.md`](scripts/README.md) first.** It is the canonical map: which tool, which canonical home, CRUD workflow, guardrails.
+
+| Asset | Tool | Home |
+|---|---|---|
+| **CSS** | edit files | `website/public/styles.css` (web); app = RN/nativewind, no CSS |
+| **Designs / UI** (vector) | **Figma MCP** (load `/figma-use` first) | Figma + `.design-specs/html/screens/` |
+| **Images** (raster) | `node scripts/generate-image.js "<prompt>" --out <path>` (OpenAI `gpt-image-1`) | `website/public/`, `mobile/assets/vocab/`, `scripts/out/` (scratch) |
+| **Icons** (deterministic) | `node scripts/generate-icon.js` (SVG→PNG) | `website/assets/` (web), `mobile/assets/` (app) |
+
+**Hard rules:** edit *sources* (SVG/tokens/Figma), regenerate derivatives — never hand-edit a generated PNG. `OPENAI_API_KEY` is a build-tooling secret (root `.env`, gitignored, never bundled). **Generate freely for og-images / marketing / content illustration; the final store icon + primary logo get Ryan's explicit sign-off and ship as vectors, never AI PNGs.** Don't AI-gen what should be a vector (icons, UI mockups → Figma).
+
+---
+
 ## Configuration Philosophy
 
 - **All config lives in the repo.** `.claude/settings.json`, any `.mcp.json` — everything travels with the codebase so switching laptops requires only `git clone` + `npm install`.
@@ -40,8 +55,13 @@ Each sub-project has its own `package.json` + scripts. "Done" = `npm run check` 
 
 | File | What it provides |
 |------|-----------------|
-| `.claude/settings.json` | Model, effort level, hooks, deny-list permissions |
-| `.claude/commands/` | Any project slash commands (if created) |
+| `.claude/settings.json` | Model, effort level, hooks, statusLine, `autoMemoryEnabled:false` (home-folder auto-memory off — repo `memory/` is the only memory), deny-list permissions |
+| `.claude/commands/` | Project slash commands (`/snip`, `/gen-image`) |
+| `.claude/skills/` | Project skills (`aso` — App Store Optimization for LexiTap) |
+| `.claude/hooks/` | `guardrails.mjs` (PreToolUse enforcement) + `session-context.sh` (SessionStart — injects open GitHub issues + git ahead/behind into context) |
+| `.claude/statusline.sh` | Status line: live model · branch · ↑unpushed/↓behind · PR# · context% (makes the never-lose-work state always visible) |
+| `.mcp.json` | Project MCP servers — **Supabase** (read-only; needs `SUPABASE_ACCESS_TOKEN` in env, see `.env.example`). Figma MCP is connected at the app level. |
+| `package.json` (root) | Asset tooling deps (`sharp`, `svgo`) + `npm run gen:image` / `gen:icon` / `optimize`. |
 
 ---
 
@@ -54,7 +74,7 @@ These rules govern how Claude Code should operate on this project. Read before s
 - **Project memory lives in the committed `memory/` dir — never in home-folder auto-memory.** Lightweight session-handoff notes go in `memory/` (auto-loaded via the `@memory/MEMORY.md` import at the bottom of this file). Do **not** write project knowledge to `~/.claude/projects/.../memory/`: that path is outside the repo, never reaches GitHub, and never reaches the next laptop — same reason config belongs in the repo.
 - **Feed raw data, not summaries.** When debugging, paste stack traces and error logs directly — do not paraphrase the problem. Summaries lose signal.
 - **Read `plans/` docs first** when starting release-planning or feature sessions. Read relevant troubleshooting docs first when touching a known fragile area.
-- **GitHub Issues is the work queue.** Start a session by reading open issues, not by asking Ryan what to do. If Issues is empty, the active plan is `ROADMAP.md` (root) → canonical `lexitap-docs/02-product-definition/ROADMAP.md`.
+- **GitHub Issues is the work queue.** Start a session by reading open issues, not by asking Ryan what to do. If Issues is empty, the active plan is `ROADMAP.md` (root) → canonical `lexitap-docs/02-product-definition/ROADMAP.md`. *(Open issues + git sync state are auto-injected at session start by `.claude/hooks/session-context.sh` — you'll see them without asking.)*
 
 ---
 
@@ -72,6 +92,19 @@ These files can still be edited, but Claude Code **pauses and asks for explicit 
 | `mobile/src/infrastructure/analytics/` | PostHog adapter, `anon_id`, env-gate (PII boundary; prod-allowed) | Wrong changes leak identity/PII off-device (email/Supabase-id misuse, autocapture-on, ungated send, non-EU host) |
 | `mobile/app.json` | Expo/EAS config, permissions, secrets | Wrong changes break builds or expose secrets. **Note:** active config is `app.config.ts`, which is intentionally NOT confirmation-gated (frequent EAS/plugin edits) — review its diffs carefully since it carries no guardrail. |
 | `.env*` files | Secrets | Never commit; never log |
+
+### Enforced at the tool boundary (PreToolUse hook)
+
+Beyond the confirmation gates above, `.claude/hooks/guardrails.mjs` (registered as a `PreToolUse` hook) **hard-blocks** these — the agent cannot proceed, even with confirmation. They encode AGENTS.md hard rules + hard-won session lessons so they're enforced, not just documented:
+
+| Blocked action | Rule it enforces |
+|---|---|
+| `git add` of a `.env` file | Secrets never committed |
+| `git add -A` / `git add .` / `git commit -a` | No broad-add (entangles concurrent sessions, risks staging secrets) — repeated memory lesson |
+| `TextInput` written into `QuizScreen.tsx` / `quiz/` / `components/assessments/` | Passive-recognition UX only |
+| `${...}` interpolation in SQL under `infrastructure/db/` | Parameterized SQL only |
+
+Hook fails **open** (any internal error → allow), so a hook bug never blocks real work. To add/relax a rule, edit `guardrails.mjs` (and re-run its self-test pattern).
 
 ---
 
@@ -108,7 +141,7 @@ These rules + automations exist so work doesn't vanish between sessions. **All t
 |---|---|
 | Merged branches pile up and look like lost work | GitHub **auto-delete head branch on merge** should be enabled at the repo level |
 | A PR is closed without merging, discarding real work | Weekly audit or manual check before closing any PR |
-| Commits made locally but never pushed | The **`Stop` hook** in `.claude/settings.json` warns when `HEAD` is ahead of its upstream |
+| Commits made locally but never pushed | The **`Stop` hook** warns when `HEAD` is ahead of upstream; the **`SessionStart` hook** (`session-context.sh`) re-warns at the next session start; the **status line** shows `↑N` unpushed at all times |
 
 **Hard rules:**
 - **Never close a PR without confirming its work is either merged into `main` or intentionally discarded.** If in doubt, recover it: `git checkout <pr-head-sha> -- <path>`.
@@ -166,7 +199,7 @@ These rules + automations exist so work doesn't vanish between sessions. **All t
 
 ---
 
-*Last updated: 2026-05-31 — `app.config.ts` removed from High-Risk confirmation table (Ryan's call: frequent EAS/Sentry/plugin edits; it was never actually in the settings.json deny list, so the table overstated the guardrail — doc now matches enforcement). B3 Sentry source-map plugin wired here. Prior: Analytics policy reconciled: PostHog **allowed in production**, env-gated + `anon_id`-only + no-PII + autocapture-off + EU-host + opt-out + disclosed, **purpose-limited to app improvement** (Forbidden-Patterns analytics row rewritten from flat ban → conditional allow; `infrastructure/analytics/` added to high-risk paths). Prior: Sentry crash reporting (B1 + PII scrub) shipped; crash rule rewritten (scrubbed, env-gated, prod-allowed); `infrastructure/crash/` high-risk; app.json refs → app.config.ts*
+*Last updated: 2026-06-09 — Claude Code infra hardening: fixed dead CI (`ci.yml` `master`→`main` after the branch rename — had run 0 times since), pruned 4.5 GB stale agent worktrees, added SessionStart context hook (`session-context.sh` — injects open issues + git sync state) + status line (`statusline.sh`) + `autoMemoryEnabled:false` (home-folder memory off, matches the committed-`memory/`-only policy). New Machine Setup table + Never-Lose-Work + work-queue rows updated. Prior: 2026-05-31 — `app.config.ts` removed from High-Risk confirmation table (Ryan's call: frequent EAS/Sentry/plugin edits; it was never actually in the settings.json deny list, so the table overstated the guardrail — doc now matches enforcement). B3 Sentry source-map plugin wired here. Prior: Analytics policy reconciled: PostHog **allowed in production**, env-gated + `anon_id`-only + no-PII + autocapture-off + EU-host + opt-out + disclosed, **purpose-limited to app improvement** (Forbidden-Patterns analytics row rewritten from flat ban → conditional allow; `infrastructure/analytics/` added to high-risk paths). Prior: Sentry crash reporting (B1 + PII scrub) shipped; crash rule rewritten (scrubbed, env-gated, prod-allowed); `infrastructure/crash/` high-risk; app.json refs → app.config.ts*
 
 ---
 

@@ -1,0 +1,15 @@
+{
+  "name": "lexitap-root",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Root tooling for LexiTap — asset generation/optimization scripts. App + content-tool live in their own sub-projects with their own package.json.",
+  "scripts": {
+    "gen:image": "node scripts/generate-image.js",
+    "gen:icon": "node scripts/generate-icon.js",
+    "optimize": "node scripts/optimize-asset.js"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5",
+    "svgo": "^3.3.2"
+  }
+}
