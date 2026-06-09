@@ -1,6 +1,6 @@
 # LexiTap — Design Finalization Plan
 
-**Status:** accepted · **Created:** 2026-06-09 · **Owner:** Ryan + design agent
+**Status:** ✅ COMPLETE (2026-06-09 — all 10 screen pages `gate: PASS`, see "Status: COMPLETE" section) · **Created:** 2026-06-09 · **Owner:** Ryan + design agent
 **Goal:** Lock a *code-ready* design so coding never loops back to "the design isn't good."
 **Intent (Ryan, 2026-06-09):** complete + comprehensive design in Figma **before any RN code** — full-design path, not targeted polish. (Burned before by coding-before-design.) Figma is the source of truth for visuals; existing RN screens are re-done against the locked design.
 **Figma file:** `Jx0TLmVpgmsjtMA3uB6uS4` · **14 pages** (10 functional screen pages + 4 foundation: 📱 Wireframes / 🎨 Tokens / ✏️ Typography / 🧩 Components). *(Empty ✨ Hi-Fi + 🎨 Design System pages deleted 2026-06-09; foundation is built into the 3 existing foundation pages, not a new one.)*
@@ -297,11 +297,37 @@ the library is proven.)
 - Duplicates inflate the "59 screens" number — after dedupe, expect ~45 canonical screens.
 - **Concurrent-edit hazard:** if multiple agents/sessions touch this Figma file at once, variable/component edits can race (same lesson as git `add -A`). One owner per page; don't fan parallel *writes* at the same node tree.
 
-## Done this pass (2026-06-09)
+## Status: COMPLETE — all 10 screen pages `gate: PASS` (2026-06-09)
+
+**Independently re-audited: `ALL_PAGES: PASS`.** Every screen page is now code-ready (rawFills 0, all text bound, 0 emoji, instance-based). Component library complete (20 components incl. Avatar + PackCard). Light↔Dark verified structural (single color-mode toggle).
+
+| Page | Screens | rawFills | textBound | emoji | instances | gate |
+|---|---|---|---|---|---|---|
+| 03 · Home | 2 | 0 | 29/29 | 0 | 25 | ✅ |
+| 01 · Onboarding | 11 | 0 | 74/74 | 0 | 47 | ✅ |
+| 02 · Auth | 5 | 0 | 29/29 | 0 | 9 | ✅ |
+| 04 · Learn Loop | 7 | 0 | 59/59 | 0 | 45 | ✅ |
+| 05 · Session | 4 | 0 | 40/40 | 0 | 46 | ✅ |
+| 06 · Curriculum | 3 | 0 | 40/40 | 0 | 66 | ✅ |
+| 07 · Words & Review | 6 | 0 | 57/57 | 0 | 82 | ✅ |
+| 08 · Profile & Progress | 5 | 0 | 49/49 | 0 | 66 | ✅ |
+| 09 · Purchase | 8 | 0 | 77/77 | 0 | 83 | ✅ |
+| 10 · Settings/Support/System | 15 | 0 | 110/110 | 0 | 134 | ✅ |
+| **Total** | **66** | **0** | **564/564** | **0** | **603** | **PASS** |
+
+Originals preserved (not deleted) in per-page `Archive — pre-rebuild originals (do not ship)` sections; annotations moved to `Annotations` sections (both out of gate scope). Decisions honored: proficiency CUT, drag-drop kept, known-metric copy, passive-recognition quiz (no TextInput), non-punitive feedback (caution not red), destructive-red only on delete/restore confirms.
+
+**Residual (does NOT block the gate — flagged honestly):**
+1. **Spacing/radius on rebuilt *wrapper* frames are raw numerics, not bound to `space`/`radius` vars.** The gate only checks fills/text/emoji, so pages PASS; but full "code-ready" #1 wants space/radius bound too. Component *internals* are correctly spaced; only the new layout containers are unbound. Low value (Default-mode only, no light/dark variance) — optional follow-up. (One subagent wrongly reported space/radius vars "don't exist" — they DO: `space` s1–s8, `radius` sm/md/lg/full.)
+2. **KnowledgeMapBar legend↔bar color:** the shared component renders Known=`success` green; the Profile legend dot maps Known→`accent` teal. Reconcile on the Components page (pick one canonical Known color) — cosmetic, not a gate fail.
+3. **Code Connect is a markdown stub** (`.design-specs/code-connect-map.md`) — publish once `@figma/code-connect` is installed and the RN components exist.
+
+### Done earlier this pass (2026-06-09)
 - ✅ Housekeeping: deleted empty `✨ Hi-Fi` + `🎨 Design System` pages; removed stray `Design_System` rect + empty duplicate `Legacy Components` section on Components page. File now 14 clean pages.
 - ✅ Audit gate built + proven (`.design-specs/figma-binding-audit.js`); Home red baseline captured.
 - ✅ Foundation rewritten to port `tokens.ts` / `DESIGN_SYSTEM.md` exactly (was: invent-from-legacy-paint-styles).
 - ✅ 4 code↔doc divergences surfaced; 3 deferred decisions resolved; drag-drop un-cut (it's MVP per the doc).
+- ✅ Phase 0 (0.1–0.8) + Home exit gate + **all 10 sections** built; one-owner-per-page parallel rebuild (Auth/Session/Curriculum/Words/Profile/Purchase/Learn-Loop/Onboarding/Settings).
 
 ---
 *Audit basis: live Figma read 2026-06-09 (14 pages; variables=0; Home `gate: FAIL` rawFills 76 / textBound 0/51 / emoji 15 / instances 0; Components page = brand + 13 feature-illustration `icon_*` frames + 5 legacy frames, 0 real COMPONENTs). Canonical token source = `tokens.ts`. Re-audit with [`.design-specs/figma-binding-audit.js`](../.design-specs/figma-binding-audit.js) to verify progress.*

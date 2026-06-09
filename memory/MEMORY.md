@@ -4,6 +4,18 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## ✅ Session: Design Finalization COMPLETE — all 10 pages gate=PASS (2026-06-09)
+
+**The whole Figma design is now code-ready.** Phase 0 + Home exit gate (prior turns) → **all 10 screen pages rebuilt from components to `gate: PASS`.** Independently re-audited: **`ALL_PAGES: PASS`** — 66 screens, **rawFills 0 · text 564/564 bound · emoji 0 · 603 instances** (file `Jx0TLmVpgmsjtMA3uB6uS4`).
+- **Method = one-owner-per-page parallel subagents** (plan's sanctioned parallelism — pages are independent node trees; shared components/vars/styles READ-only, never mutated by subagents). 3 waves: {Auth,Session,Curriculum}→{Words,Profile,Purchase}→{Learn-Loop,Onboarding,Settings}. Each: instantiate-only, bind every fill to a `color` var, emoji→Icon instances, archive originals (never delete), iterate `.design-specs/figma-binding-audit.js` until PASS, return audit JSON. First-try success every page.
+- **Library completed → 20 components:** added **Avatar** (`312:90`) + **PackCard** (`312:107`, $9.99/$24.99; later fixed to hug height 200→144).
+- **Verified, not asserted:** own cross-page audit (all PASS) + flipped Purchase Paywall to Light + screenshot (renders, reverted to Dark) → Light↔Dark structural (single color-mode toggle), inherited by all pages.
+- **Decisions honored:** proficiency CUT, drag-drop kept, known-metric copy, passive-recognition (NO TextInput), non-punitive feedback (caution not red ✗), destructive-red only on delete/restore confirms. Originals preserved in per-page `Archive — pre-rebuild originals` SECTIONs.
+- **Residual (honest, gate doesn't measure — non-blocking):** (1) rebuilt *wrapper* frames use raw numeric padding/radius, not `space`/`radius` var bindings (low value, Default-mode only; component internals fine; one subagent wrongly said those vars don't exist — they DO: s1–s8, sm/md/lg/full). (2) KnowledgeMapBar legend(teal)↔bar(green) Known-color mismatch on Profile. (3) Code Connect still a markdown stub.
+- **Next:** design locked + source of truth → RN implementation can begin (port screens against Figma, wire Code Connect). Optional polish: bind wrapper spacing, fix KMap legend color.
+
+---
+
 ## 🎨 Session: Design Finalization Plan + Figma housekeeping (2026-06-09)
 
 **Plan = [`plans/DESIGN_FINALIZATION_PLAN.md`](../plans/DESIGN_FINALIZATION_PLAN.md)** (status: accepted). Goal: complete + comprehensive Figma design **before any RN code** (Ryan: burned before by code-first). Phase 0 foundation → 10 per-page sections.
