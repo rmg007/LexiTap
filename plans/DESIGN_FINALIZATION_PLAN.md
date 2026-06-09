@@ -7,6 +7,60 @@
 
 ---
 
+## ▶ Execution guide for agents (READ THIS FIRST)
+
+You are likely a fresh agent with no memory of how this file was made. This section is everything you need to execute safely. Read it fully before any Figma write. Work **top-to-bottom**: Phase 0 (0.0 → 0.8) in order, then the 10 Sections in the Recommended-sequence order. **Do not start any Section until the Phase 0 exit gate passes.**
+
+### Environment & tools
+- **Figma file key:** `Jx0TLmVpgmsjtMA3uB6uS4` — pass as `fileKey` to every `use_figma` call.
+- **Tool:** `mcp__d6c27369-0016-435f-bc98-d606324bed06__use_figma`. **Load the `figma-use` skill BEFORE the first call** and pass `skillNames:'figma-use'`. To build components also load `figma-generate-library`; for Code Connect load `figma-code-connect`. Load tool schemas with `ToolSearch select:use_figma,get_metadata,get_screenshot`.
+- **Canonical values:** `mobile/src/presentation/theme/tokens.ts` (shipping truth) + `lexitap-docs/03-ux-design/DESIGN_SYSTEM.md` (intent). Everything you need is already tabulated below — **don't re-derive**.
+
+### Page ID map (IDs are stable; names also resolve via `figma.root.children.find(p=>p.name===…)`)
+| id | page | | id | page |
+|---|---|---|---|---|
+| `0:1` | 📱 Wireframes | | `238:4` | 03 · Home |
+| `10:2` | 🎨 Tokens | | `238:5` | 04 · Learn Loop |
+| `10:51` | ✏️ Typography | | `238:6` | 05 · Session |
+| `12:2` | 🧩 Components | | `238:7` | 06 · Curriculum |
+| `238:2` | 01 · Onboarding | | `238:8` | 07 · Words & Review |
+| `238:3` | 02 · Auth | | `238:9` | 08 · Profile & Progress |
+| | | | `238:10` | 09 · Purchase |
+| | | | `238:11` | 10 · Settings, Support & System |
+
+### use_figma gotchas that will bite you
+- Plain JS, top-level `await` + `return` (no async IIFE). **Return all created/mutated node IDs.**
+- `await figma.setCurrentPageAsync(page)` **at most once per call**. `loadAllPagesAsync` is **NOT supported here** — to touch N pages, fan out N parallel calls (one switch each).
+- Colors are **0–1 floats**. **Load a node's fonts before editing its text.** Set variable `scopes` explicitly (never ALL_SCOPES).
+- On error the script is **atomic** (no partial write) — read the error, fix, retry; never blind-retry.
+
+### Hard rules (do not violate)
+- **Never overwrite/delete an original screen frame** until its content is preserved in the rebuilt copy. Build new → verify → then remove old.
+- **One owner per page.** Do **not** run parallel *writes* against the same page/node tree — concurrent edits race and corrupt. Parallel *reads* are fine.
+- **Git:** stage **explicit paths only** — never `git add -A` / `git add .` / `commit -a` (hard-blocked by `guardrails.mjs`). Don't touch `.claude/settings.json` or `.env.example` (another session owns them). Commit footer: `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
+- **Quiz components: passive recognition only — no `TextInput`** in `AnswerOption`/quiz nodes (guardrail-enforced).
+- When you change what a doc describes, **update `DESIGN_SYSTEM.md` / this plan in the same commit.**
+
+### The work loop (repeat for every step)
+1. Read the step spec + its **Done when** below. → 2. Make the change in Figma (small `use_figma` calls). → 3. Run the binding audit on the affected page. → 4. If `gate: FAIL`, fix until pass. → 5. Commit (explicit paths) + push. → 6. Next step.
+
+### How to run the audit (the objective gate for everything)
+Paste the **body** of [`.design-specs/figma-binding-audit.js`](../.design-specs/figma-binding-audit.js) into `use_figma`, set `TARGET_PAGE` to the page name (or run on current page). Read `gate` + per-screen `rawFills` / `textBound` / `emojiTextNodes`. **Code-ready = `gate: PASS`.**
+
+### Phase 0 — Definition of Done (each must be true before the next step)
+- **0.0** audit script runs, baseline recorded. ✅ *(done — Home baseline captured)*
+- **0.1** `color` collection has Dark+Light modes + every row in the 0.1 table; legacy Coral/Gold/Navy/Turquoise paint styles deleted; `space` + `radius` vars created with explicit scopes.
+- **0.2** 10 type styles created with exact 0.2 values, each color bound to a `text/*` var; legacy `Body Regular (alt)` + `Heading 1/2/3` deleted.
+- **0.3** `elevation/modal` + `focus-ring` effect styles named; the other unnamed effect styles removed.
+- **0.4** Lucide UI-icon subset imported as components (stroke bound to token); **every emoji removed from screens** (audit `emojiTextNodes:0`).
+- **0.5** component library built — each component has variants + token-bound props + a filled `description`.
+- **0.6** 393×852 frames, auto-layout throughout, 48pt min touch targets.
+- **0.7** motion/haptic annotations applied to interactive components.
+- **0.8** Code Connect mappings stubbed (table in 0.8).
+- **EXIT GATE:** page `03 · Home` rebuilt entirely from components, audit returns `gate: PASS`, and it flips Light↔Dark from a single `color`-mode toggle. Only now start Section work.
+
+---
+
 ## 0. Why this plan is shaped the way it is (read first)
 
 Per-page polish is the **last 20%**. The thing that actually stops the design↔code loop is a shared
@@ -116,7 +170,7 @@ Rule held: where code and doc disagreed, **`tokens.ts` won** and the doc was cor
 - Dark mode separates layers by **surface lightness + 1px `border/subtle`**, not drop shadows. The `bg/surface-*` ramp already encodes elevation — use it.
 - Only the **modal/sheet** shadow exists: name the one effect style `elevation/modal` = `0 8 24 rgba(0,0,0,0.40)`. Add `focus-ring` (2px `border/strong`). Delete the other 2 unnamed effect styles. Light mode leans on this shadow for hierarchy.
 
-### 0.4 Icons — adopt **Lucide** (RESOLVED in `DESIGN_SYSTEM.md`; my earlier "rebuild icon_* frames" was wrong)
+### 0.4 Icons — adopt **Lucide** (RESOLVED in `DESIGN_SYSTEM.md`; do NOT rebuild the `icon_*` frames)
 - **UI icon system = Lucide** (`lucide-react-native`, Apache 2.0). Line, **1.75px stroke**, rounded caps, **24×24** grid, geometric/neutral. **Ban emoji in UI** (15 on Home today → swap).
 - The 13 `icon_*` frames on the Components page are **feature-illustration glyphs, not the UI set** — leave them as marketing illustration (or archive); do **not** turn them into UI icons. Keep `lexitap_wordmark` + `lexitap_app_icon` (brand). The logo tap-mark is **brand-only, never a UI icon**.
 - Import the needed Lucide subset as components, stroke bound to `text/*`/`accent` (follows mode), size via `space`-adjacent size tokens (16/20/24). **Inventory needed:** tab bar (`home`, `layers`/quiz, `bar-chart`/progress, `settings`), `flame` (streak), `snowflake` (streak frozen), `check`, gentle-dash/`minus` (correction — never a red ✗), `chevron-right/left/down`, `lock`, `volume-2` (audio), `search`, `x` (close), `arrow-left` (back), `circle-check`. Each pairs with a text/a11y label — icon alone never carries meaning.
