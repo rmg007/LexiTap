@@ -4,6 +4,18 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 🎨 Session: Design Finalization Plan + Figma housekeeping (2026-06-09)
+
+**Plan = [`plans/DESIGN_FINALIZATION_PLAN.md`](../plans/DESIGN_FINALIZATION_PLAN.md)** (status: accepted). Goal: complete + comprehensive Figma design **before any RN code** (Ryan: burned before by code-first). Phase 0 foundation → 10 per-page sections.
+- **Canonical token source = `mobile/src/presentation/theme/tokens.ts`** (shipping truth) + `lexitap-docs/03-ux-design/DESIGN_SYSTEM.md` (intent). Figma **ports 1:1**, does NOT invent. Brand = **single teal `#20B2AA`, dark-canonical** — the Figma legacy paint styles (Coral/Gold/Navy/Turquoise) are STALE → delete. Icons = **Lucide** (Apache 2.0, resolved). Web `styles.css` is a partial mirror, NOT source (its spacing names differ).
+- **⚠️ 4 code↔doc divergences flagged, Ryan-decision pending** (don't bind type until resolved): (1) Playfair vs "Inter-only" for h1/display — code ships Playfair, recommend ratify; (2) headline 18/700 code vs 22/600 doc; (3) body 15 vs 16; (4) light text.tertiary #6B7378 vs #878F92. Rule: `tokens.ts` wins, doc corrected same pass.
+- **Audit gate built + PROVEN: [`.design-specs/figma-binding-audit.js`](../.design-specs/figma-binding-audit.js)** (use_figma script). Home baseline: `gate FAIL · rawFills 76 · textBound 0/51 · emoji 15 · instances 0`. Code-ready = `gate PASS` per page.
+- **Housekeeping DONE in Figma** (file `Jx0TLmVpgmsjtMA3uB6uS4`, now **14 pages**): deleted empty `✨ Hi-Fi` + `🎨 Design System` pages, removed stray `Design_System` rect + empty dup `Legacy Components` section. Foundation builds into existing 🎨 Tokens / ✏️ Typography / 🧩 Components pages.
+- **Decisions:** proficiency screen CUT; "known" metric w/ explicit denominator; drag-drop **kept** (MVP per doc — earlier cut reverted). Effort revised 40%→~25-30% (port, not invent).
+- **Next:** resolve the 4 divergences → Phase 0.1 variables (port table in plan) → rebuild Home → audit `PASS` → proceed sections.
+
+---
+
 ## 🎨 Session: Asset Operations System (2026-06-09)
 
 **[Asset Operations System (2026-06-09_asset_operations_system.md)](2026-06-09_asset_operations_system.md)** — unified, agent-discoverable system for create/update/delete of designs, CSS, images, icons. Canonical guide = [`scripts/README.md`](../scripts/README.md). New AI raster gen: `scripts/generate-image.js` (OpenAI `gpt-image-1`, dependency-light, `OPENAI_API_KEY` in `.env`). Surfaced in auto-loaded CLAUDE.md + AGENTS.md. **Reconciled the old "never create icons" rule → generate freely for og/marketing/content; final store icon + logo still need Ryan's sign-off + ship as vectors.** Settings: dropped `Edit(**/.env)` deny, allowed the gen scripts. **+ Smoothness:** root `package.json` (pins sharp/svgo, fixes new-laptop bug), `optimize-asset.js` (PNG/SVG shrink, auto-runs on gen), `/gen-image` command, Supabase MCP (`.mcp.json`, read-only). **+ Enforced guardrails:** native `.claude/hooks/guardrails.mjs` (PreToolUse) hard-blocks `git add .env`/`-A`/`commit -a`, TextInput in passive screens, SQL interpolation — chose native hook over hookify plugin (travels in repo). 12/12 self-test. **+ `/aso` skill:** vetted App Store Optimization (`.claude/skills/aso/`, SKILL.md + 5 refs) tailored to LexiTap — keyword/metadata/screenshots/reviews/launch-checklist, no third-party scripts. Built after surveying 4 external skill repos (none worth importing).
