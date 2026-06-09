@@ -22,9 +22,15 @@ Audited the actual Claude Code setup (not generic advice) and fixed real defects
 
 - **`.claude/rules/` with `paths:` frontmatter** — NOT a documented Claude Code feature (checked official docs). Path-scoped instruction loading does not exist; use CLAUDE.md / hooks instead. (Had been tempted to move the parameterized-SQL rule there — would've created a dead dir.)
 
+## Fixing CI also caught a real latent bug (the whole point)
+
+Once CI actually ran on `main`, it immediately went red on **content-tool**: `Cannot find module '@anthropic-ai/sdk'`. Root cause = a **2nd "false-green-handoff" instance**: `@anthropic-ai/sdk` is imported by `anthropicDefinitionProvider.ts` / `qa/sample.ts` / `commands/enrich.ts` but was **never in `content-tool/package.json`** — it lived only as an `extraneous` hoisted entry in local `node_modules`, so local `npm run check` passed while clean `npm ci` failed. **Red since ≥2026-06-01, invisible because CI wasn't triggering.** Fixed: pinned `@anthropic-ai/sdk@0.100.1` (commit `92e6c39`). Confirmed `openai` is only a provider *name* string (fetch to OpenAI-compatible endpoints, no SDK) → no sibling fix. **CI now fully GREEN** (both Mobile + Content-Tool jobs, verified via `gh run watch`).
+
+⚠️ Follow-up (non-blocking): CI uses `actions/checkout@v4` + `actions/setup-node@v4` on Node 20 — GitHub forces Node 24 on 2026-06-16. Bump the action versions.
+
 ## Verification
 
-- settings.json valid JSON (`jq empty` ✓). Guardrail hook still allows normal writes (exit 0 ✓). Both new scripts smoke-tested. ⚠️ Did NOT run full `mobile`/`content-tool` `npm run check` — no app source touched this wave (CI/config/docs only).
+- settings.json valid JSON (`jq empty` ✓). Guardrail hook still allows normal writes (exit 0 ✓). Both new scripts smoke-tested. Content-tool `npm run check` GREEN (9 files / 99 tests). End-to-end: CI fix → ran → found missing dep → fixed → CI green (both jobs).
 
 ## Meta-lesson
 
