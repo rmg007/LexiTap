@@ -4,6 +4,24 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 🔧 Session: Figma Hi-Fi Redesign + Tooling (2026-06-09)
+
+**[Figma Hi-Fi Redesign + Tooling (2026-06-09_figma_hifi_redesign_and_tooling.md)](2026-06-09_figma_hifi_redesign_and_tooling.md)** — Redesigned word-learning screens 12/14/15 in Figma (new model: multi-meaning, no mandatory image, context quiz, teaching-first feedback). Renamed default branch `master` → `main`. Created `/snip` slash command for session memory extraction. ⚠️ Duplicate Figma frames need manual cleanup. ⚠️ Restore-staging-fix still uncommitted in working tree.
+
+---
+
+## 🎯 Session: DIAG-A Adaptive Band-Walk Diagnostic — IMPLEMENTED (2026-05-31)
+
+**[DIAG-A Adaptive Diagnostic (2026-05-31_diag_a_adaptive_diagnostic.md)](2026-05-31_diag_a_adaptive_diagnostic.md)** — replaced the DIAG-B stride sampler (deferred post-launch item #10) with the full adaptive band-walk: pure engine (`domain/onboarding/adaptiveDiagnostic.ts`, 34 tests) + frontier seeding (`frontierSeeding.ts`, 16 tests) + `RunAdaptiveDiagnosticUseCase` (9 tests) + pseudo-word port/repo + confirm-on-Yes UI (`OnboardingAdaptiveDiagnosticScreen`, now the live route). Bundled `words.db` rebuilt: **2790/2881 ranked + 10 pseudo-words** (user_version 2). Plan → `implemented`. ✅ mobile 455 / content-tool 99 green. ⚠️ `infrastructure/db/` deny temporarily lifted + **restored** (net-zero). ⚠️ Committed **DIAG-A paths only** — backup "restore-staging-fix" session's `container.ts` hunks left uncommitted (no `git add -A`). Remaining: close 91-word rank gap, real pseudo-word list, PC-3 resume, PD-3 beta tuning.
+
+---
+
+## 🛟 Session: Settings restore corruption fix — stage + apply-at-boot (2026-06-01)
+
+**[Restore staging fix (2026-06-01_restore_staging_fix.md)](2026-06-01_restore_staging_fix.md)** — resolves "BUG 2" from the LEGAL-4 backup review below. Settings `forceRestore` no longer overwrites the live `user.db` under an open SQLite connection (stale-page corruption). Option (c): `BackupPort.stageRestore` → staging file + `setPendingRestore()` flag; `container.applyPendingRestore()` promotes it at next launch, before `openDatabase()` (the existing safe seam). JS-only, correct-by-construction, +13 tests. ✅ `npm run check` GREEN (46 suites / 455 tests). Restore applies on next app launch (UX already required restart). ⚠️ NOT committed — a **concurrent DIAG-A session** has uncommitted hunks interleaved in the shared `container.ts`, so commit must be sequenced/split (no `git add -A`). Instant-apply via `expo-updates` `reloadAsync()` deferred to the scheduled native build.
+
+---
+
 ## 🔐 Session: LEGAL-4 delete-account Edge Function DEPLOYED + backup review (2026-06-01)
 
 - ⚠️ **Scope note / possible conflict:** the AU1 session note below grouped `delete-account` with the deferred AU2/AU3 work. This session DEPLOYED the `delete-account` Edge Function anyway — Ryan's live instruction was "get this task done," and the Edge Function is a **Supabase backend deploy, NOT part of any EAS build**, adds **no login friction**, and only makes the already-wired in-app Delete Account button work (it was hitting 404). AU2/AU3 native sign-in modules remain deferred. Rollback if ever needed: `supabase functions delete delete-account`.
@@ -11,7 +29,7 @@ This directory contains session notes, architectural decisions, and lessons lear
 - **Security (defense-in-depth), verified live:** `config.toml [functions.delete-account] verify_jwt=true` (gateway rejects no-auth → 401) + in-function `getUser()` re-derives caller from the verified JWT. Anon-key-only POST → **401 `invalid_token`**: the public anon key is itself a valid project JWT, so `verify_jwt` ALONE is insufficient — `getUser()` is the real gate. Deleted id comes ONLY from JWT, never request input. Service-role key only builds the admin client (never logged/returned). Deployed `--use-api` (no Docker; existing `daily-queue-generator` + `push-notification` functions left untouched).
 - **Adversarial review workflow** (4 reviewers + skeptic verify, 12 agents): 8 findings → **2 confirmed**, 6 dismissed (doc nits / speculative). Verifier *corrected* a reviewer's false "WAL mode" claim — expo-sqlite here uses default DELETE journal; no `-wal`/`-shm` sidecars exist.
   - **BUG 1 (FIXED in `491b05f`):** fn discarded `remove()` error then HARD-deleted auth user → a transient storage 5xx (storage-js returns `{error}` WITHOUT throwing) would orphan the encrypted user.db blob forever (RLS-scoped to a now-deleted uid → unrecoverable; incomplete GDPR/CCPA erasure). Fix: clear storage FIRST, list/remove failure is FATAL (500 → client retries while user still exists), delete auth user LAST.
-  - **BUG 2 (follow-up filed, NOT fixed):** Settings `forceRestore` writes `user.db` over the **live** open SQLite handle — violates `restore()`'s own documented "caller must hot-swap before openDatabase" contract (only boot-time BK2 path honors it). → stale page-cache reads / conditional write-back corruption. Proper fix needs `expo-updates` `reloadAsync()` (native dep, NOT installed → new build) OR close/reopen `DatabaseHandle` (no `close` exposed → touches high-risk `infrastructure/db/`). Medium, conditional (restore on primary device then keep using without restart). Deferred to its own session.
+  - **BUG 2 (✅ FIXED 2026-06-01 — [restore-staging-fix](2026-06-01_restore_staging_fix.md)):** Settings `forceRestore` wrote `user.db` over the **live** open SQLite handle — violated `restore()`'s "caller must hot-swap before openDatabase" contract (only boot-time BK2 path honored it). → stale page-cache reads / conditional write-back corruption. **Fix = option (c):** `stageRestore` downloads to a staging file (never the live DB) + a pending flag; `container.applyPendingRestore()` promotes it at next boot, before `openDatabase()` — correct-by-construction, no native dep. Instant-apply via `expo-updates` `reloadAsync()` deferred to the scheduled native build (sits on top of this; not throwaway).
 - **Live Supabase re-verified:** bucket `user-backups` `public:false`, RLS enabled, policy `cmd=ALL` / `authenticated` / own-prefix scope (`(string_to_array(name,'/'))[1] = auth.uid()`). ⚠️ Minor: bucket `file_size_limit=null` (migration comment claims 100MB) — an authenticated user could upload large objects to their own prefix; low-sev hardening, optional.
 - **Test baseline unchanged: 41 suites / 381 green** (only `supabase/` touched this session).
 
