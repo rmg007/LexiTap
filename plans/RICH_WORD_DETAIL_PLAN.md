@@ -81,9 +81,9 @@ CREATE INDEX idx_sense_examples_sense ON sense_examples(sense_id);
 4. Mappers.
 
 ### Phase 4 — Detail UI
-1. [LearnCardScreen.tsx](../mobile/src/presentation/screens/LearnCardScreen.tsx): render senses (numbered when >1), each = `explanation` + example list + optional image. Keep hard invariant: **NO TextInput / no assessment widget on this screen.**
-2. Graceful fallback: word with no senses → current single-def layout (top-N backfill means most words show rich, tail shows flat — must not look broken).
-3. Figma: add the multi-sense detail layout to the design (port, don't invent), re-run binding gate.
+1. [LearnCardScreen.tsx](../mobile/src/presentation/screens/LearnCardScreen.tsx): render senses (numbered when >1), each = `explanation` + example list + optional image. Keep hard invariant: **NO TextInput / no assessment widget on this screen.** *(NOT yet done — RN port.)*
+2. Graceful fallback: word with no senses → current single-def layout (top-N backfill means most words show rich, tail shows flat — must not look broken). *(NOT yet done — RN port.)*
+3. **✅ Figma DONE (2026-06-09).** Page `07 · Words & Review` → `Word Detail — Rebuilt` (`359:2`) rebuilt to the multi-sense layout using `plant` (2-sense showcase): word + phonetic + Listen pill → per meaning (`MEANING n · POS` label, `short_gloss`, felt `explanation`, optional-image placeholder, `EXAMPLES` list) → divider → next meaning. Single-sense original archived to the page's Archive SECTION as `526:183` (Never-Lose-Work). Added Lucide `image` glyph (set 40→41). **Binding gate PASS** (rawFills 0 · text 19/19 bound · emoji 0), screenshot-verified. RN port (1–2 above) must mirror this layout.
 
 ---
 

@@ -71,7 +71,7 @@ The rebuilt frame is the real one; the gate (top-level frames) is the truth.
 
 | Component | node id | Component | node id |
 |---|---|---|---|
-| Icon (set, 40 glyphs) | `273:2` | ListRow | `288:87` |
+| Icon (set, 41 glyphs) | `273:2` | ListRow | `288:87` |
 | Button | `278:18` | TopBar | `288:110` |
 | Card | `279:15` | EmptyState | `290:97` |
 | Streak | `282:30` | Field (non-quiz only) | `291:97` |
