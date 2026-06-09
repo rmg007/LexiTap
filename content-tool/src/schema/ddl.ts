@@ -52,6 +52,48 @@ CREATE TABLE words (
 `.trim();
 
 /**
+ * Per-meaning rich content for the word-detail screen (RICH_WORD_DETAIL_PLAN.md).
+ * ADDITIVE layer: `words.definition` + `words.example_sentence` remain the
+ * canonical source the quiz/SRS read — these tables are read ONLY by the detail
+ * screen. A word has >=1 sense; sense_index 0 is the primary/most-common meaning.
+ * Add a second sense only when genuinely distinct AND learner-relevant (no filler).
+ * `explanation` is the FELT teaching text (not a dictionary gloss); `short_gloss`
+ * is the one-liner used in lists + distractor pools.
+ */
+export const CREATE_WORD_SENSES = `
+CREATE TABLE word_senses (
+  id          TEXT PRIMARY KEY,
+  word_id     TEXT NOT NULL,
+  sense_index INTEGER NOT NULL,
+  pos         TEXT,
+  short_gloss TEXT NOT NULL,
+  explanation TEXT NOT NULL,
+  image_path  TEXT,
+  created_at  INTEGER NOT NULL,
+  deleted_at  INTEGER,
+  UNIQUE (word_id, sense_index),
+  FOREIGN KEY (word_id) REFERENCES words(id)
+);
+`.trim();
+
+/**
+ * Natural teaching example sentences for a sense. Always FULL sentences with NO
+ * `_` cloze blank — the quiz cloze lives solely in `words.example_sentence`. One
+ * concept, one home. Multiple rows per sense, ordered by example_index.
+ */
+export const CREATE_SENSE_EXAMPLES = `
+CREATE TABLE sense_examples (
+  id            TEXT PRIMARY KEY,
+  sense_id      TEXT NOT NULL,
+  example_index INTEGER NOT NULL,
+  text          TEXT NOT NULL,
+  created_at    INTEGER NOT NULL,
+  UNIQUE (sense_id, example_index),
+  FOREIGN KEY (sense_id) REFERENCES word_senses(id)
+);
+`.trim();
+
+/**
  * Many-to-many word↔category membership. One row tags a word into one category;
  * a word with rows for `foundation` + `toefl` is in both. Category membership is
  * a content tag, NOT a store product (see REVENUE_MODEL_PRICING.md glossary).
@@ -96,12 +138,22 @@ export const CREATE_WORD_TIERS_INDEXES = [
   `CREATE INDEX idx_word_tiers_tier ON word_tiers(tier_id, word_id);`,
 ];
 
+export const CREATE_SENSES_INDEXES = [
+  // word -> its senses (detail screen), active only.
+  `CREATE INDEX idx_word_senses_word ON word_senses(word_id) WHERE deleted_at IS NULL;`,
+  // sense -> its example sentences.
+  `CREATE INDEX idx_sense_examples_sense ON sense_examples(sense_id);`,
+];
+
 /** Full ordered DDL for building a fresh content DB (tiers, words, junction, pseudo_words, indexes). */
 export const CONTENT_DB_DDL: readonly string[] = [
   CREATE_CONTENT_TIERS,
   CREATE_WORDS,
   CREATE_WORD_TIERS,
   CREATE_PSEUDO_WORDS,
+  CREATE_WORD_SENSES,
+  CREATE_SENSE_EXAMPLES,
   ...CREATE_WORDS_INDEXES,
   ...CREATE_WORD_TIERS_INDEXES,
+  ...CREATE_SENSES_INDEXES,
 ];
