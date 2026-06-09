@@ -28,6 +28,7 @@ There is **no magic dispatcher** — each asset type has the right tool and the 
 
 ## 2. Designs / UI (vector)
 
+- **Start at [`.design-specs/FIGMA.md`](../.design-specs/FIGMA.md)** — the canonical map of the design file: file key (`Jx0TLmVpgmsjtMA3uB6uS4`), page IDs, component inventory, the binding gate, and the SECTION/Archive gotchas. A cold-start agent reads this before touching any screen.
 - Use the **Figma MCP** (already connected, no install). **Load the `/figma-use` skill before any `use_figma` call** — mandatory, prevents hard-to-debug failures.
 - Design-to-code and code-to-design both supported. For building a full screen/page in Figma, also load `/figma-generate-design`.
 - HTML prototypes of screens live in [`.design-specs/html/screens/`](../.design-specs/html/screens/) (light + dark variants). Keep these in sync when a screen design changes.
