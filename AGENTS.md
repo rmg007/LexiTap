@@ -41,4 +41,9 @@ Two databases: `words.db` (read-only, bundled, built by Track A) + `user.db` (re
 
 ## Done means
 
-`npm run check` (lint + typecheck + test) passes in the affected project.
+`npm run check` (lint + typecheck + test) passes in the affected project **— and would still pass in CI on a clean install.** Local green ≠ CI green.
+
+- **Adding an import means adding a dependency.** When you `import` a package, it MUST land in that sub-project's `package.json` (`npm install --save …`, run *inside* `mobile/` or `content-tool/`). A package that exists only in local `node_modules` (hoisted / once-installed without `--save`) passes local `npm run check` but fails CI's clean `npm ci` with `Cannot find module …`. This is the repeated **"false-green-handoff"** failure mode — it stayed red & invisible for over a week (the missing `@anthropic-ai/sdk`, 2026-06-09).
+- **Catch it before pushing:** `cd <subproject> && npm ls 2>&1 | grep -iE 'extraneous|UNMET|missing'` — any hit is a manifest gap. An empty result is the real "done".
+- **CI runs on `main`** (`.github/workflows/ci.yml`, path-filtered to `mobile/**` / `content-tool/**`). After a push that touches those paths, confirm green: `gh run watch $(gh run list --workflow=ci.yml --branch main --limit 1 --json databaseId --jq '.[0].databaseId') --exit-status`. **A handoff that claims "tests pass" without CI confirmation is not trustworthy** — verify, don't assert.
+- **If you rename or move anything a config file references** (branches, paths, script names), grep the repo for the old name and update it. The `master → main` rename silently broke CI for weeks because `ci.yml` still triggered on `[master]`.
