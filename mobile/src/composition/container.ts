@@ -22,6 +22,8 @@ import { SessionStartedUseCase } from '@/application/analytics/SessionStartedUse
 import { SessionCompletedUseCase } from '@/application/analytics/SessionCompletedUseCase';
 import { createAuthService } from '@/infrastructure/auth/createAuthService';
 import { createBackupService } from '@/infrastructure/backup/createBackupService';
+import { applyPendingRestore } from '@/infrastructure/backup/pendingRestore';
+import { userDbFileUri, stagingDbFileUri } from '@/infrastructure/backup/userDbPath';
 import { PerformBackupUseCase } from '@/application/backup/PerformBackupUseCase';
 import * as FileSystem from 'expo-file-system';
 import Constants from 'expo-constants';
@@ -127,6 +129,7 @@ const ASYNC_STORAGE_KEYS = [
   'lexitap.onboarding.completed',
   'lexitap.install_date',
   'lexitap.backup.lastBackupAtMs',
+  'lexitap.backup.restorePending',
 ] as const;
 
 export async function createContainer(): Promise<Container> {
@@ -137,15 +140,37 @@ export async function createContainer(): Promise<Container> {
   const auth = createAuthService();
   const backupService = createBackupService();
 
+  // Settings-staged restore: a manual "restore from backup" downloaded the
+  // remote user.db to a staging file and set a pending flag (it must NOT
+  // overwrite the live DB while the connection is open). Promote it now, before
+  // openDatabase(), so the connection opens on the restored file. Runs ahead of
+  // the BK2 gate: once applied, user.db is present, so the gate skips.
+  try {
+    await applyPendingRestore({
+      isPending: () => storage.getPendingRestore(),
+      stagingExists: async () => {
+        const info = await FileSystem.getInfoAsync(stagingDbFileUri());
+        return info.exists && info.size > 0;
+      },
+      applyStaging: async () => {
+        // Delete-first so moveAsync can't fail on an existing destination.
+        await FileSystem.deleteAsync(userDbFileUri(), { idempotent: true });
+        await FileSystem.moveAsync({ from: stagingDbFileUri(), to: userDbFileUri() });
+      },
+      clearPending: () => storage.clearPendingRestore(),
+    });
+  } catch (err) {
+    // Never block launch; the flag survives a failure and retries next boot.
+    logger.warn('Pending restore apply error', { error: String(err) });
+  }
+
   // BK2 hydration gate: if the user has a persisted session but no local
   // user.db (fresh install / re-install after device wipe), attempt to restore
   // their backup so migrations run on the recovered schema, not an empty one.
   try {
     const authSession = await auth.getSession();
     if (authSession) {
-      const docDir = FileSystem.documentDirectory ?? '';
-      const userDbUri = `${docDir}SQLite/user.db`;
-      const fileInfo = await FileSystem.getInfoAsync(userDbUri);
+      const fileInfo = await FileSystem.getInfoAsync(userDbFileUri());
       // Only restore when the local file is missing or effectively empty (<= 512 B).
       // A present, non-trivial file means the device is authoritative — skip.
       const localExists = fileInfo.exists && fileInfo.size > 512;
@@ -243,9 +268,16 @@ export async function createContainer(): Promise<Container> {
         try {
           const session = await auth.getSession();
           if (!session) return 'error';
-          const result = await backupService.restore(session.user.id);
-          if (result.ok) return 'ok';
-          return result.reason === 'no_backup' ? 'no_backup' : 'error';
+          // Stage the download instead of overwriting the live user.db: the
+          // SQLite connection is open here, so a direct write would let it flush
+          // stale page cache over the restored file. Arm the flag; the staged
+          // file is promoted at the next boot, before openDatabase().
+          const result = await backupService.stageRestore(session.user.id);
+          if (!result.ok) {
+            return result.reason === 'no_backup' ? 'no_backup' : 'error';
+          }
+          await storage.setPendingRestore();
+          return 'ok';
         } catch {
           return 'error';
         }

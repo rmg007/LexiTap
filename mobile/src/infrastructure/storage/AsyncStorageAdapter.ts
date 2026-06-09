@@ -16,6 +16,7 @@ const KEYS = {
   forgivenessConfigVersion: 'lexitap.forgiveness.config.version',
   onboardingComplete: 'lexitap.onboarding.completed',
   lastBackupAtMs: 'lexitap.backup.lastBackupAtMs',
+  restorePending: 'lexitap.backup.restorePending',
 } as const;
 
 export class AsyncStorageAdapter {
@@ -75,5 +76,21 @@ export class AsyncStorageAdapter {
 
   async setLastBackupAtMs(ms: number): Promise<void> {
     await AsyncStorage.setItem(KEYS.lastBackupAtMs, String(ms));
+  }
+
+  // "A Settings restore has been staged and must be applied at the next boot."
+  // Set after the remote backup is downloaded to the staging file; the live
+  // user.db is NOT overwritten until container.applyPendingRestore() promotes
+  // the staged file before openDatabase(). Boolean flag (present = pending).
+  async getPendingRestore(): Promise<boolean> {
+    return (await AsyncStorage.getItem(KEYS.restorePending)) === '1';
+  }
+
+  async setPendingRestore(): Promise<void> {
+    await AsyncStorage.setItem(KEYS.restorePending, '1');
+  }
+
+  async clearPendingRestore(): Promise<void> {
+    await AsyncStorage.removeItem(KEYS.restorePending);
   }
 }

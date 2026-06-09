@@ -30,11 +30,18 @@ export type BackupResult = { ok: true } | { ok: false; reason: BackupFailureReas
 export interface BackupPort {
   // Upload the local user.db to the user's remote slot (upsert). Best-effort.
   backupNow(userId: string): Promise<BackupResult>;
-  // Download the user's remote user.db and write it to the local db path. A
+  // Download the user's remote user.db and write it OVER the live user.db path. A
   // missing remote object resolves to { ok: false, reason: 'no_backup' }, not an
-  // error. NOTE: this only writes the file; hot-swapping the live SQLite
-  // connection is the caller's responsibility (it must run before openDatabase).
+  // error. CONTRACT: this only writes the file and does NOT hot-swap the live
+  // SQLite connection, so it is safe to call ONLY before openDatabase() runs
+  // (the BK2 boot gate). After the connection is open, use stageRestore instead.
   restore(userId: string): Promise<BackupResult>;
+  // Like restore, but downloads to a STAGING file beside user.db instead of
+  // overwriting the live file. For use when a connection is already open (the
+  // Settings "restore from backup" flow): the staged file is promoted over
+  // user.db at the next boot, before openDatabase() (see pendingRestore.ts), so
+  // the open connection can never write stale pages over the restored data.
+  stageRestore(userId: string): Promise<BackupResult>;
   // Whether a remote backup exists for this user (drives the device-switch
   // "Restore?" prompt). Resolves false on any failure — never throws.
   hasRemoteBackup(userId: string): Promise<boolean>;

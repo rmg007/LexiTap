@@ -12,6 +12,10 @@ export class NoopBackupService implements BackupPort {
     return { ok: false, reason: 'not_configured' };
   }
 
+  async stageRestore(_userId: string): Promise<BackupResult> {
+    return { ok: false, reason: 'not_configured' };
+  }
+
   async hasRemoteBackup(_userId: string): Promise<boolean> {
     return false;
   }

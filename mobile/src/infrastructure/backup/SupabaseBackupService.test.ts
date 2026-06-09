@@ -193,6 +193,67 @@ describe('SupabaseBackupService', () => {
     });
   });
 
+  describe('stageRestore', () => {
+    const LIVE_URI = 'file:///docs/SQLite/user.db';
+    const STAGING_URI = 'file:///docs/SQLite/user.db.restore-pending';
+
+    it('downloads the remote backup and writes it to the STAGING path, never the live user.db', async () => {
+      const { storage, bucket } = makeStorage();
+      bucket.download.mockResolvedValue({ data: fakeBlob([9, 8, 7]), error: null });
+      // jest.clearAllMocks() does not reset implementations, so explicitly make
+      // the write succeed (a prior test sets writeAsStringAsync to reject).
+      writeAsStringAsync.mockResolvedValue(undefined);
+
+      const result = await new SupabaseBackupService(storage).stageRestore(USER_ID);
+
+      expect(result).toEqual({ ok: true });
+      expect(bucket.download).toHaveBeenCalledWith(`${USER_ID}/user.db`);
+      const [uri, contents, options] = writeAsStringAsync.mock.calls[0] as [
+        string,
+        string,
+        { encoding?: string },
+      ];
+      // The whole point of stageRestore: write beside user.db, NOT over it.
+      expect(uri).toBe(STAGING_URI);
+      expect(uri).not.toBe(LIVE_URI);
+      expect(options?.encoding).toBe('base64');
+      // [9,8,7] base64-encodes to 'CQgH'.
+      expect(contents).toBe('CQgH');
+    });
+
+    it('maps a 404 to reason: no_backup and writes nothing', async () => {
+      const { storage, bucket } = makeStorage();
+      bucket.download.mockResolvedValue({ data: null, error: storageError('Object not found', 404) });
+
+      const result = await new SupabaseBackupService(storage).stageRestore(USER_ID);
+
+      expect(result).toEqual({ ok: false, reason: 'no_backup' });
+      expect(writeAsStringAsync).not.toHaveBeenCalled();
+    });
+
+    it('returns not_configured when env vars are unset (no download, no write)', async () => {
+      mockIsConfigured.mockReturnValue(false);
+      const { storage, bucket } = makeStorage();
+
+      const result = await new SupabaseBackupService(storage).stageRestore(USER_ID);
+
+      expect(result).toEqual({ ok: false, reason: 'not_configured' });
+      expect(bucket.download).not.toHaveBeenCalled();
+      expect(writeAsStringAsync).not.toHaveBeenCalled();
+    });
+
+    it('never throws even if writing the staging file throws', async () => {
+      const { storage, bucket } = makeStorage();
+      bucket.download.mockResolvedValue({ data: fakeBlob([1]), error: null });
+      writeAsStringAsync.mockRejectedValue(new Error('read-only fs'));
+
+      await expect(new SupabaseBackupService(storage).stageRestore(USER_ID)).resolves.toEqual({
+        ok: false,
+        reason: 'unknown',
+      });
+    });
+  });
+
   describe('hasRemoteBackup', () => {
     it('returns true when a remote object is present', async () => {
       const { storage, bucket } = makeStorage();

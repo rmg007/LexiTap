@@ -443,11 +443,11 @@ export function SettingsScreen(): React.JSX.Element {
 
             {restoreResult === null ? (
               <Text variant="body" color="textPrimary">
-                This will overwrite your current local progress with the cloud backup. Continue?
+                This replaces your local progress with your cloud backup the next time you open the app. Continue?
               </Text>
             ) : restoreResult === 'ok' ? (
               <Text variant="body" color="success">
-                Restore complete. Restart the app to load your restored data.
+                Backup downloaded. Quit and reopen LexiTap to finish restoring your progress.
               </Text>
             ) : restoreResult === 'no_backup' ? (
               <Text variant="body" color="textSecondary">

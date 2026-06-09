@@ -1,6 +1,7 @@
 import * as FileSystem from 'expo-file-system';
 import type { BackupPort, BackupResult } from '@/domain/backup/BackupPort';
 import { isBackupConfigured } from './backupEnv';
+import { userDbFileUri, stagingDbFileUri } from './userDbPath';
 
 // Supabase Storage backup of the read-write user.db (BK1).
 //
@@ -51,18 +52,9 @@ interface BlobLike {
 export const BACKUP_BUCKET = 'user-backups';
 export const backupObjectKey = (userId: string): string => `${userId}/user.db`;
 
-// expo-sqlite stores user.db at `${documentDirectory}SQLite/user.db` (mirrors
-// contentDb.ts's CONTENT_DB_PATH). We read/write that file directly — we do NOT
-// touch the live SQLite connection (that is infrastructure/db's job).
-function userDbFileUri(): string {
-  const docDir = FileSystem.documentDirectory;
-  if (docDir === null) {
-    // No writable document directory (should never happen on-device). Caller
-    // turns the thrown error into reason:'unknown' via the try/catch wrappers.
-    throw new Error('SupabaseBackupService: FileSystem.documentDirectory is null');
-  }
-  return `${docDir}SQLite/user.db`;
-}
+// user.db path helpers (userDbFileUri / stagingDbFileUri) live in ./userDbPath so
+// the boot-time restore-apply and this service share one definition. We read/write
+// those files directly — we do NOT touch the live SQLite connection (infrastructure/db's job).
 
 // Decode a base64 string (expo-file-system's Base64 read) into an ArrayBuffer
 // suitable for Storage.upload. RN ships a global atob.
@@ -132,6 +124,25 @@ export class SupabaseBackupService implements BackupPort {
   }
 
   async restore(userId: string): Promise<BackupResult> {
+    // BOOT path (BK2 hydration gate): write the downloaded bytes straight over
+    // user.db. SAFE only because the gate runs BEFORE openDatabase() — no live
+    // connection exists yet, honoring the BackupPort contract. The Settings flow
+    // must NOT call this (the connection is open there); it calls stageRestore.
+    return this.downloadTo(userId, userDbFileUri());
+  }
+
+  async stageRestore(userId: string): Promise<BackupResult> {
+    // SETTINGS path: the live SQLite connection is already open. Overwriting
+    // user.db here would let that connection flush stale page cache over the
+    // restored file (data loss / corruption). Download to a staging file beside
+    // user.db instead; container.applyPendingRestore() promotes it at the next
+    // boot, before openDatabase().
+    return this.downloadTo(userId, stagingDbFileUri());
+  }
+
+  // Shared download-and-write core for restore()/stageRestore(). Differs only in
+  // the target path. Never throws (BackupPort silent-fail contract).
+  private async downloadTo(userId: string, targetUri: string): Promise<BackupResult> {
     if (!isBackupConfigured()) return { ok: false, reason: 'not_configured' };
     try {
       const { data, error } = await this.storage.from(BACKUP_BUCKET).download(backupObjectKey(userId));
@@ -144,10 +155,7 @@ export class SupabaseBackupService implements BackupPort {
       }
       const buffer = await data.arrayBuffer();
       const base64 = arrayBufferToBase64(buffer);
-      // Write the downloaded bytes to the user.db path. We deliberately do NOT
-      // hot-swap the live SQLite connection here — that must be done by the
-      // caller BEFORE openDatabase() runs (infrastructure/db owns that seam).
-      await FileSystem.writeAsStringAsync(userDbFileUri(), base64, {
+      await FileSystem.writeAsStringAsync(targetUri, base64, {
         encoding: FileSystem.EncodingType.Base64,
       });
       return { ok: true };
