@@ -168,7 +168,7 @@ Rule held: where code and doc disagreed, **`tokens.ts` won** and the doc was cor
 
 ### 0.3 Elevation / surfaces (dark = lightness steps, NOT shadow — per `DESIGN_SYSTEM.md`)
 - Dark mode separates layers by **surface lightness + 1px `border/subtle`**, not drop shadows. The `bg/surface-*` ramp already encodes elevation — use it.
-- Only the **modal/sheet** shadow exists: name the one effect style `elevation/modal` = `0 8 24 rgba(0,0,0,0.40)`. Add `focus-ring` (2px `border/strong`). Delete the other 2 unnamed effect styles. Light mode leans on this shadow for hierarchy.
+- Only the **modal/sheet** shadow exists: name the one effect style `elevation/modal` = `0 8 24 rgba(0,0,0,0.40)`. Add `focus-ring` (2px, bound to `accent` — **not** `border/strong`, which fails WCAG 2.4.11 at ~1.5–1.8:1; resolved 2026-06-09, `DESIGN_SYSTEM.md` updated to match). Delete the other 2 unnamed effect styles. Light mode leans on this shadow for hierarchy.
 
 ### 0.4 Icons — adopt **Lucide** (RESOLVED in `DESIGN_SYSTEM.md`; do NOT rebuild the `icon_*` frames)
 - **UI icon system = Lucide** (`lucide-react-native`, Apache 2.0). Line, **1.75px stroke**, rounded caps, **24×24** grid, geometric/neutral. **Ban emoji in UI** (15 on Home today → swap).

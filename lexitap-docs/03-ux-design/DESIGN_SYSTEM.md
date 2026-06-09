@@ -48,11 +48,11 @@ Canonical values are dark mode. The teal primary (#20B2AA) is the LexiTap brand 
 | `bg.surface.raised` | `#1F2426` | Elevated cards, modals, menus |
 | `bg.surface.sunken` | `#0A0C0D` | Wells, input-like containers |
 | `border.subtle` | `#262B2E` | Hairline dividers, card edges |
-| `border.strong` | `#3A4145` | Focus rings, selected outlines |
+| `border.strong` | `#3A4145` | Selected/decorative outlines (NOT focus rings — fails WCAG 2.4.11 at ~1.5–1.8:1 on dark surfaces) |
 | `text.primary` | `#F2F5F6` | Headlines, word being studied |
 | `text.secondary` | `#A9B2B6` | Definitions, supporting copy |
 | `text.tertiary` | `#6E777B` | Captions, metadata, hints |
-| `accent` | `#20B2AA` | Primary teal, interactive emphasis |
+| `accent` | `#20B2AA` | Primary teal, interactive emphasis, **focus rings** (2px, ≥3.8:1 both modes) |
 | `accent.pressed` | `#1A938C` | Pressed/active teal |
 | `accent.subtle` | `#13322F` | Teal-tinted fill behind accent text |
 | `success` | `#4CAF50` | Correct-answer confirmation |
