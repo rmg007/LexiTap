@@ -1,0 +1,17 @@
+# Maestro E2E smoke: cold launch on fresh state → age gate (O-0) renders.
+# Catches render-layer/native/DB breakage that Jest can't see (dual-React,
+# ATTACH path, Metro resolution — all shipped past a green `npm run check`).
+#
+# Run: npm run e2e  (requires the app installed on a booted iOS simulator —
+# build first via `npm run ios` or install an EAS build).
+#
+# NOTE: assertions target current placeholder copy. When Phase-4 design
+# screens land, update the asserted strings here in the same PR.
+appId: com.lexitap.app
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: 'Your age'
+    timeout: 30000
+- assertVisible: 'Continue'

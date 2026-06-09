@@ -31,6 +31,10 @@
           {
             "type": "command",
             "command": "bash -c 'git rev-parse --git-dir >/dev/null 2>&1 && git diff --quiet HEAD || echo \"⚠️ Unpushed commits detected. Push before /clear.\"' || true"
+          },
+          {
+            "type": "command",
+            "command": "command -v osascript >/dev/null && osascript -e 'display notification \"Response complete\" with title \"Claude Code — LexiTap\" sound name \"Glass\"' 2>/dev/null || true"
           }
         ]
       }

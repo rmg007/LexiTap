@@ -13,6 +13,7 @@
     "test": "jest",
     "check": "npm run lint && npm run typecheck && npm run test",
     "smoke": "bash scripts/sim-smoke.sh",
+    "e2e": "maestro test .maestro",
     "postinstall": "node scripts/patch-nativewind.js"
   },
   "dependencies": {
