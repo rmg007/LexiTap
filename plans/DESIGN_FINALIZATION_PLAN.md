@@ -43,13 +43,11 @@ The design system is **already specified in two places**. Figma's job is to beco
 | `lexitap-docs/03-ux-design/DESIGN_SYSTEM.md` | **Design intent** (rationale, component specs, states) | Component anatomy, states, motion/haptics, iconography, principles. |
 | `website/public/styles.css` | Web mirror (partial, slightly behind) | Web parity only — **not** the source. Its spacing names differ (`--s6:24` vs token `s6:32`); follow `tokens.ts`. |
 
-**⚠️ Code↔doc divergences to RESOLVE before binding (these cause the loop if left):**
-1. **Type face.** `tokens.ts` ships **Playfair Display** for `h1`/`display`; `DESIGN_SYSTEM.md` says "Inter-only in app, no display faces." Website + code both use Playfair → doc is stale. **Decision needed:** ratify Playfair for editorial headings (update the doc) or strip it from code. *Recommend: ratify Playfair* (already shipping, on-brand editorial). Until decided, do not bind the type styles.
-2. **`headline` metrics.** code `18/22, 700` vs doc `22/28, 600`. Pick one. *Recommend: code values* (shipping truth).
-3. **`body` size.** code `15/24` vs doc `16/24`. *Recommend: code 15* (shipping truth).
-4. **light `text.tertiary`.** code `#6B7378` vs doc `#878F92`. *Recommend: code.*
+**✅ Code↔doc divergences — ALL RESOLVED 2026-06-09 (`DESIGN_SYSTEM.md` corrected to match `tokens.ts`):**
+1. **Type face — Playfair ratified** (Ryan, 2026-06-09): Playfair Display Bold for `h1`/`display`, Inter for all else. Doc updated. Type styles are now safe to bind.
+2. **`headline`** = `18/22, 700` (code wins). 3. **`body`** = `15/24` (code). 4. **light `text.tertiary`** = `#6B7378` (code).
 
-Rule: where code and doc disagree, **`tokens.ts` wins** (it's what users see) and the doc gets corrected in the same pass — never silently.
+Rule held: where code and doc disagreed, **`tokens.ts` won** and the doc was corrected in the same pass — never silently.
 
 ### Resolved decisions (were deferred — now decided, so we don't rebuild components)
 1. **Proficiency screen — CUT** (D1, already decided in memory 2026-05-31; off-spec: CEFR-band vs frequency-rank). §1 flow below has it removed. Do **not** build a proficiency component.
@@ -96,17 +94,17 @@ Rule: where code and doc disagree, **`tokens.ts` wins** (it's what users see) an
 - **`space`** (8pt grid, exact token names): `s1=4 s2=8 s3=12 s4=16 s5=24 s6=32 s7=48 s8=64` (scope GAP + padding). `radius`: `sm=8 md=12 lg=20 full=999` (CORNER_RADIUS).
 - Scopes set explicitly per the table — never ALL_SCOPES. Screens bind to these names; Code Connect maps them straight onto `tokens.ts` keys (1:1, no translation layer).
 
-### 0.2 Type system — PORT `tokens.ts` names (resolve the divergence first — see Canonical sources)
+### 0.2 Type system — PORT `tokens.ts` names (divergences resolved — safe to bind)
 - 10 styles, exact code names + values (do **not** rename to Display/H1/Body Strong — Code Connect needs 1:1):
 
   | style | size/line | weight | family |
   |---|---|---|---|
-  | `h1` | 44/48 | 700 | PlayfairDisplay *(pending divergence #1)* |
-  | `display` | 34/38 | 700 | PlayfairDisplay *(pending #1)* |
+  | `h1` | 44/48 | 700 | Playfair Display |
+  | `display` | 34/38 | 700 | Playfair Display |
   | `title` | 28/34 | 700 | Inter |
-  | `headline` | 18/22 | 700 | Inter *(pending #2 — code values shown)* |
+  | `headline` | 18/22 | 700 | Inter |
   | `bodyLg` | 18/26 | 400 | Inter |
-  | `body` | 15/24 | 400 | Inter *(pending #3)* |
+  | `body` | 15/24 | 400 | Inter |
   | `label` | 14/20 | 600 | Inter |
   | `caption` | 13/18 | 400 | Inter |
   | `smallCaps` | 11/16 | 700 | Inter · uppercase · +1.65 tracking |

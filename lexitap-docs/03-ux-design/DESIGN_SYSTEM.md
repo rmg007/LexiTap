@@ -2,7 +2,7 @@
 title: Design System
 category: ux-design
 status: active
-updated: 2026-05-24
+updated: 2026-06-09
 priority: P0
 tags: [design-system, brand, colors, typography, components, dark-mode, tokens, motion, haptics]
 ---
@@ -73,7 +73,7 @@ There is intentionally **no `error.red` token in the assessment path.** A destru
 | `border.subtle` | `#E6E9EA` |
 | `text.primary` | `#1A1D1E` |
 | `text.secondary` | `#52595C` |
-| `text.tertiary` | `#878F92` |
+| `text.tertiary` | `#6B7378` |
 | `accent` | `#178F88` (darkened teal for AA on white) |
 | `success` | `#2E7D32` |
 | `caution` | `#B58100` |
@@ -82,22 +82,24 @@ Light-mode accent/success/caution are darkened so text and icons meet WCAG AA on
 
 ## Typography
 
-Typeface: **Inter** (UI) with **DM Sans** as the brand/marketing alternate. Ship Inter variable for the app. The studied word may render in Inter at heavier weight; no decorative display faces.
+Typefaces: **Inter** (UI, variable) for all interface text, and **Playfair Display Bold** for the two editorial heading levels (`h1`, `display`) — ratified 2026-06-09 as on-brand editorial emphasis (it already ships in `tokens.ts` and on lexitap.app). **DM Sans** is marketing-surface only (App Store, brand collateral) and is never bundled in the app.
 
-Scale is a modular 1.2 ratio, rounded to even pixels, expressed in points (React Native logical units). All sizes scale with the OS Dynamic Type setting (see accessibility doc).
+Values below are the **shipping source of truth** (`mobile/src/presentation/theme/tokens.ts`); this table mirrors it 1:1. All sizes scale with the OS Dynamic Type setting per a per-token max multiplier (see accessibility doc).
 
-| Token | Size / Line | Weight | Use |
-|-------|-------------|--------|-----|
-| `display` | 34 / 40 | 700 | Word under study (Quiz prompt) |
-| `title` | 28 / 34 | 700 | Screen titles (Home greeting, Progress) |
-| `headline` | 22 / 28 | 600 | Card headers, section heads |
-| `body.lg` | 18 / 26 | 400 | Definitions, answer options |
-| `body` | 16 / 24 | 400 | Default body text |
-| `label` | 14 / 20 | 600 | Buttons, chips, tab labels |
-| `caption` | 13 / 18 | 400 | Metadata, hints, helper text |
-| `mono` | 14 / 20 | 500 | Streak integer, counters (tabular figures) |
+| Token | Size / Line | Weight | Family | Use |
+|-------|-------------|--------|--------|-----|
+| `h1` | 44 / 48 | 700 | Playfair Display | Hero/editorial display (Knowledge Map, onboarding) |
+| `display` | 34 / 38 | 700 | Playfair Display | Word under study (Quiz prompt) |
+| `title` | 28 / 34 | 700 | Inter | Screen titles (Home greeting, Progress) |
+| `headline` | 18 / 22 | 700 | Inter | Card headers, section heads |
+| `bodyLg` | 18 / 26 | 400 | Inter | Definitions, answer options |
+| `body` | 15 / 24 | 400 | Inter | Default body text |
+| `label` | 14 / 20 | 600 | Inter | Buttons, chips, tab labels |
+| `caption` | 13 / 18 | 400 | Inter | Metadata, hints, helper text |
+| `smallCaps` | 11 / 16 | 700 | Inter | Uppercase branded label (+0.15em tracking) |
+| `mono` | 14 / 20 | 500 | Inter | Streak integer, counters (tabular figures) |
 
-Rules: max two weights visible per screen. Use `text.secondary` for definitions so the studied word (`text.primary`) dominates. Enable tabular figures for all counters so streak/progress numbers do not jiggle when they change.
+Rules: max two weights visible per screen (Playfair counts as one). Use `text.secondary` for definitions so the studied word (`text.primary`) dominates. Enable tabular figures for all counters so streak/progress numbers do not jiggle when they change.
 
 ## Spacing and Layout
 
@@ -196,4 +198,5 @@ All open questions from the initial draft have been resolved.
 
 - **Background/text token reconciliation — RESOLVED.** The marketing palette (white background / dark-gray text) applies to lexitap.app and App Store listing surfaces only. The product UI is dark-mode-first and these tokens are the source of truth for mobile. The two contexts are separate; there is no conflict.
 - **Icon family license — RESOLVED.** Lucide confirmed. Apache 2.0 license, permissive for commercial use. All UI icons, including the frozen-streak `Snowflake`, are sourced from `lucide-react-native`.
-- **DM Sans vs Inter split — RESOLVED.** Inter variable font only inside the app bundle. DM Sans is for marketing surfaces (lexitap.app, App Store screenshots, brand collateral) and is never shipped inside the mobile app.
+- **DM Sans vs Inter split — RESOLVED.** Inter variable font for UI inside the app bundle, plus **Playfair Display Bold** for the `h1`/`display` editorial levels (ratified 2026-06-09; ships in `tokens.ts`). DM Sans is for marketing surfaces (lexitap.app, App Store screenshots, brand collateral) and is never shipped inside the mobile app.
+- **Type metrics code↔doc — RECONCILED 2026-06-09.** Earlier doc values (`headline` 22/600, `body` 16, light `text.tertiary` #878F92, Inter-only) were stale vs shipping `tokens.ts`. This doc now mirrors `tokens.ts` 1:1; that file is the source of truth for type and color values.
