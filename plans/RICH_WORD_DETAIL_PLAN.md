@@ -83,9 +83,12 @@ Additive reads only; guarded `infrastructure/db/` (confirmation granted). **No `
 5. ✅ Port `WordRepository.getSensesForWord(id)` + impl in [SQLiteWordRepository.ts](../mobile/src/infrastructure/db/repositories/SQLiteWordRepository.ts) — **fail-soft** (catch → `[]`, exactly like `SQLitePseudoWordRepository`: a content DB predating the rich-detail schema has no tables → throws → flat fallback, never breaks the screen).
 6. ✅ Phase-4 seam: `ReadQueries.getWordDetail(id) → { word, senses } | null` ([ServicesContext.tsx](../mobile/src/presentation/services/ServicesContext.tsx)), implemented in [container.ts](../mobile/src/composition/container.ts), defaulted in `mockServices`. One fail-soft call for the detail screen instead of juggling two repo reads.
 
-### Phase 4 — Detail UI
-1. [LearnCardScreen.tsx](../mobile/src/presentation/screens/LearnCardScreen.tsx): render senses (numbered when >1), each = `explanation` + example list + optional image. Keep hard invariant: **NO TextInput / no assessment widget on this screen.** *(NOT yet done — RN port.)*
-2. Graceful fallback: word with no senses → current single-def layout (top-N backfill means most words show rich, tail shows flat — must not look broken). *(NOT yet done — RN port.)*
+### Phase 4 — Detail UI ✅ DONE (2026-06-09)
+RN port of [LearnCardScreen.tsx](../mobile/src/presentation/screens/LearnCardScreen.tsx). Presentation-only, **no `domain/srs`/`infrastructure/db` diff** (1 file). `mobile npm run check` GREEN (46 suites / **459 tests**).
+1. ✅ Senses fetched **lazily per displayed card** via `services.queries.getWordDetail(word.id)` (the Phase-3 fail-soft seam) — cached in a `Record<wordId, WordSense[]>` so re-renders / advance don't refetch; the batch/quiz word reads stay flat (senses only for the card on screen). Rendered numbered (`MEANING n · POS` smallCaps) when >1 sense, plain PoS when single, mirroring Figma page 07 (`359:2`): per meaning = `shortGloss` (bodyLg) + felt `explanation` (body/primary) + `EXAMPLES` list (italic) + divider between meanings. **NO TextInput / no assessment widget** (invariant held).
+2. ✅ Graceful fallback: `senses` undefined (still loading) or `[]` (un-backfilled / pre-rich content DB) → existing flat `pos`+`definition`+`exampleSentence` layout. Accessibility label switches to the felt senses when present, flat fields otherwise.
+3. Per-sense **image is data-only** (no dynamic-require vocab-image map yet — the flat layout also omits `word.imagePath`); Figma shows a placeholder. Deferred to when the asset map lands.
+- **No render test:** repo has no `react-native-testing-library` (screen tests are logic-only) — adding RTL is separate infra. Verified via typecheck + lint + the Phase-3 mapper unit tests.
 3. **✅ Figma DONE (2026-06-09).** Page `07 · Words & Review` → `Word Detail — Rebuilt` (`359:2`) rebuilt to the multi-sense layout using `plant` (2-sense showcase): word + phonetic + Listen pill → per meaning (`MEANING n · POS` label, `short_gloss`, felt `explanation`, optional-image placeholder, `EXAMPLES` list) → divider → next meaning. Single-sense original archived to the page's Archive SECTION as `526:183` (Never-Lose-Work). Added Lucide `image` glyph (set 40→41). **Binding gate PASS** (rawFills 0 · text 19/19 bound · emoji 0), screenshot-verified. RN port (1–2 above) must mirror this layout.
 
 ---
@@ -94,7 +97,7 @@ Additive reads only; guarded `infrastructure/db/` (confirmation granted). **No `
 - Phase 1: builder emits the two tables; every word has sense 0; content-tool check green.
 - Phase 2: 20-word sample signed off by Ryan; top-N enriched; `validate --strict` clean.
 - Phase 3: ✅ mobile reads senses; `npm run check` green (459 tests); **no `domain/srs` diff** (verified — 0 srs files changed).
-- Phase 4: detail screen renders multi-sense + fallback; Figma gate PASS.
+- Phase 4: ✅ detail screen renders multi-sense + fallback (`npm run check` GREEN, presentation-only); Figma gate PASS (done prior session).
 - Docs synced: DATABASE_SCHEMA.md, AGENTS.md (if query patterns change), MEMORY.md.
 
 ## Explicitly out of scope (do not start without new go)
