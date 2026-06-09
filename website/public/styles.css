@@ -133,6 +133,10 @@ a:hover { color: var(--accent-pressed); text-decoration: underline; }
   text-align: center;
   background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-base) 100%);
 }
+.hero-mark {
+  display: block; width: 88px; height: 88px; margin: 0 auto var(--s6);
+  border-radius: 22px;
+}
 .eyebrow {
   display: inline-block; text-transform: uppercase; letter-spacing: 0.08em;
   font-size: 12px; font-weight: 700; color: var(--accent);
