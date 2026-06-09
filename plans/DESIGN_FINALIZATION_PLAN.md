@@ -299,7 +299,7 @@ the library is proven.)
 
 ## Status: COMPLETE — all 10 screen pages `gate: PASS` (2026-06-09)
 
-**Independently re-audited: `ALL_PAGES: PASS`.** Every screen page is now code-ready (rawFills 0, all text bound, 0 emoji, instance-based). Component library complete (20 components incl. Avatar + PackCard). Light↔Dark verified structural (single color-mode toggle).
+**Independently re-audited: `ALL_PAGES: PASS`.** Every screen page is now code-ready (rawFills 0, all text bound, 0 emoji, instance-based). Component library complete (20 components incl. Avatar + PackCard). Icon set expanded **20 → 32 glyphs** (added bell, shield, trash-2, user, star, award, mail, log-out, calendar, book-open, help-circle, file-text — all token-bound 1.75px/round, from real Lucide v1.17.0 sources). Light↔Dark verified structural (single color-mode toggle).
 
 | Page | Screens | rawFills | textBound | emoji | instances | gate |
 |---|---|---|---|---|---|---|
@@ -317,10 +317,12 @@ the library is proven.)
 
 Originals preserved (not deleted) in per-page `Archive — pre-rebuild originals (do not ship)` sections; annotations moved to `Annotations` sections (both out of gate scope). Decisions honored: proficiency CUT, drag-drop kept, known-metric copy, passive-recognition quiz (no TextInput), non-punitive feedback (caution not red), destructive-red only on delete/restore confirms.
 
-**Residual (does NOT block the gate — flagged honestly):**
-1. **Spacing/radius on rebuilt *wrapper* frames are raw numerics, not bound to `space`/`radius` vars.** The gate only checks fills/text/emoji, so pages PASS; but full "code-ready" #1 wants space/radius bound too. Component *internals* are correctly spaced; only the new layout containers are unbound. Low value (Default-mode only, no light/dark variance) — optional follow-up. (One subagent wrongly reported space/radius vars "don't exist" — they DO: `space` s1–s8, `radius` sm/md/lg/full.)
-2. **KnowledgeMapBar legend↔bar color:** the shared component renders Known=`success` green; the Profile legend dot maps Known→`accent` teal. Reconcile on the Components page (pick one canonical Known color) — cosmetic, not a gate fail.
-3. **Code Connect is a markdown stub** (`.design-specs/code-connect-map.md`) — publish once `@figma/code-connect` is installed and the RN components exist.
+**Residuals — resolved in the finalization-polish pass (2026-06-09):**
+1. ✅ **Wrapper spacing/radius now token-bound.** Exact-value-match pass across all 10 pages bound **761 spacing + 780 radius** properties on non-instance wrapper frames to `space` (s1–s8) / `radius` (sm/md/lg/full) — 0 errors, gate stays PASS, no layout shift (binding the existing value never changes it). Off-scale values (e.g. a 20px screen gutter, not in the 4/8/12/16/24… scale) are **intentionally left raw** — force-binding would either invent a token or shift layout. (The earlier subagent claim that space/radius vars "don't exist" was false — they exist and are now bound.)
+2. ✅ **KnowledgeMapBar legend↔bar reconciled.** Profile legend swatches rebound to match the canonical bar: Known→`success` (green), Learning→`accent` (teal), New→`text/tertiary`. Verified by screenshot — legend dots now match the segmented bar.
+3. ⏳ **Code Connect remains a markdown stub** (`.design-specs/code-connect-map.md`, icon row updated 20→32) — publish once `@figma/code-connect` is installed and the RN components exist. This is an *implementation* step, not a design step; out of scope for the design deliverable.
+
+**Out-of-gate pages (by design, not defects):** `🗄️ Archive — Original Wireframes` (renamed from `📱 Wireframes`; the pre-finalization originals, preserved not deleted), `🧩 Components` (the library — brand logos, AI feature-illustrations, and doc/showcase frames are not token-bindable *screens*), `✏️ Typography` / `🎨 Tokens` (foundation). The binding gate targets the 10 screen pages only; all 10 PASS.
 
 ### Done earlier this pass (2026-06-09)
 - ✅ Housekeeping: deleted empty `✨ Hi-Fi` + `🎨 Design System` pages; removed stray `Design_System` rect + empty duplicate `Legacy Components` section on Components page. File now 14 clean pages.
