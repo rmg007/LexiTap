@@ -26,7 +26,10 @@ The CSV-per-tier structure has three hard failures:
 | Merge `cefr_level` + `tiers` → `categories` array | One array contains everything: CEFR level + all tier slugs. Parser routes A1/A2/B1/B2/C1/C2 → `words.cefr_level`; everything else → `word_tiers` rows |
 | Add `reviewed` boolean | Per word, in both JSONL (`"reviewed": false`) and DB (`words.reviewed INTEGER DEFAULT 0`). Toggleable — Ryan marks a word reviewed after checking definition, senses, questions, audio |
 | Senses live inside the master file | `"senses": []` for un-enriched words; populated by the enrichment run in-place |
-| No new words for now | 2,848 foundation words is the scope. Seeding is expensive (explanation + examples per sense + ~20–30 questions + audio + maybe images/video). Don't expand until existing words are fully seeded |
+| Questions live inside the master file | `"questions": []` for un-enriched words; 5 per word for initial seed; populated by enrichment run alongside senses |
+| Question types: click/drag only, no typing | `multiple_choice`, `definition_match`, `fill_blank`, `sentence_order`, `true_false` — all answered by tap or drag. Passive-recognition constraint applies. |
+| Each question has `hint` + `explanation` | `hint` = nudge shown on request before answering; `explanation` = shown post-answer (correct or wrong), explains why |
+| No new words for now | 2,848 foundation words is the scope. Seeding is expensive (explanation + examples per sense + 5 questions + audio + maybe images/video). Don't expand until existing words are fully seeded |
 | Cross-reference specialty tiers against foundation | Don't add new words — identify which of the 2,848 foundation words also belong to TOEFL, IELTS, GRE, GMAT, business, advanced, common9k, and add those categories to their entries |
 
 ---
@@ -68,6 +71,61 @@ The CSV-per-tier structure has three hard failures:
         "Both countries agreed to negotiate a peace deal."
       ]
     }
+  ],
+
+  // Questions — [] until enriched. 5 per word for initial seed.
+  // All types answered by tap or drag — NO typing.
+  "questions": [
+    {
+      "question_index": 0,
+      "type": "multiple_choice",
+      "prompt": "Which sentence uses 'negotiate' correctly?",
+      "correct": "They met to negotiate the terms of the contract.",
+      "distractors": ["She negotiated the window open.", "He negotiated a loud sound.", "They negotiated the soup slowly."],
+      "hint": "Think about two sides trying to agree on something.",
+      "explanation": "'Negotiate' means to discuss until both sides reach an agreement — like a salary, a price, or a treaty.",
+      "reviewed": false
+    },
+    {
+      "question_index": 1,
+      "type": "definition_match",
+      "prompt": "negotiate",
+      "correct": "To discuss something in order to reach an agreement",
+      "distractors": ["To argue and refuse to compromise", "To sign a legal document", "To avoid a difficult topic"],
+      "hint": null,
+      "explanation": "Negotiation always involves two or more parties working toward a shared outcome.",
+      "reviewed": false
+    },
+    {
+      "question_index": 2,
+      "type": "fill_blank",
+      "prompt": "The workers and managers met to ___ a new salary agreement.",
+      "correct": "negotiate",
+      "distractors": ["celebrate", "ignore", "cancel"],
+      "hint": "They are trying to reach a decision together.",
+      "explanation": "When two sides discuss terms to find agreement, that is negotiation.",
+      "reviewed": false
+    },
+    {
+      "question_index": 3,
+      "type": "sentence_order",
+      "prompt": "Arrange the words to make a correct sentence:",
+      "correct": "She negotiated a better price for the car.",
+      "distractors": [],
+      "hint": "Who did the action? What was the outcome?",
+      "explanation": "The subject (She) acts on the object (price) through negotiation.",
+      "reviewed": false
+    },
+    {
+      "question_index": 4,
+      "type": "true_false",
+      "prompt": "\"Negotiate\" means to force someone to do something against their will.",
+      "correct": "False",
+      "distractors": ["True"],
+      "hint": "Does negotiation involve force, or discussion?",
+      "explanation": "Negotiation is a two-way discussion toward agreement — not coercion. Force is the opposite of negotiation.",
+      "reviewed": false
+    }
   ]
 }
 ```
@@ -96,9 +154,42 @@ Add to `ddl.ts` `CREATE_WORDS`. Also add index for efficient QA queries:
 CREATE INDEX idx_words_reviewed ON words(reviewed) WHERE deleted_at IS NULL;
 ```
 
-### No other schema changes
+### `word_questions` table (new — in `words.db`, content side)
 
-`word_tiers`, `word_senses`, `sense_examples` are unchanged. The JSONL import populates all of them.
+```sql
+CREATE TABLE word_questions (
+  id              TEXT PRIMARY KEY,
+  word_id         TEXT NOT NULL,
+  question_index  INTEGER NOT NULL,
+  type            TEXT NOT NULL,        -- multiple_choice | definition_match | fill_blank | sentence_order | true_false
+  prompt          TEXT NOT NULL,
+  correct         TEXT NOT NULL,
+  distractors     TEXT NOT NULL,        -- JSON array (empty array for sentence_order)
+  hint            TEXT,                 -- nullable — shown on request before answering
+  explanation     TEXT,                 -- nullable — shown post-answer
+  reviewed        INTEGER NOT NULL DEFAULT 0,
+  created_at      INTEGER NOT NULL,
+  deleted_at      INTEGER,
+  UNIQUE (word_id, question_index),
+  FOREIGN KEY (word_id) REFERENCES words(id)
+);
+
+CREATE INDEX idx_word_questions_word ON word_questions(word_id) WHERE deleted_at IS NULL;
+```
+
+### `quiz_attempts` — add `question_id` (user.db migration)
+
+```sql
+ALTER TABLE quiz_attempts ADD COLUMN question_id TEXT;
+-- NULL = algorithmic question (old behaviour)
+-- Populated = authored question from word_questions
+```
+
+Add as `migration_003` in `mobile/src/infrastructure/db/migrations/`.
+
+### `word_tiers`, `word_senses`, `sense_examples` — unchanged
+
+The JSONL import populates all of them.
 
 ---
 
@@ -108,9 +199,9 @@ CREATE INDEX idx_words_reviewed ON words(reviewed) WHERE deleted_at IS NULL;
 
 | Command | Before | After |
 |---|---|---|
-| `import` | reads CSV, takes `--tier` flag, populates `words` + `word_tiers` | reads JSONL master, no `--tier` flag needed, populates `words` + `word_tiers` + `words.reviewed` |
-| `ingest-senses` | reads `senses-enriched.jsonl`, populates `word_senses` + `sense_examples` | **merged into `import`** — senses in master JSONL are ingested in the same pass |
-| `enrich-senses` | outputs to separate `senses-enriched.jsonl` | outputs back into `words_master.jsonl` (updates `senses` array in-place per word) |
+| `import` | reads CSV, takes `--tier` flag, populates `words` + `word_tiers` | reads JSONL master, no `--tier` flag needed, populates `words` + `word_tiers` + `word_senses` + `sense_examples` + `word_questions` + `words.reviewed` |
+| `ingest-senses` | reads `senses-enriched.jsonl`, populates `word_senses` + `sense_examples` | **merged into `import`** — senses + questions ingested in the same pass |
+| `enrich-senses` | outputs to separate `senses-enriched.jsonl` | outputs back into `words_master.jsonl` (updates `senses` + `questions` arrays in-place per word) |
 
 ### Commands that stay the same
 
@@ -128,9 +219,10 @@ One-time script (run once, then the JSONL is the source of truth):
 
 1. `SELECT w.*, GROUP_CONCAT(wt.tier_id) FROM words w LEFT JOIN word_tiers wt ON w.id = wt.word_id WHERE w.deleted_at IS NULL GROUP BY w.id ORDER BY w.frequency_rank`
 2. For each row, fetch senses + examples from `word_senses` + `sense_examples`
-3. Build `categories` array: cefr_level first (if set), then all tier slugs
-4. Set `reviewed: false` for all (no word has been manually reviewed yet)
-5. Write one JSON line per word to `data/input/words_master.jsonl`
+3. For each row, fetch questions from `word_questions` (empty array if none yet)
+4. Build `categories` array: cefr_level first (if set), then all tier slugs
+5. Set `reviewed: false` for all (no word has been manually reviewed yet)
+6. Write one JSON line per word to `data/input/words_master.jsonl`
 
 This migration script lives at `content-tool/src/commands/export-master.ts` and is a one-off — run it once to bootstrap the JSONL, then retire it.
 
@@ -163,27 +255,30 @@ Ryan to provide or approve sources. This is a content task, not a code task.
 ## Implementation Phases
 
 ### Phase 1 — Schema + migration (no enrichment yet)
-- [ ] Add `reviewed` column to `ddl.ts` + `CREATE_WORDS`
-- [ ] Add `reviewed` to `WordRow` type in `schema/types.ts`
-- [ ] Write `export-master` command (DB → JSONL bootstrap)
+- [ ] Add `reviewed` column to `ddl.ts` `CREATE_WORDS`
+- [ ] Add `word_questions` table + index to `ddl.ts` `CONTENT_DB_DDL`
+- [ ] Add `reviewed` + question row types to `schema/types.ts`
+- [ ] Add `migration_003` to `mobile/src/infrastructure/db/migrations/` — `ALTER TABLE quiz_attempts ADD COLUMN question_id TEXT`
+- [ ] Write `export-master` command (DB → JSONL, includes senses + questions)
 - [ ] Run migration: generate `data/input/words_master.jsonl` from current working.db
-- [ ] Verify JSONL has all 2,848 words, correct categories, `senses: []` or existing senses
+- [ ] Verify: 2,848 words, correct categories, `senses: []`, `questions: []`
 
 ### Phase 2 — Import pipeline rewrite
-- [ ] Update `csv.ts` / `import.ts` to read JSONL master (drop `--tier` flag)
-- [ ] Parse `categories` array → route CEFR + tier slugs correctly
-- [ ] Merge `ingest-senses` logic into `import` (senses ingested in same pass)
-- [ ] Update `enrich-senses` output to write back to master JSONL
-- [ ] All existing tests green; add tests for JSONL import + categories parsing
+- [ ] Update `import.ts` to read JSONL master (drop `--tier` flag)
+- [ ] Parse `categories` array → route CEFR + tier slugs
+- [ ] Ingest `senses` + `questions` arrays in same import pass
+- [ ] Update `enrich-senses` output to write `senses` + `questions` back into master JSONL
+- [ ] All existing tests green; add tests for JSONL import, categories parsing, question ingestion
 
 ### Phase 3 — Cross-reference specialty tiers
 - [ ] Source word lists for each specialty tier (Ryan to approve)
-- [ ] Write cross-reference script: match foundation words → add tier slugs to JSONL
+- [ ] Match foundation words → add tier slugs to their `categories` in JSONL
 - [ ] Re-import; verify `word_tiers` counts are realistic
 
 ### Phase 4 — CONTENT-2 enrichment run
 - [ ] Run `npm run enrich:senses -- --limit 300 --model claude-opus-4-8`
-- [ ] Enrichment writes senses back into `words_master.jsonl`
+- [ ] Enrichment generates: senses (felt explanation + examples) + 5 questions per word (all 5 types, click/drag only, with hint + explanation)
+- [ ] Enrichment writes both back into `words_master.jsonl`
 - [ ] Re-import; validate; release
 
 ---
