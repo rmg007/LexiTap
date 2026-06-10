@@ -4,6 +4,10 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## ✅ Session: BUILD-1 cleared — app on physical device (2026-06-10)
+
+EAS preview build succeeded after two fixes: (1) `SENTRY_AUTH_TOKEN` missing → `SENTRY_DISABLE_AUTO_UPLOAD=true` added to preview/beta profiles in `mobile/eas.json` (commits `b8d85de`); (2) stale `eas.json` at repo root (invalid fields: `m1` resourceClass, `appleTeamId`, `serviceAccount`) deleted (`5f373f5`). App confirmed cold-launching on physical iOS device. Full learn-flow smoke (Quick-check → `srs_state` row) recommended before Phase 3. **Phase 3+ unblocked: BETA-1, RC-1, AUTH-1 all `ready`.**
+
 ## ✅ Session: Pull-forward batch — RTL-1 + LEGAL-3 + STORE-1 (2026-06-10)
 
 **[Pull-forward batch (2026-06-10)](2026-06-10_pull-forward-rtl1-legal3-store1.md)** — 3 tasks in isolated worktrees, octopus-merged. RTL-1: `test-utils/learnFixtures.ts` + `renderWithProviders.tsx`; shared fixture extracted, inline providers replaced; 479 tests green. LEGAL-3: `UserDataExportUseCase` (5 tests) + Settings "Export my data" → Share Sheet; Apple 5.1.1(v) done; naming note: `export/` dir clashes with eslint `expo*` pattern → used `UserDataExport*`. STORE-1: `plans/STORE_ASSETS_PLAN.md` — full App Store copy, keywords, 6-screen screenshot spec. BUILD-1 still the gate; nothing unblocked by these. ✅

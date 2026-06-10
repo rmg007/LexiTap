@@ -44,15 +44,19 @@ Shared barrels (`domain/index.ts`, `mobile/package.json`, both `ROADMAP.md`s) ar
 
 ## ▶ Ready now (the current frontier)
 
-**Ryan-only, unblocks the most downstream — do these first, no agent can:**
+**BUILD-1 ✅ cleared 2026-06-10 — app confirmed on physical device. Phase 3+ is now unblocked.**
+
+**Ryan-only / external-blocked — no agent can advance these:**
 
 | id | task | blocked_by |
 |---|---|---|
-| `BUILD-1` | EAS build → C0 on-device smoke | physical device + Apple dev acct |
-| `CONTENT-2` | Phase 2 paid enrichment run (CONTENT-1 ✅ unblocked) | paid API spend + model choice |
+| `CONTENT-2` | Phase 2 paid enrichment run | paid API spend + model choice |
+| `BETA-1` | TestFlight + Play Internal distribution | TestFlight build upload + Play Console setup |
+| `RC-1` | RevenueCat account + product config | RevenueCat account; App Store Connect + Play Console products |
+| `AUTH-1` | Native Google + Sign in with Apple | native modules (needs dev build); Apple requires SIWA when Google offered |
 
-> No agent-doable `ready` tasks remain in Phase 1. Everything in Phase 3+ is `blocked` until `BUILD-1` clears. Phase 2 content tasks are Ryan-only. Stubs stay stubs until deps land.
-> **Pull-forward tasks shipped (2026-06-10):** RTL-1 (test-utils), LEGAL-3 (data export), STORE-1 (store assets plan) — all done, not on the critical path but reduce future work.
+> **Next recommended action (Ryan):** run the full learn-flow smoke on device (learn batch → Quick-check appears → confirm an `srs_state` row is written) — proves SRS + DB end-to-end before committing to Phase 3. Then pick BETA-1 or CONTENT-2.
+> No agent-doable `ready` tasks remain until RC-1 unblocks IAP-1 or AUTH-1 is done.
 
 ---
 
@@ -101,14 +105,14 @@ commit: 4c14527 (merged)
 ```
 `mobile/src/test-utils/learnFixtures.ts` + `renderWithProviders.tsx`. Shared BATCH fixture extracted from both learn test files; inline ThemeProvider+ServicesProvider replaced with `renderWithProviders`. 479 tests green.
 
-### BUILD-1 · EAS build → C0 on-device smoke  ⚑ THE GATE
+### BUILD-1 · EAS build → C0 on-device smoke  ✅ done
 ```
-id: BUILD-1   phase: 1   status: ready   owner: ryan
-depends_on: []   parallel_safe: false   paths: [mobile/]   blocked_by: physical device + Apple dev account
+id: BUILD-1   phase: 1   status: done   owner: ryan
+depends_on: []   parallel_safe: false   paths: [mobile/]
 verify: app cold-launches on a real device; learn flow → quick-check appears → an srs_state row is written
+commit: EAS preview build succeeded 2026-06-10 (fixes: b8d85de + 5f373f5); app confirmed on physical device
 ```
-**Prompt (for Ryan, not an agent):**
-> `cd mobile && eas build --platform ios --profile preview`, install on a physical device. Cold-launch → tap through onboarding → "Learn new words" → advance the batch → confirm Quick-check appears → answer → confirm an `srs_state` row was written (the only true proof of native + DB + SRS). RTL/Maestro prove wiring; only this proves the device. **Unblocks all of Phase 3+.** On finish: tell the agent → `/orchestrate sync`.
+Cold-launch confirmed on device. **Recommend:** run full learn-flow → Quick-check → srs_state row write before kicking off Phase 3 tasks (proves SRS + SQLite end-to-end on real hardware). **Unblocks: BETA-1, RC-1, AUTH-1.**
 
 ---
 
@@ -143,11 +147,12 @@ verify: word + sentence audio generated for shipped content; bundled
 
 ### BETA-1 · TestFlight + Play Internal distribution
 ```
-id: BETA-1   phase: 2   status: blocked   owner: ryan
+id: BETA-1   phase: 2   status: ready   owner: ryan
 depends_on: [BUILD-1]   parallel_safe: false   paths: []
+blocked_by: TestFlight build upload (eas submit) + Play Console internal track setup
 verify: build distributed to internal testers on both tracks; analytics/Sentry events arriving
 ```
-**Stub:** see `plans/P2_BETA_PLAN.md`. Expand after `BUILD-1`.
+BUILD-1 ✅ — this is now Ryan's next distribution step. See `plans/P2_BETA_PLAN.md`. Run `eas submit --platform ios --profile preview` to push the preview build to TestFlight. Android on hold (iOS-only path for now). Sentry auth token must be set as EAS secret before a production/beta build with source maps: `eas secret:create --scope project --name SENTRY_AUTH_TOKEN --value <token>`.
 
 ### BETA-2 · Recruit 50 beta testers
 ```
@@ -163,12 +168,12 @@ verify: 50 testers enrolled; D7 retention measurable (gate: D7 > 30%)
 
 ### RC-1 · RevenueCat account + product config
 ```
-id: RC-1   phase: 3   status: blocked   owner: ryan
+id: RC-1   phase: 3   status: ready   owner: ryan
 depends_on: [BUILD-1]   parallel_safe: true   paths: [mobile/eas.json]
 blocked_by: RevenueCat account; App Store Connect + Play Console products
 verify: exam_* + all_exams products + entitlements configured; keys in EAS secrets
 ```
-**Stub:** see `plans/P3_REVENUECAT_PLAN.md`.
+BUILD-1 ✅ — unblocked. Still needs external accounts. See `plans/P3_REVENUECAT_PLAN.md`. Unblocks IAP-1 once done.
 
 ### IAP-1 · Wire RevenueCat into paywall + restore + entitlement gating  ⚠ high-risk path
 ```
@@ -180,12 +185,12 @@ verify: purchase → entitlement unlocks pack; restore works; StubIap still defa
 
 ### AUTH-1 · Native Google Sign-In + Sign in with Apple (Guideline 4.8)
 ```
-id: AUTH-1   phase: 3   status: blocked   owner: both
+id: AUTH-1   phase: 3   status: ready   owner: both
 depends_on: [BUILD-1]   parallel_safe: false   paths: [mobile/src/infrastructure/auth/, mobile/app.config.ts]
 blocked_by: native modules require a dev/prod build; Apple requires SIWA whenever Google offered
 verify: both native flows complete; session persists; magic-link still works
 ```
-**Stub:** AU2/AU3, deferred to pre-submission. See `plans/P3_AUTH_PLAN.md`.
+BUILD-1 ✅ — unblocked. AU2/AU3 deferred to pre-submission per Ryan's decision (2026-06-01). See `plans/P3_AUTH_PLAN.md`. Unblocks BACKUP-1 once done.
 
 ### BACKUP-1 · Verify encrypted backup against authenticated uid
 ```

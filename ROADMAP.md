@@ -12,25 +12,24 @@ status: active
 
 ---
 
-## 🔴 Active Front (2026-06-10)
+## 🟡 Active Front (2026-06-10)
 
 **Shipped since 2026-05-31 (verified, committed):**
-- **Figma design 100% finalized** — all 10 screen pages rebuilt from components to gate=PASS, 20-component library, icon set 40 glyphs, WCAG-AA contrast fixed. ([memory](memory/MEMORY.md))
-- **Rich Word-Detail data model** — Phase 1 schema, Phase 3 mobile read layer, Phase 4 multi-sense UI, Phase 1 content-tool synthesis + pre-write validation (CONTENT-1 ✅) all DONE + green (165 / 474 tests). Phase 2 paid enrichment is **Ryan's next task** (top-N by frequency, top-tier model). Plan: [plans/RICH_WORD_DETAIL_PLAN.md](plans/RICH_WORD_DETAIL_PLAN.md).
-- **Learn-loop wired** (`8fab926`) — LearnCardScreen hands batch to `/learn-check` (SRS seeding step). 474 tests green. RTL harness + Maestro flow (E2E-1 ✅) both landed.
-- **16+ age gate complete** (LEGAL-2 ✅) — AsyncStorage persistence + dead-end rejection screen + 5 render tests.
-- **expo-doctor clean** (STORE-3 ✅) — 16/18 checks pass; metro@0.84.4 benign; `.expo/` untracked from git. No SDK bump needed pre-launch.
-- **RTL test-utils + renderWithProviders** (RTL-1 ✅, 2026-06-10) — shared BATCH fixture extracted to `test-utils/`, inline providers replaced; 479 tests green.
-- **LEGAL-3 data export** (✅, 2026-06-10) — `UserDataExportUseCase` + Settings "Export my data" → Share Sheet; Apple 5.1.1(v) done.
-- **STORE-1 store assets draft** (✅, 2026-06-10) — `plans/STORE_ASSETS_PLAN.md`: App Store copy, keywords, 6-screen screenshot spec.
+- **BUILD-1 ✅ CLEARED** — EAS preview build succeeded; app confirmed on physical device. Phase 3+ unblocked.
+- **Figma design 100% finalized** — all 10 screen pages gate=PASS, 20-component library, icon set 40 glyphs, WCAG-AA contrast fixed.
+- **Rich Word-Detail data model** — schema + mobile read layer + multi-sense UI + content-tool synthesis + pre-write validation (CONTENT-1 ✅). Phase 2 paid enrichment is Ryan's next content task.
+- **Learn-loop wired** (`8fab926`) — LearnCardScreen → `/learn-check` (SRS seeding). RTL harness + Maestro flow (E2E-1 ✅) landed.
+- **16+ age gate** (LEGAL-2 ✅), **expo-doctor clean** (STORE-3 ✅), **RTL test-utils** (RTL-1 ✅), **data export** (LEGAL-3 ✅), **store assets draft** (STORE-1 ✅).
 
-**▶ Next, in order:**
-1. **C0 on-device smoke (Ryan — THE GATE).** `cd mobile && eas build --platform ios --profile preview`, install on device, tap through learn flow, confirm Quick check appears, confirm an `srs_state` row written. Only this proves native + DB + SRS. Unblocks all of Phase 3+.
-2. **Phase 2 paid enrichment run (Ryan).** CONTENT-1 ✅ — synthesis + pre-write validation exist. Parameters: top-N by frequency, top-tier model (cheap bulk = slop). CONTENT-2 is now `ready` (was blocked on CONTENT-1).
+**▶ Next, in order (all Ryan-owned or externally blocked):**
+1. **Full on-device smoke (Ryan — recommended before Phase 3).** Tap through learn batch → confirm Quick-check appears → confirm `srs_state` row written. Proves SRS + SQLite on real hardware.
+2. **TestFlight distribution (BETA-1).** `eas submit --platform ios --profile preview`. Recruit beta testers.
+3. **Phase 2 paid enrichment run (CONTENT-2).** Top-N by frequency, top-tier model. CONTENT-1 ✅ unblocked it.
+4. **RevenueCat account + App Store Connect products (RC-1).** External; unblocks IAP-1 (paywall wiring).
 
 **Tracked, lower priority:**
-- **Dependabot:** ~11 remaining alerts — transitive Expo-build-tooling (tar×6, xmldom×4, uuid), accepted until next SDK bump. Overstated for an offline RN app.
-- **Standing launch blockers (Ryan):** physical-device C0 test, fresh EAS build, P-2 beta recruitment, AU2/AU3 native sign-in (deferred to pre-submission).
+- **Dependabot:** ~11 remaining alerts — transitive Expo-build-tooling (tar×6, xmldom×4, uuid), accepted until next SDK bump.
+- **Sentry auth token:** add as EAS secret (`eas secret:create --scope project --name SENTRY_AUTH_TOKEN`) before beta/prod builds — preview currently skips source-map upload.
 
 **21 weeks from validation to 1,000 active users.**
 Solo founder. $194 Year 1 budget. **One-time consumer IAP (exam packs + bundle) via RevenueCat — no subscriptions.** B2B licensing and teacher referrals deferred (door left open). See [pricing model](lexitap-docs/08-financial-legal/REVENUE_MODEL_PRICING.md).
@@ -43,11 +42,11 @@ This root file is the at-a-glance mirror. The canonical product roadmap is [lexi
 
 | Item | Value |
 |------|-------|
-| Phase | **1 — Build** (active; ~30% to launch, not 85% — see [plans/RELEASE_PLAN.md](plans/RELEASE_PLAN.md)) |
+| Phase | **1 → 2/3 — Build gate cleared; entering Beta + Phase 3 setup** (see [plans/RELEASE_PLAN.md](plans/RELEASE_PLAN.md)) |
 | Code written | Domain logic done + tested (SRS, scheduling, mastery, quiz session, DB, 2 widgets). **Fixed 2026-05-30:** words.db delivery (was loading empty on device), `tiers.ts` monetization model, broken Jest harness. Per-table sync was deleted. Auth is a **Phase 3** dependency (not 5). Content: Foundation ~2,848/3,000 sourced (2,881 words / 2,894 memberships across 9 tiers); TOEFL + exam tiers still stubs — see [memory note](memory/2026-05-31_content_count_regression.md). Learn loop wired end-to-end (card → quick-check → SRS) as of 2026-06-09. |
 | Stack | React Native (Expo) + TypeScript + SQLite + Supabase |
 | Target | Global ESL learners (cram schools & test prep individuals) |
-| Last updated | 2026-06-09 (see Active Front above) |
+| Last updated | 2026-06-10 (BUILD-1 cleared; see Active Front above) |
 
 ---
 

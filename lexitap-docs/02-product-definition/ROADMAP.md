@@ -11,21 +11,19 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 > **⚠️ SOURCE OF TRUTH:** [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md) is the current, task-level execution plan (updated 2026-05-31). This file mirrors the phase structure and status for quick reference; **consult RELEASE_PLAN.md for actual dependencies, current blockers, and revised task list** (e.g., auth in P3 not P5, content as the long pole, Phase 2 requires analytics instrumentation, per-table sync deleted). Updates below reconcile this file with the audit.
 
-## 🔴 Active Front (2026-06-10)
+## 🟡 Active Front (2026-06-10)
 
-**Shipped since 2026-05-31:** Figma 100% finalized (10 pages gate=PASS, 20-component library, 40-glyph icon set, WCAG-AA contrast). **Rich Word-Detail model** (felt explanation + teaching examples; additive, zero SRS ripple): Phase 1 schema, Phase 3 mobile read layer, Phase 4 multi-sense UI, **Phase 1 content-tool synthesis + pre-write validation (CONTENT-1 ✅)** all DONE + green (165 / 474 tests). Phase 2 paid enrichment is Ryan's next task. Plan: [../../plans/RICH_WORD_DETAIL_PLAN.md](../../plans/RICH_WORD_DETAIL_PLAN.md).
+**BUILD-1 ✅ CLEARED (2026-06-10):** EAS preview build succeeded; app confirmed on physical device. **Phase 3+ is now unblocked.** Sentry source-map upload disabled for preview/beta profiles (missing `SENTRY_AUTH_TOKEN` EAS secret — add before production builds).
 
-**✅ Learn-loop wired (2026-06-09, `8fab926`):** LearnCardScreen hands batch to `/learn-check` (SRS seeding step). 474 tests green. **✅ RTL harness + Maestro learn-loop flow (E2E-1) both landed (2026-06-10).** Issue [#10](https://github.com/rmg007/LexiTap/issues/10) closed.
+**Shipped since 2026-05-31:** Figma 100% finalized (10 pages gate=PASS, 20-component library, 40-glyph icon set, WCAG-AA contrast). Rich Word-Detail model (schema + read layer + multi-sense UI + content-tool synthesis, CONTENT-1 ✅). Learn-loop wired (`8fab926`). E2E-1 (Maestro), LEGAL-2 (age gate), STORE-3 (expo-doctor), RTL-1 (test-utils), LEGAL-3 (data export), STORE-1 (store assets draft) — all ✅.
 
-**✅ 16+ age gate complete (LEGAL-2, 2026-06-10):** AsyncStorage persistence, permanent dead-end rejection screen, 5 render tests. 474 tests green.
+**▶ Next, in order (all Ryan-owned or externally blocked):**
+1. **Full on-device smoke (recommended).** Learn batch → Quick-check → `srs_state` row written. Proves SRS + SQLite end-to-end on real hardware before Phase 3 work starts.
+2. **TestFlight distribution (BETA-1).** `eas submit --platform ios --profile preview`. Recruit 50 beta testers.
+3. **Phase 2 paid enrichment (CONTENT-2).** Top-N by frequency, top-tier model. CONTENT-1 ✅ done.
+4. **RevenueCat + App Store Connect (RC-1).** External accounts needed; unblocks IAP-1 (paywall wiring).
 
-**✅ expo-doctor clean (STORE-3, 2026-06-10):** 16/18 checks pass; metro@0.84.4 benign; `.expo/` untracked. No SDK bump needed pre-launch.
-
-**✅ Pull-forward batch (2026-06-10):** RTL-1 (`test-utils/learnFixtures.ts` + `renderWithProviders.tsx`, 479 tests green). LEGAL-3 (`UserDataExportUseCase` + Settings export button, Apple 5.1.1(v) done). STORE-1 (`plans/STORE_ASSETS_PLAN.md` — full App Store copy, keywords, 6-screen screenshot spec).
-
-**▶ Next, in order:** (1) **C0 on-device smoke (Ryan — THE GATE):** `eas build --platform ios --profile preview`, install on device, tap through learn flow, confirm Quick check appears, confirm `srs_state` row written — only this proves native+DB+SRS; unblocks all of Phase 3+. (2) **Phase 2 paid enrichment run (Ryan):** CONTENT-1 ✅ done; CONTENT-2 now `ready` — top-N by frequency, top-tier model.
-
-**Tracked, lower priority:** ~11 Dependabot alerts remaining — transitive Expo-build-tooling (accepted until SDK bump); standing launch blockers (physical-device C0 test, fresh EAS build, P-2 beta recruitment, AU2/AU3 native sign-in).
+**Tracked, lower priority:** ~11 Dependabot alerts (transitive Expo tooling, accepted until SDK bump).
 
 The detailed product roadmap: 6 phases across 21 weeks, two parallel build tracks, deliverables and gates per phase, and the post-launch content-drop cadence. This doc expands the at-a-glance tracker [../../ROADMAP.md](../../ROADMAP.md). Feature detail is in [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md); requirements in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md).
 
@@ -33,9 +31,9 @@ The detailed product roadmap: 6 phases across 21 weeks, two parallel build track
 
 | Item | Value |
 |------|-------|
-| Phase | **1 — Build** (active; ~30% to launch — see [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md)) |
+| Phase | **1 → 2/3 — Build gate cleared; entering Beta + Phase 3 setup** (see [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md)) |
 | Code written | Track A CLI exists; content is Foundation ~2,848/3,000 sourced (2,881 words / 2,894 memberships across 9 tiers; TOEFL + exam tiers still stubs). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB) + rich word-detail read layer + multi-sense UI (459 tests). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. Learn loop wired end-to-end (card → quick-check → SRS) as of 2026-06-09. |
-| Last updated | 2026-06-09 (see Active Front above) |
+| Last updated | 2026-06-10 (BUILD-1 cleared; see Active Front above) |
 
 ## Table of Contents
 
