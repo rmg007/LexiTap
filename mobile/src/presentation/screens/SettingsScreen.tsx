@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Modal, Pressable, Share, View, type ViewStyle, Switch, Linking } from 'react-native';
 import { router } from 'expo-router';
+import Constants from 'expo-constants';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme, useThemePreference, type ThemePreference } from '@/presentation/theme';
 import { Text, Card } from '@/presentation/components';
@@ -305,7 +306,15 @@ export function SettingsScreen(): React.JSX.Element {
       </Card>
 
       <Text variant="caption" color="textTertiary">
-        {`${APP_ID} · v0.1.0`}
+        {(() => {
+          const version = Constants.expoConfig?.version ?? '—';
+          const build = Constants.nativeBuildVersion ?? '—';
+          const rawDate = Constants.expoConfig?.extra?.buildDate as string | undefined;
+          const date = rawDate
+            ? new Date(rawDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+            : null;
+          return [APP_ID, `v${version}`, `build ${build}`, date].filter(Boolean).join(' · ');
+        })()}
       </Text>
 
       {dbHealth !== null && (

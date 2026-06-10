@@ -49,6 +49,9 @@ const config: ExpoConfig = {
     supportsTablet: true,
     bundleIdentifier: 'com.lexitap.app',
     appleTeamId: 'W8FZGT253G',
+    // Build 1 (iOS 18.2 SDK) was rejected by App Store Connect (error 90725 —
+    // must be built with iOS 26 SDK). Build 2 is the first iOS-26-SDK upload.
+    buildNumber: '2',
     infoPlist: {
       // App only uses standard HTTPS/TLS — exempt from export compliance docs.
       ITSAppUsesNonExemptEncryption: false,
@@ -72,6 +75,7 @@ const config: ExpoConfig = {
     revenueCatApiKey: process.env.EXPO_PUBLIC_REVENUCAT_API_KEY ?? null,
     sentryDsn: process.env.EXPO_PUBLIC_SENTRY_DSN ?? null,
     posthogApiKey: process.env.EXPO_PUBLIC_POSTHOG_API_KEY ?? null,
+    buildDate: new Date().toISOString(),
   },
   owner: 'rmg007',
 };
