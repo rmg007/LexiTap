@@ -7,7 +7,7 @@ import {
   TIER,
   defaultServices,
   renderWithProviders,
-} from '@/presentation/screens/__fixtures__/learnFixtures';
+} from '@/test-utils/renderWithProviders';
 
 // Render test for the SRS-seeding half of the learn loop
 // (RTL_RENDER_HARNESS_PLAN.md): answering each quick-check question must call
