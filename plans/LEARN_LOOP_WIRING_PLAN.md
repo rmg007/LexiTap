@@ -1,7 +1,7 @@
 # Learn-Loop Wiring Plan — connect LearnCard → QuickCheck (SRS seeding)
 
-**Status:** accepted (2026-06-09) — pending execution.
-**Severity:** P0 launch blocker. The primary feature's SRS write path is dead.
+**Status:** ✅ DONE (executed 2026-06-09, commit `8fab926`). `npm run check` green (46 suites / 459 tests); `/learn-check` has exactly one referrer (`app/learn.tsx`). `quickcheck`/`done` phase members removed (verified internal-only). Remaining proof: on-device smoke (card flow → quick-check → SRS rows) — folds into the standing C0 device test; no RTL render harness in repo.
+**Severity:** P0 launch blocker (was). The primary feature's SRS write path was dead.
 **Scope:** presentation + routing only. **No `domain/srs`, no `infrastructure/db`, no `user.db` migration.** The SRS write code already exists and is unchanged — this plan only reconnects the navigation that reaches it.
 
 ---

@@ -4,6 +4,10 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## ✅ Session: Learn-loop wiring EXECUTED — P0 closed (2026-06-09)
+
+**[LEARN_LOOP_WIRING_PLAN](../plans/LEARN_LOOP_WIRING_PLAN.md) executed, commit `8fab926`.** `LearnCardScreen.onComplete` → `(batch: Word[]) => void`, final card passes `phase.batch`; `app/learn.tsx` `router.replace('/learn-check', {batch: JSON.stringify(batch), tierId})` (replace not push — Back can't re-enter seen cards). Dropped dead `quickcheck`/`done` phase members (grep-verified internal-only). 2 files, presentation/routing only — **no `domain/srs` / `infrastructure/db` diff.** `npm run check` GREEN (46 suites / 459 tests); `/learn-check` now has exactly one referrer (`app/learn.tsx`). Plan → DONE; P0 line cleared in both roadmaps. **Remaining proof: on-device smoke** (batch → quick-check appears → SRS rows written) — folds into the standing C0 device test (no RTL render harness; routing verified by typecheck only).
+
 ## 🔴 Session: Rich Word-Detail Phase 4 + learn-loop disconnect P0 (2026-06-09)
 
 **[Phase 4 + learn-loop disconnect (2026-06-09_phase4-and-learn-loop-disconnect.md)](2026-06-09_phase4-and-learn-loop-disconnect.md)** — Shipped Phase 4 multi-sense UI in `LearnCardScreen` (`b42504a`, 459 tests). **Found P0 launch blocker: learn loop is open-circuit — `LearnQuickCheckScreen` (the only SRS-writing screen in the learn flow) is fully built but `/learn-check` has ZERO referrers; `LearnCardScreen` still has a `// Stub until Screen 6` handoff → new words never enter spaced repetition.** Fix = thread batch out via `onComplete(batch)` + push `/learn-check`, presentation/routing only (no `domain/srs` diff). Wrote [`plans/LEARN_LOOP_WIRING_PLAN.md`](../plans/LEARN_LOOP_WIRING_PLAN.md) + synced both roadmaps with an "Active Front" block (`ca6a0e1`). ⚠️ Fix NOT executed (Ryan: plans only). Lessons: don't trust stub comments (grep referrers); no RTL render harness in repo (screen tests logic-only); Dependabot 16 alerts mostly transitive dev-only, overstated for offline RN app.

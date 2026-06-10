@@ -15,7 +15,7 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 **Shipped since 2026-05-31:** Figma design 100% finalized (10 pages gate=PASS, 20-component library, 40-glyph icon set, WCAG-AA contrast) — design is now the source of truth, RN port may proceed. **Rich Word-Detail model** (felt explanation per distinct meaning + teaching examples + optional image; **additive, zero quiz/SRS ripple**): Phase 1 schema, Phase 3 mobile read layer, Phase 4 multi-sense UI all DONE + green (459 tests). Phase 2 paid enrichment + Phase 1 content-tool remainder are Ryan's tasks. Plan: [../../plans/RICH_WORD_DETAIL_PLAN.md](../../plans/RICH_WORD_DETAIL_PLAN.md).
 
-**🔴 P0 launch blocker found 2026-06-09 (NOT fixed):** the core **learn loop is disconnected** — LearnCardScreen (exposure) skips the built-but-unreached LearnQuickCheckScreen, which is the *only* place the learn flow writes SRS rows. Result: new words never enter spaced repetition. Fix is presentation/routing only (no `domain/srs` diff). Plan: [../../plans/LEARN_LOOP_WIRING_PLAN.md](../../plans/LEARN_LOOP_WIRING_PLAN.md). **Next code task.**
+**✅ P0 learn-loop disconnect FIXED (2026-06-09, `8fab926`):** LearnCardScreen now hands the batch to `/learn-check` (LearnQuickCheck — the SRS seeding step). Presentation/routing only, no `domain/srs` diff, 459 tests green. Plan executed: [../../plans/LEARN_LOOP_WIRING_PLAN.md](../../plans/LEARN_LOOP_WIRING_PLAN.md). Remaining proof: on-device smoke (folds into the C0 device test).
 
 **Tracked, lower priority:** 16 Dependabot alerts (mostly transitive dev-only; overstated for an offline RN app — triage session); issue #10 RTL render-guard (post-launch); standing launch blockers (physical-device C0 test, fresh EAS build, P-2 beta recruitment, AU2/AU3 native sign-in).
 
@@ -26,7 +26,7 @@ The detailed product roadmap: 6 phases across 21 weeks, two parallel build track
 | Item | Value |
 |------|-------|
 | Phase | **1 — Build** (active; ~30% to launch — see [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md)) |
-| Code written | Track A CLI exists; content is Foundation ~2,848/3,000 sourced (2,881 words / 2,894 memberships across 9 tiers; TOEFL + exam tiers still stubs). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB) + rich word-detail read layer + multi-sense UI (459 tests). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. **🔴 Learn loop disconnected (2026-06-09) — SRS never seeds; see Active Front.** |
+| Code written | Track A CLI exists; content is Foundation ~2,848/3,000 sourced (2,881 words / 2,894 memberships across 9 tiers; TOEFL + exam tiers still stubs). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB) + rich word-detail read layer + multi-sense UI (459 tests). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. Learn loop wired end-to-end (card → quick-check → SRS) as of 2026-06-09. |
 | Last updated | 2026-06-09 (see Active Front above) |
 
 ## Table of Contents
