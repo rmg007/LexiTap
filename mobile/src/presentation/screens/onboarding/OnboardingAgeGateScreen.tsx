@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@/presentation/theme';
 import { Screen } from '@/presentation/screens/Screen';
@@ -12,10 +12,23 @@ import { Text, Button } from '@/presentation/components';
 //   - 'lexitap.age.gate.passed'   = '1' → user already verified ≥16; skip to onContinue immediately
 //   - 'lexitap.age.gate.rejected' = '1' → user previously rejected; show permanent block, no way forward
 //
-// Uses a simple year picker via Pressable (no TextInput — passive-recognition UX invariant).
+// Full date-of-birth picker (month + day + year), each column an independently
+// scrollable Pressable list — no TextInput (passive-recognition UX invariant).
+// (TestFlight feedback 2026-06-10: the old year-only list was a fixed, clipped
+// View with no scroll — most years were unreachable and month/day were locked.)
 
 const AGE_GATE_PASSED_KEY = 'lexitap.age.gate.passed';
 const AGE_GATE_REJECTED_KEY = 'lexitap.age.gate.rejected';
+
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+// Days in a given month/year (handles leap years via day-0 of the next month).
+function daysInMonth(year: number, monthIndex: number): number {
+  return new Date(year, monthIndex + 1, 0).getDate();
+}
 
 export interface OnboardingAgeGateScreenProps {
   // Called when user passes age check and advances to Welcome.
@@ -43,7 +56,6 @@ export function OnboardingAgeGateScreen({ onContinue }: OnboardingAgeGateScreenP
 
   const [dateOfBirth, setDateOfBirth] = useState<Date>(sixteenYearsAgo);
   const [error, setError] = useState<string>('');
-  const [showYearPicker, setShowYearPicker] = useState(false);
   // 'loading' = checking AsyncStorage; 'pending' = waiting for user input; 'rejected' = permanently blocked.
   const [gateStatus, setGateStatus] = useState<GateStatus>('loading');
 
@@ -75,15 +87,31 @@ export function OnboardingAgeGateScreen({ onContinue }: OnboardingAgeGateScreenP
   const age = useMemo(() => calculateAge(dateOfBirth), [dateOfBirth]);
   const isOldEnough = age >= 16;
 
-  const handleYearSelect = useCallback((year: number) => {
-    const newDate = new Date(year, dateOfBirth.getMonth(), dateOfBirth.getDate());
+  // Commit a new DOB, clamping the day to the chosen month/year (e.g. switching
+  // to February from the 31st snaps the day to 28/29). Clears the error once the
+  // selection is valid (≥16).
+  const commitDate = useCallback((year: number, monthIndex: number, day: number) => {
+    const maxDay = daysInMonth(year, monthIndex);
+    const clampedDay = Math.min(day, maxDay);
+    const newDate = new Date(year, monthIndex, clampedDay);
     setDateOfBirth(newDate);
-    setShowYearPicker(false);
-    // Clear error if user corrects their selection.
     if (calculateAge(newDate) >= 16) {
       setError('');
     }
-  }, [dateOfBirth]);
+  }, []);
+
+  const handleMonthSelect = useCallback(
+    (monthIndex: number) => commitDate(dateOfBirth.getFullYear(), monthIndex, dateOfBirth.getDate()),
+    [commitDate, dateOfBirth],
+  );
+  const handleDaySelect = useCallback(
+    (day: number) => commitDate(dateOfBirth.getFullYear(), dateOfBirth.getMonth(), day),
+    [commitDate, dateOfBirth],
+  );
+  const handleYearSelect = useCallback(
+    (year: number) => commitDate(year, dateOfBirth.getMonth(), dateOfBirth.getDate()),
+    [commitDate, dateOfBirth],
+  );
 
   const handleContinue = useCallback(() => {
     if (isOldEnough) {
@@ -106,9 +134,17 @@ export function OnboardingAgeGateScreen({ onContinue }: OnboardingAgeGateScreenP
     day: 'numeric',
   });
 
-  // Generate year options from current year back to 100 years ago.
+  // Picker column options. Years run from this year back 100; days are bounded
+  // by the selected month/year so invalid dates (e.g. Feb 30) can't be picked.
   const currentYear = now.getFullYear();
   const yearOptions = Array.from({ length: 100 }, (_, i) => currentYear - i);
+  const dayOptions = Array.from(
+    { length: daysInMonth(dateOfBirth.getFullYear(), dateOfBirth.getMonth()) },
+    (_, i) => i + 1,
+  );
+  const selectedMonth = dateOfBirth.getMonth();
+  const selectedDay = dateOfBirth.getDate();
+  const selectedYear = dateOfBirth.getFullYear();
 
   // Permanent rejection screen — no way forward.
   if (gateStatus === 'rejected') {
@@ -159,7 +195,7 @@ export function OnboardingAgeGateScreen({ onContinue }: OnboardingAgeGateScreenP
           </Text>
         </View>
 
-        {/* Date display + year picker button */}
+        {/* Date display + full month/day/year picker */}
         <View
           style={{
             backgroundColor: colors.bgSurface,
@@ -181,65 +217,60 @@ export function OnboardingAgeGateScreen({ onContinue }: OnboardingAgeGateScreenP
             </Text>
           </View>
 
-          {/* Year picker button */}
-          <Pressable
-            onPress={() => setShowYearPicker(!showYearPicker)}
-            accessibilityRole="button"
-            accessibilityLabel="Change year of birth"
-            accessibilityState={{ expanded: showYearPicker }}
-            style={({ pressed }) => ({
-              paddingVertical: spacing.s3,
-              paddingHorizontal: spacing.s2,
-              backgroundColor: pressed ? colors.accentSubtle : colors.bgSurfaceRaised,
-              borderRadius: 8,
-              borderWidth: 1,
-              borderColor: colors.borderSubtle,
-            })}
+          {/* Three scrollable columns: Month · Day · Year. Each is independently
+              scrollable so the full range is always reachable. */}
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: spacing.s2,
+              borderTopWidth: 1,
+              borderTopColor: colors.borderSubtle,
+              paddingTop: spacing.s3,
+            }}
           >
-            <Text variant="body" color="accent">
-              {showYearPicker ? 'Hide year picker' : 'Change year'}
-            </Text>
-          </Pressable>
-
-          {/* Year picker list */}
-          {showYearPicker && (
-            <View
-              style={{
-                maxHeight: 200,
-                borderTopWidth: 1,
-                borderTopColor: colors.borderSubtle,
-                paddingTop: spacing.s2,
-                gap: spacing.s1,
-              }}
-            >
-              {yearOptions.map((year) => {
-                const isSelected = year === dateOfBirth.getFullYear();
-                return (
-                  <Pressable
-                    key={year}
-                    onPress={() => handleYearSelect(year)}
-                    accessibilityRole="button"
-                    accessibilityLabel={`Year ${year}`}
-                    accessibilityState={{ selected: isSelected }}
-                    style={({ pressed }) => ({
-                      paddingVertical: spacing.s2,
-                      paddingHorizontal: spacing.s2,
-                      backgroundColor: isSelected ? colors.accentSubtle : pressed ? colors.bgSurfaceRaised : undefined,
-                      borderRadius: 4,
-                    })}
-                  >
-                    <Text
-                      variant="body"
-                      color={isSelected ? 'accent' : 'textPrimary'}
-                      style={{ fontWeight: isSelected ? '700' : '400' }}
-                    >
-                      {year}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          )}
+            {/* Month column */}
+            <PickerColumn
+              title="Month"
+              flex={1.4}
+              options={MONTH_NAMES.map((name, i) => ({
+                key: `m-${i}`,
+                label: name,
+                a11yLabel: `Month ${name}`,
+                selected: i === selectedMonth,
+                onPress: () => handleMonthSelect(i),
+              }))}
+              colors={colors}
+              spacing={spacing}
+            />
+            {/* Day column */}
+            <PickerColumn
+              title="Day"
+              flex={0.8}
+              options={dayOptions.map((d) => ({
+                key: `d-${d}`,
+                label: String(d),
+                a11yLabel: `Day ${d}`,
+                selected: d === selectedDay,
+                onPress: () => handleDaySelect(d),
+              }))}
+              colors={colors}
+              spacing={spacing}
+            />
+            {/* Year column */}
+            <PickerColumn
+              title="Year"
+              flex={1}
+              options={yearOptions.map((year) => ({
+                key: `y-${year}`,
+                label: String(year),
+                a11yLabel: `Year ${year}`,
+                selected: year === selectedYear,
+                onPress: () => handleYearSelect(year),
+              }))}
+              colors={colors}
+              spacing={spacing}
+            />
+          </View>
         </View>
 
         {/* Display age */}
@@ -297,5 +328,69 @@ export function OnboardingAgeGateScreen({ onContinue }: OnboardingAgeGateScreenP
         />
       </View>
     </Screen>
+  );
+}
+
+// ─── Picker column ────────────────────────────────────────────────────────────
+// A single scrollable column of selectable values (Month / Day / Year). Pure
+// Pressable + ScrollView — no TextInput (passive-recognition invariant).
+
+interface PickerOption {
+  key: string;
+  label: string;
+  a11yLabel: string;
+  selected: boolean;
+  onPress: () => void;
+}
+
+interface PickerColumnProps {
+  title: string;
+  flex: number;
+  options: PickerOption[];
+  colors: ReturnType<typeof useTheme>['colors'];
+  spacing: ReturnType<typeof useTheme>['spacing'];
+}
+
+function PickerColumn({ title, flex, options, colors, spacing }: PickerColumnProps): React.JSX.Element {
+  return (
+    <View style={{ flex, gap: spacing.s1 }}>
+      <Text variant="caption" color="textTertiary" style={{ textAlign: 'center' }}>
+        {title}
+      </Text>
+      <ScrollView
+        style={{ maxHeight: 180 }}
+        nestedScrollEnabled
+        showsVerticalScrollIndicator
+        contentContainerStyle={{ gap: spacing.s1, paddingVertical: spacing.s1 }}
+      >
+        {options.map((opt) => (
+          <Pressable
+            key={opt.key}
+            onPress={opt.onPress}
+            accessibilityRole="button"
+            accessibilityLabel={opt.a11yLabel}
+            accessibilityState={{ selected: opt.selected }}
+            style={({ pressed }) => ({
+              paddingVertical: spacing.s2,
+              paddingHorizontal: spacing.s2,
+              borderRadius: 4,
+              backgroundColor: opt.selected
+                ? colors.accentSubtle
+                : pressed
+                  ? colors.bgSurfaceRaised
+                  : undefined,
+            })}
+          >
+            <Text
+              variant="body"
+              color={opt.selected ? 'accent' : 'textPrimary'}
+              style={{ textAlign: 'center', fontWeight: opt.selected ? '700' : '400' }}
+            >
+              {opt.label}
+            </Text>
+          </Pressable>
+        ))}
+      </ScrollView>
+    </View>
   );
 }

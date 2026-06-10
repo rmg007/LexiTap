@@ -240,7 +240,7 @@ export function LearnCardScreen({
           {/* Audio button: only show when audioPath exists */}
           {word.audioPath != null && (
             <Button
-              label="♪"
+              label="Listen"
               variant="tertiary"
               accessibilityLabel="Play pronunciation"
               onPress={() => {

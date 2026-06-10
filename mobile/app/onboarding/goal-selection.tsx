@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { View } from 'react-native';
 import { router } from 'expo-router';
 import { Screen } from '@/presentation/screens/Screen';
-import { Text, Button, SelectionCard } from '@/presentation/components';
+import { Text, Button, SelectionCard, Icon, type IconName } from '@/presentation/components';
 import { useServices } from '@/presentation/services';
 import type { LearningGoal } from '@/domain/index';
 
-const GOALS: { value: LearningGoal; label: string; icon: string }[] = [
-  { value: 'general', label: 'General English', icon: '📖' },
-  { value: 'professional', label: 'Work & Business', icon: '💼' },
-  { value: 'academic', label: 'Academic English', icon: '🎓' },
-  { value: 'exam', label: 'Exam Prep', icon: '📝' },
+const GOALS: { value: LearningGoal; label: string; icon: IconName }[] = [
+  { value: 'general', label: 'General English', icon: 'book-open' },
+  { value: 'professional', label: 'Work & Business', icon: 'briefcase' },
+  { value: 'academic', label: 'Academic English', icon: 'graduation-cap' },
+  { value: 'exam', label: 'Exam Prep', icon: 'pencil' },
 ];
 
 export default function GoalSelectionRoute(): React.JSX.Element {
@@ -34,7 +34,7 @@ export default function GoalSelectionRoute(): React.JSX.Element {
             <SelectionCard
               key={g.value}
               label={g.label}
-              icon={<Text variant="label" color="textPrimary">{g.icon}</Text>}
+              icon={<Icon name={g.icon} size={24} color="textPrimary" />}
               selected={selected === g.value}
               onPress={() => setSelected(g.value)}
             />

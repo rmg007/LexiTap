@@ -2,6 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '@/presentation/theme';
 import { Text } from '@/presentation/components/Text';
+import { Icon, type IconName } from '@/presentation/components/Icon';
 import type { StreakState } from '@/domain/index';
 import type { ColorTokens } from '@/presentation/theme';
 
@@ -31,11 +32,11 @@ export function resolveStreakVisualState(input: StreakBadgeInput): StreakVisualS
   return 'active';
 }
 
-const GLYPH: Record<StreakVisualState, string> = {
-  active: '🔥',
-  at_risk: '🔥',
-  frozen: '❄️',
-  none: '🔥',
+const GLYPH: Record<StreakVisualState, IconName> = {
+  active: 'flame',
+  at_risk: 'flame',
+  frozen: 'snowflake',
+  none: 'flame',
 };
 
 function tintFor(state: StreakVisualState): keyof ColorTokens {
@@ -101,9 +102,7 @@ export function StreakBadge({
         borderColor: colors.caution,
       }}
     >
-      <Text variant="label" color={tint} accessibilityElementsHidden>
-        {GLYPH[state]}
-      </Text>
+      <Icon name={GLYPH[state]} size={16} color={tint} />
       <Text variant="mono" color={tint} tabularNums accessibilityElementsHidden>
         {String(streak.currentStreak)}
       </Text>

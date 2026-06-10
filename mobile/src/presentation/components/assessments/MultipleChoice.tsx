@@ -9,6 +9,7 @@ import { useTheme } from '@/presentation/theme';
 import { useMotion } from '@/presentation/theme/useMotion';
 import { Text } from '@/presentation/components/Text';
 import { Button } from '@/presentation/components/Button';
+import { Icon, type IconName } from '@/presentation/components/Icon';
 import { hapticsSelect, hapticsCorrect, hapticsCorrection } from '@/presentation/services/haptics';
 import {
   optionFeedback,
@@ -35,12 +36,12 @@ export interface MultipleChoiceProps {
   revealed?: boolean;
 }
 
-const FEEDBACK_ICON: Record<OptionFeedback, string> = {
-  idle: '',
-  selected: '',
-  correct: '✓',
-  incorrect: '–',
-  reveal_correct: '✓',
+const FEEDBACK_ICON: Record<OptionFeedback, IconName | null> = {
+  idle: null,
+  selected: null,
+  correct: 'check',
+  incorrect: 'minus',
+  reveal_correct: 'check',
 };
 
 function baseOptionStyle(theme: Theme): ViewStyle {
@@ -146,10 +147,8 @@ function OptionCard({ option, state, theme, revealed, onSelect }: OptionCardProp
         ]}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.s2 }}>
-          {icon !== '' && (
-            <Text variant="label" color={iconColor(state)} accessibilityElementsHidden>
-              {icon}
-            </Text>
+          {icon !== null && (
+            <Icon name={icon} size={18} color={iconColor(state)} />
           )}
           <Text variant="bodyLg" color="textPrimary" style={{ flexShrink: 1 }}>
             {option.label}

@@ -1,6 +1,7 @@
 export { Text, type TextProps } from '@/presentation/components/Text';
 export { Button, type ButtonProps, type ButtonVariant } from '@/presentation/components/Button';
 export { Card, type CardProps } from '@/presentation/components/Card';
+export { Icon, type IconProps, type IconName } from '@/presentation/components/Icon';
 export { SelectionCard, type SelectionCardProps } from '@/presentation/components/SelectionCard';
 export { ProgressBar, clampProgress, SegmentedProgress, type ProgressBarProps, type SegmentedProgressProps } from '@/presentation/components/ProgressBar';
 export { RadioButton, type RadioButtonProps } from '@/presentation/components/RadioButton';

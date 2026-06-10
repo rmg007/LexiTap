@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme } from '@/presentation/theme';
-import { Text, Button, StreakBadge } from '@/presentation/components';
+import { Text, Button, StreakBadge, Icon } from '@/presentation/components';
 import { hapticsStreakIncrement } from '@/presentation/services/haptics';
 
 // Session Complete — spec: lexitap-docs/03-ux-design/screens/SessionComplete.md
@@ -62,13 +62,7 @@ export function SessionCompleteScreen({
         }}
       >
         {/* A — completion mark */}
-        <Text
-          variant="title"
-          color="success"
-          accessibilityLabel="Session complete"
-        >
-          {'✓'}
-        </Text>
+        <Icon name="check" size={40} color="success" accessibilityLabel="Session complete" />
 
         {/* B — headline */}
         <Text variant="headline" color="textPrimary" accessibilityRole="header">

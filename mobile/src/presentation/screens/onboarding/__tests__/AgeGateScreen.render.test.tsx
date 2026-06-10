@@ -76,16 +76,14 @@ describe('OnboardingAgeGateScreen (render)', () => {
     const currentYear = new Date().getFullYear();
     const under16Year = currentYear - 10; // 10 years old → clearly under-16.
 
-    const { findByText, getByText, getByLabelText, findByLabelText } = await renderAgeGate();
+    const { findByText, getByText, findByLabelText } = await renderAgeGate();
 
     // Wait for the gate to be in pending state.
     await findByText("What's your date of birth?");
 
-    // Open the year picker and select a year that is under 16. React 19 defers
-    // these onPress setState updates; a real-timer tick lets them flush (waitFor's
-    // act-wrapped polling does not reliably observe the picker toggle).
-    fireEvent.press(getByLabelText('Change year of birth'));
-    await flushDeferred();
+    // Select a year that is under 16 from the always-visible year column. React 19
+    // defers these onPress setState updates; a real-timer tick lets them flush
+    // (waitFor's act-wrapped polling does not reliably observe the picker update).
     fireEvent.press(await findByLabelText(`Year ${under16Year}`));
     await flushDeferred();
 
@@ -106,16 +104,14 @@ describe('OnboardingAgeGateScreen (render)', () => {
     const over16Year = currentYear - 20; // 20 years old → clearly over-16.
 
     const onContinue = jest.fn();
-    const { findByText, getByText, getByLabelText, findByLabelText } = await renderAgeGate({ onContinue });
+    const { findByText, getByText, findByLabelText } = await renderAgeGate({ onContinue });
 
     // Wait for the gate to be in pending state.
     await findByText("What's your date of birth?");
 
-    // Open the year picker and select a year that is >=16. React 19 defers these
-    // onPress setState updates; a real-timer tick lets them flush (waitFor's
-    // act-wrapped polling does not reliably observe the picker toggle).
-    fireEvent.press(getByLabelText('Change year of birth'));
-    await flushDeferred();
+    // Select a year that is >=16 from the always-visible year column. React 19
+    // defers these onPress setState updates; a real-timer tick lets them flush
+    // (waitFor's act-wrapped polling does not reliably observe the picker update).
     fireEvent.press(await findByLabelText(`Year ${over16Year}`));
     await flushDeferred();
 

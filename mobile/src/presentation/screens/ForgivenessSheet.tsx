@@ -3,6 +3,7 @@ import { Modal, View, StyleSheet, useWindowDimensions } from 'react-native';
 import { useTheme } from '@/presentation/theme';
 import { Text } from '@/presentation/components/Text';
 import { Button } from '@/presentation/components/Button';
+import { Icon } from '@/presentation/components/Icon';
 
 // Forgiveness Sheet — shown when the learner hits the soft daily cap mid-session.
 // Spec: lexitap-docs/03-ux-design/screens/ForgivenessSheet.md
@@ -92,13 +93,14 @@ export function ForgivenessSheet({
               : 'Streak secured'
           }
         >
+          <Icon name="flame" size={20} color="streak" />
           <Text
             variant="bodyLg"
             color="streak"
             accessibilityElementsHidden
             style={{ textAlign: 'center' }}
           >
-            {'🔥 Streak secured'}
+            Streak secured
           </Text>
           {currentStreak > 0 && (
             <Text

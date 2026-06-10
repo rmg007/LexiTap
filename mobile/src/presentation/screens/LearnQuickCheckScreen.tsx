@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme } from '@/presentation/theme';
-import { Text, Button, ProgressBar } from '@/presentation/components';
+import { Text, Button, ProgressBar, Icon } from '@/presentation/components';
 import { MultipleChoice } from '@/presentation/components/assessments';
 import type { AssessmentAnswer } from '@/presentation/components/assessments/types';
 import { useServices } from '@/presentation/services';
@@ -223,9 +223,7 @@ export function LearnQuickCheckScreen({
             }}
             accessibilityLiveRegion="polite"
           >
-            <Text variant="label" color="success">
-              {'✓'}
-            </Text>
+            <Icon name="check" size={18} color="success" />
             <Text variant="body" color="success" style={{ flex: 1 }}>
               {phase.wasCorrect ? phase.chosenValue : phase.correctValue}
             </Text>

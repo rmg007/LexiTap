@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, ScrollView, Pressable, ActivityIndicator } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useTheme } from '@/presentation/theme';
 import type { ColorTokens, Radii, Spacing } from '@/presentation/theme/tokens';
-import { Text, Button, Card } from '@/presentation/components';
+import { Text, Button, Card, Icon } from '@/presentation/components';
 import type { TierConfigEntry } from '@/config/tiers';
 import { listTiers } from '@/config/tiers';
 import { useServices } from '@/presentation/services';
@@ -14,7 +15,9 @@ import { useServices } from '@/presentation/services';
 //
 // Accessibility:
 // - Header + product cards accessible via screen reader.
-// - "Subscribe" buttons: 64px primary (teal gradient) — WCAG AA 48pt minimum.
+// - "Unlock" buttons: 64px primary (teal gradient) — WCAG AA 48pt minimum.
+//   (Copy is "Unlock", not "Subscribe": one-time non-consumable IAPs, no
+//   recurring billing — Apple 3.1.1.)
 // - Bundle card highlighted with accent background + "Best value" badge.
 // - Focus order: top-to-bottom (dismiss first, then products, then CTA).
 // - Contrast: 4.5:1 on price/description text; on-accent label on primary button.
@@ -28,6 +31,7 @@ export interface PaywallScreenProps {
 
 export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: PaywallScreenProps): React.JSX.Element {
   const { colors, spacing, radii } = useTheme();
+  const insets = useSafeAreaInsets();
   const { analytics, iap } = useServices();
   // sku of the in-progress purchase (null = idle)
   const [purchasing, setPurchasing] = useState<string | null>(null);
@@ -94,8 +98,11 @@ export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: Pa
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bgBase }}>
-      {/* Header + Dismiss button */}
-      <View style={{ paddingHorizontal: spacing.s4, paddingTop: spacing.s4, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+      {/* Header + Dismiss button. paddingTop includes the safe-area inset so the
+          title + dismiss control clear the status bar / Dynamic Island on notched
+          devices — this screen renders its own View (not the Screen scaffold),
+          so the inset must be applied here. (TestFlight feedback 2026-06-10.) */}
+      <View style={{ paddingHorizontal: spacing.s4, paddingTop: spacing.s4 + insets.top, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <Text variant="headline" color="textPrimary" accessibilityRole="header">
           Unlock Exam Prep
         </Text>
@@ -108,9 +115,7 @@ export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: Pa
             padding: spacing.s2,
           })}
         >
-          <Text variant="label" color="accent">
-            ✕
-          </Text>
+          <Icon name="x" size={24} colorValue={colors.accent} />
         </Pressable>
       </View>
 
@@ -240,9 +245,7 @@ function ProductCard({
             }}
             accessible={false}
           >
-            <Text variant="headline" color="accent">
-              📚
-            </Text>
+            <Icon name="library" size={28} colorValue={colors.accent} />
           </View>
 
           {/* Title + description */}
@@ -271,10 +274,10 @@ function ProductCard({
             />
           ) : (
             <Button
-              label="Subscribe"
+              label="Unlock"
               variant="primary"
               onPress={onPress}
-              accessibilityLabel={`Subscribe to ${tier.displayName} for $${price?.toFixed(2) ?? 'contact'}`}
+              accessibilityLabel={`Unlock ${tier.displayName} for $${price?.toFixed(2) ?? 'contact'}`}
             />
           )}
         </View>

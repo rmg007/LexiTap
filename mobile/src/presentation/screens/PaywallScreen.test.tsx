@@ -200,11 +200,13 @@ describe('PaywallScreen', () => {
       expect('Dismiss paywall').toBeTruthy();
     });
 
-    it('subscribe button has accessibilityLabel including pack name + price', () => {
+    it('unlock button has accessibilityLabel including pack name + price', () => {
       // Button component accepts accessibilityLabel prop.
-      // Label format: "Subscribe to {tier.displayName} for ${price}"
-      const label = 'Subscribe to TOEFL Prep for $9.99';
-      expect(label).toMatch(/Subscribe to .+ for \$/);
+      // Label format: "Unlock {tier.displayName} for ${price}" — "Unlock" not
+      // "Subscribe": these are one-time non-consumable IAPs, not subscriptions
+      // (Apple 3.1.1 — copy must not imply recurring billing).
+      const label = 'Unlock TOEFL Prep for $9.99';
+      expect(label).toMatch(/Unlock .+ for \$/);
     });
 
     it('icon view is accessible=false (decorative)', () => {

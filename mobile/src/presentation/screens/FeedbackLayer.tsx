@@ -7,7 +7,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useTheme } from '@/presentation/theme';
-import { Text, Button } from '@/presentation/components';
+import { Text, Button, Icon } from '@/presentation/components';
 
 // Feedback layer shown after answer submission — slides up from frame bottom.
 // Two states: Correct (success row + affirm copy) and Gentle Correction
@@ -66,7 +66,6 @@ function AnswerRow({
   textColor,
 }: AnswerRowProps): React.JSX.Element {
   const { spacing, radii } = useTheme();
-  const symbol = icon === 'check' ? '✓' : '–';
 
   return (
     <View
@@ -82,9 +81,7 @@ function AnswerRow({
         gap: spacing.s3,
       }}
     >
-      <Text variant="headline" style={{ color: textColor }} allowFontScaling={false}>
-        {symbol}
-      </Text>
+      <Icon name={icon === 'check' ? 'check' : 'minus'} size={20} colorValue={textColor} />
       <Text variant="body" style={{ color: textColor, flex: 1 }}>
         {value}
       </Text>
