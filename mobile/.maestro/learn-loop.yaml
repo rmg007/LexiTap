@@ -4,8 +4,14 @@
 #   /learn (LearnCardScreen) → onComplete(batch) → router.replace('/learn-check')
 #   → LearnQuickCheckScreen → onComplete() → router.replace('/')
 #
-# CANNOT run green until BUILD-1 (EAS device build) is complete.
-# Syntax is valid; update button labels if UI copy changes before that build.
+# Selector notes (iOS + React Native 0.85 / Expo SDK 56):
+#   - On iOS, all element text is in `accessibilityText` (never `text`). Maestro
+#     matches `tapOn: text:` against `accessibilityText` with anchored regex.
+#   - PrimaryButton wraps label text in LinearGradient, which hides inner Text
+#     from XCUITest. The Pressable's `accessibilityLabel` is the only selector.
+#   - When a Pressable carries an explicit `accessibilityLabel` override the
+#     child Text is absorbed: tap by the override, not the visual string.
+#   - `visible:` uses substring/unanchored matching; `tapOn: text:` is anchored.
 #
 # Run: maestro test mobile/.maestro/learn-loop.yaml
 #   (requires app installed on a booted iOS/Android device or simulator)
@@ -17,11 +23,12 @@ appId: com.lexitap.app
 
 # ── 2. Tap through minimum onboarding to reach Home ──────────────────────────
 # O-0: Age gate
+# Button has accessibilityLabel override "Continue to LexiTap" (age ≥ 16 path).
 - extendedWaitUntil:
     visible: "Your age"
     timeout: 30000
 - tapOn:
-    text: "Continue"
+    text: "Continue to LexiTap"
 
 # O-1: Welcome
 - extendedWaitUntil:
@@ -30,21 +37,22 @@ appId: com.lexitap.app
 - tapOn:
     text: "Get started"
 
-# O-2: Goal selection — pick "Everyday English" (first option)
+# O-2: Goal selection — pick "General English" (first option, value='general')
+# SelectionCard uses accessibilityLabel={label}; label is "General English".
 - extendedWaitUntil:
-    visible: "Continue"
+    visible: "General English"
     timeout: 10000
 - tapOn:
-    text: "Everyday English"
+    text: "General English"
 - tapOn:
     text: "Continue"
 
 # O-4: Adaptive diagnostic — answer "No, not yet" for every word so the
 # band-walk terminates quickly without requiring us to know any answers.
-# The diagnostic auto-advances when it has enough signal (DIAG-A stops after
-# ~10 items). We loop up to 15 taps to cover any batch size.
+# DIAG-A stops after ~15-40 items depending on convergence. Using 50 as a
+# safe ceiling; the runFlow `when:` guard makes extra iterations harmless.
 - repeat:
-    times: 15
+    times: 50
     commands:
       - runFlow:
           when:
@@ -61,23 +69,35 @@ appId: com.lexitap.app
     text: "Start learning"
 
 # O-6: Paywall — dismiss to continue for free (marks onboarding complete)
+# Dismiss Pressable has accessibilityLabel="Dismiss paywall"; inner "✕" is hidden.
+#
+# ⚠️  KNOWN APP BUG — this step FAILS on notched iOS devices (see bug note below).
+#
+# PaywallScreen uses a bare <View> with no safe-area handling. On iPhone 11 Pro
+# Max (and all notched/Dynamic-Island iPhones), the header row renders starting
+# at y=0 (behind the system status bar). The dismiss Pressable's accessibility
+# bounds are [387,17][398,37] — center (392.5, 27) — fully inside the 44pt safe
+# area zone. XCUITest sends the tap to (392.5, 27) but the onPress never fires;
+# before/after screenshots are identical. The fix is to add useSafeAreaInsets()
+# to PaywallScreen and apply insets.top to the header paddingTop.
+# Bug filed in memory: see memory/2026-06-10_paywall-safe-area-bug.md
 - extendedWaitUntil:
     visible: "Unlock Exam Prep"
     timeout: 10000
 - tapOn:
-    text: "✕"
+    text: "Dismiss paywall"
 
 # ── 3. Home: tap "Learn new words" ──────────────────────────────────────────
-# The label includes a dynamic count: "Learn new words (N left today)".
-# Maestro partial-text match on the stable prefix.
+# The button label is dynamic: "Learn new words (N left today)".
+# Use anchored regex prefix match to handle the count suffix.
 - extendedWaitUntil:
     visible: "Learn new words"
     timeout: 15000
 - tapOn:
-    text: "Learn new words"
+    text: "Learn new words.*"
 
 # ── 4. Advance through ALL cards in the batch ────────────────────────────────
-# Each card has a "Got it" primary button. Tap up to BATCH_LIMIT (10) times.
+# Each card has a "Got it" primary button (accessibilityLabel="Got it").
 # The final tap calls onComplete(batch) → router.replace('/learn-check').
 - extendedWaitUntil:
     visible: "Got it"
@@ -100,12 +120,11 @@ appId: com.lexitap.app
 - assertVisible: "Quick check"
 
 # ── 6. Answer one question (tap any option, then Continue) ───────────────────
-# MultipleChoice renders 4 option buttons. We can't know the correct answer at
-# test-write time, so tap the first visible option and then Continue.
+# MultipleChoice options have accessibilityRole="radio" and a word-definition
+# label. We cannot predict the label at write-time, so tap the first interactive
+# radio element. `index: 0` with no text picks the first interactive element.
 - tapOn:
     index: 0
-    text: ".*"
-    # Maestro regex: any text — will hit whichever option renders first
 - extendedWaitUntil:
     visible: "Continue"
     timeout: 10000
@@ -113,7 +132,7 @@ appId: com.lexitap.app
     text: "Continue"
 
 # ── 7. Assert return to Home / study-session tab ─────────────────────────────
-# HomeScreen renders "Learn new words" as the secondary CTA.
+# HomeScreen renders "Learn new words (N left today)" as the secondary CTA.
 - extendedWaitUntil:
     visible: "Learn new words"
     timeout: 15000
