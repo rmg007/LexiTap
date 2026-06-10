@@ -13,3 +13,28 @@
 
 **Patterns / lessons:**
 - Concurrent-session hygiene held: another session was editing LearnCardScreen/ROADMAP/plans mid-run; staged only the 4 package files by name, no entanglement.
+
+---
+
+## Re-triage 2026-06-10 (post SDK-56)
+
+**Trigger:** SDK-52→56 upgrade shipped (commit `556606c`). The 11 "deferred to next Expo SDK bump" alerts were re-evaluated. Also 1 new open alert (#16) at session start.
+
+**Open alerts at start:** 1 (alert #16 — uuid <11.1.1, moderate, path: mobile/package-lock.json)
+
+**tar ×6 and @xmldom/xmldom ×4:** Resolved — all gone from the open alert list post SDK-56. The Expo SDK upgrade cleared them automatically (expo@56's updated @expo/cli / @expo/config-plugins deps pulled in safe versions). No manual action needed.
+
+**Alert #16 — uuid (moderate, "Missing buffer bounds check in v3/v5/v6 when buf provided"):**
+- Chain: `expo@56 → @expo/config-plugins@56.0.8 → xcode@3.0.1 → uuid@7.0.3`
+- `xcode` uses only `uuid.v4()` (generates GUID for .xcodeproj file entries). The vulnerability is in `v3`/`v5`/`v6` when a caller supplies a `buf` argument — that code path does not exist in xcode.
+- Independently verified: downloaded xcode@3.0.1 source, confirmed only `uuid.v4()` is called (`pbxProject.js:90`).
+- uuid@11.1.1 CJS exports `v4` with the same API signature — override is safe.
+- **Fix:** Added `"uuid": "^11.1.1"` to `mobile/package.json` `overrides`. `npm install` resolved to uuid@11.1.1, `npm audit: 0 vulnerabilities`.
+- Commit: `6020aa9` on `dep-triage`, merged to main (`133e5db`), pushed.
+- Dependabot auto-dismissed #16 after scanning the updated lockfile.
+
+**Final state:** 0 open Dependabot alerts. `npm run check` green in both projects (mobile 54 suites / 520 tests; content-tool 13 files / 216 tests).
+
+**npm ls verdict:** Clean — no extraneous packages, no duplicate expo instances, no broken peers.
+
+**Gotcha:** GitHub's push response still showed the alert warning immediately after push — Dependabot rescans asynchronously. Waited ~15s, re-queried: alert was gone. Don't interpret the push warning as "fix failed."
