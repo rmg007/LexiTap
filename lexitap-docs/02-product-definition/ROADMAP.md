@@ -17,7 +17,7 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 **2026-06-10 PM frontier batch ✅ (CI green):** AUTH-1 code half (native Sign in with Apple + Google → Supabase), IAP-1 code tail (RevenueCat alias + Restore purchases), CONTENT-2 driver (`enrich-senses` — the paid run is one command now), STORE-2 agent half (site was NOT live — redirect loop + no DNS + stale deploy fixed; deployed + verified; `/delete-account` page added). 24 adversarial-review findings fixed same-day; CI revived (dead since SDK-56).
 
-**2026-06-10 evening ✅:** **STORE-2 DONE** — lexitap.app live (DNS + Email Routing; legal pages verified on the apex). **AUTH-1 dashboards done** (Supabase providers + Google client ID + EAS env, API-verified); **EAS build 3 in flight with auto-submit to TestFlight**. ⚠️ Supabase project had **auto-paused** (free tier, idle since June 1 — backend DNS dead under build 2 for ~2 days); restored intact → new pre-submission blocker **SUPA-1** (Pro plan).
+**2026-06-10 evening ✅:** **STORE-2 DONE** — lexitap.app live (DNS + Email Routing; legal pages verified on the apex). **AUTH-1 dashboards done** (Supabase providers + Google client ID + EAS env, API-verified); **EAS build 3 built + submitted to App Store Connect**. ⚠️ Supabase project had **auto-paused** (free tier, idle since June 1 — backend DNS dead under build 2 for ~2 days); restored intact → new pre-submission blocker **SUPA-1** (Pro plan).
 
 **Shipped since 2026-05-31:** BUILD-1 ✅ (device), SDK-56 ✅ (iOS 26 mandate), Figma 100% finalized, Rich Word-Detail model (CONTENT-1 ✅), Learn-loop wired, E2E-1, LEGAL-2, STORE-3, RTL-1, LEGAL-3, STORE-1 — all ✅.
 

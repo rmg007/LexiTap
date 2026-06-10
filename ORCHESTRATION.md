@@ -52,7 +52,7 @@ Shared barrels (`domain/index.ts`, `mobile/package.json`, both `ROADMAP.md`s) ar
 
 **Ryan-only / external-blocked — no agent can advance these (now mostly clicks, not work):**
 
-**2026-06-10 evening ✅ — STORE-2 fully done** (Ryan's DNS + Email Routing clicks landed; lexitap.app live + verified). **AUTH-1 dashboards done** (Supabase Apple/Google providers enabled, Google iOS client ID created, EAS env var set — all verified via API); **EAS build 3 (`728f9d28`) in flight with auto-submit to TestFlight**. ⚠️ **Incident: the Supabase project had AUTO-PAUSED** (free tier, ~7 idle days since the June-1 deploy) — DNS for `xippwvtmkpskldlmouro.supabase.co` was gone, meaning TestFlight build 2's auth/backup were silently dead for ~2 days. Restored same-day, everything survived. → new task `SUPA-1`.
+**2026-06-10 evening ✅ — STORE-2 fully done** (Ryan's DNS + Email Routing clicks landed; lexitap.app live + verified). **AUTH-1 dashboards done** (Supabase Apple/Google providers enabled, Google iOS client ID created, EAS env var set — all verified via API); **EAS build 3 (`728f9d28`) built + submitted to App Store Connect** (awaiting Apple processing). ⚠️ **Incident: the Supabase project had AUTO-PAUSED** (free tier, ~7 idle days since the June-1 deploy) — DNS for `xippwvtmkpskldlmouro.supabase.co` was gone, meaning TestFlight build 2's auth/backup were silently dead for ~2 days. Restored same-day, everything survived. → new task `SUPA-1`.
 
 | id | task | blocked_by |
 |---|---|---|
@@ -220,11 +220,11 @@ commit: 10af213 (+ contract fixes c188bb9)
 ```
 id: AUTH-1   phase: 3   status: in-progress   owner: ryan
 depends_on: [BUILD-1]   parallel_safe: false   paths: [mobile/src/infrastructure/auth/, mobile/app.config.ts]
-blocked_by: EAS build 3 (728f9d28, building w/ auto-submit) → TestFlight processing → device verify
+blocked_by: build 3 (728f9d28) SUBMITTED to ASC 2026-06-10 → Apple processing → device verify
 verify: both native flows complete on device; session persists; magic-link still works
 commit: 590de22 (+ review fixes c188bb9)
 ```
-**All code shipped 2026-06-10:** `AuthPort.signInWithIdToken('apple'|'google')`, `AppleSignInAdapter` (expo-apple-authentication ~56.0.4) + `GoogleSignInAdapter` (@react-native-google-signin ^16.1.2, env-gated on `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID`), AuthContext `signInWithApple`/`signInWithGoogle` + availability flags, SignInScreen native buttons (re-entrancy-guarded, cancel = silent), app.config plugins (Google plugin only when env present; `usesAppleSignIn: true`; buildNumber → 3). 520 tests green. **Dashboards done 2026-06-10 evening (verified via API, not asserted):** Supabase auth settings report `apple: true, google: true`; `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` present in EAS production env; `eas config --profile beta` resolves the production environment and emits both auth plugins with the correctly reversed `iosUrlScheme`. **EAS build 3 (`728f9d28`) launched with `--auto-submit`.** Remaining: Apple processing → (f) verify both flows + magic link on device ([`mobile/AUTH_INTEGRATION.md`](mobile/AUTH_INTEGRATION.md)). Unblocks BACKUP-1 once device-verified.
+**All code shipped 2026-06-10:** `AuthPort.signInWithIdToken('apple'|'google')`, `AppleSignInAdapter` (expo-apple-authentication ~56.0.4) + `GoogleSignInAdapter` (@react-native-google-signin ^16.1.2, env-gated on `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID`), AuthContext `signInWithApple`/`signInWithGoogle` + availability flags, SignInScreen native buttons (re-entrancy-guarded, cancel = silent), app.config plugins (Google plugin only when env present; `usesAppleSignIn: true`; buildNumber → 3). 520 tests green. **Dashboards done 2026-06-10 evening (verified via API, not asserted):** Supabase auth settings report `apple: true, google: true`; `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` present in EAS production env; `eas config --profile beta` resolves the production environment and emits both auth plugins with the correctly reversed `iosUrlScheme`. **Build 3 (`728f9d28`) built + SUBMITTED to App Store Connect** (submission `52c45e6c`). Remaining: Apple processing (~10 min) → (f) verify both flows + magic link on device ([`mobile/AUTH_INTEGRATION.md`](mobile/AUTH_INTEGRATION.md)). Unblocks BACKUP-1 once device-verified.
 
 ### AUTH-2 · Apple token revocation on account deletion (App Review 5.1.1(v))  ⚠ pre-submission blocker
 ```
