@@ -6,6 +6,8 @@ status: active
 
 # LexiTap Roadmap
 
+> **▶ To run work, use [`ORCHESTRATION.md`](ORCHESTRATION.md)** — the execution layer: every remaining task as a runnable, dependency-tagged, parallel-safe prompt. This file is the *glance* mirror; `ORCHESTRATION.md` is what you actually pick tasks from (`/orchestrate next`), and `/orchestrate sync` keeps both in step. Task-level dependency truth still lives in [plans/RELEASE_PLAN.md](plans/RELEASE_PLAN.md).
+
 > **⚠️ Ordering superseded (2026-05-30):** A code+docs audit found this file's phase *ordering* and status claims are stale — auth is a Phase 3 dependency (not Phase 5), `words.db` content delivery is currently broken, Foundation is ~2,848/3,000 sourced (2,881 words total; TOEFL + exam tiers still stubs), per-table sync was deleted, and Phase 2 requires instrumentation coding. The authoritative, task-level execution plan is **[plans/RELEASE_PLAN.md](plans/RELEASE_PLAN.md)**. This file remains the high-level phase mirror; trust RELEASE_PLAN.md where they conflict.
 
 ---

@@ -57,7 +57,7 @@ Each sub-project has its own `package.json` + scripts. "Done" = `npm run check` 
 |------|-----------------|
 | `.claude/settings.json` | Model, effort level, hooks, statusLine, `autoMemoryEnabled:false` (home-folder auto-memory off — repo `memory/` is the only memory), deny-list permissions |
 | `.claude/commands/` | Project slash commands (`/snip`, `/gen-image`, `/plan` — grounded implementation plan into `plans/`) |
-| `.claude/skills/` | Project skills (`aso` — App Store Optimization for LexiTap) |
+| `.claude/skills/` | Project skills (`aso` — App Store Optimization; `orchestrate` — maintains the living task graph: sync state / pick next / expand stubs) |
 | `.claude/hooks/` | `guardrails.mjs` (PreToolUse enforcement) + `session-context.sh` (SessionStart — injects open GitHub issues + git ahead/behind into context) |
 | `.claude/statusline.sh` | Status line: live model · branch · ↑unpushed/↓behind · PR# · context% (makes the never-lose-work state always visible) |
 | `.mcp.json` | Project MCP servers — **Supabase** (read-only; needs `SUPABASE_ACCESS_TOKEN` in env, see `.env.example`). Figma MCP is connected at the app level. |
@@ -70,11 +70,12 @@ Each sub-project has its own `package.json` + scripts. "Done" = `npm run check` 
 These rules govern how Claude Code should operate on this project. Read before starting any session.
 
 - **One session = one task.** `/clear` after every completed task. Never accumulate multi-feature context in a single session — context bloat causes hallucinations and references to stale code.
+- **Pick the task from [`ORCHESTRATION.md`](ORCHESTRATION.md) (the execution layer); reconcile with `/orchestrate` when done.** `ORCHESTRATION.md` is the living task graph — every remaining unit of work as a runnable prompt, tagged `parallel_safe` + `paths` + `owner`. Start a task by taking a `ready` block from it. **Finish a task by invoking `/orchestrate sync`** — it flips status, unblocks dependents, regenerates stale downstream prompts, appends a memory note, and re-syncs both roadmaps. This is the self-orchestration loop; it is how the three altitudes (ROADMAP → ORCHESTRATION → plans) stay consistent. Never hand-edit one altitude without the others.
 - **Repo is memory, not chat.** Every decision made in a session must be committed to the relevant file before `/clear`. If it isn't in the repo, it doesn't exist.
 - **Project memory lives in the committed `memory/` dir — never in home-folder auto-memory.** Lightweight session-handoff notes go in `memory/` (auto-loaded via the `@memory/MEMORY.md` import at the bottom of this file). Do **not** write project knowledge to `~/.claude/projects/.../memory/`: that path is outside the repo, never reaches GitHub, and never reaches the next laptop — same reason config belongs in the repo.
 - **Feed raw data, not summaries.** When debugging, paste stack traces and error logs directly — do not paraphrase the problem. Summaries lose signal.
 - **Read `plans/` docs first** when starting release-planning or feature sessions. Read relevant troubleshooting docs first when touching a known fragile area.
-- **GitHub Issues is the work queue.** Start a session by reading open issues, not by asking Ryan what to do. If Issues is empty, the active plan is `ROADMAP.md` (root) → canonical `lexitap-docs/02-product-definition/ROADMAP.md`. *(Open issues + git sync state are auto-injected at session start by `.claude/hooks/session-context.sh` — you'll see them without asking.)*
+- **GitHub Issues is the work queue.** Start a session by reading open issues, not by asking Ryan what to do. If Issues is empty, the work queue is [`ORCHESTRATION.md`](ORCHESTRATION.md) (`ready` tasks; `/orchestrate next` computes the parallel-safe batch) → `ROADMAP.md` (root) → canonical `lexitap-docs/02-product-definition/ROADMAP.md`. *(Open issues + git sync state are auto-injected at session start by `.claude/hooks/session-context.sh` — you'll see them without asking.)*
 - **Any "review", "fix", or "something is broken" request → invoke `/review-and-fix` immediately.** Full trigger list is in [`.claude/commands/review-and-fix.md`](.claude/commands/review-and-fix.md) (canonical source — do not duplicate here). Always: fix every CONFIRMED/PLAUSIBLE finding AND prevent recurrence (rules, invariants, guardrails, tests, memory). Never stop at a findings report.
 
 ---
@@ -121,7 +122,7 @@ Every change to this repo must leave the relevant documentation accurate. This i
 |---|---|
 | Architecture decision, new pattern, "never do X" rule | CLAUDE.md or AGENTS.md |
 | Bug that was hard to fix or revealed a fragile area | add a note in `memory/` |
-| Completed a roadmap/feature item | `ROADMAP.md` (root) + `lexitap-docs/02-product-definition/ROADMAP.md` |
+| Completed a task / roadmap item | Run `/orchestrate sync` — it reconciles `ORCHESTRATION.md` + both `ROADMAP.md`s + `memory/` in one pass. Do not hand-edit one altitude alone. |
 | New high-risk path or forbidden edit | High-Risk Paths section above + `.claude/settings.json` deny list |
 | Database schema or query pattern changed | AGENTS.md + `mobile/src/infrastructure/db/` comments |
 | Payment/entitlement behavior changed | AGENTS.md + `mobile/src/infrastructure/iap/` comments |
