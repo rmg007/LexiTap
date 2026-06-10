@@ -1,10 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdtempSync, rmSync, readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
   selectWordsForSenseEnrichment,
   readResumeWordIds,
+  readContentSkipWordIds,
+  skipFilePathFor,
+  repairTruncatedOutput,
   runEnrichSenses,
   enrichSensesCommand,
   estimateSenseEnrichmentCostUsd,
@@ -14,7 +17,7 @@ import {
 } from '@/commands/enrich-senses';
 import { parseSenseIngestFile, type SenseIngestItem } from '@/commands/ingest-senses';
 import { serializeSenseIngestFile } from '@/commands/synthesize-senses';
-import { openMemoryContentDb } from '@/lib/db';
+import { openMemoryContentDb, openWorkingDb, openWorkingDbReadonly } from '@/lib/db';
 import { makeSenseId } from '@/lib/ids';
 import type { DB } from '@/lib/db';
 import type { WordRow } from '@/schema/types';
@@ -296,9 +299,11 @@ describe('enrichSensesCommand', () => {
     expect(calls.flat().map((w) => w.id)).toEqual(['word_1', 'word_2']);
   });
 
-  it('--no-resume truncates the output file and re-enriches from scratch', async () => {
+  it('--no-resume BACKS UP the existing output (never destroys it) and re-enriches from scratch', async () => {
     const outputPath = join(tmpDir, 'out.jsonl');
-    writeFileSync(outputPath, serializeSenseIngestFile([validItem('word_1', 'one')]));
+    const originalContent = serializeSenseIngestFile([validItem('word_old', 'oldword')]);
+    writeFileSync(outputPath, originalContent);
+    writeFileSync(skipFilePathFor(outputPath), '{"word_id":"word_junk","word":"junk","reason":"proper noun"}\n');
 
     const deps = {
       openDb: () => {
@@ -314,11 +319,312 @@ describe('enrichSensesCommand', () => {
     };
 
     await enrichSensesCommand(['--limit', '5', '--output', outputPath, '--no-resume'], deps);
+
+    // Fresh output contains only the new run:
     const { items } = parseSenseIngestFile(readFileSync(outputPath, 'utf8'));
-    expect(items.map((i) => i.word_id)).toEqual(['word_1']); // fresh file, single entry
+    expect(items.map((i) => i.word_id)).toEqual(['word_1']);
+
+    // The old (paid) output was renamed to <output>.bak-<timestamp>, byte-identical:
+    const backups = readdirSync(tmpDir).filter((f) => f.startsWith('out.jsonl.bak-'));
+    expect(backups).toHaveLength(1);
+    expect(readFileSync(join(tmpDir, backups[0]!), 'utf8')).toBe(originalContent);
+
+    // The skip file was backed up too (fresh start = fresh skip history):
+    const skipBackups = readdirSync(tmpDir).filter((f) => f.startsWith('out-skipped.jsonl.bak-'));
+    expect(skipBackups).toHaveLength(1);
+  });
+
+  it('--no-resume leaves the existing output UNTOUCHED when provider construction fails (e.g. missing API key)', async () => {
+    const outputPath = join(tmpDir, 'out.jsonl');
+    const originalContent = serializeSenseIngestFile([validItem('word_old', 'oldword')]);
+    writeFileSync(outputPath, originalContent);
+
+    const deps = {
+      openDb: () => {
+        const db = openMemoryContentDb();
+        seedWord(db, 'word_1', 'one', 1);
+        return db;
+      },
+      providerFactory: () => {
+        throw new Error('AnthropicSenseProvider requires ANTHROPIC_API_KEY');
+      },
+    };
+
+    await expect(
+      enrichSensesCommand(['--limit', '5', '--output', outputPath, '--no-resume'], deps),
+    ).rejects.toThrow(/ANTHROPIC_API_KEY/);
+
+    // Previous enrichment survives intact — no truncation, no rename:
+    expect(readFileSync(outputPath, 'utf8')).toBe(originalContent);
+    expect(readdirSync(tmpDir).filter((f) => f.includes('.bak-'))).toHaveLength(0);
+  });
+
+  it('dry-run with --no-resume never touches the existing output', async () => {
+    const outputPath = join(tmpDir, 'out.jsonl');
+    const originalContent = serializeSenseIngestFile([validItem('word_old', 'oldword')]);
+    writeFileSync(outputPath, originalContent);
+
+    const db = openMemoryContentDb();
+    seedWord(db, 'word_1', 'one', 1);
+    await enrichSensesCommand(['--limit', '5', '--output', outputPath, '--no-resume', '--dry-run'], {
+      openDb: () => db,
+      providerFactory: () => {
+        throw new Error('provider must NOT be constructed in dry-run');
+      },
+    });
+
+    expect(readFileSync(outputPath, 'utf8')).toBe(originalContent);
+    expect(readdirSync(tmpDir).filter((f) => f.includes('.bak-'))).toHaveLength(0);
   });
 
   it('rejects an unknown tier', async () => {
     await expect(enrichSensesCommand(['--limit', '5', '--tier', 'nope'])).rejects.toThrow(/unknown tier/);
+  });
+
+  it('rejects unknown or typo’d flags before doing anything (a misspelled --dry-run must not pay)', async () => {
+    await expect(enrichSensesCommand(['--limit', '5', '--dryrun'])).rejects.toThrow(/unknown flag '--dryrun'/);
+    await expect(enrichSensesCommand(['--limit', '5', '--frobnicate'])).rejects.toThrow(/unknown flag/);
+    await expect(enrichSensesCommand(['--limit', '5', '--noresume'])).rejects.toThrow(/unknown flag/);
+  });
+
+  it('resume excludes CONTENT skips permanently but retries provider_error skips', async () => {
+    const outputPath = join(tmpDir, 'out.jsonl');
+    const calls: WordRow[][] = [];
+    const makeDb = () => {
+      const db = openMemoryContentDb();
+      seedWord(db, 'word_junk', 'williams', 1);
+      seedWord(db, 'word_flaky', 'beacon', 2);
+      seedWord(db, 'word_ok', 'anchor', 3);
+      return db;
+    };
+
+    // Run 1: model content-skips word_junk, provider errors on word_flaky, enriches word_ok.
+    await enrichSensesCommand(['--limit', '10', '--output', outputPath], {
+      openDb: makeDb,
+      providerFactory: () =>
+        fakeProvider(() => ({
+          items: new Map([['word_ok', validItem('word_ok', 'anchor')]]),
+          skipped: [
+            { word_id: 'word_junk', word: 'williams', reason: 'proper noun (surname)' },
+            { word_id: 'word_flaky', word: 'beacon', reason: 'provider_error' },
+          ],
+        })),
+    });
+
+    const skipPath = skipFilePathFor(outputPath);
+    expect(existsSync(skipPath)).toBe(true);
+    const skipLines = readFileSync(skipPath, 'utf8').trim().split('\n').map((l) => JSON.parse(l));
+    expect(skipLines).toEqual([
+      { word_id: 'word_junk', word: 'williams', reason: 'proper noun (surname)' },
+      { word_id: 'word_flaky', word: 'beacon', reason: 'provider_error' },
+    ]);
+
+    // Run 2: selection must RE-include word_flaky (retry-eligible) but NEVER word_junk.
+    await enrichSensesCommand(['--limit', '10', '--output', outputPath], {
+      openDb: makeDb,
+      providerFactory: () =>
+        fakeProvider(
+          (batch) => ({
+            items: new Map(batch.map((w) => [w.id, validItem(w.id, w.word)])),
+            skipped: [],
+          }),
+          calls,
+        ),
+    });
+
+    expect(calls.flat().map((w) => w.id)).toEqual(['word_flaky']); // junk excluded, enriched excluded
+    const { items } = parseSenseIngestFile(readFileSync(outputPath, 'utf8'));
+    expect(items.map((i) => i.word_id)).toEqual(['word_ok', 'word_flaky']);
+  });
+});
+
+// ─── skip-file helpers ─────────────────────────────────────────────────────
+
+describe('skipFilePathFor', () => {
+  it('derives the sibling <basename>-skipped.jsonl path', () => {
+    expect(skipFilePathFor('/data/working/senses-enriched.jsonl')).toBe(
+      '/data/working/senses-enriched-skipped.jsonl',
+    );
+    expect(skipFilePathFor('out.jsonl')).toBe('out-skipped.jsonl');
+  });
+});
+
+describe('readContentSkipWordIds', () => {
+  it('returns content-skip ids only — provider_error stays retry-eligible; garbage lines ignored', () => {
+    const path = join(tmpDir, 'skips.jsonl');
+    writeFileSync(
+      path,
+      [
+        '{"word_id":"word_junk1","word":"williams","reason":"proper noun (surname)"}',
+        '{"word_id":"word_flaky","word":"beacon","reason":"provider_error"}',
+        'not json at all',
+        '{"word_id":"word_junk2","word":"british","reason":"demonym"}',
+        '',
+      ].join('\n'),
+    );
+    expect(readContentSkipWordIds(path)).toEqual(new Set(['word_junk1', 'word_junk2']));
+  });
+
+  it('returns empty set when the file does not exist', () => {
+    expect(readContentSkipWordIds(join(tmpDir, 'missing.jsonl')).size).toBe(0);
+  });
+});
+
+// ─── crash-truncated output repair ─────────────────────────────────────────
+
+describe('repairTruncatedOutput', () => {
+  it('truncates a partial trailing line back to the last complete line', () => {
+    const path = join(tmpDir, 'out.jsonl');
+    const goodLine = serializeSenseIngestFile([validItem('word_1', 'one')]);
+    writeFileSync(path, goodLine + '{"word_id":"word_2","sen'); // crash mid-append
+    repairTruncatedOutput(path);
+    expect(readFileSync(path, 'utf8')).toBe(goodLine);
+    const { items, errors } = parseSenseIngestFile(readFileSync(path, 'utf8'));
+    expect(errors).toHaveLength(0);
+    expect(items.map((i) => i.word_id)).toEqual(['word_1']);
+  });
+
+  it('empties a file that is a single partial line; no-ops on clean/missing/empty files', () => {
+    const partialOnly = join(tmpDir, 'partial.jsonl');
+    writeFileSync(partialOnly, '{"word_id":"word');
+    repairTruncatedOutput(partialOnly);
+    expect(readFileSync(partialOnly, 'utf8')).toBe('');
+
+    const clean = join(tmpDir, 'clean.jsonl');
+    const goodLine = serializeSenseIngestFile([validItem('word_1', 'one')]);
+    writeFileSync(clean, goodLine);
+    repairTruncatedOutput(clean);
+    expect(readFileSync(clean, 'utf8')).toBe(goodLine);
+
+    repairTruncatedOutput(join(tmpDir, 'missing.jsonl')); // must not throw
+  });
+
+  it('command-level: a crash-truncated output does not corrupt the first newly appended item', async () => {
+    const outputPath = join(tmpDir, 'out.jsonl');
+    const goodLine = serializeSenseIngestFile([validItem('word_1', 'one')]);
+    writeFileSync(outputPath, goodLine + '{"word_id":"word_2","senses":[{"sense_'); // interrupted
+
+    await enrichSensesCommand(['--limit', '10', '--output', outputPath], {
+      openDb: () => {
+        const db = openMemoryContentDb();
+        seedWord(db, 'word_1', 'one', 1);
+        seedWord(db, 'word_2', 'two', 2);
+        return db;
+      },
+      providerFactory: () =>
+        fakeProvider((batch) => ({
+          items: new Map(batch.map((w) => [w.id, validItem(w.id, w.word)])),
+          skipped: [],
+        })),
+    });
+
+    const { items, errors } = parseSenseIngestFile(readFileSync(outputPath, 'utf8'));
+    expect(errors).toHaveLength(0); // the partial line is gone, nothing fused
+    expect(items.map((i) => i.word_id)).toEqual(['word_1', 'word_2']); // word_2 re-enriched cleanly
+  });
+});
+
+// ─── read-only working DB (missing DB must fail loudly) ────────────────────
+
+describe('openWorkingDbReadonly', () => {
+  it('throws a clear pipeline-pointer error when the working DB does not exist', () => {
+    expect(() => openWorkingDbReadonly(join(tmpDir, 'missing.db'))).toThrow(
+      /working DB not found .* import\/release pipeline/s,
+    );
+  });
+
+  it('opens an existing DB read-only: reads work, writes throw', () => {
+    const path = join(tmpDir, 'working.db');
+    const rw = openWorkingDb(path);
+    rw.prepare(
+      `INSERT INTO words (id, word, definition, pos, cefr_level, example_sentence, definition_license, created_at)
+       VALUES ('word_1', 'one', 'def.', 'noun', 'A2', 'She used the _ today.', 'original', 1)`,
+    ).run();
+    rw.close();
+
+    const ro = openWorkingDbReadonly(path);
+    try {
+      const row = ro.prepare(`SELECT word FROM words WHERE id = 'word_1'`).get() as { word: string };
+      expect(row.word).toBe('one');
+      expect(() => ro.prepare(`DELETE FROM words`).run()).toThrow(/readonly/i);
+    } finally {
+      ro.close();
+    }
+  });
+});
+
+// ─── word-identity cross-check + validator-throw resilience ───────────────
+
+describe('runEnrichSenses hardening', () => {
+  it('drops an item whose returned word does not match the batch word for that word_id (identity swap)', async () => {
+    const db = openMemoryContentDb();
+    seedWord(db, 'word_a', 'anchor', 1);
+    seedWord(db, 'word_b', 'beacon', 2);
+    const words = selectWordsForSenseEnrichment(db, { limit: 10 });
+
+    const swapped = validItem('word_a', 'beacon'); // word_a's content labeled 'beacon' — swap!
+    const provider = fakeProvider(() => ({
+      items: new Map([
+        ['word_a', swapped],
+        ['word_b', validItem('word_b', 'BEACON')], // case-insensitive match — kept
+      ]),
+      skipped: [],
+    }));
+
+    const outputPath = join(tmpDir, 'out.jsonl');
+    const summary = await runEnrichSenses(provider, { words, outputPath });
+
+    expect(summary.enriched).toBe(1);
+    expect(summary.invalidDropped).toBe(1);
+    const { items } = parseSenseIngestFile(readFileSync(outputPath, 'utf8'));
+    expect(items.map((i) => i.word_id)).toEqual(['word_b']);
+  });
+
+  it('an item that makes the validator THROW is dropped alone; the run continues', async () => {
+    const db = openMemoryContentDb();
+    seedWord(db, 'word_a', 'anchor', 1);
+    seedWord(db, 'word_b', 'beacon', 2);
+    const words = selectWordsForSenseEnrichment(db, { limit: 10 });
+
+    const malformed = validItem('word_a', 'anchor');
+    (malformed.senses[0] as unknown as Record<string, unknown>).short_gloss = 42; // .trim() throws
+
+    const provider = fakeProvider(() => ({
+      items: new Map([
+        ['word_a', malformed],
+        ['word_b', validItem('word_b', 'beacon')],
+      ]),
+      skipped: [],
+    }));
+
+    const outputPath = join(tmpDir, 'out.jsonl');
+    const summary = await runEnrichSenses(provider, { words, outputPath });
+
+    expect(summary.enriched).toBe(1);
+    expect(summary.invalidDropped).toBe(1);
+    const { items } = parseSenseIngestFile(readFileSync(outputPath, 'utf8'));
+    expect(items.map((i) => i.word_id)).toEqual(['word_b']);
+  });
+
+  it('summary reports both skip classes separately', async () => {
+    const db = openMemoryContentDb();
+    seedWord(db, 'word_a', 'anchor', 1);
+    seedWord(db, 'word_b', 'beacon', 2);
+    seedWord(db, 'word_c', 'candle', 3);
+    const words = selectWordsForSenseEnrichment(db, { limit: 10 });
+
+    const provider = fakeProvider(() => ({
+      items: new Map(),
+      skipped: [
+        { word_id: 'word_a', word: 'anchor', reason: 'proper noun' },
+        { word_id: 'word_b', word: 'beacon', reason: 'provider_error' },
+        { word_id: 'word_c', word: 'candle', reason: 'provider_error' },
+      ],
+    }));
+
+    const summary = await runEnrichSenses(provider, { words, outputPath: join(tmpDir, 'out.jsonl') });
+    expect(summary.skippedByModel).toBe(3);
+    expect(summary.skippedContent).toBe(1);
+    expect(summary.skippedProviderError).toBe(2);
   });
 });
