@@ -11,9 +11,9 @@ export interface TierMeta {
   displayName: string;
   isFree: boolean;
   // The entitlement that unlocks this tier when held, or null for free tiers.
-  // For paid exam packs this is the per-pack entitlement (`exam_{name}`); the
-  // global `all_exams` bundle override is applied by the entitlement use case,
-  // not encoded per-tier. (Replaces the dead subscription-era premiumPassSku.)
+  // For paid tiers this is the entitlement granted on purchase (e.g.
+  // `foundation_access`, `all_packs`); the `all_packs` superset override is
+  // applied by the entitlement use case, not encoded per-tier.
   entitlementId: string | null;
 }
 

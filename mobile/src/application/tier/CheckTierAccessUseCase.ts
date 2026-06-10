@@ -1,11 +1,10 @@
 import type { TierId } from '@/domain/vocabulary/ids';
-import { getTierConfig } from '@/config/tiers';
-import { ALL_EXAMS_ENTITLEMENT } from '@/config/tiers';
+import { getTierConfig, ALL_PACKS_ENTITLEMENT } from '@/config/tiers';
 import type { IapPort } from '@/domain/iap/IapPort';
 
 // Determines whether the current user may access a given content tier.
 // Access rules (from tiers.ts config comment):
-//   hasAccess = isFree OR owns(tier.entitlementId) OR owns(all_exams)
+//   hasAccess = isFree OR owns(tier.entitlementId) OR owns(all_packs)
 // Entitlement state is memory-only and never written to user.db (SECURITY_MODEL).
 
 export class CheckTierAccessUseCase {
@@ -27,6 +26,6 @@ export class CheckTierAccessUseCase {
       return false;
     }
 
-    return active.includes(entitlementId) || active.includes(ALL_EXAMS_ENTITLEMENT);
+    return active.includes(entitlementId) || active.includes(ALL_PACKS_ENTITLEMENT);
   }
 }

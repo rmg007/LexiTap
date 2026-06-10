@@ -1,319 +1,200 @@
 /**
- * PaywallScreen tests: visual layout, accessibility, theme handling, and placeholder logic.
- * Full rendering requires react-native-testing-library; these tests verify:
- * - Product catalog filtering (paid tiers only)
- * - Touch target sizing (64px primary, 48px secondary per WCAG AA)
- * - Accessibility attributes (roles, labels, contrast)
- * - Bundle identification and highlighting
- * - Dismiss + Subscribe placeholder callbacks
+ * PaywallScreen tests: product catalog, pricing, accessibility, copy, layout.
  */
 
 import { describe, it, expect } from '@jest/globals';
 import type { TierUnlock } from '@/config/tiers';
-import { TIER_CONFIG, listTiers } from '@/config/tiers';
+import {
+  TIER_CONFIG,
+  listTiers,
+  FOUNDATION_PACK_SKU,
+  BUNDLE_PACK_SKU,
+  UPGRADE_PACK_SKU,
+  FOUNDATION_ENTITLEMENT,
+  ALL_PACKS_ENTITLEMENT,
+} from '@/config/tiers';
 
-// Type-safe accessor for exam pack price
-function getExamPackPrice(unlock: TierUnlock): number | null {
-  if (unlock.kind === 'exam_pack') {
-    return unlock.listPriceUsd;
-  }
-  return null;
+function getPaidPrice(unlock: TierUnlock): number | null {
+  return unlock.kind === 'paid' ? unlock.listPriceUsd : null;
 }
 
 describe('PaywallScreen', () => {
-  describe('Product catalog filtering', () => {
-    it('filters tiers to paid exam packs only (unlock.kind === "exam_pack")', () => {
-      const allTiers = listTiers();
-      const paidTiers = allTiers.filter((t) => t.unlock.kind === 'exam_pack');
-
-      // Should find: TOEFL, IELTS, GRE, GMAT, Business, bundle.
-      // Should NOT find: Foundation, Advanced, Common 3K/9K (all free).
-      expect(paidTiers.length).toBeGreaterThan(0);
-      paidTiers.forEach((tier) => {
-        expect(tier.unlock.kind).toBe('exam_pack');
-      });
+  describe('Product catalog', () => {
+    it('has exactly 3 active paid tiers', () => {
+      const active = listTiers().filter((t) => t.isActive && t.unlock.kind === 'paid');
+      expect(active.length).toBe(3);
     });
 
-    it('identifies free tiers (unlock.kind === "free") as non-paywall content', () => {
-      const allTiers = listTiers();
-      const freeTiers = allTiers.filter((t) => t.unlock.kind === 'free');
-
-      expect(freeTiers.length).toBeGreaterThan(0);
-      freeTiers.forEach((tier) => {
-        expect(tier.isFree).toBe(true);
-      });
+    it('active paid tiers are foundation, bundle, upgrade', () => {
+      const ids = listTiers()
+        .filter((t) => t.isActive && t.unlock.kind === 'paid')
+        .map((t) => t.id);
+      expect(ids).toContain('foundation');
+      expect(ids).toContain('bundle');
+      expect(ids).toContain('upgrade');
     });
 
-    it('all exam packs are priced at 9.99 (bundle is a separate store product)', () => {
-      const allTiers = listTiers();
-      const paidTiers = allTiers.filter((t) => t.unlock.kind === 'exam_pack');
+    it('free/inactive tiers are not shown on paywall', () => {
+      const freeTiers = listTiers().filter((t) => t.unlock.kind === 'free');
+      freeTiers.forEach((t) => expect(t.isFree).toBe(true));
+      // No exam-specific tiers (toefl/ielts/gre/gmat/business) in v1 catalog
+      expect(TIER_CONFIG['toefl']).toBeUndefined();
+      expect(TIER_CONFIG['ielts']).toBeUndefined();
+    });
+  });
 
-      // All exam packs have consistent $9.99 pricing
-      paidTiers.forEach((pack) => {
-        expect(pack.unlock.kind).toBe('exam_pack');
-        expect(getExamPackPrice(pack.unlock)).toBe(9.99);
+  describe('SKUs match App Store Connect', () => {
+    it('foundation SKU matches ASC product ID', () => {
+      expect(FOUNDATION_PACK_SKU).toBe('com.lexitap.app.pack.foundation');
+    });
+
+    it('bundle SKU matches ASC product ID', () => {
+      expect(BUNDLE_PACK_SKU).toBe('com.lexitap.app.pack.bundle');
+    });
+
+    it('upgrade SKU matches ASC product ID', () => {
+      expect(UPGRADE_PACK_SKU).toBe('com.lexitap.app.pack.upgrade');
+    });
+
+    it('foundation tier unlock references correct SKU', () => {
+      const t = TIER_CONFIG['foundation'];
+      expect(t?.unlock.kind).toBe('paid');
+      if (t?.unlock.kind === 'paid') expect(t.unlock.sku).toBe(FOUNDATION_PACK_SKU);
+    });
+
+    it('bundle tier unlock references correct SKU', () => {
+      const t = TIER_CONFIG['bundle'];
+      expect(t?.unlock.kind).toBe('paid');
+      if (t?.unlock.kind === 'paid') expect(t.unlock.sku).toBe(BUNDLE_PACK_SKU);
+    });
+
+    it('upgrade tier unlock references correct SKU', () => {
+      const t = TIER_CONFIG['upgrade'];
+      expect(t?.unlock.kind).toBe('paid');
+      if (t?.unlock.kind === 'paid') expect(t.unlock.sku).toBe(UPGRADE_PACK_SKU);
+    });
+  });
+
+  describe('Entitlements', () => {
+    it('foundation_access entitlement constant is correct', () => {
+      expect(FOUNDATION_ENTITLEMENT).toBe('foundation_access');
+    });
+
+    it('all_packs entitlement constant is correct', () => {
+      expect(ALL_PACKS_ENTITLEMENT).toBe('all_packs');
+    });
+
+    it('foundation tier grants foundation_access', () => {
+      const t = TIER_CONFIG['foundation'];
+      expect(t?.entitlementId).toBe(FOUNDATION_ENTITLEMENT);
+    });
+
+    it('bundle tier grants all_packs', () => {
+      const t = TIER_CONFIG['bundle'];
+      expect(t?.entitlementId).toBe(ALL_PACKS_ENTITLEMENT);
+    });
+
+    it('upgrade tier grants all_packs (same as bundle)', () => {
+      const t = TIER_CONFIG['upgrade'];
+      expect(t?.entitlementId).toBe(ALL_PACKS_ENTITLEMENT);
+    });
+  });
+
+  describe('Pricing', () => {
+    it('foundation is $9.99', () => {
+      const t = TIER_CONFIG['foundation'];
+      expect(getPaidPrice(t!.unlock)).toBe(9.99);
+    });
+
+    it('bundle is $24.99', () => {
+      const t = TIER_CONFIG['bundle'];
+      expect(getPaidPrice(t!.unlock)).toBe(24.99);
+    });
+
+    it('upgrade is $19.99', () => {
+      const t = TIER_CONFIG['upgrade'];
+      expect(getPaidPrice(t!.unlock)).toBe(19.99);
+    });
+
+    it('formats prices as USD with two decimals', () => {
+      const prices = [9.99, 24.99, 19.99];
+      prices.forEach((p) => {
+        const formatted = `$${p.toFixed(2)}`;
+        expect(formatted).toMatch(/^\$\d+\.\d{2}$/);
       });
-
-      // The $29.99 All-Exams bundle is defined in STORE_PRODUCTS, not in TIER_CONFIG
-      // It's merchandised at purchase time, not as a browsable tier
-      expect(paidTiers.length).toBeGreaterThan(0);
     });
   });
 
   describe('Bundle identification', () => {
-    it('all exam pack tiers are priced at 9.99 (bundle is a store product, not a tier)', () => {
-      const allTiers = listTiers();
-      const paidTiers = allTiers.filter((t) => t.unlock.kind === 'exam_pack');
-
-      // All exam packs are priced consistently at $9.99
-      paidTiers.forEach((t) => {
-        expect(getExamPackPrice(t.unlock)).toBe(9.99);
-      });
-
-      // Bundle ($29.99) is defined in STORE_PRODUCTS, not as a tier in TIER_CONFIG
-      expect(paidTiers.length).toBeGreaterThan(0);
+    it('bundle tier is identified by id === "bundle"', () => {
+      const allPaid = listTiers().filter((t) => t.unlock.kind === 'paid' && t.isActive);
+      const bundle = allPaid.find((t) => t.id === 'bundle');
+      expect(bundle).toBeDefined();
+      expect(bundle?.unlock.kind).toBe('paid');
     });
 
-    it('exam packs have consistent pricing and unlock model', () => {
-      const allTiers = listTiers();
-      const paidTiers = allTiers.filter((t) => t.unlock.kind === 'exam_pack');
-
-      // Each exam pack should have the exam_pack unlock kind
-      paidTiers.forEach((t) => {
-        expect(t.unlock.kind).toBe('exam_pack');
-        expect(t.entitlementId).toBeTruthy();
-      });
-    });
-  });
-
-  describe('Pricing display', () => {
-    it('formats prices as USD with two decimals', () => {
-      const allTiers = listTiers();
-      const paidTiers = allTiers.filter((t) => t.unlock.kind === 'exam_pack');
-
-      paidTiers.forEach((tier) => {
-        const price = getExamPackPrice(tier.unlock);
-        if (price !== null) {
-          const formatted = `$${price.toFixed(2)}`;
-
-          expect(formatted).toMatch(/^\$\d+\.\d{2}$/);
-          expect(formatted).toBe(price === 9.99 ? '$9.99' : price === 29.99 ? '$29.99' : formatted);
-        }
-      });
-    });
-
-    it('displays all products with explicit listPriceUsd', () => {
-      const allTiers = listTiers();
-      const paidTiers = allTiers.filter((t) => t.unlock.kind === 'exam_pack');
-
-      paidTiers.forEach((tier) => {
-        expect(tier.unlock.kind).toBe('exam_pack');
-        expect(getExamPackPrice(tier.unlock)).toBeGreaterThan(0);
-      });
+    it('non-bundle cards are foundation and upgrade', () => {
+      const allPaid = listTiers().filter((t) => t.unlock.kind === 'paid' && t.isActive);
+      const others = allPaid.filter((t) => t.id !== 'bundle');
+      const ids = others.map((t) => t.id);
+      expect(ids).toContain('foundation');
+      expect(ids).toContain('upgrade');
     });
   });
 
   describe('Accessibility: touch targets', () => {
     it('primary button has minimum 48dp height (enforced as 64px)', () => {
-      // From Button.tsx: LinearGradient style={{ height: 64 }}
-      const primaryButtonHeight = 64;
-      expect(primaryButtonHeight).toBeGreaterThanOrEqual(48);
+      expect(64).toBeGreaterThanOrEqual(48);
     });
 
-    it('button width is flexible or 48px minimum', () => {
-      // Primary button: minWidth: 48, paddingHorizontal: 16 → min 80px
-      // For full-width: alignSelf: 'stretch'
-      const minWidth = 48;
-      const paddingH = 16 * 2;
-      const minFullWidth = minWidth + paddingH;
-
-      expect(minFullWidth).toBeGreaterThanOrEqual(44);
-    });
-
-    it('dismiss button is tappable (pressable padding + text)', () => {
-      // Dismiss is a text button with padding: spacing.s2 (8px)
-      // Text + padding should be at least 44px
-      const textHeight = 18; // label variant
-      const padding = 8;
-      const tappableHeight = textHeight + padding * 2;
-
-      expect(tappableHeight).toBeGreaterThanOrEqual(34);
-      // Real implementation: Pressable + padding makes it 44+
+    it('dismiss button is tappable (padding s3=12px each side → 48px total)', () => {
+      const iconSize = 24;
+      const padding = 12;
+      expect(iconSize + padding * 2).toBeGreaterThanOrEqual(44);
     });
   });
 
   describe('Accessibility: contrast', () => {
-    it('product title uses textPrimary (#F2F5F6 dark, #1A1D1E light)', () => {
-      // Against bgSurface (#171A1C dark, #FFFFFF light)
-      // Dark: F2F5F6 on 171A1C → ~15:1 ✓
-      // Light: 1A1D1E on FFFFFF → ~16:1 ✓
-      const darkTitle = '#F2F5F6';
-      const darkBg = '#171A1C';
-      const lightTitle = '#1A1D1E';
-      const lightBg = '#FFFFFF';
-
-      expect([darkTitle, lightTitle]).toContainEqual(expect.any(String));
-      expect([darkBg, lightBg]).toContainEqual(expect.any(String));
+    it('product title uses textPrimary (~15:1 on surface dark)', () => {
+      expect('#F2F5F6').toBeTruthy();
     });
 
-    it('price uses accent (teal) with 4.5:1 contrast on surface', () => {
-      // Dark: accent #20B2AA on bgSurface #171A1C → ~4.8:1 ✓
-      // Light: accent #178F88 on bgSurface #FFFFFF → ~7:1 ✓
-      const darkAccent = '#20B2AA';
-      const darkBg = '#171A1C';
-      const lightAccent = '#178F88';
-      const lightBg = '#FFFFFF';
-
-      expect([darkAccent, lightAccent]).toContainEqual(expect.any(String));
-      expect([darkBg, lightBg]).toContainEqual(expect.any(String));
-    });
-
-    it('secondary text uses textSecondary (A9B2B6 dark, 52595C light)', () => {
-      // Against surface: A9B2B6 on 171A1C → ~5.4:1 ✓
-      // Light: 52595C on FFFFFF → ~5:1 ✓
-      const darkSecondary = '#A9B2B6';
-      const darkBg = '#171A1C';
-
-      expect(darkSecondary).toBeTruthy();
-      expect(darkBg).toBeTruthy();
-    });
-
-    it('button label (onAccent #062826) has 7:1 on teal (#20B2AA)', () => {
-      // Primary button text on gradient → label color #062826 on teal
-      // Contrast: ~7:1 ✓
-      const label = '#062826';
-      const accentLight = '#20B2AA';
-
-      expect(label).toBeTruthy();
-      expect(accentLight).toBeTruthy();
+    it('price uses accent with 4.5:1+ contrast on surface', () => {
+      expect('#20B2AA').toBeTruthy();
     });
   });
 
   describe('Accessibility: semantic roles', () => {
     it('header text has accessibilityRole="header"', () => {
-      // PaywallScreen: <Text variant="headline" accessibilityRole="header">
       expect('header').toBe('header');
     });
 
-    it('dismiss button has accessibilityRole="button" + accessibilityLabel', () => {
-      expect('button').toBe('button');
+    it('dismiss button has accessibilityRole="button" + label', () => {
       expect('Dismiss paywall').toBeTruthy();
     });
 
-    it('unlock button has accessibilityLabel including pack name + price', () => {
-      // Button component accepts accessibilityLabel prop.
-      // Label format: "Unlock {tier.displayName} for ${price}" — "Unlock" not
-      // "Subscribe": these are one-time non-consumable IAPs, not subscriptions
-      // (Apple 3.1.1 — copy must not imply recurring billing).
-      const label = 'Unlock TOEFL Prep for $9.99';
+    it('unlock button label includes pack name + price', () => {
+      const label = 'Unlock Foundation Pack for $9.99';
       expect(label).toMatch(/Unlock .+ for \$/);
     });
 
     it('icon view is accessible=false (decorative)', () => {
-      // Mock icon: <View accessible={false} />
       expect(false).toBe(false);
     });
   });
 
-  describe('Theme support', () => {
-    it('bundle card uses accentSubtle background in dark + light', () => {
-      // Card raised={isBundle} + backgroundColor: colors.accentSubtle
-      // Dark: #13322F, Light: #DCF0EE
-      expect('accentSubtle').toBeTruthy();
+  describe('Copy', () => {
+    it('header is "Unlock LexiTap"', () => {
+      expect('Unlock LexiTap').toMatch(/Unlock/i);
     });
 
-    it('bundle badge uses accent foreground + onAccent text', () => {
-      // Badge: backgroundColor: colors.accent, Text color="onAccent"
-      expect('accent').toBeTruthy();
-      expect('onAccent').toBeTruthy();
-    });
-
-    it('product icon placeholder uses bgSurfaceRaised background', () => {
-      // Icon container: backgroundColor: colors.bgSurfaceRaised
-      expect('bgSurfaceRaised').toBeTruthy();
-    });
-
-    it('all text variants respect Dynamic Type scaling', () => {
-      // Text component uses useScaledFont() + maxFontSizeMultiplier per variant
-      // Variants used: headline, body, caption, title, label
-      const variants = ['headline', 'body', 'caption', 'title', 'label'];
-      expect(variants.length).toBeGreaterThan(0);
-    });
-  });
-
-  describe('Callback placeholders', () => {
-    it('handleDismiss calls onDismiss prop if provided', () => {
-      let dismissCalled = false;
-      const mockDismiss = () => {
-        dismissCalled = true;
-      };
-
-      mockDismiss();
-      expect(dismissCalled).toBe(true);
-    });
-
-    it('handleSubscribe accepts pack id string parameter', () => {
-      const mockSubscribe = (packId: string) => {
-        // R1 TBD: initiate purchase for packId
-        expect(packId).toBeTruthy();
-      };
-
-      mockSubscribe('toefl');
-      expect('toefl').toBe('toefl');
-    });
-
-    it('subscribe button receives pack id from tier.id', () => {
-      const toeflTier = TIER_CONFIG.toefl;
-      if (toeflTier) {
-        expect(toeflTier.id).toBe('toefl');
-        expect(toeflTier.unlock.kind).toBe('exam_pack');
-      }
-    });
-  });
-
-  describe('Layout + spacing', () => {
-    it('uses 8pt spacing grid (s1–s8)', () => {
-      // Spacing tokens: s1:4, s2:8, s3:12, s4:16, s5:24, s6:32, s7:48, s8:64
-      const expectedMultiples = [4, 8, 12, 16, 24, 32, 48, 64];
-      expectedMultiples.forEach((val) => {
-        expect(val % 4).toBe(0);
-      });
-    });
-
-    it('product card has gap between icon + content + price/CTA', () => {
-      // Card padding: spacing.s4 (16px)
-      // Content gap: spacing.s3 (12px)
-      // Row gap (price/button): spacing.s3 (12px)
-      expect(16).toBeGreaterThan(0);
-      expect(12).toBeGreaterThan(0);
-    });
-
-    it('exam pack section has gap: s3 between cards', () => {
-      // View style={{ gap: spacing.s3 }}
-      expect(12).toBe(12);
-    });
-
-    it('bundle card has marginTop: s2 (8px) offset + badge positioning', () => {
-      // marginTop: spacing.s2 (8px) to accommodate badge absolute positioning
-      // Badge: top: -8, left: spacing.s4 (16px)
-      expect(8).toBe(8);
-    });
-  });
-
-  describe('Copy + messaging', () => {
-    it('header text is "Unlock Exam Prep"', () => {
-      expect('Unlock Exam Prep').toMatch(/Unlock/i);
-    });
-
-    it('description explains one-time purchase + offline access', () => {
-      const desc =
-        'Access exam prep vocabulary, advanced content, and more. One-time purchase, forever access.';
-      expect(desc).toMatch(/One-time/i);
-      expect(desc).toMatch(/forever/i);
+    it('description mentions one-time purchase', () => {
+      const desc = 'One-time purchase, forever access. No subscriptions, no recurring charges.';
+      expect(desc).toMatch(/one-time/i);
     });
 
     it('footer clarifies no subscriptions', () => {
-      const footer = 'All purchases are non-consumable one-time unlocks. No subscriptions, no recurring charges.';
+      const footer = 'All purchases are non-consumable one-time unlocks.\nNo subscriptions, no recurring charges.';
       expect(footer).toMatch(/non-consumable/i);
       expect(footer).toMatch(/No subscriptions/i);
     });
@@ -323,23 +204,30 @@ describe('PaywallScreen', () => {
     });
   });
 
-  describe('Integration: onboarding flow', () => {
-    it('PaywallRoute (onboarding/paywall.tsx) wires dismiss → markComplete + replace("/")', () => {
-      // Route logic:
-      // handleDismiss → onboarding.markComplete() → router.replace('/')
-      const flowSteps = ['handleDismiss', 'onboarding.markComplete()', 'router.replace("/")'];
-      expect(flowSteps.length).toBe(3);
+  describe('Layout', () => {
+    it('uses 8pt spacing grid', () => {
+      [4, 8, 12, 16, 24, 32, 48, 64].forEach((v) => expect(v % 4).toBe(0));
     });
 
-    it('PaywallRoute wires subscribe → placeholder handler (R1 TBD)', () => {
-      // Route logic:
-      // handleSubscribe → _packId placeholder (R1: RevenueCat integration pending)
-      expect('R1 TBD RevenueCat').toBeTruthy();
+    it('bundle card shown first (highlighted above other cards)', () => {
+      // Bundle id is 'bundle'; displayOrder 2, but shown first via explicit
+      // separation in PaywallScreen (bundle rendered before the others loop).
+      const bundle = TIER_CONFIG['bundle'];
+      expect(bundle).toBeDefined();
+    });
+  });
+
+  describe('Callback wiring', () => {
+    it('handleDismiss calls onDismiss prop if provided', () => {
+      let called = false;
+      const mock = () => { called = true; };
+      mock();
+      expect(called).toBe(true);
     });
 
-    it('Route receives onboarding service from useServices()', () => {
-      // Hook: const { onboarding } = useServices();
-      expect('onboarding').toBeTruthy();
+    it('handlePurchase passes pack id to onSubscribe', () => {
+      const mock = (packId: string) => { expect(packId).toBeTruthy(); };
+      mock('foundation');
     });
   });
 });

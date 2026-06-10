@@ -9,19 +9,16 @@ import type { TierConfigEntry } from '@/config/tiers';
 import { listTiers } from '@/config/tiers';
 import { useServices } from '@/presentation/services';
 
-// P-3: Paywall screen for exam pack SKUs. Displays paid tiers (exam packs +
-// bundle) with product cards. Placeholder buttons (R1: RevenueCat integration
-// pending). Dismiss routes back to home.
+// Paywall — three one-time non-consumable products matching App Store Connect:
+//   Foundation Pack ($9.99)  — full vocabulary access
+//   Bundle Pack     ($24.99) — Foundation + all future packs (highlighted)
+//   Upgrade Pack    ($19.99) — for Foundation owners upgrading to Bundle
 //
 // Accessibility:
-// - Header + product cards accessible via screen reader.
-// - "Unlock" buttons: 64px primary (teal gradient) — WCAG AA 48pt minimum.
-//   (Copy is "Unlock", not "Subscribe": one-time non-consumable IAPs, no
-//   recurring billing — Apple 3.1.1.)
-// - Bundle card highlighted with accent background + "Best value" badge.
-// - Focus order: top-to-bottom (dismiss first, then products, then CTA).
-// - Contrast: 4.5:1 on price/description text; on-accent label on primary button.
-// - Dynamic Type: all text scales with OS setting (useScaledFont).
+// - "Unlock" copy (not "Subscribe"): Apple 3.1.1 — one-time IAP, no recurring billing.
+// - Bundle card: accent background + "Best Value" badge.
+// - All Pressables 48pt+ touch targets; primary Button 64px height.
+// - Safe-area inset applied to header (notched device fix — TestFlight 2026-06-10).
 
 export interface PaywallScreenProps {
   source?: string;
@@ -33,31 +30,24 @@ export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: Pa
   const { colors, spacing, radii } = useTheme();
   const insets = useSafeAreaInsets();
   const { analytics, iap } = useServices();
-  // sku of the in-progress purchase (null = idle)
   const [purchasing, setPurchasing] = useState<string | null>(null);
 
-  // Fire paywall_viewed event on mount.
   useEffect(() => {
     void analytics.track('paywall_viewed', { source });
   }, [analytics, source]);
 
   const handleDismiss = useCallback(() => {
-    if (onDismiss) {
-      onDismiss();
-    } else {
-      router.back();
-    }
+    if (onDismiss) onDismiss();
+    else router.back();
   }, [onDismiss]);
 
-  const handleSubscribe = useCallback(
+  const handlePurchase = useCallback(
     async (pack: TierConfigEntry) => {
       const unlock = pack.unlock;
-      if (unlock.kind !== 'exam_pack') return;
-
+      if (unlock.kind !== 'paid') return;
       const sku = unlock.sku;
 
       if (onSubscribe) {
-        // Delegate to parent (used in onboarding route).
         void analytics.track('purchase_initiated', { tier_id: pack.id, sku, amount: unlock.listPriceUsd });
         onSubscribe(pack.id);
         return;
@@ -76,7 +66,6 @@ export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: Pa
             void analytics.track('purchase_cancelled', { sku, tier_id: pack.id });
             break;
           case 'pending':
-            // Ask-to-Buy: parental approval pending — inform user, no dismiss.
             void analytics.track('purchase_pending', { sku, tier_id: pack.id });
             break;
           case 'error':
@@ -90,36 +79,34 @@ export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: Pa
     [onSubscribe, onDismiss, analytics, iap],
   );
 
-  // Filter to paid exam packs + bundle only (unlock.kind === 'exam_pack')
-  const paidTiers = listTiers().filter((t) => t.unlock.kind === 'exam_pack');
-  // Bundle is the full all-exams SKU (29.99); identify it
-  const bundle = paidTiers.find((t) => t.unlock.kind === 'exam_pack' && t.unlock.listPriceUsd === 29.99);
-  const examPacks = paidTiers.filter((t) => t !== bundle);
+  const paidTiers = listTiers().filter((t) => t.unlock.kind === 'paid' && t.isActive);
+  const bundle   = paidTiers.find((t) => t.id === 'bundle');
+  const others   = paidTiers.filter((t) => t.id !== 'bundle');
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bgBase }}>
-      {/* Header + Dismiss button. paddingTop includes the safe-area inset so the
-          title + dismiss control clear the status bar / Dynamic Island on notched
-          devices — this screen renders its own View (not the Screen scaffold),
-          so the inset must be applied here. (TestFlight feedback 2026-06-10.) */}
-      <View style={{ paddingHorizontal: spacing.s4, paddingTop: spacing.s4 + insets.top, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+      <View
+        style={{
+          paddingHorizontal: spacing.s4,
+          paddingTop: spacing.s4 + insets.top,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <Text variant="headline" color="textPrimary" accessibilityRole="header">
-          Unlock Exam Prep
+          Unlock LexiTap
         </Text>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Dismiss paywall"
           onPress={handleDismiss}
-          style={({ pressed }) => ({
-            opacity: pressed ? 0.6 : 1,
-            padding: spacing.s2,
-          })}
+          style={({ pressed }) => ({ opacity: pressed ? 0.6 : 1, padding: spacing.s3 })}
         >
           <Icon name="x" size={24} colorValue={colors.accent} />
         </Pressable>
       </View>
 
-      {/* Scrollable product cards */}
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: spacing.s4,
@@ -128,34 +115,17 @@ export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: Pa
         }}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Header description */}
         <Text variant="body" color="textSecondary">
-          Access exam prep vocabulary, advanced content, and more. One-time purchase, forever access.
+          One-time purchase, forever access. No subscriptions, no recurring charges.
         </Text>
 
-        {/* Exam pack cards */}
-        <View style={{ gap: spacing.s3 }}>
-          {examPacks.map((pack) => (
-            <ProductCard
-              key={pack.id}
-              tier={pack}
-              isBundle={false}
-              onPress={() => void handleSubscribe(pack)}
-              isLoading={purchasing === (pack.unlock.kind === 'exam_pack' ? pack.unlock.sku : null)}
-              spacing={spacing}
-              colors={colors}
-              radii={radii}
-            />
-          ))}
-        </View>
-
-        {/* Bundle card (highlighted) */}
+        {/* Bundle card (Best Value — shown first and highlighted) */}
         {bundle && (
-          <View style={{ marginTop: spacing.s4 }}>
+          <View style={{ marginTop: spacing.s2 }}>
             <View
               style={{
                 position: 'absolute',
-                top: -8,
+                top: -10,
                 left: spacing.s4,
                 backgroundColor: colors.accent,
                 paddingHorizontal: spacing.s3,
@@ -169,11 +139,10 @@ export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: Pa
               </Text>
             </View>
             <ProductCard
-              key={bundle.id}
               tier={bundle}
-              isBundle={true}
-              onPress={() => void handleSubscribe(bundle)}
-              isLoading={purchasing === (bundle.unlock.kind === 'exam_pack' ? bundle.unlock.sku : null)}
+              isHighlighted={true}
+              isLoading={purchasing === (bundle.unlock.kind === 'paid' ? bundle.unlock.sku : null)}
+              onPress={() => void handlePurchase(bundle)}
               spacing={spacing}
               colors={colors}
               radii={radii}
@@ -181,13 +150,24 @@ export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: Pa
           </View>
         )}
 
-        {/* Footer info */}
-        <View style={{ marginTop: spacing.s4, paddingBottom: spacing.s4 }}>
-          <Text
-            variant="caption"
-            color="textTertiary"
-            style={{ textAlign: 'center', lineHeight: 18 }}
-          >
+        {/* Foundation + Upgrade cards */}
+        <View style={{ gap: spacing.s3 }}>
+          {others.map((pack) => (
+            <ProductCard
+              key={pack.id}
+              tier={pack}
+              isHighlighted={false}
+              isLoading={purchasing === (pack.unlock.kind === 'paid' ? pack.unlock.sku : null)}
+              onPress={() => void handlePurchase(pack)}
+              spacing={spacing}
+              colors={colors}
+              radii={radii}
+            />
+          ))}
+        </View>
+
+        <View style={{ marginTop: spacing.s2, paddingBottom: spacing.s4 }}>
+          <Text variant="caption" color="textTertiary" style={{ textAlign: 'center', lineHeight: 18 }}>
             All purchases are non-consumable one-time unlocks.{'\n'}
             No subscriptions, no recurring charges.
           </Text>
@@ -201,7 +181,7 @@ export function PaywallScreen({ source = 'paywall', onDismiss, onSubscribe }: Pa
 
 interface ProductCardProps {
   tier: TierConfigEntry;
-  isBundle: boolean;
+  isHighlighted: boolean;
   isLoading: boolean;
   onPress: () => void;
   spacing: Spacing;
@@ -211,7 +191,7 @@ interface ProductCardProps {
 
 function ProductCard({
   tier,
-  isBundle,
+  isHighlighted,
   isLoading,
   onPress,
   spacing: sp,
@@ -219,21 +199,19 @@ function ProductCard({
   radii: r,
 }: ProductCardProps): React.JSX.Element {
   const unlock = tier.unlock;
-  const price = unlock.kind === 'exam_pack' ? unlock.listPriceUsd : null;
+  const price = unlock.kind === 'paid' ? unlock.listPriceUsd : null;
 
   return (
     <Card
-      raised={isBundle}
+      raised={isHighlighted}
       style={{
-        backgroundColor: isBundle ? colors.accentSubtle : undefined,
-        marginTop: isBundle ? sp.s2 : 0,
-        borderColor: isBundle ? colors.accent : undefined,
+        backgroundColor: isHighlighted ? colors.accentSubtle : undefined,
+        marginTop: isHighlighted ? sp.s2 : 0,
+        borderColor: isHighlighted ? colors.accent : undefined,
       }}
     >
       <View style={{ gap: sp.s3 }}>
-        {/* Icon placeholder + title */}
         <View style={{ flexDirection: 'row', gap: sp.s4, alignItems: 'flex-start' }}>
-          {/* Tier icon (Lucide "library" glyph via the Icon component) */}
           <View
             style={{
               width: 56,
@@ -248,7 +226,6 @@ function ProductCard({
             <Icon name="library" size={28} colorValue={colors.accent} />
           </View>
 
-          {/* Title + description */}
           <View style={{ flex: 1, gap: sp.s1 }}>
             <Text variant="headline" color="textPrimary">
               {tier.displayName}
@@ -259,7 +236,6 @@ function ProductCard({
           </View>
         </View>
 
-        {/* Price + CTA row */}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: sp.s3 }}>
           {price !== null && (
             <Text variant="title" color="accent" accessibilityLabel={`$${price.toFixed(2)}`}>
@@ -267,17 +243,13 @@ function ProductCard({
             </Text>
           )}
           {isLoading ? (
-            <ActivityIndicator
-              size="small"
-              color={colors.accent}
-              accessibilityLabel="Purchase in progress"
-            />
+            <ActivityIndicator size="small" color={colors.accent} accessibilityLabel="Purchase in progress" />
           ) : (
             <Button
               label="Unlock"
               variant="primary"
               onPress={onPress}
-              accessibilityLabel={`Unlock ${tier.displayName} for $${price?.toFixed(2) ?? 'contact'}`}
+              accessibilityLabel={`Unlock ${tier.displayName} for $${price?.toFixed(2) ?? ''}`}
             />
           )}
         </View>
