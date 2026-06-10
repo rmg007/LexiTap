@@ -55,6 +55,11 @@ export interface WordRow {
    * value so a build can't ship undocumented-provenance content.
    */
   definition_license: string | null;
+  /**
+   * Founder QA flag (0/1). Set 1 after a human has reviewed the word's
+   * definition, senses, questions, and audio; reset to 0 to re-review. Default 0.
+   */
+  reviewed: number;
   created_at: number;
   deleted_at: number | null;
 }
@@ -92,4 +97,34 @@ export interface SenseExampleRow {
   example_index: number;
   text: string;
   created_at: number;
+}
+
+/** Allowed `word_questions.type` values — all answered by tap/drag, never typing. */
+export const QUESTION_TYPES = [
+  'multiple_choice',
+  'definition_match',
+  'fill_blank',
+  'sentence_order',
+  'true_false',
+] as const;
+export type QuestionType = (typeof QUESTION_TYPES)[number];
+
+/**
+ * One row of `word_questions` — an authored quiz question for a word.
+ * `distractors` is a JSON-array TEXT ('[]' for sentence_order). `hint` and
+ * `explanation` are nullable. `reviewed` is the per-question QA flag (0/1).
+ */
+export interface WordQuestionRow {
+  id: string;
+  word_id: string;
+  question_index: number;
+  type: string;
+  prompt: string;
+  correct: string;
+  distractors: string;
+  hint: string | null;
+  explanation: string | null;
+  reviewed: number;
+  created_at: number;
+  deleted_at: number | null;
 }

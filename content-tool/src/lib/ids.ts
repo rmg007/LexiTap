@@ -37,3 +37,8 @@ export function makeExampleId(senseId: string, exampleIndex: number): string {
   const hash = createHash('sha1').update(`${senseId}:${exampleIndex}`).digest('hex').slice(0, 16);
   return `ex_${hash}`;
 }
+
+export function makeQuestionId(wordId: string, questionIndex: number): string {
+  const hash = createHash('sha1').update(`${wordId}:${questionIndex}`).digest('hex').slice(0, 16);
+  return `q_${hash}`;
+}

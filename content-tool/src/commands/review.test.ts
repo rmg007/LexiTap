@@ -39,6 +39,7 @@ describe('review', () => {
         antonyms: null,
         usage_notes: null,
         definition_license: 'original',
+        reviewed: 0,
         created_at: Date.now(),
         deleted_at: null,
       }));
@@ -77,6 +78,7 @@ describe('review', () => {
         antonyms: null,
         usage_notes: null,
         definition_license: 'original',
+        reviewed: 0,
         created_at: Date.now(),
         deleted_at: null,
       }));
@@ -108,6 +110,7 @@ describe('review', () => {
         antonyms: null,
         usage_notes: null,
         definition_license: 'original',
+        reviewed: 0,
         created_at: Date.now(),
         deleted_at: null,
       }));

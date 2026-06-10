@@ -13,6 +13,7 @@ import { makeWordId, normalizeWord } from '@/lib/ids';
 import { loadConfig, findTier } from '@/lib/config';
 import { logger } from '@/lib/logger';
 import { flagValue, DEFAULT_DEFINITION_LICENSE } from '@/commands/validate';
+import { importMasterCommand } from '@/commands/import-master';
 import type { WordRow, WordType } from '@/schema/types';
 
 export type OnConflict = 'update' | 'skip' | 'error';
@@ -58,6 +59,8 @@ export function toWordRow(parsed: ParsedInputRow, createdAt: number): WordRow {
     // C7 provenance: imported content is original-authored by default (the C4
     // enrich prompt forces original phrasing). `validate --strict` requires this.
     definition_license: DEFAULT_DEFINITION_LICENSE,
+    // QA flag starts unreviewed; a human flips it via the master JSONL.
+    reviewed: 0,
     created_at: createdAt,
     deleted_at: null,
   };
@@ -67,11 +70,11 @@ const INSERT_SQL = `
 INSERT INTO words (
   id, word, definition, pos, cefr_level, grade_level, word_type,
   difficulty, frequency_rank, theme, example_sentence, image_path, audio_path, synonyms,
-  antonyms, usage_notes, definition_license, created_at, deleted_at
+  antonyms, usage_notes, definition_license, reviewed, created_at, deleted_at
 ) VALUES (
   @id, @word, @definition, @pos, @cefr_level, @grade_level, @word_type,
   @difficulty, @frequency_rank, @theme, @example_sentence, @image_path, @audio_path, @synonyms,
-  @antonyms, @usage_notes, @definition_license, @created_at, @deleted_at
+  @antonyms, @usage_notes, @definition_license, @reviewed, @created_at, @deleted_at
 )
 ON CONFLICT(id) DO UPDATE SET
   word = excluded.word,
@@ -190,13 +193,23 @@ export function importPseudoWordsCommand(args: string[]): void {
 /** CLI entry for `import`. */
 export function importCommand(args: string[]): void {
   const source = flagValue(args, '--source');
+
+  // JSONL master is the canonical source of truth (CONTENT_PIPELINE_JSONL_PLAN.md).
+  // A `.jsonl` source routes to the master importer — no `--tier` flag (categories
+  // carry CEFR + tiers per word). The legacy CSV path below stays only for the
+  // export self-bootstrap + pseudo-word seeding.
+  if (source && source.toLowerCase().endsWith('.jsonl')) {
+    importMasterCommand(args);
+    return;
+  }
+
   const tier = flagValue(args, '--tier');
   const type = (flagValue(args, '--type') ?? 'vocabulary') as WordType;
   const onConflict = (flagValue(args, '--on-conflict') ?? 'update') as OnConflict;
   const dryRun = args.includes('--dry-run');
 
   if (!source) throw new Error('import requires --source <path>');
-  if (!tier) throw new Error('import requires --tier <slug>');
+  if (!tier) throw new Error('import requires --tier <slug> (CSV mode); use a .jsonl source for the master importer');
 
   const config = loadConfig();
   if (!findTier(config, tier)) {

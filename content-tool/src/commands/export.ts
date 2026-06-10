@@ -37,7 +37,15 @@ import { defaultProviders } from '@/providers/defaultProviders';
 import type { ProviderRegistry } from '@/providers/types';
 import { logger } from '@/lib/logger';
 import { flagValue } from '@/commands/validate';
-import type { TierRow, WordRow, WordTierRow, PseudoWordRow, WordSenseRow, SenseExampleRow } from '@/schema/types';
+import type {
+  TierRow,
+  WordRow,
+  WordTierRow,
+  PseudoWordRow,
+  WordSenseRow,
+  SenseExampleRow,
+  WordQuestionRow,
+} from '@/schema/types';
 
 const INSERT_TIER = `
 INSERT INTO content_tiers (
@@ -51,11 +59,11 @@ const INSERT_WORD = `
 INSERT INTO words (
   id, word, definition, pos, cefr_level, grade_level, word_type,
   difficulty, frequency_rank, theme, example_sentence, image_path, audio_path, synonyms,
-  antonyms, usage_notes, definition_license, created_at, deleted_at
+  antonyms, usage_notes, definition_license, reviewed, created_at, deleted_at
 ) VALUES (
   @id, @word, @definition, @pos, @cefr_level, @grade_level, @word_type,
   @difficulty, @frequency_rank, @theme, @example_sentence, @image_path, @audio_path, @synonyms,
-  @antonyms, @usage_notes, @definition_license, @created_at, @deleted_at
+  @antonyms, @usage_notes, @definition_license, @reviewed, @created_at, @deleted_at
 )
 `.trim();
 
@@ -76,6 +84,11 @@ VALUES (@id, @word_id, @sense_index, @pos, @short_gloss, @explanation, @image_pa
 const INSERT_SENSE_EXAMPLE = `
 INSERT INTO sense_examples (id, sense_id, example_index, text, created_at)
 VALUES (@id, @sense_id, @example_index, @text, @created_at)
+`.trim();
+
+const INSERT_WORD_QUESTION = `
+INSERT INTO word_questions (id, word_id, question_index, type, prompt, correct, distractors, hint, explanation, reviewed, created_at, deleted_at)
+VALUES (@id, @word_id, @question_index, @type, @prompt, @correct, @distractors, @hint, @explanation, @reviewed, @created_at, @deleted_at)
 `.trim();
 
 function activeWords(working: DB): WordRow[] {
@@ -113,6 +126,21 @@ function activeSenseExamples(working: DB): SenseExampleRow[] {
        ORDER BY se.sense_id, se.example_index`,
     )
     .all() as SenseExampleRow[];
+}
+
+function activeQuestions(working: DB): WordQuestionRow[] {
+  const hasQuestions = working
+    .prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='word_questions'`)
+    .get();
+  if (!hasQuestions) return [];
+  return working
+    .prepare(
+      `SELECT wq.* FROM word_questions wq
+       JOIN words w ON w.id = wq.word_id
+       WHERE w.deleted_at IS NULL AND wq.deleted_at IS NULL
+       ORDER BY wq.word_id, wq.question_index`,
+    )
+    .all() as WordQuestionRow[];
 }
 
 /** Memberships for active words only (a soft-deleted word's tags are dropped). */
@@ -211,6 +239,7 @@ export function buildOutputDb(
   const pseudoWords = allPseudoWords(working);
   const senses = activeSenses(working);
   const senseExamples = activeSenseExamples(working);
+  const questions = activeQuestions(working);
 
   // Final validation against the OUTPUT data; abort on any error. Under --strict
   // the extra C7 checks (dup-leak, provenance) also gate the build (fail-closed:
@@ -250,6 +279,7 @@ export function buildOutputDb(
   const insertPseudo = output.prepare(INSERT_PSEUDO_WORD);
   const insertSense = output.prepare(INSERT_SENSE);
   const insertSenseExample = output.prepare(INSERT_SENSE_EXAMPLE);
+  const insertQuestion = output.prepare(INSERT_WORD_QUESTION);
 
   const tx = output.transaction(() => {
     for (const tier of config.tiers) {
@@ -269,6 +299,9 @@ export function buildOutputDb(
     }
     for (const ex of senseExamples) {
       insertSenseExample.run(ex);
+    }
+    for (const q of questions) {
+      insertQuestion.run(q);
     }
   });
   tx();

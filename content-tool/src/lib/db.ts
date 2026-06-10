@@ -106,6 +106,44 @@ function applyWorkingDbMigrations(db: DB): void {
     `);
     db.exec(`CREATE INDEX idx_sense_examples_sense ON sense_examples(sense_id)`);
   }
+
+  // JSONL-redesign migration: add `words.reviewed` QA flag if schema pre-dates it.
+  const hasReviewed = db
+    .prepare(`SELECT name FROM pragma_table_info('words') WHERE name='reviewed'`)
+    .get();
+  if (!hasReviewed) {
+    db.exec(`ALTER TABLE words ADD COLUMN reviewed INTEGER NOT NULL DEFAULT 0`);
+    db.exec(
+      `CREATE INDEX IF NOT EXISTS idx_words_reviewed ON words(reviewed) WHERE deleted_at IS NULL`,
+    );
+  }
+
+  // JSONL-redesign migration: create word_questions table if absent.
+  const hasQuestions = db
+    .prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='word_questions'`)
+    .get();
+  if (!hasQuestions) {
+    db.exec(`
+      CREATE TABLE word_questions (
+        id             TEXT PRIMARY KEY,
+        word_id        TEXT NOT NULL,
+        question_index INTEGER NOT NULL,
+        type           TEXT NOT NULL,
+        prompt         TEXT NOT NULL,
+        correct        TEXT NOT NULL,
+        distractors    TEXT NOT NULL,
+        hint           TEXT,
+        explanation    TEXT,
+        reviewed       INTEGER NOT NULL DEFAULT 0,
+        created_at     INTEGER NOT NULL,
+        deleted_at     INTEGER,
+        UNIQUE (word_id, question_index)
+      )
+    `);
+    db.exec(
+      `CREATE INDEX idx_word_questions_word ON word_questions(word_id) WHERE deleted_at IS NULL`,
+    );
+  }
 }
 
 /**

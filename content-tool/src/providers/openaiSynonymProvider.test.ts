@@ -25,6 +25,7 @@ function row(overrides: Partial<WordRow> = {}): WordRow {
     antonyms: null,
     usage_notes: null,
     definition_license: 'original',
+    reviewed: 0,
     created_at: 1,
     deleted_at: null,
     ...overrides,

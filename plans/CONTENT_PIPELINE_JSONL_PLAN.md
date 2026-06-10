@@ -1,9 +1,9 @@
 # Content Pipeline JSONL Redesign Plan
 
-**Status:** approved — pending implementation  
+**Status:** Phase 1 + Phase 2 (code) IMPLEMENTED — Phase 3 + 4 owner-blocked  
 **Decision date:** 2026-06-10  
 **Supersedes:** separate-CSV-per-tier approach (foundation.csv, toefl.csv, etc.)  
-**Blocked by:** nothing — implement before CONTENT-2 enrichment run  
+**Blocked by:** nothing for code; Phase 3 needs specialty word lists (Ryan), Phase 4 needs API key + spend approval (Ryan)  
 
 ---
 
@@ -254,21 +254,25 @@ Ryan to provide or approve sources. This is a content task, not a code task.
 
 ## Implementation Phases
 
-### Phase 1 — Schema + migration (no enrichment yet)
-- [ ] Add `reviewed` column to `ddl.ts` `CREATE_WORDS`
-- [ ] Add `word_questions` table + index to `ddl.ts` `CONTENT_DB_DDL`
-- [ ] Add `reviewed` + question row types to `schema/types.ts`
-- [ ] Add `migration_003` to `mobile/src/infrastructure/db/migrations/` — `ALTER TABLE quiz_attempts ADD COLUMN question_id TEXT`
-- [ ] Write `export-master` command (DB → JSONL, includes senses + questions)
-- [ ] Run migration: generate `data/input/words_master.jsonl` from current working.db
-- [ ] Verify: 2,848 words, correct categories, `senses: []`, `questions: []`
+### Phase 1 — Schema + migration (no enrichment yet) — ✅ DONE (commit 07e032d)
+- [x] Add `reviewed` column to `ddl.ts` `CREATE_WORDS` (+ `idx_words_reviewed`)
+- [x] Add `word_questions` table + index to `ddl.ts` `CONTENT_DB_DDL`
+- [x] Add `reviewed` to `WordRow` + `WordQuestionRow`/`QuestionType` to `schema/types.ts`
+- [x] Idempotent working-DB migrations in `lib/db.ts` (reviewed col + word_questions table)
+- [x] `export.ts` carries `reviewed` + `word_questions` through to the output `words.db`
+- [x] Write `export-master` command (DB → JSONL, includes senses + questions) + test
+- [x] Generate `data/input/words_master.jsonl` from current working.db (2,881 words, 12 with senses, 0 questions)
+- [ ] ~~`migration_003` in `mobile/src/infrastructure/db/`~~ — **DEFERRED.** Belongs with the mobile question-rendering feature (a confirmation-gated high-risk path), not the content pipeline. Adding an unused nullable column now vs. with that feature is functionally identical. Re-list it as the first task of the mobile authored-questions feature.
 
-### Phase 2 — Import pipeline rewrite
-- [ ] Update `import.ts` to read JSONL master (drop `--tier` flag)
-- [ ] Parse `categories` array → route CEFR + tier slugs
-- [ ] Ingest `senses` + `questions` arrays in same import pass
-- [ ] Update `enrich-senses` output to write `senses` + `questions` back into master JSONL
-- [ ] All existing tests green; add tests for JSONL import, categories parsing, question ingestion
+> Note: most foundation words carry no CEFR in `categories` because the legacy `foundation.csv` used a `cefr` header the importer mapped to nothing — pre-existing content debt, fixed during Phase 3 cross-referencing, not by this code.
+
+### Phase 2 — Import pipeline rewrite — ✅ DONE (code) (this commit)
+- [x] `import --source *.jsonl` routes to the master importer (`import-master`); `--tier` not required for JSONL (CSV path kept only for export self-bootstrap + pseudo-words)
+- [x] Parse `categories` → route CEFR → `cefr_level`, tier slugs → `word_tiers`; unknown slug = hard error; >1 CEFR warns + keeps first
+- [x] Ingest `senses` + `questions` in the same pass (full upsert per word; children replaced clean-slate)
+- [x] Tests: coerce/parse/import + round-trip `export-master ↔ import-master` (237 content-tool tests green)
+- [x] Verified end-to-end: real master JSONL loads into a fresh DB → 2,881 words / 2,894 memberships / 15 senses / 45 examples, 0 errors; `validate --strict` = 0 errors / 2,802 known warnings; `release` rebuilt `words.db` (new schema present) → copied to `mobile/assets/vocab/`
+- [ ] **Update `enrich-senses` output to master format + generate questions — DEFERRED to Phase 4.** Coupled to the paid run: it requires extending the Anthropic provider prompt to also produce the 5 questions (with hint/explanation) and the V-rule validators for them. That prompt is a content-quality decision Ryan gates (as he gated the senses prompt), so it lands with the approved enrichment run, not before.
 
 ### Phase 3 — Cross-reference specialty tiers
 - [ ] Source word lists for each specialty tier (Ryan to approve)
