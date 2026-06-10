@@ -2,12 +2,26 @@
 title: Content Pipeline Architecture
 category: content-data
 status: active
-updated: 2026-05-31
+updated: 2026-06-10
 priority: P0
-tags: [content-pipeline, cli, sqlite, csv, enrichment, neural-tts, polly, google-tts, openai, unsplash, app-agnostic, two-db, versioning]
+tags: [content-pipeline, cli, sqlite, jsonl, enrichment, neural-tts, polly, google-tts, openai, unsplash, app-agnostic, two-db, versioning]
 ---
 
 # Content Pipeline Architecture
+
+> ⚠️ **PIPELINE REDESIGN IN PROGRESS (2026-06-10)** — The CSV-per-tier input format is being
+> replaced with a single `words_master.jsonl` file. See
+> [`/plans/CONTENT_PIPELINE_JSONL_PLAN.md`](/plans/CONTENT_PIPELINE_JSONL_PLAN.md) for the
+> full spec and implementation phases. Do NOT use the legacy CSV files as import sources;
+> do NOT run `import --source *.csv --tier <slug>`. The sections below describe the old
+> architecture; they will be updated once the JSONL pipeline (Phases 1–2) is implemented.
+>
+> **Key decisions:**
+> - Single `data/input/words_master.jsonl` replaces all separate tier CSVs
+> - `categories` array per word (e.g. `["B2", "foundation", "toefl"]`) replaces both `cefr_level` column and separate tier files
+> - `reviewed` boolean added to both JSONL and `words` table
+> - Senses nested inside each word object — `ingest-senses` merged into `import`
+> - 2,848 foundation words is the scope; no new words until existing words are fully seeded
 
 Authoritative build specification for the LexiTap content tool ("Track A") — the local
 developer CLI that turns the founder's frequency-ordered word corpora into the read-only
