@@ -1,0 +1,32 @@
+# Session: Frontier batch — AUTH-1 code, IAP-1 tail, CONTENT-2 driver, STORE-2 rescue (2026-06-10 PM)
+
+**Trigger:** Ryan: "you have my permission to act as senior developer and finish as much as possible from the plans and the roadmap." Honest scope read: of everything left, exactly four things were finishable without Ryan's accounts/devices/money. All four done (commits `da530c7`…`cde165d`, CI green), plus a 30-agent adversarial review whose 24 confirmed findings were all fixed same-day.
+
+## What shipped (3 parallel worktree agents, octopus-merged, then review+fix)
+
+1. **AUTH-1 code half** (`590de22` + fixes `c188bb9`): `AuthPort.signInWithIdToken('apple'|'google')` → Supabase; `AppleSignInAdapter` (expo-apple-authentication ~56.0.4) + `GoogleSignInAdapter` (@react-native-google-signin ^16.1.2 — **v16 returns a response OBJECT** `{type:'success',data:{idToken}}`, verified against installed source, not memory); AuthContext methods + availability flags; SignInScreen native buttons. New AuthErrorKinds `cancelled` (silent) + `unavailable` (hide entry point). Google plugin in app.config.ts is **env-gated** on `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` (iosUrlScheme derived by reversing the client ID) so credential-less builds don't break. buildNumber 2→3 (2 consumed on TestFlight; native modules force a store build). Ryan tail in `mobile/AUTH_INTEGRATION.md`.
+2. **IAP-1 code tail** (`10af213` + `c188bb9`): `IapPort.logIn/logOut` → container `syncIapIdentity` (AU2.5 alias); Settings "Restore purchases" (3.1.1). Review hardened the contracts — see lessons.
+3. **CONTENT-2 driver** (`b795ae3` + `dff920a`): `enrich-senses` CLI + `AnthropicSenseProvider` (feel-it prompt embeds Ryan-approved plant/borrow exemplars; conservative 1-sense default; junk-word SKIP rule so proper nouns/demonyms/inflections don't burn tokens). `--limit` required, `--dry-run` keyless, resume-safe append + skip-file, cost estimate up front (~$8 approx for 300 words on claude-opus-4-8 — brief's $15/$75 opus pricing was stale, current is $5/$25). Runbook: `content-tool/ENRICH_SENSES.md`. 216 content-tool tests.
+4. **STORE-2 rescue** (`e5f0e3e` + `c188bb9`): **the 2026-05-31 "deployed to lexitap.app" memory claim was FALSE** — domain had no DNS records, live Pages deployment was a stale May-31 snapshot, and privacy/terms were unreachable even on pages.dev. Fixed + deployed + verified; domains attached via API (pending Ryan's CNAME clicks); Email Routing not set up (no MX — support@ bounces until Ryan enables).
+
+## Hard-won lessons (each cost a debug loop or was a latent landmine)
+
+- **CI was DEAD since the SDK-56 upgrade** — `tsc` fails on any clean checkout with TS2882 on `import '../global.css'` because the CSS-module types live in the gitignored generated `expo-env.d.ts`. Both build agents hit it in fresh worktrees and worked around it locally; the connection to CI was only made when `gh run list` showed every run red. **Fix: committed `mobile/expo-types.d.ts`** (`/// <reference types="expo/types" />`) + tsconfig include; proven by typechecking with expo-env.d.ts removed. Lesson: *fresh-worktree failure = CI failure; if an agent works around an environment gap, check CI.*
+- **Cloudflare Pages redirect loop:** `_redirects` aliases targeting `.html` files loop against Pages' built-in pretty-URL 308 (`/privacy` ↔ `/privacy.html`). Aliases must target extensionless paths. Also: with no `404.html`, Pages SPA-fallback serves index.html with 200 for ANY path — masks broken links.
+- **Pipe swallows exit codes:** `npm run check | tail` reported exit 0 on a typecheck FAILURE (caught because the error text was visible). Use `set -o pipefail` when piping check output.
+- **react-native-purchases jest mock had diverged error-code values** from the real SDK enum (e.g. PAYMENT_PENDING '9' vs real '20') — tests internally consistent but lying about production. Mock now mirrors `@revenuecat/purchases-typescript-internal/dist/errors.d.ts`.
+- **`restorePurchases(): []` on error = dead error path:** UI told paying users "No previous purchases found." on SDK failure. Contract now `PurchaseResult[] | null` (null = failure). Generalize: *a fallback value that overlaps a legitimate result hides failures.*
+- **Alias dedup must commit only on success:** committing `lastAliasedUserId` before `Purchases.logIn` resolves means a swallowed failure is never retried. Same shape as the BK2 throttle lesson. Also: cold start with no session must `logOut()` once — in-memory dedup can't see a stale alias from a previous run.
+- **Native AppleAuthenticationButton has NO disabled prop** (ViewProps only) — concurrency-gate it via wrapper `pointerEvents` + self-guarding handler.
+- **mapError reuse trap (2nd occurrence):** the shared 4xx→invalid_otp mapping produced "That code is invalid or has expired." after an Apple/Google sheet. deleteAccount had already dodged this exact trap. Per-flow error mapping for non-OTP paths.
+- **wrangler OAuth token** (from `wrangler login`, in `~/Library/Preferences/.wrangler/config/default.toml`) can deploy Pages and attach Pages custom domains via API, but **lacks DNS-record write scope** — CNAME creation is dashboard-only for Ryan.
+
+## New pre-submission blockers (from review; tracked as AUTH-2 / RC-2 in ORCHESTRATION)
+- **AUTH-2:** Apple REQUIRES Sign in with Apple token revocation on account deletion (App Review 5.1.1(v)). `delete-account` Edge Function has no revoke step. Needs Apple Services .p8 as a function secret.
+- **RC-2:** the RevenueCat alias creates account-linked data that deletion never touches. Site copy softened same-day; real fix = `DELETE /v1/subscribers/{id}` in the Edge Function once RC-1 yields a secret key.
+
+## Ryan's tail (all clicks/runs, no code — also in ORCHESTRATION ▶ Ready now)
+1. Cloudflare: 2 CNAME records + Email Routing (STORE-2).
+2. Supabase provider toggles + Google client ID + EAS secret + build 3 + device verify (AUTH-1, `mobile/AUTH_INTEGRATION.md`).
+3. RevenueCat account/products/secrets (RC-1) → sandbox test (IAP-1 closes).
+4. `enrich-senses` dry-run → live run → ingest → validate → release (CONTENT-2, `content-tool/ENRICH_SENSES.md`).

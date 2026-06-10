@@ -15,14 +15,18 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 **BETA-1 ✅ DONE:** Build `9bf46ff6` (Expo SDK 56 / RN 0.85 / React 19) distributed to internal testers on TestFlight. Phase 2 beta is live.
 
+**2026-06-10 PM frontier batch ✅ (CI green):** AUTH-1 code half (native Sign in with Apple + Google → Supabase), IAP-1 code tail (RevenueCat alias + Restore purchases), CONTENT-2 driver (`enrich-senses` — the paid run is one command now), STORE-2 agent half (site was NOT live — redirect loop + no DNS + stale deploy fixed; deployed + verified; `/delete-account` page added). 24 adversarial-review findings fixed same-day; CI revived (dead since SDK-56).
+
 **Shipped since 2026-05-31:** BUILD-1 ✅ (device), SDK-56 ✅ (iOS 26 mandate), Figma 100% finalized, Rich Word-Detail model (CONTENT-1 ✅), Learn-loop wired, E2E-1, LEGAL-2, STORE-3, RTL-1, LEGAL-3, STORE-1 — all ✅.
 
-**▶ Next, in order (all Ryan-owned or externally blocked):**
-1. **Recruit 50 beta testers (BETA-2).** TestFlight link is live — share in r/TOEFL, r/IELTS, r/languagelearning, ESL groups. D7 gate: 7 days from first session.
-2. **RC-1 — RevenueCat + App Store Connect products.** Start in parallel with recruitment. Unblocks IAP-1 (paywall).
-3. **Phase 2 paid enrichment (CONTENT-2).** Top-N by frequency, top-tier model. Stub — tell agent N + budget to expand.
+**▶ Next, in order (all Ryan-owned — mostly clicks; exact steps in [ORCHESTRATION.md](../../ORCHESTRATION.md)):**
+1. **STORE-2 tail:** 2 Cloudflare clicks (CNAME records + Email Routing) — until then lexitap.app doesn't resolve and support@ bounces.
+2. **Recruit 50 beta testers (BETA-2).** TestFlight link is live — share in r/TOEFL, r/IELTS, r/languagelearning, ESL groups. D7 gate: 7 days from first session.
+3. **RC-1 — RevenueCat + App Store Connect products.** IAP-1 code is COMPLETE — after RC-1 it's config + one sandbox device test.
+4. **CONTENT-2 — run the driver** (`content-tool/ENRICH_SENSES.md`): dry-run, then ~$8 approx live run on claude-opus-4-8.
+5. **AUTH-1 tail:** Supabase provider toggles + Google client ID + EAS build 3 + device verify (`mobile/AUTH_INTEGRATION.md`).
 
-**Tracked, lower priority:** ~11 Dependabot alerts (transitive Expo tooling, accepted until SDK bump). Sentry auth token needed as EAS secret before production builds.
+**Tracked, lower priority:** Pre-submission blockers AUTH-2 (Apple token revocation on deletion, App Review 5.1.1(v)) + RC-2 (RevenueCat customer deletion) — await Ryan-owned secrets. ~11 Dependabot alerts (transitive Expo tooling, accepted until SDK bump). Sentry auth token needed as EAS secret before production builds.
 
 The detailed product roadmap: 6 phases across 21 weeks, two parallel build tracks, deliverables and gates per phase, and the post-launch content-drop cadence. This doc expands the at-a-glance tracker [../../ROADMAP.md](../../ROADMAP.md). Feature detail is in [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md); requirements in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md).
 

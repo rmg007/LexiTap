@@ -48,16 +48,19 @@ Shared barrels (`domain/index.ts`, `mobile/package.json`, both `ROADMAP.md`s) ar
 
 **BETA-1 ✅ cleared 2026-06-10 — build distributed to internal testers on TestFlight.**
 
-**Ryan-only / external-blocked — no agent can advance these:**
+**2026-06-10 PM batch ✅ — every agent-doable code task on the frontier is DONE** (commits `da530c7`…`cde165d`, all CI-green): AUTH-1 code half (native SIWA + Google, env-gated), IAP-1 code tail (RevenueCat alias + Restore purchases), CONTENT-2 driver (`enrich-senses` one-command run), STORE-2 site fixes (deployed + verified live). A 30-agent adversarial review confirmed 24 findings — all fixed same-day. **CI was dead since the SDK-56 upgrade (TS2882 on clean checkouts) — fixed via committed `mobile/expo-types.d.ts`.**
+
+**Ryan-only / external-blocked — no agent can advance these (now mostly clicks, not work):**
 
 | id | task | blocked_by |
 |---|---|---|
-| `CONTENT-2` | Phase 2 paid enrichment run | paid API spend + model choice |
-| `BETA-2` | Recruit 50 beta testers | testers; D7 data takes 7 days |
+| `CONTENT-2` | run `npm run enrich:senses` (driver built, see task) | API key + N/model/budget call |
+| `STORE-2` | 2 Cloudflare dashboard clicks: DNS records + Email Routing | Cloudflare account (token on disk lacks DNS scope) |
+| `AUTH-1` | Supabase provider toggles + Google client ID + EAS build 3 | dashboards + device verify |
 | `RC-1` | RevenueCat account + product config | RevenueCat account; App Store Connect products |
-| `AUTH-1` | Native Google + Sign in with Apple | native modules; Apple requires SIWA when Google offered |
+| `BETA-2` | Recruit 50 beta testers | testers; D7 data takes 7 days |
 
-> No agent-doable `ready` tasks exist until RC-1 unblocks IAP-1 or AUTH-1 is done. Critical path is now D7 retention gate (7 days) + RC-1 setup in parallel.
+> Agent-doable `ready` tasks: none until RC-1 unblocks IAP-1's live verify or AUTH-1's device verify unblocks BACKUP-1. Critical path: D7 retention gate (7 days) + RC-1 setup in parallel. **Pre-submission blockers added this pass: AUTH-2 (Apple token revocation) + RC-2 (RevenueCat customer deletion) — both in the delete-account Edge Function, both need Ryan-owned secrets.**
 
 ---
 
@@ -119,14 +122,24 @@ Cold-launch confirmed on device. **Recommend:** run full learn-flow → Quick-ch
 
 # Phase 2 — Content (the long pole) + Beta
 
-### CONTENT-2 · Phase 2 paid enrichment run
+### CONTENT-2 · Phase 2 paid enrichment run — **driver BUILT, run is one command**
 ```
 id: CONTENT-2   phase: 2   status: ready   owner: ryan
 depends_on: [CONTENT-1]   parallel_safe: false   paths: [content-tool/, mobile/assets/vocab/words.db]
-blocked_by: paid API spend + top-tier model choice
-verify: top-N words enriched with rich senses; validate --strict clean; words.db rebuilt + copied to mobile
+blocked_by: ANTHROPIC_API_KEY + N/model/budget decision (recommended: 300 / claude-opus-4-8 / ~$8 approx)
+verify: top-N words enriched with rich senses; validate --strict clean (0 errors); words.db rebuilt + copied to mobile
 ```
-**Stub:** CONTENT-1 ✅ (synthesis + pre-write validation now exist). Real "seedings" — top-N by frequency, top-tier model (cheap bulk = slop on "feel it", per Ryan). Expand to a full prompt via `/orchestrate expand CONTENT-2` once run parameters (N, model, budget) are chosen.
+**Driver done 2026-06-10** (commits `b795ae3` + `dff920a`, 216 tests green): `enrich-senses` command + `AnthropicSenseProvider` (feel-it prompt with Ryan-approved `plant`/`borrow` exemplars as few-shots, conservative default-1-sense, junk-word SKIP rule, V1–V10 validation, max_tokens batch-split, resume-safe append, skip-file persistence, read-only DB open). Full runbook: [`content-tool/ENRICH_SENSES.md`](content-tool/ENRICH_SENSES.md). The run:
+```bash
+cd content-tool
+npm run enrich:senses -- --limit 300 --dry-run        # $0 — selection + cost estimate
+export ANTHROPIC_API_KEY=sk-ant-...                    # shell only, never commit
+npm run enrich:senses -- --limit 300 --model claude-opus-4-8   # interruptible, resumes
+npm run cli -- ingest-senses --source data/working/senses-enriched.jsonl
+npm run cli -- validate --strict                       # expect 0 errors / ~2802 known warnings
+npm run release                                        # rebuild words.db + copy to mobile
+```
+Review the printed skip list — it's the seed-junk inventory (proper nouns/demonyms/inflections the model refused to dress up).
 
 ### CONTENT-3 · Exam-pack word-list sourcing (TOEFL/IELTS)
 ```
@@ -191,22 +204,43 @@ verify: exam_* + all_exams products + entitlements configured; keys in EAS secre
 ```
 BUILD-1 ✅ — unblocked. Still needs external accounts. See `plans/P3_REVENUECAT_PLAN.md`. Unblocks IAP-1 once done.
 
-### IAP-1 · Wire RevenueCat into paywall + restore + entitlement gating  ⚠ high-risk path
+### IAP-1 · Wire RevenueCat into paywall + restore + entitlement gating  ⚠ high-risk path — **code ✅ complete, live verify blocked on RC-1**
 ```
-id: IAP-1   phase: 3   status: blocked   owner: agent
-depends_on: [RC-1]   parallel_safe: false   paths: [mobile/src/infrastructure/iap/, mobile/src/presentation/screens/PaywallScreen.tsx]
-verify: purchase → entitlement unlocks pack; restore works; StubIap still default when unconfigured; npm run check green
+id: IAP-1   phase: 3   status: blocked   owner: ryan
+depends_on: [RC-1]   parallel_safe: false   paths: [mobile/src/infrastructure/iap/, mobile/src/presentation/screens/SettingsScreen.tsx]
+blocked_by: RC-1 (account + products + EAS secrets) — then on-device sandbox verify only
+verify: purchase → entitlement unlocks pack; Settings "Restore purchases" works; alias visible in RC dashboard after sign-in; npm run check green
+commit: 10af213 (+ contract fixes c188bb9)
 ```
-**Stub:** `RevenueCatIapService.ts` exists; app runs `StubIapService`. `infrastructure/iap/` is a **confirmation-gated high-risk path** — expand with care once `RC-1` provides real products.
+**All code shipped 2026-06-10** (paywall purchase flow + entitlement gating were already done in R4–R6): `IapPort.logIn/logOut` (boolean, never-throw, cache-invalidating), container `syncIapIdentity` (dedup commits only on success; cold-start stale-alias revert), Settings "Restore purchases" row (always visible per 3.1.1; failure ≠ "no purchases" — null contract; screen-reader announced). Legacy duplicate `IapService.ts` deleted. **Remaining = RC-1's dashboard work + EAS secrets (`EXPO_PUBLIC_REVENUECAT_API_KEY_IOS`), then a sandbox purchase/restore/sign-in pass on device.**
 
-### AUTH-1 · Native Google Sign-In + Sign in with Apple (Guideline 4.8)
+### AUTH-1 · Native Google Sign-In + Sign in with Apple (Guideline 4.8) — **code half ✅ done**
 ```
-id: AUTH-1   phase: 3   status: ready   owner: both
+id: AUTH-1   phase: 3   status: in-progress   owner: ryan
 depends_on: [BUILD-1]   parallel_safe: false   paths: [mobile/src/infrastructure/auth/, mobile/app.config.ts]
-blocked_by: native modules require a dev/prod build; Apple requires SIWA whenever Google offered
-verify: both native flows complete; session persists; magic-link still works
+blocked_by: Supabase provider config + Google OAuth client ID + EAS build 3 + device verify
+verify: both native flows complete on device; session persists; magic-link still works
+commit: 590de22 (+ review fixes c188bb9)
 ```
-BUILD-1 ✅ — unblocked. AU2/AU3 deferred to pre-submission per Ryan's decision (2026-06-01). See `plans/P3_AUTH_PLAN.md`. Unblocks BACKUP-1 once done.
+**All code shipped 2026-06-10:** `AuthPort.signInWithIdToken('apple'|'google')`, `AppleSignInAdapter` (expo-apple-authentication ~56.0.4) + `GoogleSignInAdapter` (@react-native-google-signin ^16.1.2, env-gated on `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID`), AuthContext `signInWithApple`/`signInWithGoogle` + availability flags, SignInScreen native buttons (re-entrancy-guarded, cancel = silent), app.config plugins (Google plugin only when env present; `usesAppleSignIn: true`; buildNumber → 3). 520 tests green. **Ryan's exact tail is in [`mobile/AUTH_INTEGRATION.md`](mobile/AUTH_INTEGRATION.md):** (a) Supabase → Providers → Apple: enable + add `com.lexitap.app` to Authorized Client IDs; (b) Google Cloud → iOS OAuth client → copy ID; (c) Supabase → Providers → Google: enable + add it; (d) `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` EAS secret; (e) new EAS build (native modules — cannot ship via EAS Update); (f) verify both flows on device. Unblocks BACKUP-1 once device-verified.
+
+### AUTH-2 · Apple token revocation on account deletion (App Review 5.1.1(v))  ⚠ pre-submission blocker
+```
+id: AUTH-2   phase: 3   status: blocked   owner: both
+depends_on: [AUTH-1]   parallel_safe: true   paths: [supabase/functions/delete-account/]
+blocked_by: Apple Services key (.p8) must exist + be set as a Supabase function secret
+verify: deleting an account whose identities include provider 'apple' revokes the Apple token (appleid.apple.com /auth/revoke); deletion still completes for non-Apple users
+```
+**Found by adversarial review 2026-06-10:** once SIWA ships, Apple REQUIRES apps to revoke Sign in with Apple tokens when an account is deleted. The `delete-account` Edge Function has no revoke step. Agent half: mint the client-secret JWT from the .p8, call `/auth/token` + `/auth/revoke` for users with an `apple` identity (via `admin.getUserById().identities`), fail-safe ordering (revoke before the irreversible auth-user delete). Ryan half: create the Apple Services key + store as function secret. **Must land before App Store submission.**
+
+### RC-2 · RevenueCat customer deletion in delete-account  ⚠ erasure-claim accuracy
+```
+id: RC-2   phase: 3   status: blocked   owner: both
+depends_on: [RC-1]   parallel_safe: true   paths: [supabase/functions/delete-account/]
+blocked_by: RevenueCat secret API key (account doesn't exist yet — RC-1)
+verify: delete-account removes the RevenueCat customer (DELETE /v1/subscribers/{app_user_id}) in the storage-clear phase, fail-fatal like the storage step
+```
+**Found by adversarial review 2026-06-10:** the IAP-1 alias (`Purchases.logIn(supabaseUserId)`) creates account-linked data at RevenueCat that account deletion never touches. Site copy was softened same-day (delete-account.html discloses store/RevenueCat purchase records); this task makes the erasure real once RC-1 provides the secret key.
 
 ### BACKUP-1 · Verify encrypted backup against authenticated uid
 ```
@@ -246,7 +280,15 @@ commit: 7b7b885 (merged)
 ```
 `plans/STORE_ASSETS_PLAN.md` — full App Store copy, iOS subtitle, Android short desc, keywords (94 chars), 6-screen screenshot spec, 15s App Preview storyboard. Ryan reviews + signs off final icon (ships as vector).
 
-### STORE-2 · Verify legal site live (privacy/ToS), support email, lexitap.app — **stub**
+### STORE-2 · Legal site live (privacy/ToS), support email, lexitap.app — **agent half ✅ done; 2 Ryan clicks left**
+```
+id: STORE-2   phase: 5   status: in-progress   owner: ryan
+depends_on: []   parallel_safe: true   paths: [website/public/]
+blocked_by: Cloudflare dashboard (DNS records + Email Routing) — wrangler OAuth token lacks DNS-write scope
+verify: https://lexitap.app/privacy + /terms + /delete-account return 200; support@lexitap.app receives mail
+commit: e5f0e3e (+ privacy updates c188bb9)
+```
+**Audit 2026-06-10 found the site was NOT live at all** (memory's 2026-05-31 "deployed to lexitap.app" claim was wrong): domain never attached (no DNS records), live deployment was a stale May-31 snapshot, and `/privacy`+`/terms` were unreachable even on pages.dev — the `_redirects` extensionless→`.html` aliases looped against Pages' built-in pretty-URL 308. **Fixed + deployed + verified live on lexitap.pages.dev** (all pages 200, real 404s, new `/delete-account` page for Play's deletion-URL requirement, privacy discloses Apple/Google sign-in, in-app Settings links de-`.html`ed). Custom domains `lexitap.app` + `www` attached to the Pages project via API (status: pending DNS). **Ryan's 2 clicks:** (1) Cloudflare → zone lexitap.app → DNS → add CNAME `@` → `lexitap.pages.dev` (proxied) + CNAME `www` → `lexitap.pages.dev` (proxied) — the pending Pages domains then auto-activate; (2) Cloudflare → Email Routing → enable + route `support@`/`privacy@` → personal inbox (destination verify email will arrive).
 ### SUBMIT-1 · Apple ($99/yr) + Google ($25) submission — **stub** owner: ryan.
 
 > Expand the Phase-5 block via `/orchestrate` once Phase 4 content + IAP are real.
@@ -259,4 +301,4 @@ ASO, Reddit presence, monthly content drops (GRE wk22, GMAT wk26, Idioms wk30, P
 
 ---
 
-*Maintained by `/orchestrate`. Last sync: 2026-06-10 (seeded). Source of task-level truth for dependencies remains [`plans/RELEASE_PLAN.md`](plans/RELEASE_PLAN.md); this file is the runnable projection of it.*
+*Maintained by `/orchestrate`. Last sync: 2026-06-10 PM (frontier batch: AUTH-1 code half, IAP-1 code tail, CONTENT-2 driver, STORE-2 agent half; +AUTH-2/RC-2 pre-submission blockers; CI revived). Source of task-level truth for dependencies remains [`plans/RELEASE_PLAN.md`](plans/RELEASE_PLAN.md); this file is the runnable projection of it.*

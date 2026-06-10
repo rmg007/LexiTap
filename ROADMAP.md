@@ -15,16 +15,20 @@ status: active
 ## 🟢 Active Front (2026-06-10)
 
 **Shipped since 2026-05-31 (verified, committed):**
+- **2026-06-10 PM frontier batch ✅** (`da530c7`…`cde165d`, CI green): **AUTH-1 code half** (native Sign in with Apple + Google → Supabase, 520 tests), **IAP-1 code tail** (RevenueCat↔Supabase alias + Settings "Restore purchases"), **CONTENT-2 driver** (`enrich-senses` — the paid run is now one command), **STORE-2 agent half** (site was NOT live: redirect loop + stale deploy + no DNS — fixed, deployed, verified; `/delete-account` page added). 30-agent adversarial review: 24 confirmed findings, all fixed same-day. **CI revived** (dead since SDK-56: TS2882 on clean checkouts).
 - **BETA-1 ✅ DONE** — build `9bf46ff6` (SDK 56 / RN 0.85) distributed to internal testers on TestFlight.
-- **Expo SDK 52 → 56 ✅** (`556606c`) — forced by Apple iOS-26-SDK mandate. RN 0.85 / React 19 / 479 tests green / expo-doctor 21/21.
+- **Expo SDK 52 → 56 ✅** (`556606c`) — forced by Apple iOS-26-SDK mandate. RN 0.85 / React 19 / expo-doctor 21/21.
 - **BUILD-1 ✅** — app confirmed on physical device. **LEGAL-2, STORE-3, RTL-1, LEGAL-3, STORE-1, CONTENT-1, E2E-1** all ✅.
 
-**▶ Next, in order (all Ryan-owned or externally blocked):**
-1. **Recruit 50 beta testers (BETA-2).** Share TestFlight link — r/TOEFL, r/IELTS, r/languagelearning, ESL groups. D7 gate: 7 days from first session.
-2. **RC-1 — RevenueCat + App Store Connect products.** Start now; runs in parallel with beta recruitment. Unblocks IAP-1 (paywall).
-3. **Phase 2 paid enrichment (CONTENT-2).** Top-N by frequency, top-tier model. Tell me N + budget → I expand the prompt.
+**▶ Next, in order (all Ryan-owned — mostly clicks now, exact steps in [ORCHESTRATION.md](ORCHESTRATION.md)):**
+1. **STORE-2 tail — 2 Cloudflare clicks:** add the CNAME records (`@` + `www` → lexitap.pages.dev) + enable Email Routing. Until then lexitap.app doesn't resolve and support@ bounces.
+2. **Recruit 50 beta testers (BETA-2).** Share TestFlight link — r/TOEFL, r/IELTS, r/languagelearning, ESL groups. D7 gate: 7 days from first session.
+3. **RC-1 — RevenueCat + App Store Connect products.** IAP-1's code is COMPLETE — after RC-1 it's config + one sandbox device test, no code.
+4. **CONTENT-2 — run the driver:** `npm run enrich:senses -- --limit 300 --dry-run`, then live (~$8 approx on claude-opus-4-8). Runbook: `content-tool/ENRICH_SENSES.md`.
+5. **AUTH-1 tail:** Supabase provider toggles + Google iOS client ID + EAS build 3 → verify both native sign-ins on device (`mobile/AUTH_INTEGRATION.md`).
 
 **Tracked, lower priority:**
+- **Pre-submission blockers (new, from review):** AUTH-2 (Apple token revocation on account deletion — App Review 5.1.1(v)) + RC-2 (RevenueCat customer deletion) — both in the delete-account Edge Function, both await Ryan-owned secrets.
 - **Dependabot:** ~11 remaining alerts — transitive Expo-build-tooling (tar×6, xmldom×4, uuid), accepted until next SDK bump.
 - **Sentry auth token:** add as EAS secret (`eas secret:create --scope project --name SENTRY_AUTH_TOKEN`) before beta/prod builds — preview currently skips source-map upload.
 
