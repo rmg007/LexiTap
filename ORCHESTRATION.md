@@ -149,10 +149,17 @@ verify: word + sentence audio generated for shipped content; bundled
 ```
 id: BETA-1   phase: 2   status: ready   owner: ryan
 depends_on: [BUILD-1]   parallel_safe: false   paths: []
-blocked_by: TestFlight build upload (eas submit) + Play Console internal track setup
-verify: build distributed to internal testers on both tracks; analytics/Sentry events arriving
+blocked_by: TestFlight submission — ASC API key needs refresh (see below)
+verify: build distributed to internal testers on TestFlight; analytics/Sentry events arriving
 ```
-BUILD-1 ✅ — this is now Ryan's next distribution step. See `plans/P2_BETA_PLAN.md`. Run `eas submit --platform ios --profile preview` to push the preview build to TestFlight. Android on hold (iOS-only path for now). Sentry auth token must be set as EAS secret before a production/beta build with source maps: `eas secret:create --scope project --name SENTRY_AUTH_TOKEN --value <token>`.
+BUILD-1 ✅ — store-signed beta build already exists: **`2c37eec9-603a-48f3-a282-4ec21cfe5af4`** (profile: `beta`, version 0.1.0 build 1, 2026-06-10). `eas.json` now has a `beta` submit profile (ascAppId `6775245619`). **Do NOT use `--profile preview`** — that's `distribution: internal` (ad-hoc), rejected by App Store Connect.
+
+**Remaining blocker:** ASC API key `YLG2BU44NG` ("[Expo] EAS Submit XoyR86wDwZ") expired — Apple returned 401. Fix:
+1. App Store Connect → Users and Access → Integrations → App Store Connect API → generate new key (role: App Manager), download `.p8`
+2. `eas credentials --platform ios` → add new ASC API key
+3. `eas submit --platform ios --profile beta --id 2c37eec9-603a-48f3-a282-4ec21cfe5af4` — pick the new key
+
+Android on hold (iOS-only path). After TestFlight delivery: add internal testers in App Store Connect → TestFlight → Internal Testing.
 
 ### BETA-2 · Recruit 50 beta testers
 ```

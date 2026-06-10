@@ -19,7 +19,7 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 **▶ Next, in order (all Ryan-owned or externally blocked):**
 1. **Full on-device smoke (recommended).** Learn batch → Quick-check → `srs_state` row written. Proves SRS + SQLite end-to-end on real hardware before Phase 3 work starts.
-2. **TestFlight distribution (BETA-1).** `eas submit --platform ios --profile preview`. Recruit 50 beta testers.
+2. **TestFlight distribution (BETA-1).** Store-signed build `2c37eec9` ready. Blocked on refreshing expired ASC API key — then `eas submit --platform ios --profile beta --id 2c37eec9-603a-48f3-a282-4ec21cfe5af4`. Recruit 50 beta testers.
 3. **Phase 2 paid enrichment (CONTENT-2).** Top-N by frequency, top-tier model. CONTENT-1 ✅ done.
 4. **RevenueCat + App Store Connect (RC-1).** External accounts needed; unblocks IAP-1 (paywall wiring).
 

@@ -21,6 +21,7 @@ build
 coverage
 
 # Expo / React Native
+/app.json
 .expo
 .expo-shared
 *.orig.*

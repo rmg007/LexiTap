@@ -23,7 +23,7 @@ status: active
 
 **▶ Next, in order (all Ryan-owned or externally blocked):**
 1. **Full on-device smoke (Ryan — recommended before Phase 3).** Tap through learn batch → confirm Quick-check appears → confirm `srs_state` row written. Proves SRS + SQLite on real hardware.
-2. **TestFlight distribution (BETA-1).** `eas submit --platform ios --profile preview`. Recruit beta testers.
+2. **TestFlight distribution (BETA-1).** Store-signed build `2c37eec9` ready. Blocked on refreshing expired ASC API key — then `eas submit --platform ios --profile beta --id 2c37eec9-603a-48f3-a282-4ec21cfe5af4`. Recruit beta testers.
 3. **Phase 2 paid enrichment run (CONTENT-2).** Top-N by frequency, top-tier model. CONTENT-1 ✅ unblocked it.
 4. **RevenueCat account + App Store Connect products (RC-1).** External; unblocks IAP-1 (paywall wiring).
 
