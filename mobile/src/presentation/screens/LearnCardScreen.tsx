@@ -31,16 +31,16 @@ import type { Word, WordSense } from '@/domain/vocabulary/Word';
 
 export interface LearnCardScreenProps {
   tierId: string;
-  onExit: () => void;       // back to Home
-  onComplete: () => void;   // after quick-check batch → Home (stub until Screen 6)
+  onExit: () => void; // back to Home
+  // Called with the just-learned batch so the route can hand off to the
+  // LearnQuickCheck screen (Screen 6) — the SRS seeding step.
+  onComplete: (batch: Word[]) => void;
 }
 
 type LearnPhase =
   | { kind: 'loading' }
   | { kind: 'empty' }
-  | { kind: 'card'; index: number; batch: Word[] }
-  | { kind: 'quickcheck' }
-  | { kind: 'done' };
+  | { kind: 'card'; index: number; batch: Word[] };
 
 const BATCH_LIMIT = 10;
 
@@ -108,10 +108,9 @@ export function LearnCardScreen({
     if (phase.kind !== 'card') return;
     const next = phase.index + 1;
     if (next >= phase.batch.length) {
-      // Final card: hand off to LearnQuickCheck (Screen 6).
-      // Stub until Screen 6 is built: call onComplete directly.
-      setPhase({ kind: 'quickcheck' });
-      onComplete();
+      // Final card: hand the batch to the route, which pushes LearnQuickCheck
+      // (Screen 6) — the only place the learn flow writes SRS.
+      onComplete(phase.batch);
       return;
     }
     cardKey.current += 1;
@@ -142,17 +141,6 @@ export function LearnCardScreen({
           </Text>
           <Button label="Back to Home" variant="primary" fullWidth onPress={onExit} />
         </View>
-      </Screen>
-    );
-  }
-
-  // ── QuickCheck / Done (stubs) ─────────────────────────────────────────────
-  // These phases transition immediately via onComplete; guard in case of
-  // an unexpected re-render before the navigation commits.
-  if (phase.kind === 'quickcheck' || phase.kind === 'done') {
-    return (
-      <Screen scroll={false}>
-        <Button label="Back to Home" variant="primary" fullWidth onPress={onExit} />
       </Screen>
     );
   }
