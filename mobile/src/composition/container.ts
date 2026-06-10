@@ -33,6 +33,7 @@ import { Platform } from 'react-native';
 
 import { v1FixedScheduler } from '@/domain/srs/v1-fixed';
 import type { TierId, WordId } from '@/domain/vocabulary/ids';
+import type { AuthSession } from '@/domain/auth/AuthPort';
 
 import { StartQuizUseCase } from '@/application/quiz/StartQuizUseCase';
 import { AnswerQuestionUseCase } from '@/application/quiz/AnswerQuestionUseCase';
@@ -235,6 +236,26 @@ export async function createContainer(): Promise<Container> {
   // RevenueCat IAP (env-gated: no-op when EXPO_PUBLIC_REVENUECAT_API_KEY_* absent).
   const iap = createRevenueCatIapService();
   const checkTierAccess = new CheckTierAccessUseCase(iap);
+
+  // RevenueCat ↔ Supabase identity alias (P3_AUTH_PLAN AU2.5: alias on every
+  // sign-in). `lastAliasedUserId` dedupes repeated onAuthStateChange events —
+  // token refreshes re-fire with the same user — so RevenueCat is only called
+  // on actual sign-in/sign-out transitions. Fire-and-forget: logIn/logOut never
+  // throw and must never block auth or app startup.
+  let lastAliasedUserId: string | null = null;
+  const syncIapIdentity = (authState: AuthSession | null): void => {
+    const userId = authState?.user.id ?? null;
+    if (userId !== null && userId !== lastAliasedUserId) {
+      lastAliasedUserId = userId;
+      void iap.logIn(userId);
+    } else if (userId === null && lastAliasedUserId !== null) {
+      lastAliasedUserId = null;
+      void iap.logOut();
+    }
+  };
+  auth.onAuthStateChange(syncIapIdentity);
+  // Seed once: a persisted session at cold start never fires the listener.
+  void auth.getSession().then(syncIapIdentity);
 
   const sessionStartedUC = new SessionStartedUseCase(analytics, stats);
   const sessionCompletedUC = new SessionCompletedUseCase(analytics);

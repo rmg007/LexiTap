@@ -38,4 +38,16 @@ export class StubIapService implements IapService {
     // No store connected; user owns nothing.
     return [];
   }
+
+  // Last id passed to logIn (null after logOut) -- observable by tests.
+  lastAppUserId: string | null = null;
+
+  async logIn(appUserId: string): Promise<void> {
+    // No store SDK to alias against; record for test assertions only.
+    this.lastAppUserId = appUserId;
+  }
+
+  async logOut(): Promise<void> {
+    this.lastAppUserId = null;
+  }
 }

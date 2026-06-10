@@ -212,4 +212,41 @@ describe('RevenueCatIapService', () => {
       await expect(service.getActiveEntitlements()).rejects.toThrow();
     });
   });
+
+  describe('logIn', () => {
+    it('aliases to the app user id and invalidates the entitlement cache', async () => {
+      mockPurchases.getCustomerInfo.mockResolvedValue(mockCustomerInfo as never);
+      await service.getActiveEntitlements(); // prime cache
+      await service.logIn('supabase-user-1');
+      expect(mockPurchases.logIn).toHaveBeenCalledWith('supabase-user-1');
+      await service.getActiveEntitlements(); // cache invalidated -> refetch
+      expect(mockPurchases.getCustomerInfo).toHaveBeenCalledTimes(2);
+    });
+
+    it('swallows the error when the SDK is unconfigured (never throws)', async () => {
+      mockPurchases.logIn.mockRejectedValueOnce(
+        new Error('There is no singleton instance') as never,
+      );
+      await expect(service.logIn('supabase-user-1')).resolves.toBeUndefined();
+    });
+  });
+
+  describe('logOut', () => {
+    it('reverts to anonymous and invalidates the entitlement cache', async () => {
+      mockPurchases.getCustomerInfo.mockResolvedValue(mockCustomerInfo as never);
+      await service.getActiveEntitlements(); // prime cache
+      await service.logOut();
+      expect(mockPurchases.logOut).toHaveBeenCalled();
+      await service.getActiveEntitlements(); // cache invalidated -> refetch
+      expect(mockPurchases.getCustomerInfo).toHaveBeenCalledTimes(2);
+    });
+
+    it('swallows the already-anonymous error (never throws)', async () => {
+      mockPurchases.logOut.mockRejectedValueOnce({
+        code: PURCHASES_ERROR_CODE.UNKNOWN_ERROR,
+        message: 'Called logOut but the current user is anonymous',
+      } as never);
+      await expect(service.logOut()).resolves.toBeUndefined();
+    });
+  });
 });
