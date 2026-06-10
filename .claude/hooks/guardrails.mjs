@@ -72,6 +72,27 @@ function checkFileWrite(file, text) {
     block(`interpolated SQL detected in ${file} — use parameterized queries (\`?\` placeholders), never \`\${...}\`. See AGENTS.md.`);
   }
 
+  // No emoji in the mobile app UI source. (Ryan, 2026-06-10: hard rule.)
+  // Emoji-as-icons render inconsistently across platforms/OS versions and fail
+  // the Figma design-system "emoji 0" gate. Use the Icon component
+  // (src/presentation/components/Icon.tsx — authentic Lucide glyphs) instead.
+  // Scope: mobile src/ + app/ .ts(x), excluding tests. Pictographic ranges ONLY
+  // — the `→`/`↔` arrows (U+2190–21FF) and `─` box-drawing (U+2500) used in
+  // caveman-mode comments are deliberately NOT matched.
+  const mobileUiSource = /mobile\/(src|app)\/.*\.tsx?$/.test(file) && !/\.test\.tsx?$/.test(file);
+  if (mobileUiSource) {
+    // Pictographic emoji ranges: misc-symbols/dingbats (2600–27BF, incl ✓✕♪❄),
+    // misc-symbols-and-arrows (2B00–2BFF, incl ⭐), symbols & pictographs +
+    // emoji (1F300–1FAFF, incl 🔥📚📖), and the FE0F variation selector.
+    // Excludes 2190–21FF (→ ↔) and 2500–257F (─) by design.
+    const emoji = text.match(/[\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{1F300}-\u{1FAFF}\u{FE0F}]/u);
+    if (emoji) {
+      block(
+        `emoji "${emoji[0]}" (U+${emoji[0].codePointAt(0).toString(16).toUpperCase()}) is forbidden in ${file} — no emoji in the app UI. Use the Icon component (Lucide glyphs) or plain text. (Hard rule.)`,
+      );
+    }
+  }
+
   process.exit(0);
 }
 

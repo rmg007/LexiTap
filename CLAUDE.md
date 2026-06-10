@@ -105,6 +105,7 @@ Beyond the confirmation gates above, `.claude/hooks/guardrails.mjs` (registered 
 | `git add -A` / `git add .` / `git commit -a` | No broad-add (entangles concurrent sessions, risks staging secrets) — repeated memory lesson |
 | `TextInput` written into `QuizScreen.tsx` / `quiz/` / `components/assessments/` | Passive-recognition UX only |
 | `${...}` interpolation in SQL under `infrastructure/db/` | Parameterized SQL only |
+| **Emoji** in `mobile/src/` or `mobile/app/` UI `.ts(x)` (non-test) | **No emoji in the app UI** — use the `Icon` component ([`Icon.tsx`](mobile/src/presentation/components/Icon.tsx), authentic Lucide glyphs) or plain text. Pictographic ranges only; the `→ ↔ ─` chars used in comments are allowed. |
 
 Hook fails **open** (any internal error → allow), so a hook bug never blocks real work. To add/relax a rule, edit `guardrails.mjs` (and re-run its self-test pattern).
 
@@ -161,6 +162,7 @@ These rules + automations exist so work doesn't vanish between sessions. **All t
 | Analytics SDK (PostHog, etc.) sending **PII/identity**, autocapture-on, or used for anything **beyond app improvement**, in production | Product analytics IS allowed in prod — but ONLY via `infrastructure/analytics/` with: env-gated key (`EXPO_PUBLIC_POSTHOG_API_KEY`, **Noop if unset**), **`anon_id` pseudonymity only** (never email/Supabase id), **no PII** in payloads, **autocapture off** (explicit events only), **EU host**, in-Settings **opt-out**, and privacy-policy sub-processor disclosure. **Purpose-limited to app improvement** (retention/conversion/funnel health) — never advertising, ad-SDK coupling, cross-app tracking, IDFA/AAID, or selling data. Any analytics SDK that sends identity/PII, autocaptures, tracks for ads, or serves a non-improvement purpose is forbidden. |
 | Crash SDK (Sentry) **unscrubbed**, or sending identity, in production | Crash reporting IS allowed in prod — but ONLY via `infrastructure/crash/` with: env-gated DSN (inert if unset), `beforeSend`/`beforeBreadcrumb` PII scrub (strip user id/email/ip/server-name/tokens/URLs; drop network + `sync` breadcrumbs), no tracing/replay/screenshots, privacy-policy disclosure. Any crash SDK that skips the scrub or sends identity is forbidden. |
 | `console.log` persistent writes in production | Logger must no-op in production |
+| **Emoji in the app UI** (`mobile/src/` or `mobile/app/`) | **Hard rule** — emoji render inconsistently across platforms/OS versions and fail the Figma design-system "emoji 0" gate. Use the `Icon` component ([`Icon.tsx`](mobile/src/presentation/components/Icon.tsx) — authentic Lucide glyphs; add a glyph by pasting real Lucide path data, never hand-draw) or plain text. **Enforced** at the tool boundary by `guardrails.mjs` (non-test `.ts(x)`; `→ ↔ ─` comment chars exempt). |
 | Hardcoded secrets or `.env` committed to git | Local dev: `.env` (in .gitignore). Production builds: configure EAS secrets in eas.json. Never commit any secrets. |
 
 ---
