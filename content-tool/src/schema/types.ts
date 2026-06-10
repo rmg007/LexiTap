@@ -71,3 +71,25 @@ export interface PseudoWordRow {
   word: string;
   phoneme_similarity_score: number | null;
 }
+
+/** One row of `word_senses` — per-meaning rich content for the detail screen. */
+export interface WordSenseRow {
+  id: string;
+  word_id: string;
+  sense_index: number;
+  pos: string | null;
+  short_gloss: string;
+  explanation: string;
+  image_path: string | null;
+  created_at: number;
+  deleted_at: number | null;
+}
+
+/** One row of `sense_examples` — a full teaching sentence for one sense. */
+export interface SenseExampleRow {
+  id: string;
+  sense_id: string;
+  example_index: number;
+  text: string;
+  created_at: number;
+}

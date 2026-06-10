@@ -1,13 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import {
   validateRows,
+  validateSenseRows,
   countBlanks,
   hasInTokenUnderscore,
   isJsonStringArray,
   exampleLeaksAnswer,
+  isGlossStyle,
 } from '@/commands/validate';
 import type { AppConfig } from '@/lib/config';
-import type { WordRow, WordTierRow } from '@/schema/types';
+import type { WordRow, WordTierRow, WordSenseRow, SenseExampleRow } from '@/schema/types';
 
 const config: AppConfig = {
   app_id: 'lexitap',
@@ -266,5 +268,165 @@ describe('C7 strict: orphan / dup-leak / provenance', () => {
     const b = row({ id: 'word_b', word: 'huge', definition: 'large in size', example_sentence: 'a _ ship' });
     const e = errors([a, b]);
     expect(e.some((i) => /duplicate definition/.test(i.message))).toBe(false);
+  });
+});
+
+// ─── Sense + example validation ────────────────────────────────────────────
+
+const WORD_IDS = new Set(['word_plant', 'word_cook']);
+
+function sense(overrides: Partial<WordSenseRow> = {}): WordSenseRow {
+  return {
+    id: 'sense_s0',
+    word_id: 'word_plant',
+    sense_index: 0,
+    pos: 'noun',
+    short_gloss: 'a living organism that grows in soil',
+    explanation: 'A plant is a living thing that pulls water through roots and turns sunlight into energy to grow. Trees, flowers, and grass are all plants.',
+    image_path: null,
+    created_at: 1,
+    deleted_at: null,
+    ...overrides,
+  };
+}
+
+function example(overrides: Partial<SenseExampleRow> = {}): SenseExampleRow {
+  return {
+    id: 'ex_e0',
+    sense_id: 'sense_s0',
+    example_index: 0,
+    text: 'She waters her plants every morning.',
+    created_at: 1,
+    ...overrides,
+  };
+}
+
+function senseErrors(
+  senses: WordSenseRow[],
+  examples: SenseExampleRow[] = [],
+  strict = false,
+) {
+  return validateSenseRows(senses, examples, WORD_IDS, { strict }).filter(
+    (i) => i.level === 'error',
+  );
+}
+
+function senseWarnings(senses: WordSenseRow[], examples: SenseExampleRow[] = []) {
+  return validateSenseRows(senses, examples, WORD_IDS, { strict: true }).filter(
+    (i) => i.level === 'warning',
+  );
+}
+
+describe('isGlossStyle', () => {
+  it('detects dictionary-style openers', () => {
+    expect(isGlossStyle('a word that describes something')).toBe(true);
+    expect(isGlossStyle('term for a type of plant')).toBe(true);
+    expect(isGlossStyle('A word meaning happy')).toBe(true);
+  });
+
+  it('passes felt prose', () => {
+    expect(isGlossStyle('When you cook, heat transforms raw ingredients.')).toBe(false);
+    expect(isGlossStyle('Effort is the fuel behind everything hard.')).toBe(false);
+  });
+});
+
+describe('validateSenseRows — word-level rules', () => {
+  it('passes a clean single sense', () => {
+    expect(senseErrors([sense()])).toHaveLength(0);
+  });
+
+  it('S1: unknown word_id is an error', () => {
+    const e = senseErrors([sense({ word_id: 'word_ghost' })]);
+    expect(e.some((i) => i.field === 'word_id' && /unknown/.test(i.message))).toBe(true);
+  });
+
+  it('S2/S6: senses must start at index 0', () => {
+    const e = senseErrors([sense({ sense_index: 1 })]);
+    expect(e.some((i) => i.field === 'sense_index')).toBe(true);
+  });
+
+  it('S2: sense_index gap is an error', () => {
+    const s0 = sense({ id: 'sense_s0', sense_index: 0 });
+    const s2 = sense({ id: 'sense_s2', sense_index: 2 }); // gap: 1 is missing
+    const e = senseErrors([s0, s2]);
+    expect(e.some((i) => i.field === 'sense_index' && /gap/.test(i.message))).toBe(true);
+  });
+
+  it('S3: empty short_gloss is an error', () => {
+    const e = senseErrors([sense({ short_gloss: '' })]);
+    expect(e.some((i) => i.field === 'short_gloss')).toBe(true);
+  });
+
+  it('S4: empty explanation is an error', () => {
+    const e = senseErrors([sense({ explanation: '' })]);
+    expect(e.some((i) => i.field === 'explanation' && /empty/.test(i.message))).toBe(true);
+  });
+
+  it('S5: explanation identical to short_gloss is an error', () => {
+    const s = sense({ short_gloss: 'a living thing', explanation: 'a living thing' });
+    const e = senseErrors([s]);
+    expect(e.some((i) => i.field === 'explanation' && /identical/.test(i.message))).toBe(true);
+  });
+
+  it('S5: case-insensitive comparison', () => {
+    const s = sense({ short_gloss: 'A Living Thing', explanation: 'a living thing' });
+    const e = senseErrors([s]);
+    expect(e.some((i) => i.field === 'explanation' && /identical/.test(i.message))).toBe(true);
+  });
+
+  it('S7 strict: identical short_gloss across two senses of same word is an error', () => {
+    const s0 = sense({ id: 'sense_s0', sense_index: 0, short_gloss: 'same gloss' });
+    const s1 = sense({ id: 'sense_s1', sense_index: 1, short_gloss: 'same gloss' });
+    const e = senseErrors([s0, s1], [], true);
+    expect(e.some((i) => i.field === 'short_gloss' && /identical/.test(i.message))).toBe(true);
+  });
+
+  it('S7 non-strict: identical short_gloss is NOT flagged', () => {
+    const s0 = sense({ id: 'sense_s0', sense_index: 0, short_gloss: 'same gloss' });
+    const s1 = sense({ id: 'sense_s1', sense_index: 1, short_gloss: 'same gloss' });
+    const e = senseErrors([s0, s1], [], false);
+    expect(e.some((i) => i.field === 'short_gloss')).toBe(false);
+  });
+
+  it('S8 strict: gloss-style explanation is a warning', () => {
+    const s = sense({ explanation: 'a word that refers to green living things' });
+    const w = senseWarnings([s]);
+    expect(w.some((i) => i.field === 'explanation' && /gloss/.test(i.message))).toBe(true);
+  });
+
+  it('S9 strict: very short explanation is a warning', () => {
+    const s = sense({ explanation: 'It grows.' }); // <50 chars
+    const w = senseWarnings([s]);
+    expect(w.some((i) => i.field === 'explanation' && /short/.test(i.message))).toBe(true);
+  });
+
+  it('two clean senses on one word pass', () => {
+    const s0 = sense({ id: 'sense_s0', sense_index: 0, short_gloss: 'gloss A' });
+    const s1 = sense({
+      id: 'sense_s1',
+      sense_index: 1,
+      short_gloss: 'gloss B',
+      explanation: 'Totally different felt explanation for the second sense of this word.',
+    });
+    expect(senseErrors([s0, s1])).toHaveLength(0);
+  });
+});
+
+describe('validateSenseRows — example rules', () => {
+  it('E1: empty text is an error', () => {
+    const ex = example({ text: '' });
+    const e = senseErrors([sense()], [ex]);
+    expect(e.some((i) => i.field === 'example_text' && /empty/.test(i.message))).toBe(true);
+  });
+
+  it('E2: underscore blank in teaching example is an error', () => {
+    const ex = example({ text: 'She _ her plants every morning.' });
+    const e = senseErrors([sense()], [ex]);
+    expect(e.some((i) => i.field === 'example_text' && /no.*_/.test(i.message))).toBe(true);
+  });
+
+  it('clean example with no underscore passes', () => {
+    const ex = example({ text: 'She waters her plants every morning.' });
+    expect(senseErrors([sense()], [ex])).toHaveLength(0);
   });
 });

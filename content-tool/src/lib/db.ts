@@ -73,6 +73,39 @@ function applyWorkingDbMigrations(db: DB): void {
       )
     `);
   }
+
+  // Rich word-detail migration: create word_senses + sense_examples tables if absent.
+  const hasSenses = db
+    .prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='word_senses'`)
+    .get();
+  if (!hasSenses) {
+    db.exec(`
+      CREATE TABLE word_senses (
+        id          TEXT PRIMARY KEY,
+        word_id     TEXT NOT NULL,
+        sense_index INTEGER NOT NULL,
+        pos         TEXT,
+        short_gloss TEXT NOT NULL,
+        explanation TEXT NOT NULL,
+        image_path  TEXT,
+        created_at  INTEGER NOT NULL,
+        deleted_at  INTEGER,
+        UNIQUE (word_id, sense_index)
+      )
+    `);
+    db.exec(`CREATE INDEX idx_word_senses_word ON word_senses(word_id) WHERE deleted_at IS NULL`);
+    db.exec(`
+      CREATE TABLE sense_examples (
+        id            TEXT PRIMARY KEY,
+        sense_id      TEXT NOT NULL,
+        example_index INTEGER NOT NULL,
+        text          TEXT NOT NULL,
+        created_at    INTEGER NOT NULL,
+        UNIQUE (sense_id, example_index)
+      )
+    `);
+    db.exec(`CREATE INDEX idx_sense_examples_sense ON sense_examples(sense_id)`);
+  }
 }
 
 /**

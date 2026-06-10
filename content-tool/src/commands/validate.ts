@@ -12,7 +12,7 @@ import { openWorkingDb } from '@/lib/db';
 import { loadConfig, findTier, tierSlugs, PROJECT_ROOT, type AppConfig } from '@/lib/config';
 import { normalizeWord } from '@/lib/ids';
 import { logger } from '@/lib/logger';
-import { WORD_TYPES, type WordRow, type WordTierRow } from '@/schema/types';
+import { WORD_TYPES, type WordRow, type WordTierRow, type WordSenseRow, type SenseExampleRow } from '@/schema/types';
 
 /** Resolve a stored asset path (e.g. "assets/audio/x.mp3") under data/ and test it exists. */
 export function diskAssetExists(assetPath: string): boolean {
@@ -294,7 +294,14 @@ export function runValidate(
 ): ValidateResult {
   const rows = loadWords(db, options.tier);
   const memberships = loadMemberships(db, options.tier);
-  const issues = validateRows(rows, memberships, config, options, assetExists);
+  const wordIssues = validateRows(rows, memberships, config, options, assetExists);
+
+  const senses = loadSenses(db);
+  const examples = loadSenseExamples(db);
+  const wordIds = new Set(rows.map((w) => w.id));
+  const senseIssues = validateSenseRows(senses, examples, wordIds, options);
+
+  const issues = [...wordIssues, ...senseIssues];
   const errorCount = issues.filter((i) => i.level === 'error').length;
   const warningCount = issues.filter((i) => i.level === 'warning').length;
   return { rowCount: rows.length, issues, errorCount, warningCount };
@@ -336,4 +343,180 @@ export function flagValue(args: string[], flag: string): string | undefined {
 
 export function flagExists(args: string[], flag: string): boolean {
   return args.indexOf(flag) !== -1;
+}
+
+// ─── Sense / example validation ────────────────────────────────────────────
+
+/** True when explanation reads like a dictionary gloss rather than felt teaching prose. */
+export function isGlossStyle(text: string): boolean {
+  return /^(a|an|the)?\s*(word that|word meaning|term for|term meaning)\b/i.test(text.trim());
+}
+
+/**
+ * Validate word_senses + sense_examples rows. Pure — depends only on its arguments.
+ *
+ * Rules:
+ *   S1  word_id must exist in the supplied wordIds set (error)
+ *   S2  sense_index must be contiguous from 0 per word (error)
+ *   S3  short_gloss must be non-empty (error)
+ *   S4  explanation must be non-empty (error)
+ *   S5  explanation must differ from short_gloss (error — identical = slop)
+ *   S6  every active word with ≥1 sense must have sense_index 0 (error)
+ *   S7  multi-sense words must not share an identical short_gloss across senses (strict error)
+ *   S8  strict warning: explanation looks like a dictionary gloss (isGlossStyle)
+ *   S9  strict warning: explanation is very short (< 50 chars) — not enough to be "felt"
+ *   E1  example text must be non-empty (error)
+ *   E2  example text must contain NO `_` blank (error — teaching sentences only)
+ */
+export function validateSenseRows(
+  senses: WordSenseRow[],
+  examples: SenseExampleRow[],
+  wordIds: Set<string>,
+  options: ValidateOptions = {},
+): ValidationIssue[] {
+  const issues: ValidationIssue[] = [];
+  const push = (level: IssueLevel, wordId: string, field: string, message: string): void => {
+    issues.push({ level, wordId, field, message });
+  };
+
+  // Group by word_id for per-word checks.
+  const byWord = new Map<string, WordSenseRow[]>();
+  for (const s of senses) {
+    let arr = byWord.get(s.word_id);
+    if (!arr) {
+      arr = [];
+      byWord.set(s.word_id, arr);
+    }
+    arr.push(s);
+  }
+
+  // Build a sense_id -> word_id map for example rule attribution.
+  const senseToWord = new Map<string, string>(senses.map((s) => [s.id, s.word_id]));
+
+  for (const [wordId, wordSenses] of byWord) {
+    // S1 word_id exists
+    if (!wordIds.has(wordId)) {
+      push('error', wordId, 'word_id', 'sense references unknown word_id');
+      continue;
+    }
+
+    // Sort by sense_index for S2 contiguity check.
+    const sorted = [...wordSenses].sort((a, b) => a.sense_index - b.sense_index);
+
+    // S6 must start at 0
+    if (sorted[0]!.sense_index !== 0) {
+      push('error', wordId, 'sense_index', 'senses must start at sense_index 0');
+    }
+
+    // S2 contiguous (0,1,2,... no gaps)
+    for (let i = 0; i < sorted.length; i++) {
+      if (sorted[i]!.sense_index !== i) {
+        push('error', wordId, 'sense_index', `sense_index gap: expected ${i}, found ${sorted[i]!.sense_index}`);
+      }
+    }
+
+    // S7 strict: no two senses of the same word may share a short_gloss
+    if (options.strict && sorted.length > 1) {
+      const seen = new Map<string, number>();
+      for (const s of sorted) {
+        const key = s.short_gloss.trim().toLowerCase();
+        const prev = seen.get(key);
+        if (prev !== undefined) {
+          push(
+            'error',
+            wordId,
+            'short_gloss',
+            `sense_index ${s.sense_index} has identical short_gloss as sense_index ${prev} — senses must be genuinely distinct`,
+          );
+        }
+        seen.set(key, s.sense_index);
+      }
+    }
+
+    for (const s of sorted) {
+      // S3
+      if (!s.short_gloss || !s.short_gloss.trim()) {
+        push('error', wordId, 'short_gloss', `sense_index ${s.sense_index}: short_gloss is empty`);
+      }
+      // S4
+      if (!s.explanation || !s.explanation.trim()) {
+        push('error', wordId, 'explanation', `sense_index ${s.sense_index}: explanation is empty`);
+      }
+      // S5 explanation != short_gloss
+      if (
+        s.explanation &&
+        s.short_gloss &&
+        s.explanation.trim().toLowerCase() === s.short_gloss.trim().toLowerCase()
+      ) {
+        push(
+          'error',
+          wordId,
+          'explanation',
+          `sense_index ${s.sense_index}: explanation is identical to short_gloss — must be felt prose, not a gloss copy`,
+        );
+      }
+      if (options.strict) {
+        // S8 gloss-style explanation
+        if (s.explanation && isGlossStyle(s.explanation)) {
+          push(
+            'warning',
+            wordId,
+            'explanation',
+            `sense_index ${s.sense_index}: explanation reads like a dictionary gloss — write felt teaching prose instead`,
+          );
+        }
+        // S9 too short
+        if (s.explanation && s.explanation.trim().length < 50) {
+          push(
+            'warning',
+            wordId,
+            'explanation',
+            `sense_index ${s.sense_index}: explanation is very short (${s.explanation.trim().length} chars) — aim for 2–4 sentences`,
+          );
+        }
+      }
+    }
+  }
+
+  // Example rules.
+  for (const ex of examples) {
+    const wordId = senseToWord.get(ex.sense_id) ?? ex.sense_id;
+    // E1
+    if (!ex.text || !ex.text.trim()) {
+      push('error', wordId, 'example_text', `sense_id ${ex.sense_id} example_index ${ex.example_index}: text is empty`);
+    }
+    // E2 no underscore blank
+    if (ex.text && ex.text.includes('_')) {
+      push(
+        'error',
+        wordId,
+        'example_text',
+        `sense_id ${ex.sense_id} example_index ${ex.example_index}: teaching examples must be full sentences with no '_' blank (cloze lives only in words.example_sentence)`,
+      );
+    }
+  }
+
+  return issues;
+}
+
+function loadSenses(db: DB): WordSenseRow[] {
+  const hasSenses = db
+    .prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='word_senses'`)
+    .get();
+  if (!hasSenses) return [];
+  return db.prepare(`SELECT * FROM word_senses WHERE deleted_at IS NULL`).all() as WordSenseRow[];
+}
+
+function loadSenseExamples(db: DB): SenseExampleRow[] {
+  const hasExamples = db
+    .prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='sense_examples'`)
+    .get();
+  if (!hasExamples) return [];
+  return db
+    .prepare(
+      `SELECT se.* FROM sense_examples se
+       JOIN word_senses ws ON ws.id = se.sense_id
+       WHERE ws.deleted_at IS NULL`,
+    )
+    .all() as SenseExampleRow[];
 }

@@ -27,3 +27,13 @@ export function makeWordId(word: string): string {
   const hash = createHash('sha1').update(normalized).digest('hex').slice(0, 16);
   return `word_${hash}`;
 }
+
+export function makeSenseId(wordId: string, senseIndex: number): string {
+  const hash = createHash('sha1').update(`${wordId}:${senseIndex}`).digest('hex').slice(0, 16);
+  return `sense_${hash}`;
+}
+
+export function makeExampleId(senseId: string, exampleIndex: number): string {
+  const hash = createHash('sha1').update(`${senseId}:${exampleIndex}`).digest('hex').slice(0, 16);
+  return `ex_${hash}`;
+}

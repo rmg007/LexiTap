@@ -1,6 +1,6 @@
 # Rich Word-Detail Plan — felt explanations, multi-sense, multi-example
 
-**Status:** accepted (2026-06-09) — pending execution.
+**Status:** Phase 1 DONE (2026-06-09). Phase 2 gated on Ryan's paid enrichment run.
 **Goal:** word detail stops being a one-line dictionary gloss. Each word gets, **per distinct meaning**, a *felt explanation* (so the learner internalizes the word, not just decodes it) + multiple natural examples + an optional image. Two meanings → both fully treated.
 
 **Decisions (Ryan, 2026-06-09):**
@@ -61,12 +61,37 @@ CREATE INDEX idx_sense_examples_sense ON sense_examples(sense_id);
 
 ## Phases
 
-### Phase 1 — Schema + types foundation (no paid run, no SRS, content-tool only)
-1. Add `CREATE_WORD_SENSES`, `CREATE_SENSE_EXAMPLES` + indexes to [ddl.ts](../content-tool/src/schema/ddl.ts); wire into `CONTENT_DB_DDL`.
-2. Update [DATABASE_SCHEMA.md](../lexitap-docs/04-technical-architecture/DATABASE_SCHEMA.md) (schema doc wins per ddl.ts header).
-3. content-tool row types + insert helpers + sense/example id hashing.
-4. **Migration step in the builder:** for every existing word with no senses, synthesize `sense_index 0` (`short_gloss` = `definition`, `explanation` = TBD-placeholder, 0 examples) so the DB is structurally valid before enrichment. Validator: every active word has ≥1 sense; every sense has non-empty `short_gloss` + `explanation`; warn (don't block) on 0 examples / placeholder explanation.
-5. `content-tool npm run check` green.
+### Phase 1 — Schema + types foundation (no paid run, no SRS, content-tool only) ✅ DONE (2026-06-09)
+
+**DDL** (done commit `79baec2`): `CREATE_WORD_SENSES` + `CREATE_SENSE_EXAMPLES` + indexes in [ddl.ts](../content-tool/src/schema/ddl.ts); wired into `CONTENT_DB_DDL`. Working-DB migration added to `applyWorkingDbMigrations` in [db.ts](../content-tool/src/lib/db.ts) so existing working DBs get the tables without a full rebuild.
+
+**Types + IDs** (done 2026-06-09): `WordSenseRow` + `SenseExampleRow` in [types.ts](../content-tool/src/schema/types.ts). `makeSenseId(wordId, senseIndex)` + `makeExampleId(senseId, exampleIndex)` in [ids.ts](../content-tool/src/lib/ids.ts) — deterministic SHA-1 prefixed IDs, same recipe as `makeWordId`.
+
+**Ingest format** (JSONL — one object per line, maps 1:1 with model structured output):
+```jsonl
+{"word_id":"word_<hex>","word":"plant","senses":[
+  {"sense_index":0,"pos":"noun","short_gloss":"...","explanation":"...","image_path":null,
+   "examples":[{"example_index":0,"text":"Full sentence."},...]},
+  {"sense_index":1,"pos":"verb","short_gloss":"...","explanation":"...","examples":[...]}
+]}
+```
+- `word_id` required; `word` optional (readability/cross-check only).
+- `sense_index` 0-based, contiguous. Most words = single sense (index 0 only).
+- `short_gloss` = one-liner for lists + distractor pools.
+- `explanation` = felt teaching text (2–4 sentences, NOT a gloss copy).
+- `examples` = full teaching sentences, NO `_` blank (cloze lives only in `words.example_sentence`).
+- Re-ingesting a word does a clean-slate replace (old senses+examples deleted, new ones inserted).
+
+**Ingest command**: `npm run cli ingest-senses -- --source <file.jsonl> [--dry-run]` in [ingest-senses.ts](../content-tool/src/commands/ingest-senses.ts). Registered in [cli.ts](../content-tool/src/cli.ts).
+
+**Validator sense rules** wired into `validate` / `validate --strict` in [validate.ts](../content-tool/src/commands/validate.ts):
+- S1 word_id must exist (error), S2 sense_index contiguous from 0 (error), S3 short_gloss non-empty (error), S4 explanation non-empty (error), S5 explanation ≠ short_gloss (error), S6 senses start at 0 (error), S7 no identical short_gloss across senses of same word (strict error), S8 explanation looks like a dict gloss (strict warning), S9 explanation < 50 chars (strict warning), E1 example text non-empty (error), E2 example text has `_` blank (error).
+
+**Export**: `buildOutputDb` in [export.ts](../content-tool/src/commands/export.ts) copies active `word_senses` + `sense_examples` rows to the output DB.
+
+**Round-trip proof** (2026-06-09): ingested [sample-senses.jsonl](../content-tool/data/input/sample-senses.jsonl) (12 approved words: plant/design/cook multi-sense + 9 single-sense) → `validate --strict` → **0 errors, 2802 warnings (known baseline)**. 15 senses / 45 examples queryable. `npm run check` GREEN (**129 tests**, +30).
+
+Note: Phase 1 plan step 4 ("synthesize sense_index 0 for every word") is intentionally NOT done — auto-generating placeholder explanations would fill the DB with low-quality stubs that the validator would then flag. The correct flow is: run ingest-senses for the top-N real words (Phase 2), leave the rest with no senses (the mobile detail screen falls back to the flat `definition` field when senses is empty).
 
 ### Phase 2 — Enrichment pipeline (the real cost)
 1. New enrich mode: given a word + its primary sense, generate (a) detect genuinely-distinct additional senses (conservative — default 1), (b) per sense: felt `explanation`, (c) 2–3 teaching examples per sense.

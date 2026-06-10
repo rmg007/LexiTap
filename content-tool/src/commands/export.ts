@@ -37,7 +37,7 @@ import { defaultProviders } from '@/providers/defaultProviders';
 import type { ProviderRegistry } from '@/providers/types';
 import { logger } from '@/lib/logger';
 import { flagValue } from '@/commands/validate';
-import type { TierRow, WordRow, WordTierRow, PseudoWordRow } from '@/schema/types';
+import type { TierRow, WordRow, WordTierRow, PseudoWordRow, WordSenseRow, SenseExampleRow } from '@/schema/types';
 
 const INSERT_TIER = `
 INSERT INTO content_tiers (
@@ -68,6 +68,16 @@ INSERT INTO pseudo_words (id, word, phoneme_similarity_score)
 VALUES (@id, @word, @phoneme_similarity_score)
 `.trim();
 
+const INSERT_SENSE = `
+INSERT INTO word_senses (id, word_id, sense_index, pos, short_gloss, explanation, image_path, created_at, deleted_at)
+VALUES (@id, @word_id, @sense_index, @pos, @short_gloss, @explanation, @image_path, @created_at, @deleted_at)
+`.trim();
+
+const INSERT_SENSE_EXAMPLE = `
+INSERT INTO sense_examples (id, sense_id, example_index, text, created_at)
+VALUES (@id, @sense_id, @example_index, @text, @created_at)
+`.trim();
+
 function activeWords(working: DB): WordRow[] {
   return working.prepare(`SELECT * FROM words WHERE deleted_at IS NULL`).all() as WordRow[];
 }
@@ -78,6 +88,31 @@ function allPseudoWords(working: DB): PseudoWordRow[] {
     .get();
   if (!hasPseudo) return [];
   return working.prepare(`SELECT * FROM pseudo_words ORDER BY id`).all() as PseudoWordRow[];
+}
+
+function activeSenses(working: DB): WordSenseRow[] {
+  const hasSenses = working
+    .prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='word_senses'`)
+    .get();
+  if (!hasSenses) return [];
+  return working
+    .prepare(`SELECT * FROM word_senses WHERE deleted_at IS NULL ORDER BY word_id, sense_index`)
+    .all() as WordSenseRow[];
+}
+
+function activeSenseExamples(working: DB): SenseExampleRow[] {
+  const hasExamples = working
+    .prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='sense_examples'`)
+    .get();
+  if (!hasExamples) return [];
+  return working
+    .prepare(
+      `SELECT se.* FROM sense_examples se
+       JOIN word_senses ws ON ws.id = se.sense_id
+       WHERE ws.deleted_at IS NULL
+       ORDER BY se.sense_id, se.example_index`,
+    )
+    .all() as SenseExampleRow[];
 }
 
 /** Memberships for active words only (a soft-deleted word's tags are dropped). */
@@ -174,6 +209,8 @@ export function buildOutputDb(
   const words = activeWords(working);
   const memberships = activeMemberships(working);
   const pseudoWords = allPseudoWords(working);
+  const senses = activeSenses(working);
+  const senseExamples = activeSenseExamples(working);
 
   // Final validation against the OUTPUT data; abort on any error. Under --strict
   // the extra C7 checks (dup-leak, provenance) also gate the build (fail-closed:
@@ -200,6 +237,8 @@ export function buildOutputDb(
   const insertWord = output.prepare(INSERT_WORD);
   const insertWordTier = output.prepare(INSERT_WORD_TIER);
   const insertPseudo = output.prepare(INSERT_PSEUDO_WORD);
+  const insertSense = output.prepare(INSERT_SENSE);
+  const insertSenseExample = output.prepare(INSERT_SENSE_EXAMPLE);
 
   const tx = output.transaction(() => {
     for (const tier of config.tiers) {
@@ -213,6 +252,12 @@ export function buildOutputDb(
     }
     for (const p of pseudoWords) {
       insertPseudo.run(p);
+    }
+    for (const s of senses) {
+      insertSense.run(s);
+    }
+    for (const ex of senseExamples) {
+      insertSenseExample.run(ex);
     }
   });
   tx();
