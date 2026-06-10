@@ -5,6 +5,7 @@
  */
 
 import { importCommand, importPseudoWordsCommand } from '@/commands/import';
+import { importMasterCommand } from '@/commands/import-master';
 import { validateCommand } from '@/commands/validate';
 import { enrichCommand } from '@/commands/enrich';
 import { reviewCommand, reviewFinalizeCommand } from '@/commands/review';
@@ -18,7 +19,9 @@ import { logger } from '@/lib/logger';
 const USAGE = `lexitap-tool <command> [options]
 
 Commands:
-  import           --source <path> --tier <slug> [--type t] [--on-conflict update|skip|error] [--dry-run]
+  import           --source <path> [--tier <slug>] [--type t] [--on-conflict update|skip|error] [--dry-run]
+                   (a .jsonl source = master importer, no --tier; a .csv source = legacy per-tier import)
+  import-master    --source <path.jsonl> [--dry-run]  (load words_master.jsonl: words + categories + senses + questions)
   import-pseudo    --source <path>   (import pseudo_words CSV for DIAG-A false-alarm detection)
   ingest-senses    --source <path.jsonl>  [--dry-run]  (load rich sense/example enrichment)
   export-master    [--output <path.jsonl>]  (dump working DB -> words_master.jsonl, round-trip/bootstrap)
@@ -38,6 +41,9 @@ async function main(): Promise<void> {
   switch (command) {
     case 'import':
       importCommand([secondArg ?? '', ...rest].filter(Boolean));
+      break;
+    case 'import-master':
+      importMasterCommand([secondArg ?? '', ...rest].filter(Boolean));
       break;
     case 'import-pseudo':
       importPseudoWordsCommand([secondArg ?? '', ...rest].filter(Boolean));
