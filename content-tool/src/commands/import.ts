@@ -58,6 +58,8 @@ export function toWordRow(parsed: ParsedInputRow, createdAt: number): WordRow {
     // C7 provenance: imported content is original-authored by default (the C4
     // enrich prompt forces original phrasing). `validate --strict` requires this.
     definition_license: DEFAULT_DEFINITION_LICENSE,
+    // QA flag starts unreviewed; a human flips it via the master JSONL.
+    reviewed: 0,
     created_at: createdAt,
     deleted_at: null,
   };
@@ -67,11 +69,11 @@ const INSERT_SQL = `
 INSERT INTO words (
   id, word, definition, pos, cefr_level, grade_level, word_type,
   difficulty, frequency_rank, theme, example_sentence, image_path, audio_path, synonyms,
-  antonyms, usage_notes, definition_license, created_at, deleted_at
+  antonyms, usage_notes, definition_license, reviewed, created_at, deleted_at
 ) VALUES (
   @id, @word, @definition, @pos, @cefr_level, @grade_level, @word_type,
   @difficulty, @frequency_rank, @theme, @example_sentence, @image_path, @audio_path, @synonyms,
-  @antonyms, @usage_notes, @definition_license, @created_at, @deleted_at
+  @antonyms, @usage_notes, @definition_license, @reviewed, @created_at, @deleted_at
 )
 ON CONFLICT(id) DO UPDATE SET
   word = excluded.word,

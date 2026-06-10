@@ -46,6 +46,7 @@ CREATE TABLE words (
   antonyms         TEXT,
   usage_notes      TEXT,
   definition_license TEXT,
+  reviewed         INTEGER NOT NULL DEFAULT 0,
   created_at       INTEGER NOT NULL,
   deleted_at       INTEGER
 );
@@ -94,6 +95,35 @@ CREATE TABLE sense_examples (
 `.trim();
 
 /**
+ * Authored quiz questions for a word (5 per word for the initial seed).
+ * ADDITIVE layer: the quiz/SRS still functions without any rows here (the app
+ * generates questions algorithmically when none are authored). All question
+ * types are answered by tap or drag — NEVER typing (passive-recognition
+ * constraint): multiple_choice | definition_match | fill_blank | sentence_order
+ * | true_false. `distractors` is a JSON array TEXT ('[]' for sentence_order).
+ * `hint` (nullable) is shown on request before answering; `explanation`
+ * (nullable) is shown post-answer. `reviewed` is the per-question QA flag.
+ */
+export const CREATE_WORD_QUESTIONS = `
+CREATE TABLE word_questions (
+  id             TEXT PRIMARY KEY,
+  word_id        TEXT NOT NULL,
+  question_index INTEGER NOT NULL,
+  type           TEXT NOT NULL,
+  prompt         TEXT NOT NULL,
+  correct        TEXT NOT NULL,
+  distractors    TEXT NOT NULL,
+  hint           TEXT,
+  explanation    TEXT,
+  reviewed       INTEGER NOT NULL DEFAULT 0,
+  created_at     INTEGER NOT NULL,
+  deleted_at     INTEGER,
+  UNIQUE (word_id, question_index),
+  FOREIGN KEY (word_id) REFERENCES words(id)
+);
+`.trim();
+
+/**
  * Many-to-many word↔category membership. One row tags a word into one category;
  * a word with rows for `foundation` + `toefl` is in both. Category membership is
  * a content tag, NOT a store product (see REVENUE_MODEL_PRICING.md glossary).
@@ -130,6 +160,8 @@ export const CREATE_WORDS_INDEXES = [
   `CREATE INDEX idx_words_alphabetical  ON words(word) WHERE deleted_at IS NULL;`,
   // DIAG-A band-walk: select words near a target frequency rank.
   `CREATE INDEX idx_words_frequency     ON words(frequency_rank) WHERE deleted_at IS NULL;`,
+  // QA review queue: words awaiting (or flagged for re-) manual review.
+  `CREATE INDEX idx_words_reviewed      ON words(reviewed) WHERE deleted_at IS NULL;`,
 ];
 
 export const CREATE_WORD_TIERS_INDEXES = [
@@ -145,6 +177,11 @@ export const CREATE_SENSES_INDEXES = [
   `CREATE INDEX idx_sense_examples_sense ON sense_examples(sense_id);`,
 ];
 
+export const CREATE_WORD_QUESTIONS_INDEXES = [
+  // word -> its authored questions, active only.
+  `CREATE INDEX idx_word_questions_word ON word_questions(word_id) WHERE deleted_at IS NULL;`,
+];
+
 /** Full ordered DDL for building a fresh content DB (tiers, words, junction, pseudo_words, indexes). */
 export const CONTENT_DB_DDL: readonly string[] = [
   CREATE_CONTENT_TIERS,
@@ -153,7 +190,9 @@ export const CONTENT_DB_DDL: readonly string[] = [
   CREATE_PSEUDO_WORDS,
   CREATE_WORD_SENSES,
   CREATE_SENSE_EXAMPLES,
+  CREATE_WORD_QUESTIONS,
   ...CREATE_WORDS_INDEXES,
   ...CREATE_WORD_TIERS_INDEXES,
   ...CREATE_SENSES_INDEXES,
+  ...CREATE_WORD_QUESTIONS_INDEXES,
 ];
