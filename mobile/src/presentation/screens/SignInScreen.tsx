@@ -8,20 +8,35 @@ import {
   View,
 } from 'react-native';
 import { router } from 'expo-router';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import { Screen } from '@/presentation/screens/Screen';
 import { Text, Button } from '@/presentation/components';
 import { useTheme } from '@/presentation/theme';
 import { useAuth } from '@/presentation/auth';
+import type { AuthSession, Result } from '@/domain/auth/AuthPort';
 
 // Two-phase magic-link sign-in:
 //   'email' — user enters email address → tap "Send code" → Supabase sends OTP email
 //   'verify' — user enters 6-digit code → tap "Verify" → session created → navigate home
+// Plus native provider buttons (email phase only): Sign in with Apple (official
+// AppleAuthenticationButton, shown when the OS supports it) and Continue with
+// Google (shown when the build carries a Google iOS client ID).
+//
+// NOTE: this screen legitimately uses TextInput — the no-TextInput guardrail
+// covers quiz/assessment screens only (passive-recognition UX), not auth.
 
 type Phase = 'email' | 'verify';
 
 export function SignInScreen(): React.JSX.Element {
-  const { colors, spacing, radii } = useTheme();
-  const { signInWithOtp, verifyOtp } = useAuth();
+  const { colors, spacing, radii, scheme } = useTheme();
+  const {
+    signInWithOtp,
+    verifyOtp,
+    signInWithApple,
+    signInWithGoogle,
+    appleAvailable,
+    googleAvailable,
+  } = useAuth();
 
   const [phase, setPhase] = useState<Phase>('email');
   const [email, setEmail] = useState('');
@@ -82,6 +97,22 @@ export function SignInScreen(): React.JSX.Element {
     setPhase('email');
   };
 
+  // Shared handler for both native providers. 'cancelled' (user dismissed the
+  // OS sheet) is a silent no-op — never an error message.
+  const handleProvider = async (signIn: () => Promise<Result<AuthSession>>) => {
+    setLoading(true);
+    setError(null);
+    const result = await signIn();
+    setLoading(false);
+    if (result.ok) {
+      router.replace('/');
+    } else if (result.error.kind !== 'cancelled') {
+      setError(result.error.message);
+    }
+  };
+
+  const showProviders = appleAvailable || googleAvailable;
+
   return (
     <Screen>
       <KeyboardAvoidingView
@@ -124,6 +155,47 @@ export function SignInScreen(): React.JSX.Element {
                 disabled={loading}
                 onPress={handleSend}
               />
+
+              {showProviders ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: spacing.s3,
+                    marginVertical: spacing.s2,
+                  }}
+                >
+                  <View style={{ flex: 1, height: 1, backgroundColor: colors.borderSubtle }} />
+                  <Text variant="caption" color="textTertiary">or</Text>
+                  <View style={{ flex: 1, height: 1, backgroundColor: colors.borderSubtle }} />
+                </View>
+              ) : null}
+
+              {appleAvailable ? (
+                <AppleAuthentication.AppleAuthenticationButton
+                  buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+                  buttonStyle={
+                    scheme === 'dark'
+                      ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
+                      : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+                  }
+                  cornerRadius={radii.sm}
+                  style={{ height: 48, width: '100%' }}
+                  onPress={() => handleProvider(signInWithApple)}
+                  testID="apple-sign-in-button"
+                  accessibilityLabel="Sign in with Apple"
+                />
+              ) : null}
+
+              {googleAvailable ? (
+                <Button
+                  label="Continue with Google"
+                  variant="secondary"
+                  fullWidth
+                  disabled={loading}
+                  onPress={() => handleProvider(signInWithGoogle)}
+                />
+              ) : null}
             </View>
           ) : (
             <View style={{ gap: spacing.s3 }}>

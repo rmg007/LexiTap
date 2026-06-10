@@ -207,6 +207,35 @@ export class SupabaseAuthService implements AuthPort {
     }
   }
 
+  async signInWithIdToken(
+    provider: "apple" | "google",
+    idToken: string,
+  ): Promise<Result<AuthSession>> {
+    if (!this.client) return NOT_CONFIGURED;
+    try {
+      // Native flow: the OS sheet already authenticated the user; Supabase
+      // validates the provider ID token server-side and mints a session. Per
+      // the official Supabase Expo guidance no manual nonce is needed for the
+      // native Apple flow (the SDK handles it).
+      const { data, error } = await this.client.auth.signInWithIdToken({
+        provider,
+        token: idToken,
+      });
+      if (error) return mapError(error);
+      if (!data.session) {
+        // Token accepted but no session is unexpected; treat as unknown so the
+        // UI shows a generic retry message rather than appearing signed-in.
+        return err({
+          kind: "unknown",
+          message: "Something went wrong. Please try again.",
+        });
+      }
+      return ok(toSession(data.session));
+    } catch (caught) {
+      return mapError(caught);
+    }
+  }
+
   async deleteAccount(): Promise<Result> {
     if (!this.client) return NOT_CONFIGURED;
     try {

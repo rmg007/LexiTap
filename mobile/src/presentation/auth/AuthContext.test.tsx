@@ -82,6 +82,34 @@ describe('AuthContext verifyOtpLink contract', () => {
   });
 });
 
+// Native-provider compose contract: AuthContext.signInWithApple/Google call
+// adapter.signIn() → AuthPort.signInWithIdToken(provider, token). These tests
+// exercise the AuthPort half via the stub (the adapter half is covered by
+// AppleSignInAdapter.test.ts / GoogleSignInAdapter.test.ts, and the full
+// composition by SignInScreen.render.test.tsx).
+describe('AuthContext signInWithIdToken contract', () => {
+  it.each(['apple', 'google'] as const)(
+    'signInWithIdToken(%s) resolves a session and updates getSession',
+    async (provider) => {
+      const svc = new StubAuthService();
+      const result = await svc.signInWithIdToken(provider, 'provider-jwt');
+      expect(result.ok).toBe(true);
+      if (!result.ok) return;
+      expect(result.value.user.email).toBe(`stub-${provider}@example.com`);
+      expect(await svc.getSession()).not.toBeNull();
+    },
+  );
+
+  it('signInWithIdToken fires onAuthStateChange (context mirrors live session)', async () => {
+    const svc = new StubAuthService();
+    const events: Array<string | null> = [];
+    const unsub = svc.onAuthStateChange((s) => events.push(s?.user.email ?? null));
+    await svc.signInWithIdToken('apple', 'provider-jwt');
+    unsub();
+    expect(events).toEqual(['stub-apple@example.com']);
+  });
+});
+
 // SignInScreen input validation logic (extracted for unit testing).
 describe('SignInScreen validation', () => {
   it('rejects blank email', () => {

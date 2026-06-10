@@ -12,6 +12,10 @@ const plugins: NonNullable<ExpoConfig['plugins']> = [
   'expo-router',
   'expo-sqlite',
   ['expo-asset', { assets: ['./assets/vocab/words.db'] }],
+  // AUTH-1: Sign in with Apple (AU3) — entitlement wired by the plugin +
+  // ios.usesAppleSignIn below. Mandatory per App Store Guideline 4.8 once
+  // Google sign-in ships.
+  'expo-apple-authentication',
   // R1.3: RevenueCat — native dep wired via autolinking + Pods (Podfile.lock has
   // RNPurchases/RevenueCat/PurchasesHybridCommon). Plugin string removed because
   // react-native-purchases@10.2.0 has no app.plugin.js, so Expo falls back to
@@ -29,6 +33,16 @@ if (sentryConfigured) {
       url: 'https://sentry.io/',
     },
   ]);
+}
+
+// AUTH-1: Google Sign-In (AU2) — plugin added ONLY when the iOS OAuth client ID
+// is present so credential-less builds don't break (the plugin throws without
+// iosUrlScheme). iosUrlScheme is the client ID reversed:
+// 'XXXX.apps.googleusercontent.com' → 'com.googleusercontent.apps.XXXX'.
+const googleIosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
+if (googleIosClientId) {
+  const iosUrlScheme = googleIosClientId.split('.').reverse().join('.');
+  plugins.push(['@react-native-google-signin/google-signin', { iosUrlScheme }]);
 }
 
 const config: ExpoConfig = {
@@ -52,6 +66,8 @@ const config: ExpoConfig = {
     // Build 1 (iOS 18.2 SDK) was rejected by App Store Connect (error 90725 —
     // must be built with iOS 26 SDK). Build 2 is the first iOS-26-SDK upload.
     buildNumber: '2',
+    // AUTH-1: Sign in with Apple capability (com.apple.developer.applesignin).
+    usesAppleSignIn: true,
     infoPlist: {
       // App only uses standard HTTPS/TLS — exempt from export compliance docs.
       ITSAppUsesNonExemptEncryption: false,
@@ -72,7 +88,9 @@ const config: ExpoConfig = {
   extra: {
     router: { origin: false },
     eas: { projectId: '4f9ec642-cf69-483b-966c-ff36616c6d94' },
-    revenueCatApiKey: process.env.EXPO_PUBLIC_REVENUCAT_API_KEY ?? null,
+    // revenueCatApiKey removed: it read a typo'd env var
+    // (EXPO_PUBLIC_REVENUCAT_API_KEY) and had zero consumers — the IAP factory
+    // reads EXPO_PUBLIC_REVENUECAT_API_KEY_IOS/_ANDROID from process.env directly.
     sentryDsn: process.env.EXPO_PUBLIC_SENTRY_DSN ?? null,
     posthogApiKey: process.env.EXPO_PUBLIC_POSTHOG_API_KEY ?? null,
     buildDate: new Date().toISOString(),

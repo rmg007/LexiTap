@@ -12,6 +12,11 @@ module.exports = {
     '^@react-native-async-storage/async-storage$': '<rootDir>/src/__mocks__/@react-native-async-storage/async-storage.ts',
     // Never load the native RevenueCat SDK in tests (see src/__mocks__).
     '^react-native-purchases$': '<rootDir>/src/__mocks__/react-native-purchases.ts',
+    // Never load the native Apple Authentication module in tests (see src/__mocks__).
+    '^expo-apple-authentication$': '<rootDir>/src/__mocks__/expo-apple-authentication.tsx',
+    // Never load the native Google Sign-In TurboModule in tests (see src/__mocks__).
+    '^@react-native-google-signin/google-signin$':
+      '<rootDir>/src/__mocks__/@react-native-google-signin/google-signin.ts',
   },
   transformIgnorePatterns: [
     'node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@supabase/.*))',
