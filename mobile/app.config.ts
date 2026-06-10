@@ -48,7 +48,7 @@ if (googleIosClientId) {
 const config: ExpoConfig = {
   name: 'LexiTap',
   slug: 'lexitap',
-  version: '0.1.0',
+  version: '0.0.1',
   orientation: 'portrait',
   scheme: 'lexitap',
   userInterfaceStyle: 'dark',
