@@ -8,7 +8,7 @@
 - **Default branch renamed `master` → `main`**: GitHub default branch updated, protection removed from master, master deleted both remote and local. All docs updated.
 - **`/snip` slash command**: Created `.claude/commands/snip.md`. Run at end of every session before `/clear` to extract decisions/bugs/patterns into memory. Hot-loads on next session start — not available in the session it was created.
 
-**Figma state (file `Jx0TLmVpgmsjtMA3uB6uS4`, page `✨ Hi-Fi`):**
+**Figma state (file `8YT6PYWnpX6nqkT2mxXOwi`, page `✨ Hi-Fi`):**
 
 Three redesigned frames exist at y=4200:
 - `12 · Learn Card (Redesign)` — node `136:2` — x=1385, 375×1340

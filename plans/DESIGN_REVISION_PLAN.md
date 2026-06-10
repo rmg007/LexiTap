@@ -7,7 +7,7 @@
 
 > **Update 2026-06-09:** Section A APPLIED + verified — 8 glyphs added (32→40), 13 instances swapped, gate re-run PASS on all 4 touched pages (0 raw fills), screenshots confirm signal/graduation-cap/accessibility/activity/type/contrast/cloud-download/refresh-cw/user render on the canonical rebuilt screens. The toggle-row Accessibility screen seen mid-verify was an *archived original* (Archive SECTION, excluded from gate) — not a duplicate defect. Minor IA note: that archived original carried "Auto-play audio" + "Haptic feedback" toggles the rebuilt Accessibility screen omits — preserved in Archive, needs a home if still wanted (low priority).
 
-**File:** Figma `Jx0TLmVpgmsjtMA3uB6uS4` (pages 01–10). Canonical tokens = `mobile/src/presentation/theme/tokens.ts`.
+**File:** Figma `8YT6PYWnpX6nqkT2mxXOwi` (pages 01–10). Canonical tokens = `mobile/src/presentation/theme/tokens.ts`.
 **Method:** read-only audit of all 10 screen pages — every Icon-instance glyph + its row label, off-scale spacing, and a WCAG contrast sweep resolving every text/bg token pair in both modes. Gate (`.design-specs/figma-binding-audit.js`) re-confirmed **PASS** before any change.
 
 This is a *grounded* revision: each item below came from the audit, not from open-ended "improve it." Open-ended parallel "revision chats" were rejected — N agents writing the same file collide on shared components/variables and can't be verified. Review fans out read-only; revision is applied by one owner.

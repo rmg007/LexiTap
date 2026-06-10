@@ -36,7 +36,7 @@ Each sub-project has its own `package.json` + scripts. "Done" = `npm run check` 
 | Asset | Tool | Home |
 |---|---|---|
 | **CSS** | edit files | `website/public/styles.css` (web); app = RN/nativewind, no CSS |
-| **Designs / UI** (vector) | **Figma MCP** (load `/figma-use` first; **read [`.design-specs/FIGMA.md`](.design-specs/FIGMA.md)** for file key, page map, components, gate) | Figma (`Jx0TLmVpgmsjtMA3uB6uS4`) + `.design-specs/html/screens/` |
+| **Designs / UI** (vector) | **Figma MCP** (load `/figma-use` first; **read [`.design-specs/FIGMA.md`](.design-specs/FIGMA.md)** for file key, page map, components, gate) | Figma (`8YT6PYWnpX6nqkT2mxXOwi`) + `.design-specs/html/screens/` |
 | **Images** (raster) | `node scripts/generate-image.js "<prompt>" --out <path>` (OpenAI `gpt-image-1`) | `website/public/`, `mobile/assets/vocab/`, `scripts/out/` (scratch) |
 | **Icons** (deterministic) | `node scripts/generate-icon.js` (SVG→PNG) | `website/assets/` (web), `mobile/assets/` (app) |
 

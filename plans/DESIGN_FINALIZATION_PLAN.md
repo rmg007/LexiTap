@@ -3,7 +3,7 @@
 **Status:** ✅ COMPLETE (2026-06-09 — all 10 screen pages `gate: PASS`, see "Status: COMPLETE" section) · **Created:** 2026-06-09 · **Owner:** Ryan + design agent
 **Goal:** Lock a *code-ready* design so coding never loops back to "the design isn't good."
 **Intent (Ryan, 2026-06-09):** complete + comprehensive design in Figma **before any RN code** — full-design path, not targeted polish. (Burned before by coding-before-design.) Figma is the source of truth for visuals; existing RN screens are re-done against the locked design.
-**Figma file:** `Jx0TLmVpgmsjtMA3uB6uS4` · **14 pages** (10 functional screen pages + 4 foundation: 📱 Wireframes / 🎨 Tokens / ✏️ Typography / 🧩 Components). *(Empty ✨ Hi-Fi + 🎨 Design System pages deleted 2026-06-09; foundation is built into the 3 existing foundation pages, not a new one.)*
+**Figma file:** `8YT6PYWnpX6nqkT2mxXOwi` · **14 pages** (10 functional screen pages + 4 foundation: 📱 Wireframes / 🎨 Tokens / ✏️ Typography / 🧩 Components). *(Empty ✨ Hi-Fi + 🎨 Design System pages deleted 2026-06-09; foundation is built into the 3 existing foundation pages, not a new one.)*
 
 ---
 
@@ -12,7 +12,7 @@
 You are likely a fresh agent with no memory of how this file was made. This section is everything you need to execute safely. Read it fully before any Figma write. Work **top-to-bottom**: Phase 0 (0.0 → 0.8) in order, then the 10 Sections in the Recommended-sequence order. **Do not start any Section until the Phase 0 exit gate passes.**
 
 ### Environment & tools
-- **Figma file key:** `Jx0TLmVpgmsjtMA3uB6uS4` — pass as `fileKey` to every `use_figma` call.
+- **Figma file key:** `8YT6PYWnpX6nqkT2mxXOwi` — pass as `fileKey` to every `use_figma` call.
 - **Tool:** `mcp__d6c27369-0016-435f-bc98-d606324bed06__use_figma`. **Load the `figma-use` skill BEFORE the first call** and pass `skillNames:'figma-use'`. To build components also load `figma-generate-library`; for Code Connect load `figma-code-connect`. Load tool schemas with `ToolSearch select:use_figma,get_metadata,get_screenshot`.
 - **Canonical values:** `mobile/src/presentation/theme/tokens.ts` (shipping truth) + `lexitap-docs/03-ux-design/DESIGN_SYSTEM.md` (intent). Everything you need is already tabulated below — **don't re-derive**.
 

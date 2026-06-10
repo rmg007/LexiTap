@@ -5,8 +5,8 @@
 "TO CREATE" rows). This file is the source of truth for the intended `figma.connect()` wiring;
 turn each row into a `*.figma.tsx` once the package is added and the component exists.
 
-- **Figma file:** `Jx0TLmVpgmsjtMA3uB6uS4`
-- **Node URL form:** `https://www.figma.com/design/Jx0TLmVpgmsjtMA3uB6uS4/?node-id=<id-with-dash>`
+- **Figma file:** `8YT6PYWnpX6nqkT2mxXOwi`
+- **Node URL form:** `https://www.figma.com/design/8YT6PYWnpX6nqkT2mxXOwi/?node-id=<id-with-dash>`
 - **Why thin:** Figma variables/styles/components are named 1:1 with `tokens.ts` + RN components,
   so each mapping is a binding, not a translation. Design edits then surface as code diffs.
 

@@ -9,9 +9,9 @@ idea this file exists, where it lives, or how it's organized. This doc is the ma
 
 | | |
 |---|---|
-| **File key** | `Jx0TLmVpgmsjtMA3uB6uS4` |
-| **URL** | `https://www.figma.com/design/Jx0TLmVpgmsjtMA3uB6uS4/` |
-| **Node URL form** | `…/Jx0TLmVpgmsjtMA3uB6uS4/?node-id=<id-with-dash>` (e.g. node `359:2` → `?node-id=359-2`) |
+| **File key** | `8YT6PYWnpX6nqkT2mxXOwi` |
+| **URL** | `https://www.figma.com/design/8YT6PYWnpX6nqkT2mxXOwi/` |
+| **Node URL form** | `…/8YT6PYWnpX6nqkT2mxXOwi/?node-id=<id-with-dash>` (e.g. node `359:2` → `?node-id=359-2`) |
 | **How to access** | Figma MCP is connected at the app level (no install). **Load the `figma-use` skill before any `use_figma` call** — mandatory. For building/extending full screens also load `figma-generate-design`; for building components load `figma-generate-library`. |
 | **Editor mode** | Design (`/design/` URL) — full node-type set available. |
 
