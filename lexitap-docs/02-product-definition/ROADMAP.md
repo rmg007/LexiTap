@@ -11,19 +11,18 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 > **⚠️ SOURCE OF TRUTH:** [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md) is the current, task-level execution plan (updated 2026-05-31). This file mirrors the phase structure and status for quick reference; **consult RELEASE_PLAN.md for actual dependencies, current blockers, and revised task list** (e.g., auth in P3 not P5, content as the long pole, Phase 2 requires analytics instrumentation, per-table sync deleted). Updates below reconcile this file with the audit.
 
-## 🟡 Active Front (2026-06-10)
+## 🟢 Active Front (2026-06-10)
 
-**BUILD-1 ✅ CLEARED (2026-06-10):** EAS preview build succeeded; app confirmed on physical device. **Phase 3+ is now unblocked.** Sentry source-map upload disabled for preview/beta profiles (missing `SENTRY_AUTH_TOKEN` EAS secret — add before production builds).
+**BETA-1 ✅ DONE:** Build `9bf46ff6` (Expo SDK 56 / RN 0.85 / React 19) distributed to internal testers on TestFlight. Phase 2 beta is live.
 
-**Shipped since 2026-05-31:** Figma 100% finalized (10 pages gate=PASS, 20-component library, 40-glyph icon set, WCAG-AA contrast). Rich Word-Detail model (schema + read layer + multi-sense UI + content-tool synthesis, CONTENT-1 ✅). Learn-loop wired (`8fab926`). E2E-1 (Maestro), LEGAL-2 (age gate), STORE-3 (expo-doctor), RTL-1 (test-utils), LEGAL-3 (data export), STORE-1 (store assets draft) — all ✅.
+**Shipped since 2026-05-31:** BUILD-1 ✅ (device), SDK-56 ✅ (iOS 26 mandate), Figma 100% finalized, Rich Word-Detail model (CONTENT-1 ✅), Learn-loop wired, E2E-1, LEGAL-2, STORE-3, RTL-1, LEGAL-3, STORE-1 — all ✅.
 
 **▶ Next, in order (all Ryan-owned or externally blocked):**
-1. **Full on-device smoke (recommended).** Learn batch → Quick-check → `srs_state` row written. Proves SRS + SQLite end-to-end on real hardware before Phase 3 work starts.
-2. **TestFlight distribution (BETA-1) — 🟡 submitted, awaiting Apple processing.** Build `9bf46ff6` (Expo SDK 56, accepted by ASC 2026-06-10). When processing finishes → App Store Connect → TestFlight → Internal Testing → add testers. Then recruit 50 beta testers (BETA-2). NOTE: required an Expo SDK 52→56 upgrade — Apple now mandates the iOS 26 SDK (error 90725).
-3. **Phase 2 paid enrichment (CONTENT-2).** Top-N by frequency, top-tier model. CONTENT-1 ✅ done.
-4. **RevenueCat + App Store Connect (RC-1).** External accounts needed; unblocks IAP-1 (paywall wiring).
+1. **Recruit 50 beta testers (BETA-2).** TestFlight link is live — share in r/TOEFL, r/IELTS, r/languagelearning, ESL groups. D7 gate: 7 days from first session.
+2. **RC-1 — RevenueCat + App Store Connect products.** Start in parallel with recruitment. Unblocks IAP-1 (paywall).
+3. **Phase 2 paid enrichment (CONTENT-2).** Top-N by frequency, top-tier model. Stub — tell agent N + budget to expand.
 
-**Tracked, lower priority:** ~11 Dependabot alerts (transitive Expo tooling, accepted until SDK bump).
+**Tracked, lower priority:** ~11 Dependabot alerts (transitive Expo tooling, accepted until SDK bump). Sentry auth token needed as EAS secret before production builds.
 
 The detailed product roadmap: 6 phases across 21 weeks, two parallel build tracks, deliverables and gates per phase, and the post-launch content-drop cadence. This doc expands the at-a-glance tracker [../../ROADMAP.md](../../ROADMAP.md). Feature detail is in [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md); requirements in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md).
 

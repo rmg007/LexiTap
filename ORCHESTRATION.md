@@ -46,17 +46,18 @@ Shared barrels (`domain/index.ts`, `mobile/package.json`, both `ROADMAP.md`s) ar
 
 **BUILD-1 ✅ cleared 2026-06-10 — app confirmed on physical device. Phase 3+ is now unblocked.**
 
+**BETA-1 ✅ cleared 2026-06-10 — build distributed to internal testers on TestFlight.**
+
 **Ryan-only / external-blocked — no agent can advance these:**
 
 | id | task | blocked_by |
 |---|---|---|
 | `CONTENT-2` | Phase 2 paid enrichment run | paid API spend + model choice |
-| `BETA-1` | TestFlight + Play Internal distribution | TestFlight build upload + Play Console setup |
-| `RC-1` | RevenueCat account + product config | RevenueCat account; App Store Connect + Play Console products |
-| `AUTH-1` | Native Google + Sign in with Apple | native modules (needs dev build); Apple requires SIWA when Google offered |
+| `BETA-2` | Recruit 50 beta testers | testers; D7 data takes 7 days |
+| `RC-1` | RevenueCat account + product config | RevenueCat account; App Store Connect products |
+| `AUTH-1` | Native Google + Sign in with Apple | native modules; Apple requires SIWA when Google offered |
 
-> **Next recommended action (Ryan):** run the full learn-flow smoke on device (learn batch → Quick-check appears → confirm an `srs_state` row is written) — proves SRS + DB end-to-end before committing to Phase 3. Then pick BETA-1 or CONTENT-2.
-> No agent-doable `ready` tasks remain until RC-1 unblocks IAP-1 or AUTH-1 is done.
+> No agent-doable `ready` tasks exist until RC-1 unblocks IAP-1 or AUTH-1 is done. Critical path is now D7 retention gate (7 days) + RC-1 setup in parallel.
 
 ---
 
@@ -145,20 +146,19 @@ verify: word + sentence audio generated for shipped content; bundled
 ```
 **Stub:** expand after content is firm.
 
-### BETA-1 · TestFlight + Play Internal distribution  ✅ submitted (awaiting Apple processing)
+### BETA-1 · TestFlight + Play Internal distribution  ✅ done
 ```
-id: BETA-1   phase: 2   status: in-progress   owner: ryan
+id: BETA-1   phase: 2   status: done   owner: ryan
 depends_on: [BUILD-1, SDK-56]   parallel_safe: false   paths: []
 verify: build distributed to internal testers on TestFlight; analytics/Sentry events arriving
+commit: build 9bf46ff6 (SDK 56 / RN 0.85 / v0.1.0 build 2); submitted 2026-06-10; testers added
 ```
-**Build `9bf46ff6` (Expo SDK 56 / RN 0.85, version 0.1.0 build 2) compiled under Xcode 26 and was SUBMITTED + accepted to TestFlight 2026-06-10** (submission `74f46a21`, ASC key `PL3GWRNB7B`). Apple is processing (~5–10 min, email on completion).
+Build distributed to internal testers on TestFlight. Analytics/Sentry event verification pending real tester usage. Android on hold (iOS-only path). **Unblocks BETA-2.**
 
-**Hard-won lesson — two walls hit and cleared:**
-1. `--profile preview` is `distribution: internal` (ad-hoc) → App Store Connect rejects it. Must use `--profile beta` (`distribution: store`). Added a `beta` submit profile (ascAppId `6775245619`).
-2. The original ASC API key `YLG2BU44NG` expired (401). Generated a new one (`PL3GWRNB7B`) via `eas credentials`.
-3. **Apple now mandates the iOS 26 SDK (error 90725).** Expo SDK 52 (RN 0.76) cannot build under Xcode 26 (fmt consteval in RCT-Folly). → drove the **SDK-56 upgrade** (see SDK-56 task / memory note).
-
-**Remaining (Ryan):** once Apple finishes processing → App Store Connect → TestFlight → Internal Testing → add testers. Android on hold (iOS-only path).
+**Hard-won lessons:**
+1. `--profile preview` is ad-hoc → ASC rejects it. Use `--profile beta` (`distribution: store`).
+2. ASC API key `YLG2BU44NG` had expired → regenerated `PL3GWRNB7B` via `eas credentials`.
+3. Apple mandates iOS 26 SDK (error 90725) → drove the SDK-56 upgrade.
 
 ### SDK-56 · Expo SDK 52 → 56 upgrade (RN 0.85 / React 19)  ✅ done
 ```
@@ -171,11 +171,12 @@ Forced by Apple's iOS-26-SDK mandate. expo 56 / RN 0.85 / React 19.2 / reanimate
 
 ### BETA-2 · Recruit 50 beta testers
 ```
-id: BETA-2   phase: 2   status: blocked   owner: ryan
+id: BETA-2   phase: 2   status: ready   owner: ryan
 depends_on: [BETA-1]   parallel_safe: true   paths: []
+blocked_by: testers; D7 data takes 7 days from first session
 verify: 50 testers enrolled; D7 retention measurable (gate: D7 > 30%)
 ```
-**Stub:** see `plans/P2_RECRUITMENT_CHECKLIST.md`.
+BETA-1 ✅ — TestFlight build is live. Share the TestFlight link. Target: r/TOEFL, r/IELTS, r/languagelearning, ESL Facebook groups, cram-school contacts. See `plans/P2_RECRUITMENT_CHECKLIST.md`. D7 gate: wait 7 days after first tester session before reading retention data.
 
 ---
 
