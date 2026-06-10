@@ -4,6 +4,10 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 🛡️ Session: Dependabot triage — 16 alerts, 5 patched incl. critical, 11 expo-pinned ACCEPTED (2026-06-09)
+
+**[Dependabot Triage (2026-06-09_dependabot_triage.md)](2026-06-09_dependabot_triage.md)** — commit `93d7500`, both checks GREEN. ✅ Patched: vitest 2.1.9→3.2.6 in content-tool (clears CRITICAL GHSA-5xrq-8626-4rwp + vite + esbuild, all dev-scope); postcss→8.5.15 via mobile root `overrides` (`@expo/metro-config` pins ~8.4.32). ⚠️ **Remaining 11 (tar ×6, xmldom ×4, uuid) = expo@52-pinned CLI/prebuild tooling, never in app bundle — ACCEPTED until next Expo SDK bump. Do NOT re-investigate; only fix is expo@56 (forbidden major).** Gotcha: plain `npm audit fix` on the Expo tree made it WORSE (nested duplicate expo@56, 20→22 vulns) — reverted lockfile + `npm ci`; targeted bumps/overrides only.
+
 ## ✅ Session: Learn-loop wiring EXECUTED — P0 closed (2026-06-09)
 
 **[LEARN_LOOP_WIRING_PLAN](../plans/LEARN_LOOP_WIRING_PLAN.md) executed, commit `8fab926`.** `LearnCardScreen.onComplete` → `(batch: Word[]) => void`, final card passes `phase.batch`; `app/learn.tsx` `router.replace('/learn-check', {batch: JSON.stringify(batch), tierId})` (replace not push — Back can't re-enter seen cards). Dropped dead `quickcheck`/`done` phase members (grep-verified internal-only). 2 files, presentation/routing only — **no `domain/srs` / `infrastructure/db` diff.** `npm run check` GREEN (46 suites / 459 tests); `/learn-check` now has exactly one referrer (`app/learn.tsx`). Plan → DONE; P0 line cleared in both roadmaps. **Remaining proof: on-device smoke** (batch → quick-check appears → SRS rows written) — folds into the standing C0 device test (no RTL render harness; routing verified by typecheck only).
