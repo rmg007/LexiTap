@@ -64,8 +64,10 @@ const config: ExpoConfig = {
     bundleIdentifier: 'com.lexitap.app',
     appleTeamId: 'W8FZGT253G',
     // Build 1 (iOS 18.2 SDK) was rejected by App Store Connect (error 90725 —
-    // must be built with iOS 26 SDK). Build 2 is the first iOS-26-SDK upload.
-    buildNumber: '2',
+    // must be built with iOS 26 SDK). Build 2 = first iOS-26-SDK upload (on
+    // TestFlight). Build 3 adds the AUTH-1 native modules (Sign in with Apple
+    // entitlement + Google Sign-In) — every new store upload must bump this.
+    buildNumber: '3',
     // AUTH-1: Sign in with Apple capability (com.apple.developer.applesignin).
     usesAppleSignIn: true,
     infoPlist: {

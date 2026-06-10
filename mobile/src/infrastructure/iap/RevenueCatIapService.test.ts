@@ -152,11 +152,20 @@ describe('RevenueCatIapService', () => {
 
       const results = await service.restorePurchases();
       expect(results).toHaveLength(2);
-      expect(results[0]).toMatchObject({ sku: 'com.lexitap.exam.toefl', status: 'purchased' });
+      expect(results?.[0]).toMatchObject({ sku: 'com.lexitap.exam.toefl', status: 'purchased' });
     });
 
-    it('returns empty array on SDK error', async () => {
+    it('returns null on SDK error — failure is distinguishable from owning nothing', async () => {
       mockPurchases.restorePurchases.mockRejectedValueOnce(new Error('SDK error') as never);
+      const results = await service.restorePurchases();
+      expect(results).toBeNull();
+    });
+
+    it('returns [] when the restore succeeds but the user owns nothing', async () => {
+      mockPurchases.restorePurchases.mockResolvedValueOnce({
+        ...mockCustomerInfo,
+        allPurchasedProductIdentifiers: [],
+      } as never);
       const results = await service.restorePurchases();
       expect(results).toEqual([]);
     });
@@ -214,39 +223,53 @@ describe('RevenueCatIapService', () => {
   });
 
   describe('logIn', () => {
-    it('aliases to the app user id and invalidates the entitlement cache', async () => {
+    it('aliases to the app user id, resolves true, and invalidates the entitlement cache', async () => {
       mockPurchases.getCustomerInfo.mockResolvedValue(mockCustomerInfo as never);
       await service.getActiveEntitlements(); // prime cache
-      await service.logIn('supabase-user-1');
+      await expect(service.logIn('supabase-user-1')).resolves.toBe(true);
       expect(mockPurchases.logIn).toHaveBeenCalledWith('supabase-user-1');
       await service.getActiveEntitlements(); // cache invalidated -> refetch
       expect(mockPurchases.getCustomerInfo).toHaveBeenCalledTimes(2);
     });
 
-    it('swallows the error when the SDK is unconfigured (never throws)', async () => {
+    it('resolves false when the SDK is unconfigured (never throws) and still invalidates the cache', async () => {
+      mockPurchases.getCustomerInfo.mockResolvedValue(mockCustomerInfo as never);
+      await service.getActiveEntitlements(); // prime cache
       mockPurchases.logIn.mockRejectedValueOnce(
         new Error('There is no singleton instance') as never,
       );
-      await expect(service.logIn('supabase-user-1')).resolves.toBeUndefined();
+      await expect(service.logIn('supabase-user-1')).resolves.toBe(false);
+      // Failed identity switch must not keep serving the prior user's
+      // entitlements from cache.
+      await service.getActiveEntitlements();
+      expect(mockPurchases.getCustomerInfo).toHaveBeenCalledTimes(2);
     });
   });
 
   describe('logOut', () => {
-    it('reverts to anonymous and invalidates the entitlement cache', async () => {
+    it('reverts to anonymous, resolves true, and invalidates the entitlement cache', async () => {
       mockPurchases.getCustomerInfo.mockResolvedValue(mockCustomerInfo as never);
       await service.getActiveEntitlements(); // prime cache
-      await service.logOut();
+      await expect(service.logOut()).resolves.toBe(true);
       expect(mockPurchases.logOut).toHaveBeenCalled();
       await service.getActiveEntitlements(); // cache invalidated -> refetch
       expect(mockPurchases.getCustomerInfo).toHaveBeenCalledTimes(2);
     });
 
-    it('swallows the already-anonymous error (never throws)', async () => {
+    it('treats the already-anonymous error as success (desired state reached)', async () => {
       mockPurchases.logOut.mockRejectedValueOnce({
-        code: PURCHASES_ERROR_CODE.UNKNOWN_ERROR,
+        code: PURCHASES_ERROR_CODE.LOG_OUT_ANONYMOUS_USER_ERROR,
         message: 'Called logOut but the current user is anonymous',
       } as never);
-      await expect(service.logOut()).resolves.toBeUndefined();
+      await expect(service.logOut()).resolves.toBe(true);
+    });
+
+    it('resolves false on any other failure (never throws)', async () => {
+      mockPurchases.logOut.mockRejectedValueOnce({
+        code: PURCHASES_ERROR_CODE.NETWORK_ERROR,
+        message: 'network down',
+      } as never);
+      await expect(service.logOut()).resolves.toBe(false);
     });
   });
 });

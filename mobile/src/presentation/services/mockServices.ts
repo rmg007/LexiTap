@@ -49,8 +49,8 @@ const noopIap: IapPort = {
   restorePurchases: async () => [],
   validateReceipt: async () => ({ isValid: false, entitledSkus: [] }),
   getActiveEntitlements: async () => [],
-  logIn: async () => undefined,
-  logOut: async () => undefined,
+  logIn: async () => true,
+  logOut: async () => true,
 };
 
 export function createMockServices(handlers: MockServiceHandlers = {}): Services {

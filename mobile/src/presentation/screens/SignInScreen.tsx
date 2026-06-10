@@ -41,7 +41,14 @@ export function SignInScreen(): React.JSX.Element {
   const [phase, setPhase] = useState<Phase>('email');
   const [email, setEmail] = useState('');
   const [token, setToken] = useState('');
+  // loading = the email-OTP path; providerLoading = a native Apple/Google
+  // exchange. Separate so a provider flow never relabels the Send-code button
+  // or freezes the email input. busy gates ALL entry points against
+  // concurrent flows (the native AppleAuthenticationButton has no disabled
+  // prop, so its handler must self-guard).
   const [loading, setLoading] = useState(false);
+  const [providerLoading, setProviderLoading] = useState(false);
+  const busy = loading || providerLoading;
   const [error, setError] = useState<string | null>(null);
 
   const inputBase = {
@@ -57,6 +64,7 @@ export function SignInScreen(): React.JSX.Element {
   };
 
   const handleSend = async () => {
+    if (busy) return;
     const trimmed = email.trim();
     if (!trimmed) {
       setError('Enter your email address.');
@@ -75,6 +83,7 @@ export function SignInScreen(): React.JSX.Element {
   };
 
   const handleVerify = async () => {
+    if (busy) return;
     const trimmed = token.trim();
     if (trimmed.length < 6) {
       setError('Enter the 6-digit code from your email.');
@@ -98,12 +107,14 @@ export function SignInScreen(): React.JSX.Element {
   };
 
   // Shared handler for both native providers. 'cancelled' (user dismissed the
-  // OS sheet) is a silent no-op — never an error message.
+  // OS sheet) is a silent no-op — never an error message. Self-guards against
+  // re-entry: the Apple button cannot be disabled via props.
   const handleProvider = async (signIn: () => Promise<Result<AuthSession>>) => {
-    setLoading(true);
+    if (busy) return;
+    setProviderLoading(true);
     setError(null);
     const result = await signIn();
-    setLoading(false);
+    setProviderLoading(false);
     if (result.ok) {
       router.replace('/');
     } else if (result.error.kind !== 'cancelled') {
@@ -152,7 +163,7 @@ export function SignInScreen(): React.JSX.Element {
                 label={loading ? 'Sending…' : 'Send code'}
                 variant="primary"
                 fullWidth
-                disabled={loading}
+                disabled={busy}
                 onPress={handleSend}
               />
 
@@ -172,19 +183,25 @@ export function SignInScreen(): React.JSX.Element {
               ) : null}
 
               {appleAvailable ? (
-                <AppleAuthentication.AppleAuthenticationButton
-                  buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-                  buttonStyle={
-                    scheme === 'dark'
-                      ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
-                      : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
-                  }
-                  cornerRadius={radii.sm}
-                  style={{ height: 48, width: '100%' }}
-                  onPress={() => handleProvider(signInWithApple)}
-                  testID="apple-sign-in-button"
-                  accessibilityLabel="Sign in with Apple"
-                />
+                // pointerEvents wrapper: the native button has no disabled
+                // prop, so while any flow is in flight it must be made
+                // un-tappable from the outside (handleProvider self-guards as
+                // the backstop).
+                <View pointerEvents={busy ? 'none' : 'auto'} style={{ opacity: busy ? 0.5 : 1 }}>
+                  <AppleAuthentication.AppleAuthenticationButton
+                    buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+                    buttonStyle={
+                      scheme === 'dark'
+                        ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
+                        : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+                    }
+                    cornerRadius={radii.sm}
+                    style={{ height: 48, width: '100%' }}
+                    onPress={() => handleProvider(signInWithApple)}
+                    testID="apple-sign-in-button"
+                    accessibilityLabel="Sign in with Apple"
+                  />
+                </View>
               ) : null}
 
               {googleAvailable ? (
@@ -192,9 +209,13 @@ export function SignInScreen(): React.JSX.Element {
                   label="Continue with Google"
                   variant="secondary"
                   fullWidth
-                  disabled={loading}
+                  disabled={busy}
                   onPress={() => handleProvider(signInWithGoogle)}
                 />
+              ) : null}
+
+              {providerLoading ? (
+                <ActivityIndicator size="small" color={colors.textTertiary} />
               ) : null}
             </View>
           ) : (

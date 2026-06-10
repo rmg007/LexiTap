@@ -241,15 +241,28 @@ export async function createContainer(): Promise<Container> {
   // sign-in). `lastAliasedUserId` dedupes repeated onAuthStateChange events —
   // token refreshes re-fire with the same user — so RevenueCat is only called
   // on actual sign-in/sign-out transitions. Fire-and-forget: logIn/logOut never
-  // throw and must never block auth or app startup.
+  // throw and must never block auth or app startup. The dedup key commits only
+  // on SUCCESS (logIn/logOut resolve a boolean): a swallowed failure must stay
+  // retryable on the next auth event, not be silently committed for the rest
+  // of the app run.
   let lastAliasedUserId: string | null = null;
+  let coldStartReverted = false;
   const syncIapIdentity = (authState: AuthSession | null): void => {
     const userId = authState?.user.id ?? null;
     if (userId !== null && userId !== lastAliasedUserId) {
-      lastAliasedUserId = userId;
-      void iap.logIn(userId);
+      void iap.logIn(userId).then((ok) => {
+        if (ok) lastAliasedUserId = userId;
+      });
     } else if (userId === null && lastAliasedUserId !== null) {
-      lastAliasedUserId = null;
+      void iap.logOut().then((ok) => {
+        if (ok) lastAliasedUserId = null;
+      });
+    } else if (userId === null && !coldStartReverted) {
+      // Cold start with no session: the in-memory dedup key can't know whether
+      // a PREVIOUS app run left a stale alias behind (session expired/revoked
+      // outside an in-app sign-out). logOut is idempotent — already-anonymous
+      // counts as success — so revert unconditionally once per launch.
+      coldStartReverted = true;
       void iap.logOut();
     }
   };

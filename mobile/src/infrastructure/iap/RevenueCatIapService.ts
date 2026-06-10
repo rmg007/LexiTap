@@ -55,15 +55,18 @@ export class RevenueCatIapService implements IapPort {
     }
   }
 
-  async restorePurchases(): Promise<PurchaseResult[]> {
+  async restorePurchases(): Promise<PurchaseResult[] | null> {
     try {
       const info = await Purchases.restorePurchases();
       this.invalidateCache();
       const skus: string[] = (info.allPurchasedProductIdentifiers as string[]) ?? [];
       return skus.map((s) => ({ sku: s, status: 'purchased' as const }));
     } catch (err) {
+      // null = failure (unconfigured SDK / network) — distinguishable from a
+      // successful-but-empty restore so the UI never tells a paying user
+      // "no purchases found" on an error.
       logger.warn('RevenueCat restorePurchases failed', { error: String(err) });
-      return [];
+      return null;
     }
   }
 
@@ -88,24 +91,39 @@ export class RevenueCatIapService implements IapPort {
 
   // Alias the store customer to the Supabase user id (P3_AUTH_PLAN AU2.5).
   // Best-effort: an unconfigured SDK throws -- swallow, never block sign-in.
-  async logIn(appUserId: string): Promise<void> {
+  // Returns false on failure so the container retries on the next auth event
+  // instead of permanently committing a failed alias. Cache is invalidated on
+  // BOTH paths: a failed identity switch must not keep serving the prior
+  // user's entitlements from cache.
+  async logIn(appUserId: string): Promise<boolean> {
     try {
       await Purchases.logIn(appUserId);
-      this.invalidateCache();
+      return true;
     } catch (err) {
       logger.warn('RevenueCat logIn failed', { error: String(err) });
+      return false;
+    } finally {
+      this.invalidateCache();
     }
   }
 
-  // Revert to an anonymous store customer. RevenueCat throws when the current
-  // user is ALREADY anonymous -- expected on every sign-out that follows an
-  // anonymous session, so swallow silently (warn only; never block sign-out).
-  async logOut(): Promise<void> {
+  // Revert to an anonymous store customer. RevenueCat throws
+  // LOG_OUT_ANONYMOUS_USER_ERROR when the current user is ALREADY anonymous --
+  // the desired state is reached, so that counts as success. Never throws.
+  async logOut(): Promise<boolean> {
     try {
       await Purchases.logOut();
-      this.invalidateCache();
+      return true;
     } catch (err) {
-      logger.warn('RevenueCat logOut skipped', { error: String(err) });
+      const code =
+        err != null && typeof err === 'object' && 'code' in err
+          ? String((err as Record<string, unknown>).code)
+          : null;
+      if (code === String(PURCHASES_ERROR_CODE.LOG_OUT_ANONYMOUS_USER_ERROR)) return true;
+      logger.warn('RevenueCat logOut failed', { error: String(err) });
+      return false;
+    } finally {
+      this.invalidateCache();
     }
   }
 

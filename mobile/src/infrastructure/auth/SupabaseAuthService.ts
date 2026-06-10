@@ -212,16 +212,32 @@ export class SupabaseAuthService implements AuthPort {
     idToken: string,
   ): Promise<Result<AuthSession>> {
     if (!this.client) return NOT_CONFIGURED;
+    // mapError's 4xx branch is OTP-specific ("That code is invalid or has
+    // expired.") — wrong for a user who just completed a native provider
+    // sheet and never typed a code. Keep network/rate-limit mapping, but
+    // re-map the 4xx case (provider not enabled, audience mismatch, rejected
+    // token) to a provider-appropriate message. Same trap deleteAccount
+    // already avoids.
+    const remap = (result: Result<never>): Result<never> =>
+      !result.ok && result.error.kind === "invalid_otp"
+        ? err({
+            kind: "unknown",
+            message: `Couldn't sign in with ${provider === "apple" ? "Apple" : "Google"}. Please try again.`,
+          })
+        : result;
     try {
       // Native flow: the OS sheet already authenticated the user; Supabase
-      // validates the provider ID token server-side and mints a session. Per
-      // the official Supabase Expo guidance no manual nonce is needed for the
-      // native Apple flow (the SDK handles it).
+      // validates the provider ID token server-side and mints a session.
+      // Nonce: official Supabase Expo guidance omits it for the native flows;
+      // Supabase skips nonce binding when the token carries none, so replay
+      // resistance rests on short token expiry + TLS. If hardening later:
+      // generate a nonce, pass its SHA-256 to signInAsync and the raw nonce
+      // to signInWithIdToken.
       const { data, error } = await this.client.auth.signInWithIdToken({
         provider,
         token: idToken,
       });
-      if (error) return mapError(error);
+      if (error) return remap(mapError(error));
       if (!data.session) {
         // Token accepted but no session is unexpected; treat as unknown so the
         // UI shows a generic retry message rather than appearing signed-in.
@@ -232,7 +248,7 @@ export class SupabaseAuthService implements AuthPort {
       }
       return ok(toSession(data.session));
     } catch (caught) {
-      return mapError(caught);
+      return remap(mapError(caught));
     }
   }
 

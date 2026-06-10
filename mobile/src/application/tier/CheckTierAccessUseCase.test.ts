@@ -9,8 +9,8 @@ function makeIap(entitlements: string[]): IapPort {
     restorePurchases: async () => [],
     validateReceipt: async () => ({ isValid: false, entitledSkus: [] }),
     getActiveEntitlements: async () => entitlements,
-    logIn: async () => undefined,
-    logOut: async () => undefined,
+    logIn: async () => true,
+    logOut: async () => true,
   };
 }
 

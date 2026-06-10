@@ -283,14 +283,21 @@ describe("SupabaseAuthService", () => {
       },
     );
 
-    it("maps a rejected token (4xx) via mapError", async () => {
+    it("re-maps a rejected token (4xx) to a provider message, never the OTP one", async () => {
       mockAuth.signInWithIdToken.mockResolvedValue({
         data: { session: null, user: null },
         error: authError(400),
       });
       const result = await makeService().signInWithIdToken("apple", "bad-jwt");
       expect(result.ok).toBe(false);
-      if (!result.ok) expect(result.error.kind).toBe("invalid_otp");
+      if (!result.ok) {
+        // The user completed a native sheet — an OTP-code message ("That code
+        // is invalid or has expired.") would be nonsense here.
+        expect(result.error.kind).toBe("unknown");
+        expect(result.error.message).toBe(
+          "Couldn't sign in with Apple. Please try again.",
+        );
+      }
     });
 
     it("maps a 5xx response to network", async () => {

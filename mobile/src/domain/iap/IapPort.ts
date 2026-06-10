@@ -26,7 +26,10 @@ export interface ReceiptValidation {
 export interface IapPort {
   getProducts(skus: readonly string[]): Promise<IapProduct[]>;
   purchase(sku: string): Promise<PurchaseResult>;
-  restorePurchases(): Promise<PurchaseResult[]>;
+  // null = the restore FAILED (SDK unconfigured / network error) — callers must
+  // show an error, never "no purchases". [] = restore succeeded and the user
+  // genuinely owns nothing. Never throws.
+  restorePurchases(): Promise<PurchaseResult[] | null>;
   // RevenueCat validates server-side; client calls this for legacy compat only.
   validateReceipt(receiptToken: string): Promise<ReceiptValidation>;
   // Active RevenueCat entitlement identifiers for the current user.
@@ -34,9 +37,11 @@ export interface IapPort {
   getActiveEntitlements(): Promise<readonly string[]>;
   // Alias the store customer to the app's authenticated user id (RevenueCat
   // Purchases.logIn) so entitlements follow the account across devices.
-  // Best-effort: never throws (unconfigured SDK / network errors are swallowed).
-  logIn(appUserId: string): Promise<void>;
-  // Revert to an anonymous store customer on sign-out. Best-effort, never
-  // throws (RevenueCat errors when already anonymous — implementations swallow).
-  logOut(): Promise<void>;
+  // Resolves true on success, false on failure (unconfigured SDK / network) —
+  // callers use the result to decide whether to retry later. Never throws.
+  logIn(appUserId: string): Promise<boolean>;
+  // Revert to an anonymous store customer on sign-out. Resolves true on
+  // success (already-anonymous counts as success — desired state reached),
+  // false on failure. Never throws.
+  logOut(): Promise<boolean>;
 }

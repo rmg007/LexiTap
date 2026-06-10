@@ -47,7 +47,7 @@
         <table>
           <thead><tr><th>Data</th><th>Why</th><th>Where it lives</th></tr></thead>
           <tbody>
-            <tr><td>Email &amp; display name (if you create an account)</td><td>Sign-in and device-switch recovery</td><td>Supabase (auth provider)</td></tr>
+            <tr><td>Email &amp; display name (if you create an account)</td><td>Sign-in and device-switch recovery</td><td>Supabase (auth provider). If you choose Sign in with Apple or Google Sign-In, Apple or Google provides us your sign-in identity (Apple can hide your email via its private relay).</td></tr>
             <tr><td>Learning progress — review history, schedule, streaks</td><td>To run spaced repetition and show your stats</td><td>Your device. Optional encrypted backup to our storage.</td></tr>
             <tr><td>Purchases (exam packs)</td><td>To unlock and restore what you bought</td><td>Apple / Google &amp; our payments processor</td></tr>
             <tr><td>Anonymous usage events — e.g. app opened, session completed</td><td>To understand which features help learners and fix drop-off</td><td>PostHog (EU). Pseudonymous ID only. Opt-out in Settings.</td></tr>
@@ -69,7 +69,7 @@
       <p>We rely on a small number of trusted providers to operate LexiTap:</p>
       <ul>
         <li><strong>Supabase</strong> — account authentication and encrypted backup storage</li>
-        <li><strong>Apple App Store / Google Play</strong> — app distribution and payments</li>
+        <li><strong>Apple / Google</strong> — app distribution, payments, and optional sign-in (Sign in with Apple / Google Sign-In)</li>
         <li><strong>RevenueCat</strong> — purchase and entitlement management</li>
         <li><strong>PostHog (EU)</strong> — anonymous product analytics</li>
         <li><strong>Sentry</strong> — crash diagnostics (PII-scrubbed)</li>

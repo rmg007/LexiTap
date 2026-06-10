@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Modal, Pressable, Share, View, type ViewStyle, Switch, Linking } from 'react-native';
+import { AccessibilityInfo, ActivityIndicator, Alert, Modal, Pressable, Share, View, type ViewStyle, Switch, Linking } from 'react-native';
 import { router } from 'expo-router';
 import Constants from 'expo-constants';
 import { Screen } from '@/presentation/screens/Screen';
@@ -88,19 +88,33 @@ export function SettingsScreen(): React.JSX.Element {
     setRestoring(false);
   };
 
+  // Screen readers don't re-read text that appears inside an already-focused
+  // labeled Pressable — announce the restore outcome explicitly.
+  const announceRestoreOutcome = (message: string) => {
+    AccessibilityInfo.announceForAccessibility(message);
+  };
+
   // App Store guideline 3.1.1: a restore mechanism must be reachable for
   // non-consumables — always visible, sign-in not required (store-side identity).
   const handleRestorePurchases = async () => {
     setPurchasesRestore('busy');
     void services.analytics.track('restore_purchases_initiated');
-    try {
-      const results = await services.iap.restorePurchases();
-      setPurchasesRestore(results.length);
-      void services.analytics.track('restore_purchases_completed', { count: results.length });
-    } catch {
-      // IapPort.restorePurchases returns [] on SDK errors; defensive only.
+    // IapPort contract: null = restore FAILED (unconfigured SDK / network),
+    // [] = succeeded and the user owns nothing. Never throws.
+    const results = await services.iap.restorePurchases();
+    if (results === null) {
       setPurchasesRestore('error');
+      void services.analytics.track('restore_purchases_failed');
+      announceRestoreOutcome('Could not restore purchases.');
+      return;
     }
+    setPurchasesRestore(results.length);
+    void services.analytics.track('restore_purchases_completed', { count: results.length });
+    announceRestoreOutcome(
+      results.length > 0
+        ? `Restored ${results.length} purchase${results.length === 1 ? '' : 's'}.`
+        : 'No previous purchases found.',
+    );
   };
 
   const handleDeleteAccount = async () => {
@@ -200,22 +214,32 @@ export function SettingsScreen(): React.JSX.Element {
                 color={colors.accent}
                 style={{ alignSelf: 'flex-start', marginTop: spacing.s1 }}
               />
-            ) : typeof purchasesRestore === 'number' ? (
-              <Text
-                variant="caption"
-                color={purchasesRestore > 0 ? 'success' : 'textSecondary'}
-                style={{ marginTop: spacing.s1 }}
-              >
-                {purchasesRestore > 0
-                  ? `Restored ${purchasesRestore} purchase${purchasesRestore === 1 ? '' : 's'}.`
-                  : 'No previous purchases found.'}
-              </Text>
-            ) : purchasesRestore === 'error' ? (
-              <Text variant="caption" color="destructive" style={{ marginTop: spacing.s1 }}>
-                Could not restore purchases. Please try again.
-              </Text>
             ) : null}
           </Pressable>
+          {/* Result lives OUTSIDE the labeled Pressable (it would be flattened
+              into the button's label and never announced) + a live region for
+              Android; iOS gets the explicit announceForAccessibility call. */}
+          {typeof purchasesRestore === 'number' ? (
+            <Text
+              variant="caption"
+              color={purchasesRestore > 0 ? 'success' : 'textSecondary'}
+              accessibilityLiveRegion="polite"
+              style={{ paddingHorizontal: spacing.s1 }}
+            >
+              {purchasesRestore > 0
+                ? `Restored ${purchasesRestore} purchase${purchasesRestore === 1 ? '' : 's'}.`
+                : 'No previous purchases found.'}
+            </Text>
+          ) : purchasesRestore === 'error' ? (
+            <Text
+              variant="caption"
+              color="destructive"
+              accessibilityLiveRegion="polite"
+              style={{ paddingHorizontal: spacing.s1 }}
+            >
+              Could not restore purchases. Please try again.
+            </Text>
+          ) : null}
         </View>
       </Card>
 
