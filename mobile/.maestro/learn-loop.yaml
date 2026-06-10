@@ -1,0 +1,120 @@
+# Maestro E2E: learn loop — card batch → quick-check → home.
+#
+# Proves the native navigation chain that RTL tests cannot:
+#   /learn (LearnCardScreen) → onComplete(batch) → router.replace('/learn-check')
+#   → LearnQuickCheckScreen → onComplete() → router.replace('/')
+#
+# CANNOT run green until BUILD-1 (EAS device build) is complete.
+# Syntax is valid; update button labels if UI copy changes before that build.
+#
+# Run: maestro test mobile/.maestro/learn-loop.yaml
+#   (requires app installed on a booted iOS/Android device or simulator)
+appId: com.lexitap.app
+---
+# ── 1. Launch from scratch ──────────────────────────────────────────────────
+- launchApp:
+    clearState: true
+
+# ── 2. Tap through minimum onboarding to reach Home ──────────────────────────
+# O-0: Age gate
+- extendedWaitUntil:
+    visible: "Your age"
+    timeout: 30000
+- tapOn:
+    text: "Continue"
+
+# O-1: Welcome
+- extendedWaitUntil:
+    visible: "Get started"
+    timeout: 10000
+- tapOn:
+    text: "Get started"
+
+# O-2: Goal selection — pick "Everyday English" (first option)
+- extendedWaitUntil:
+    visible: "Continue"
+    timeout: 10000
+- tapOn:
+    text: "Everyday English"
+- tapOn:
+    text: "Continue"
+
+# O-4: Adaptive diagnostic — answer "No, not yet" for every word so the
+# band-walk terminates quickly without requiring us to know any answers.
+# The diagnostic auto-advances when it has enough signal (DIAG-A stops after
+# ~10 items). We loop up to 15 taps to cover any batch size.
+- repeat:
+    times: 15
+    commands:
+      - runFlow:
+          when:
+            visible: "No, not yet"
+          commands:
+            - tapOn:
+                text: "No, not yet"
+
+# O-5: Knowledge Map reveal
+- extendedWaitUntil:
+    visible: "Start learning"
+    timeout: 15000
+- tapOn:
+    text: "Start learning"
+
+# O-6: Paywall — dismiss to continue for free (marks onboarding complete)
+- extendedWaitUntil:
+    visible: "Unlock Exam Prep"
+    timeout: 10000
+- tapOn:
+    text: "✕"
+
+# ── 3. Home: tap "Learn new words" ──────────────────────────────────────────
+# The label includes a dynamic count: "Learn new words (N left today)".
+# Maestro partial-text match on the stable prefix.
+- extendedWaitUntil:
+    visible: "Learn new words"
+    timeout: 15000
+- tapOn:
+    text: "Learn new words"
+
+# ── 4. Advance through ALL cards in the batch ────────────────────────────────
+# Each card has a "Got it" primary button. Tap up to BATCH_LIMIT (10) times.
+# The final tap calls onComplete(batch) → router.replace('/learn-check').
+- extendedWaitUntil:
+    visible: "Got it"
+    timeout: 15000
+- repeat:
+    times: 10
+    commands:
+      - runFlow:
+          when:
+            visible: "Got it"
+          commands:
+            - tapOn:
+                text: "Got it"
+
+# ── 5. Assert Quick-check screen is visible ──────────────────────────────────
+# LearnQuickCheckScreen renders a "Quick check" caption in the header.
+- extendedWaitUntil:
+    visible: "Quick check"
+    timeout: 15000
+- assertVisible: "Quick check"
+
+# ── 6. Answer one question (tap any option, then Continue) ───────────────────
+# MultipleChoice renders 4 option buttons. We can't know the correct answer at
+# test-write time, so tap the first visible option and then Continue.
+- tapOn:
+    index: 0
+    text: ".*"
+    # Maestro regex: any text — will hit whichever option renders first
+- extendedWaitUntil:
+    visible: "Continue"
+    timeout: 10000
+- tapOn:
+    text: "Continue"
+
+# ── 7. Assert return to Home / study-session tab ─────────────────────────────
+# HomeScreen renders "Learn new words" as the secondary CTA.
+- extendedWaitUntil:
+    visible: "Learn new words"
+    timeout: 15000
+- assertVisible: "Learn new words"

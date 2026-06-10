@@ -1,12 +1,21 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@/presentation/theme';
 import { Screen } from '@/presentation/screens/Screen';
 import { Text, Button } from '@/presentation/components';
 
 // Age gate screen (O-0): verify user is 16+.
-// Routes to Welcome (O-1) if age >= 16, shows error and stays on screen if < 16.
-// Uses a simple date picker via Pressable + ScrollView (cross-platform compatible).
+// Routes to Welcome (O-1) if age >= 16, shows permanent rejection if < 16.
+//
+// Persistence (AsyncStorage):
+//   - 'lexitap.age.gate.passed'   = '1' → user already verified ≥16; skip to onContinue immediately
+//   - 'lexitap.age.gate.rejected' = '1' → user previously rejected; show permanent block, no way forward
+//
+// Uses a simple year picker via Pressable (no TextInput — passive-recognition UX invariant).
+
+const AGE_GATE_PASSED_KEY = 'lexitap.age.gate.passed';
+const AGE_GATE_REJECTED_KEY = 'lexitap.age.gate.rejected';
 
 export interface OnboardingAgeGateScreenProps {
   // Called when user passes age check and advances to Welcome.
@@ -23,6 +32,8 @@ function calculateAge(dateOfBirth: Date): number {
   return age;
 }
 
+type GateStatus = 'loading' | 'pending' | 'rejected';
+
 export function OnboardingAgeGateScreen({ onContinue }: OnboardingAgeGateScreenProps): React.JSX.Element {
   const { colors, spacing } = useTheme();
 
@@ -33,6 +44,33 @@ export function OnboardingAgeGateScreen({ onContinue }: OnboardingAgeGateScreenP
   const [dateOfBirth, setDateOfBirth] = useState<Date>(sixteenYearsAgo);
   const [error, setError] = useState<string>('');
   const [showYearPicker, setShowYearPicker] = useState(false);
+  // 'loading' = checking AsyncStorage; 'pending' = waiting for user input; 'rejected' = permanently blocked.
+  const [gateStatus, setGateStatus] = useState<GateStatus>('loading');
+
+  // On mount: read persisted gate state.
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const [passed, rejected] = await Promise.all([
+        AsyncStorage.getItem(AGE_GATE_PASSED_KEY),
+        AsyncStorage.getItem(AGE_GATE_REJECTED_KEY),
+      ]);
+      if (cancelled) return;
+      if (passed === '1') {
+        // Already verified — advance immediately.
+        onContinue();
+        return;
+      }
+      if (rejected === '1') {
+        setGateStatus('rejected');
+        return;
+      }
+      setGateStatus('pending');
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [onContinue]);
 
   const age = useMemo(() => calculateAge(dateOfBirth), [dateOfBirth]);
   const isOldEnough = age >= 16;
@@ -50,8 +88,14 @@ export function OnboardingAgeGateScreen({ onContinue }: OnboardingAgeGateScreenP
   const handleContinue = useCallback(() => {
     if (isOldEnough) {
       setError('');
-      onContinue();
+      void AsyncStorage.setItem(AGE_GATE_PASSED_KEY, '1').then(() => {
+        onContinue();
+      });
     } else {
+      // Persist rejection immediately — user must be permanently blocked on re-launch.
+      void AsyncStorage.setItem(AGE_GATE_REJECTED_KEY, '1').then(() => {
+        setGateStatus('rejected');
+      });
       setError('You must be 16 or older to use LexiTap.');
     }
   }, [isOldEnough, onContinue]);
@@ -65,6 +109,42 @@ export function OnboardingAgeGateScreen({ onContinue }: OnboardingAgeGateScreenP
   // Generate year options from current year back to 100 years ago.
   const currentYear = now.getFullYear();
   const yearOptions = Array.from({ length: 100 }, (_, i) => currentYear - i);
+
+  // Permanent rejection screen — no way forward.
+  if (gateStatus === 'rejected') {
+    return (
+      <Screen>
+        <View style={{ flex: 1, gap: spacing.s4 }}>
+          <View style={{ gap: spacing.s2 }}>
+            <Text variant="headline" color="textPrimary" accessibilityRole="header">
+              Age requirement not met
+            </Text>
+          </View>
+          <View
+            style={{
+              backgroundColor: colors.cautionSubtle,
+              padding: spacing.s4,
+              borderRadius: 12,
+              borderLeftWidth: 4,
+              borderLeftColor: colors.caution,
+            }}
+            accessible
+            accessibilityRole="alert"
+          >
+            <Text variant="body" color="caution">
+              LexiTap requires users to be 16 or older. You cannot continue with this app.
+            </Text>
+          </View>
+          <View style={{ flex: 1 }} />
+        </View>
+      </Screen>
+    );
+  }
+
+  // Loading state — blank while we check AsyncStorage.
+  if (gateStatus === 'loading') {
+    return <Screen><View style={{ flex: 1 }} /></Screen>;
+  }
 
   return (
     <Screen>
@@ -186,7 +266,7 @@ export function OnboardingAgeGateScreen({ onContinue }: OnboardingAgeGateScreenP
         </View>
 
         {/* Error message */}
-        {error && (
+        {error !== '' && (
           <View
             style={{
               backgroundColor: colors.cautionSubtle,
