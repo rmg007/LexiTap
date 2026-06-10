@@ -4,6 +4,28 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## ✅ Session: AUTH-2 + RC-2 — delete-account Edge Function hardened (2026-06-10)
+
+**Commit `9963f33` (main).** Both agent halves done, 15 Deno tests green, merged+pushed.
+
+**AUTH-2 (Apple token revocation, App Review 5.1.1(v)):** `revokeAppleTokens()` — fetches user identities via `admin.getUserById()`, mints an ES256 client-secret JWT (`mintAppleClientSecret`: PKCS8→importKey, ECDSA/SHA-256 sig, 180 s TTL), calls `appleid.apple.com /auth/revoke` with the `provider_refresh_token` from `identity_data`. Runs before the irreversible auth-user delete. **Skip** when `APPLE_TEAM_ID`/`APPLE_KEY_ID`/`APPLE_P8_PRIVATE_KEY`/`APPLE_CLIENT_ID` are unset; **abort 500** when set + revoke fails (fail-safe).
+
+**RC-2 (RevenueCat customer deletion):** `deleteRevenueCatCustomer()` — `DELETE /v1/subscribers/{encodeURIComponent(userId)}` with `Bearer REVENUECAT_SECRET_KEY`. 404 = idempotent success. **Skip** when `REVENUECAT_SECRET_KEY` is unset; **abort 500** when set + call fails (fail-fatal).
+
+**Deletion order (load-bearing):** revoke Apple → delete RC → clear storage → delete auth user (irreversible, last).
+
+**Testability:** `Deno.serve` guarded behind `if (import.meta.main)` — test imports don't start the server. `AdminAuthClient` minimal type exported so tests don't need full SDK generics.
+
+**Ryan must run** before submission — exact commands in [`supabase/functions/delete-account/README.md`](../supabase/functions/delete-account/README.md):
+- `supabase secrets set APPLE_TEAM_ID=... APPLE_KEY_ID=... APPLE_CLIENT_ID=com.lexitap.app APPLE_P8_PRIVATE_KEY="$(cat AuthKey_*.p8)"`
+- `supabase secrets set REVENUECAT_SECRET_KEY=sk_...`
+
+**Auth-2/RC-2 status:** agent half complete; **blocked on Ryan's secrets** (Apple .p8 key creation, RC-1 account setup). Secrets unset → function degrades gracefully (skips both steps, deletion still completes). Once secrets are set, any failure aborts.
+
+**Gotcha:** `Deno.env.get` key management in tests — `withEnv()` helper saves+restores the real env around each test. `Deno.env.delete(key)` is the right call for "unset"; setting to `''` is NOT the same as absent.
+
+---
+
 ## ⚠️ Session: Supabase auto-pause incident + STORE-2 done + build 3 launched (2026-06-10 evening)
 
 **[Evening tail — same note file, bottom section](2026-06-10_frontier-batch-auth-iap-content-store.md)** — Ryan's "we don't have a Supabase project" = **free-tier AUTO-PAUSE** (idle since June 1): paused projects lose DNS entirely (NXDOMAIN, not 5xx) → **TestFlight build 2's auth/backup were silently dead ~2 days**. Restored intact. New blocker **SUPA-1** (Pro plan before submission); keep `SUPABASE_ACCESS_TOKEN` in root `.env` (was missing — blinded MCP+CLI during diagnosis). **STORE-2 ✅ DONE** (lexitap.app live, support@ Active). **AUTH-1 dashboards ✅** verified via API (`/auth/v1/settings` → apple+google true; `eas config` → plugins fired); **EAS build 3 `728f9d28` launched `--auto-submit`** → device verify remains.
