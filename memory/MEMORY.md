@@ -4,6 +4,10 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 🔴 Session: Rich Word-Detail Phase 4 + learn-loop disconnect P0 (2026-06-09)
+
+**[Phase 4 + learn-loop disconnect (2026-06-09_phase4-and-learn-loop-disconnect.md)](2026-06-09_phase4-and-learn-loop-disconnect.md)** — Shipped Phase 4 multi-sense UI in `LearnCardScreen` (`b42504a`, 459 tests). **Found P0 launch blocker: learn loop is open-circuit — `LearnQuickCheckScreen` (the only SRS-writing screen in the learn flow) is fully built but `/learn-check` has ZERO referrers; `LearnCardScreen` still has a `// Stub until Screen 6` handoff → new words never enter spaced repetition.** Fix = thread batch out via `onComplete(batch)` + push `/learn-check`, presentation/routing only (no `domain/srs` diff). Wrote [`plans/LEARN_LOOP_WIRING_PLAN.md`](../plans/LEARN_LOOP_WIRING_PLAN.md) + synced both roadmaps with an "Active Front" block (`ca6a0e1`). ⚠️ Fix NOT executed (Ryan: plans only). Lessons: don't trust stub comments (grep referrers); no RTL render harness in repo (screen tests logic-only); Dependabot 16 alerts mostly transitive dev-only, overstated for offline RN app.
+
 ## 📖 Session: Rich word-detail data model + Figma 07 rebuild + FIGMA.md (2026-06-09)
 
 **New product decision (Ryan): word detail is no longer a one-line gloss — each DISTINCT meaning gets a *felt explanation* (so the learner internalizes the word) + multiple full-sentence teaching examples + optional per-sense image.** Plan = [`plans/RICH_WORD_DETAIL_PLAN.md`](../plans/RICH_WORD_DETAIL_PLAN.md). Decisions: **image only** (NO video — offline-first, 1.18MB bundle; not even a column yet); **senses only when genuinely distinct** (most words stay single-sense, no filler); **schema+pipeline now, backfill top-N by frequency first**.
