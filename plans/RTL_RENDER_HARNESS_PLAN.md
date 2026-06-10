@@ -1,6 +1,6 @@
 # RTL Render Harness Plan — make the test suite able to fail when the UI breaks
 
-**Status:** proposed (2026-06-09). Supersedes issue [#10](https://github.com/rmg007/LexiTap/issues/10)'s "post-launch" timing — pulled forward by Ryan's call ("this is a huge issue").
+**Status:** DONE (2026-06-10). Supersedes issue [#10](https://github.com/rmg007/LexiTap/issues/10)'s "post-launch" timing — pulled forward by Ryan's call ("this is a huge issue"). Issue closed.
 **Severity:** P1 infra. Not itself a launch blocker, but the absence of this harness is the proven root cause of one (the learn-loop P0) and watched a second (dual-React black-screen) ship past a green check.
 **Scope:** test infra + tests only. **No production code changes. No `domain/srs`, no `infrastructure/db` diff.**
 

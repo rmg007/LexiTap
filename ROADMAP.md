@@ -18,9 +18,15 @@ status: active
 
 **✅ P0 learn-loop disconnect FIXED (2026-06-09, `8fab926`):** LearnCardScreen now hands the just-learned batch to `/learn-check` (LearnQuickCheck — the SRS seeding step) via `router.replace`. Presentation/routing only; no `domain/srs` diff; 459 tests green. Plan executed: [plans/LEARN_LOOP_WIRING_PLAN.md](plans/LEARN_LOOP_WIRING_PLAN.md). Remaining proof: on-device smoke (tap through a batch → quick-check appears → SRS rows written) — folds into the standing C0 device test.
 
+**✅ RTL render harness LANDED (2026-06-10):** `@testing-library/react-native@12` + 3 render test files (LearnCardScreen handoff, LearnQuickCheckScreen SRS seed, passive-recognition invariant). 49 suites / 466 tests green. Harness proved RED when `onComplete(batch)` was reverted to bare `onComplete()` — not theater. Issue [#10](https://github.com/rmg007/LexiTap/issues/10) closed. Plan: [plans/RTL_RENDER_HARNESS_PLAN.md](plans/RTL_RENDER_HARNESS_PLAN.md).
+
+**▶ Next, in order:**
+1. **C0 on-device smoke (Ryan — the gate).** Build to a real device, tap Home → "Learn new words" → batch → confirm Quick check appears → answer → confirm an `srs_state` row written. RTL proves wiring; only the device proves native+DB+SRS.
+2. Phase 2 paid enrichment run (Ryan; top-N by frequency, top-tier model).
+3. Maestro `learn-loop.yaml` e2e (follow-up from RTL plan; needs a built sim app).
+
 **Tracked, lower priority:**
-- **Dependabot:** 16 alerts (1 critical, 11 high, 4 medium) on `main`. Mostly transitive dev-only (the "critical" vitest is not a direct dependency and never ships; runtime ones — tar/xmldom/postcss/uuid — come from Expo/build tooling and likely need an SDK bump to clear). Overstated for an offline RN app, but worth a triage session.
-- **Issue [#10](https://github.com/rmg007/LexiTap/issues/10):** RTL render-guard for the passive-recognition invariant (post-launch).
+- **Dependabot:** ~12 alerts (11 high, 1 moderate) on `main` after the 2026-06-09 patch pass (`93d7500`). Remaining are transitive dev-only / Expo-build-tooling (likely need an SDK bump). Overstated for an offline RN app, but worth a triage session.
 - **Standing launch blockers (Ryan):** physical-device C0 test, fresh EAS build, P-2 beta recruitment, AU2/AU3 native sign-in (deferred to pre-submission build).
 
 **21 weeks from validation to 1,000 active users.**
