@@ -1,70 +1,49 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
+import { fireEvent } from '@testing-library/react-native';
 import { LearnCardScreen } from '@/presentation/screens/LearnCardScreen';
-import { ThemeProvider } from '@/presentation/theme';
-import { ServicesProvider } from '@/presentation/services';
-import { createMockServices, type MockServiceHandlers } from '@/presentation/services/mockServices';
 import type { WordDetail } from '@/presentation/services/ServicesContext';
-import { asTierId, asWordId, asSessionId } from '@/domain/index';
-import type { Word, WordSense } from '@/domain/vocabulary/Word';
+import type { WordSense } from '@/domain/vocabulary/Word';
+import {
+  BATCH,
+  TIER,
+  defaultServices,
+  renderWithProviders,
+} from '@/presentation/screens/__fixtures__/learnFixtures';
 
 // Render tests for the learn-card handoff (RTL_RENDER_HARNESS_PLAN.md).
-// This is the test that would have caught the learn-loop P0 (8fab926): the
-// final "Got it" must call onComplete WITH the batch — a bare onComplete()
-// silently kills SRS seeding for every new word.
+// The final "Got it" must call onComplete WITH the batch — a bare onComplete()
+// silently kills SRS seeding for every new word learned.
 
-const TIER = 'foundation';
-
-function makeWord(id: string, word: string, definition: string): Word {
-  return {
-    id: asWordId(id),
-    word,
-    definition,
-    tierId: asTierId(TIER),
-    wordType: 'vocabulary',
-    exampleSentence: `She will _ tomorrow.`,
-    synonyms: [],
-    antonyms: [],
-    isDeleted: false,
-  };
-}
-
-const BATCH: Word[] = [
-  makeWord('w1', 'borrow', 'to take something to use temporarily'),
-  makeWord('w2', 'arrive', 'to reach a place'),
-  makeWord('w3', 'tired', 'needing rest or sleep'),
+const TWO_SENSES: WordSense[] = [
+  {
+    senseIndex: 0,
+    pos: 'noun',
+    shortGloss: 'a living thing that grows in soil',
+    explanation: 'Think of something green reaching for the sun.',
+    examples: [{ exampleIndex: 0, text: 'The plant on her desk needs water.' }],
+  },
+  {
+    senseIndex: 1,
+    pos: 'verb',
+    shortGloss: 'to put something in the ground to grow',
+    explanation: 'You press a seed into the earth and wait.',
+    examples: [{ exampleIndex: 0, text: 'We plant tomatoes every spring.' }],
+  },
 ];
 
-function makeSession(batch: Word[]) {
-  return {
-    id: asSessionId(1),
-    tierId: asTierId(TIER),
-    mode: 'learn' as const,
-    words: batch,
-    currentIndex: 0,
-    correctCount: 0,
-    startedAt: Date.now(),
-  };
-}
-
 function renderLearnCard(options?: {
-  handlers?: MockServiceHandlers;
   onComplete?: jest.Mock;
   onExit?: jest.Mock;
+  getWordDetail?: () => Promise<WordDetail | null>;
 }) {
   const onComplete = options?.onComplete ?? jest.fn();
   const onExit = options?.onExit ?? jest.fn();
-  const services = createMockServices({
-    startQuiz: async () => makeSession(BATCH),
-    getWordDetail: async () => null,
-    ...options?.handlers,
+  const services = defaultServices({
+    getWordDetail: options?.getWordDetail,
   });
-  const utils = render(
-    <ThemeProvider initialPreference="dark">
-      <ServicesProvider value={services}>
-        <LearnCardScreen tierId={TIER} onExit={onExit} onComplete={onComplete} />
-      </ServicesProvider>
-    </ThemeProvider>,
+  const utils = renderWithProviders(
+    <LearnCardScreen tierId={TIER} onExit={onExit} onComplete={onComplete} />,
+    services,
   );
   return { ...utils, onComplete, onExit };
 }
@@ -91,39 +70,33 @@ describe('LearnCardScreen (render)', () => {
     expect(onComplete).toHaveBeenCalledWith(BATCH);
   });
 
-  it('renders numbered MEANING blocks when a word has multiple senses', async () => {
-    const senses: WordSense[] = [
-      {
-        senseIndex: 0,
-        pos: 'noun',
-        shortGloss: 'a living thing that grows in soil',
-        explanation: 'Think of something green reaching for the sun.',
-        examples: [{ exampleIndex: 0, text: 'The plant on her desk needs water.' }],
-      },
-      {
-        senseIndex: 1,
-        pos: 'verb',
-        shortGloss: 'to put something in the ground to grow',
-        explanation: 'You press a seed into the earth and wait.',
-        examples: [{ exampleIndex: 0, text: 'We plant tomatoes every spring.' }],
-      },
-    ];
-    const detail: WordDetail = { word: BATCH[0] as Word, senses };
-    const { findByText, queryByText } = renderLearnCard({
-      handlers: { getWordDetail: async () => detail },
+  it('renders numbered MEANING blocks for all cards when senses are present', async () => {
+    // Mock returns the same two senses for every word id. All 3 cards should
+    // render the rich layout — this catches a regression where the sense cache
+    // broke on index > 0 (cards 2 and 3 falling back to flat silently).
+    const detail: WordDetail = { word: BATCH[0]!, senses: TWO_SENSES };
+    const { findByText, getByText } = renderLearnCard({
+      getWordDetail: async () => detail,
     });
 
+    // Card 1 — rich layout.
     await findByText('MEANING 1 · noun');
-    expect(queryByText('MEANING 2 · verb')).toBeTruthy();
-    expect(queryByText('Think of something green reaching for the sun.')).toBeTruthy();
-    expect(queryByText('You press a seed into the earth and wait.')).toBeTruthy();
-    // Rich layout replaces the flat definition.
-    expect(queryByText(BATCH[0]?.definition ?? '')).toBeNull();
+    await findByText('MEANING 2 · verb');
+
+    // Card 2 — advance, rich layout still renders (cache populated for w2).
+    fireEvent.press(getByText('Got it'));
+    await findByText('arrive');
+    await findByText('MEANING 1 · noun');
+
+    // Card 3 — same check.
+    fireEvent.press(getByText('Got it'));
+    await findByText('tired');
+    await findByText('MEANING 1 · noun');
   });
 
   it('falls back to the flat definition when a word has no rich senses', async () => {
     const { findByText, queryByText } = renderLearnCard({
-      handlers: { getWordDetail: async () => null },
+      getWordDetail: async () => null,
     });
 
     await findByText('to take something to use temporarily');
