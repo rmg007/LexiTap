@@ -44,63 +44,53 @@ Shared barrels (`domain/index.ts`, `mobile/package.json`, both `ROADMAP.md`s) ar
 
 ## ▶ Ready now (the current frontier)
 
-Agent-doable, dependencies met, **paths disjoint → safe to run in parallel worktrees today:**
-
-| id | task | paths | parallel batch |
-|---|---|---|---|
-| `E2E-1` | Maestro learn-loop flow (write; verify needs a build) | `mobile/.maestro/` | A |
-| `CONTENT-1` | content-tool synthesis + validator remainder | `content-tool/src/` | A |
-| `LEGAL-2` | finish/verify 16+ age gate | `mobile/app/onboarding/`, `mobile/src/.../onboarding/` | A |
-| `STORE-3` | `expo-doctor` sweep + SDK-upgrade eval (report only) | *(read-only audit)* | A |
-
 **Ryan-only, unblocks the most downstream — do these first, no agent can:**
 
 | id | task | blocked_by |
 |---|---|---|
 | `BUILD-1` | EAS build → C0 on-device smoke | physical device + Apple dev acct |
-| `CONTENT-2` | Phase 2 paid enrichment run | paid API spend + model choice |
+| `CONTENT-2` | Phase 2 paid enrichment run (CONTENT-1 ✅ unblocked) | paid API spend + model choice |
 
-> Everything in Phase 3+ is `blocked` until `BUILD-1` and the content tasks clear. Their prompts are stubs by design.
+> No agent-doable `ready` tasks remain in Phase 1. Everything in Phase 3+ is `blocked` until `BUILD-1` clears. Phase 2 content tasks are Ryan-only. Stubs stay stubs until deps land.
 
 ---
 
 # Phase 1 — Build (finish the gate)
 
-### E2E-1 · Maestro learn-loop end-to-end flow
+### E2E-1 · Maestro learn-loop end-to-end flow ✅ done
 ```
-id: E2E-1   phase: 1   status: ready   owner: agent
+id: E2E-1   phase: 1   status: done   owner: agent
 depends_on: []     parallel_safe: true   paths: [mobile/.maestro/]
 verify: `learn-loop.yaml` written + lints; runs green once a sim build exists (BUILD-1)
+commit: e6dead3 (merged)
 ```
-**Prompt:**
-> Read `plans/RTL_RENDER_HARNESS_PLAN.md` §3 and the existing `.maestro/smoke.yaml`. Add `.maestro/learn-loop.yaml`: launch the app in a state past onboarding (seed or tap through), tap "Learn new words", advance through the batch, **assert the Quick-check screen is visible**, answer a question, assert return to Home. This is the native-layer proof the RTL harness can't give. It cannot be *run* green until a sim build exists (`npm run smoke` / `BUILD-1`) — write it, lint the YAML, and leave it ready. Do **not** touch any `.tsx` or production source. On finish: `/orchestrate sync`.
+`mobile/.maestro/learn-loop.yaml` written. Taps through age-gate → onboarding → learn batch (repeat:10, guarded on "Got it") → asserts Quick-check header → answers one question → asserts Home. Cannot run green until BUILD-1. No production source touched.
 
-### CONTENT-1 · content-tool synthesis + validator remainder
+### CONTENT-1 · content-tool synthesis + validator remainder ✅ done
 ```
-id: CONTENT-1   phase: 1   status: ready   owner: agent
+id: CONTENT-1   phase: 1   status: done   owner: agent
 depends_on: []   parallel_safe: true   paths: [content-tool/src/]
 verify: content-tool `npm run check` green; validator covers rich-sense rows; synthesis emits the ingest format
+commit: cc83fb0 (merged)
 ```
-**Prompt:**
-> The Phase-1 ingest *write* path for rich word senses landed (`3da68ea`, `ingest-senses.ts`). Finish Phase 1 of `plans/RICH_WORD_DETAIL_PLAN.md`: the **synthesis** side (types + any generator that emits the `sense-senses.jsonl` ingest format) and the **validator** coverage for sense/example rows, co-designed with the now-known ingest format. Stay entirely in `content-tool/src/`. Do not run any paid enrichment (that's `CONTENT-2`, Ryan's). `npm run check` must stay green. On finish: `/orchestrate sync`.
+`synthesize-senses.ts`: `validateSenseIngestItem` (V1–V10 pre-write invariants) + `serializeSenseIngestFile` (canonical JSONL with round-trip guarantee). 34 new tests; 165 total green. CONTENT-2 unblocked.
 
-### LEGAL-2 · 16+ age gate — finish + verify
+### LEGAL-2 · 16+ age gate — finish + verify ✅ done
 ```
-id: LEGAL-2   phase: 1   status: ready   owner: agent
+id: LEGAL-2   phase: 1   status: done   owner: agent
 depends_on: []   parallel_safe: true   paths: [mobile/app/onboarding/, mobile/src/presentation/screens/onboarding/]
 verify: age gate blocks <16, persists, has a render test; mobile `npm run check` green
+commit: a6ac11b (merged)
 ```
-**Prompt:**
-> `mobile/app/onboarding/age.tsx` exists. Audit it against the requirement (16+ gate, required pre-launch). Confirm it blocks under-16, persists the result, and is reachable as the first onboarding step. If gaps exist, fix them; add a render test (the RTL harness now exists — `*.render.test.tsx`). Stay in the onboarding paths. `npm run check` green. On finish: `/orchestrate sync`.
+`OnboardingAgeGateScreen`: added AsyncStorage persistence (`lexitap.age.gate.passed` / `lexitap.age.gate.rejected`), auto-advance on pass, permanent dead-end on reject (no re-prompt). `AgeGateScreen.render.test.tsx` (5 tests: fresh render, auto-advance, permanent rejection, under-16 persists, ≥16 persists). 474 tests green.
 
-### STORE-3 · expo-doctor + SDK-upgrade evaluation
+### STORE-3 · expo-doctor + SDK-upgrade evaluation ✅ done
 ```
-id: STORE-3   phase: 1   status: ready   owner: agent
-depends_on: []   parallel_safe: true   paths: []   (read-only audit → writes a memory note only)
+id: STORE-3   phase: 1   status: done   owner: agent
+depends_on: []   parallel_safe: true   paths: []
 verify: a memory note enumerating expo-doctor findings + a keep/upgrade recommendation with reasons
 ```
-**Prompt:**
-> Run `npx expo-doctor` in `mobile/`. Triage every finding against the known-benign list in memory (the `metro@0.84.4` false-positive, the Expo-pinned transitive Dependabot set). Produce a `memory/` note: what's real, what's benign-and-why, and whether an SDK bump is warranted before launch (note: Expo major bumps are effectively forbidden mid-cycle per memory). Audit only — change no config. On finish: `/orchestrate sync`.
+16/18 checks pass. Two findings: (1) metro@0.84.4 — KNOWN-BENIGN per project memory, nativewind side-effect, cannot fix without SDK bump; (2) `.expo/` tracked in git — FIXED inline (`git rm --cached mobile/.expo/types/router.d.ts`, added `.expo/` to `mobile/.gitignore`). **No SDK bump warranted before launch.** See memory note 2026-06-10.
 
 ### BUILD-1 · EAS build → C0 on-device smoke  ⚑ THE GATE
 ```
@@ -117,12 +107,12 @@ verify: app cold-launches on a real device; learn flow → quick-check appears �
 
 ### CONTENT-2 · Phase 2 paid enrichment run
 ```
-id: CONTENT-2   phase: 2   status: blocked   owner: ryan
+id: CONTENT-2   phase: 2   status: ready   owner: ryan
 depends_on: [CONTENT-1]   parallel_safe: false   paths: [content-tool/, mobile/assets/vocab/words.db]
 blocked_by: paid API spend + top-tier model choice
 verify: top-N words enriched with rich senses; validate --strict clean; words.db rebuilt + copied to mobile
 ```
-**Stub:** real "seedings" — top-N by frequency, top-tier model (cheap bulk = slop on "feel it", per Ryan). Expand to a full prompt via `/orchestrate` once `CONTENT-1` lands and the run parameters (N, model, budget) are chosen.
+**Stub:** CONTENT-1 ✅ (synthesis + pre-write validation now exist). Real "seedings" — top-N by frequency, top-tier model (cheap bulk = slop on "feel it", per Ryan). Expand to a full prompt via `/orchestrate expand CONTENT-2` once run parameters (N, model, budget) are chosen.
 
 ### CONTENT-3 · Exam-pack word-list sourcing (TOEFL/IELTS)
 ```

@@ -11,17 +11,19 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 > **⚠️ SOURCE OF TRUTH:** [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md) is the current, task-level execution plan (updated 2026-05-31). This file mirrors the phase structure and status for quick reference; **consult RELEASE_PLAN.md for actual dependencies, current blockers, and revised task list** (e.g., auth in P3 not P5, content as the long pole, Phase 2 requires analytics instrumentation, per-table sync deleted). Updates below reconcile this file with the audit.
 
-## 🔴 Active Front (2026-06-09)
+## 🔴 Active Front (2026-06-10)
 
-**Shipped since 2026-05-31:** Figma design 100% finalized (10 pages gate=PASS, 20-component library, 40-glyph icon set, WCAG-AA contrast) — design is now the source of truth, RN port may proceed. **Rich Word-Detail model** (felt explanation per distinct meaning + teaching examples + optional image; **additive, zero quiz/SRS ripple**): Phase 1 schema, Phase 3 mobile read layer, Phase 4 multi-sense UI all DONE + green (459 tests). Phase 2 paid enrichment + Phase 1 content-tool remainder are Ryan's tasks. Plan: [../../plans/RICH_WORD_DETAIL_PLAN.md](../../plans/RICH_WORD_DETAIL_PLAN.md).
+**Shipped since 2026-05-31:** Figma 100% finalized (10 pages gate=PASS, 20-component library, 40-glyph icon set, WCAG-AA contrast). **Rich Word-Detail model** (felt explanation + teaching examples; additive, zero SRS ripple): Phase 1 schema, Phase 3 mobile read layer, Phase 4 multi-sense UI, **Phase 1 content-tool synthesis + pre-write validation (CONTENT-1 ✅)** all DONE + green (165 / 474 tests). Phase 2 paid enrichment is Ryan's next task. Plan: [../../plans/RICH_WORD_DETAIL_PLAN.md](../../plans/RICH_WORD_DETAIL_PLAN.md).
 
-**✅ P0 learn-loop disconnect FIXED (2026-06-09, `8fab926`):** LearnCardScreen now hands the batch to `/learn-check` (LearnQuickCheck — the SRS seeding step). Presentation/routing only, no `domain/srs` diff, 459 tests green. Plan executed: [../../plans/LEARN_LOOP_WIRING_PLAN.md](../../plans/LEARN_LOOP_WIRING_PLAN.md). Remaining proof: on-device smoke (folds into the C0 device test).
+**✅ Learn-loop wired (2026-06-09, `8fab926`):** LearnCardScreen hands batch to `/learn-check` (SRS seeding step). 474 tests green. **✅ RTL harness + Maestro learn-loop flow (E2E-1) both landed (2026-06-10).** Issue [#10](https://github.com/rmg007/LexiTap/issues/10) closed.
 
-**✅ RTL render harness LANDED (2026-06-10):** `@testing-library/react-native@12` + 3 render test files (LearnCardScreen handoff, LearnQuickCheckScreen SRS seed, passive-recognition invariant). 49 suites / 466 tests green. Harness proved RED on the motivating bug (bare `onComplete()` regression). Issue [#10](https://github.com/rmg007/LexiTap/issues/10) closed. Plan: [../../plans/RTL_RENDER_HARNESS_PLAN.md](../../plans/RTL_RENDER_HARNESS_PLAN.md).
+**✅ 16+ age gate complete (LEGAL-2, 2026-06-10):** AsyncStorage persistence, permanent dead-end rejection screen, 5 render tests. 474 tests green.
 
-**▶ Next, in order:** (1) **C0 on-device smoke (Ryan — the gate):** build to real device, tap through learn flow, confirm Quick check appears, confirm `srs_state` row written (RTL proves wiring; only device proves native+DB+SRS). (2) Phase 2 paid enrichment run (Ryan; top-N by frequency, top-tier model). (3) Maestro `learn-loop.yaml` e2e (follow-up from RTL plan; needs built sim app).
+**✅ expo-doctor clean (STORE-3, 2026-06-10):** 16/18 checks pass; metro@0.84.4 benign; `.expo/` untracked. No SDK bump needed pre-launch.
 
-**Tracked, lower priority:** ~12 Dependabot alerts after the 2026-06-09 patch pass (`93d7500`) — remaining transitive dev-only / Expo-build-tooling, overstated for an offline RN app; standing launch blockers (physical-device C0 test, fresh EAS build, P-2 beta recruitment, AU2/AU3 native sign-in).
+**▶ Next, in order:** (1) **C0 on-device smoke (Ryan — THE GATE):** `eas build --platform ios --profile preview`, install on device, tap through learn flow, confirm Quick check appears, confirm `srs_state` row written — only this proves native+DB+SRS; unblocks all of Phase 3+. (2) **Phase 2 paid enrichment run (Ryan):** CONTENT-1 ✅ done; CONTENT-2 now `ready` — top-N by frequency, top-tier model.
+
+**Tracked, lower priority:** ~11 Dependabot alerts remaining — transitive Expo-build-tooling (accepted until SDK bump); standing launch blockers (physical-device C0 test, fresh EAS build, P-2 beta recruitment, AU2/AU3 native sign-in).
 
 The detailed product roadmap: 6 phases across 21 weeks, two parallel build tracks, deliverables and gates per phase, and the post-launch content-drop cadence. This doc expands the at-a-glance tracker [../../ROADMAP.md](../../ROADMAP.md). Feature detail is in [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md); requirements in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md).
 

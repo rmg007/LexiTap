@@ -12,24 +12,22 @@ status: active
 
 ---
 
-## 🔴 Active Front (2026-06-09)
+## 🔴 Active Front (2026-06-10)
 
 **Shipped since 2026-05-31 (verified, committed):**
-- **Figma design 100% finalized** — all 10 screen pages rebuilt from components to gate=PASS (rawFills 0 · text bound · emoji 0), 20-component library, icon set 40 glyphs, WCAG-AA contrast fixed. Design is the source of truth; RN port may proceed. ([memory](memory/MEMORY.md))
-- **Rich Word-Detail data model** — Ryan's decision: word detail = a *felt explanation* per distinct meaning + full-sentence teaching examples + optional per-sense image. **Additive, zero quiz/SRS ripple.** Phase 1 (schema, `79baec2`), Phase 3 (mobile read layer, `dc529a3`), Phase 4 (multi-sense UI in LearnCardScreen, `b42504a`) all DONE + green (459 tests). Phase 2 (paid enrichment) + Phase 1 content-tool remainder are **Ryan's tasks** (real seedings, top-N by frequency, top-tier model). Plan: [plans/RICH_WORD_DETAIL_PLAN.md](plans/RICH_WORD_DETAIL_PLAN.md).
-
-**✅ P0 learn-loop disconnect FIXED (2026-06-09, `8fab926`):** LearnCardScreen now hands the just-learned batch to `/learn-check` (LearnQuickCheck — the SRS seeding step) via `router.replace`. Presentation/routing only; no `domain/srs` diff; 459 tests green. Plan executed: [plans/LEARN_LOOP_WIRING_PLAN.md](plans/LEARN_LOOP_WIRING_PLAN.md). Remaining proof: on-device smoke (tap through a batch → quick-check appears → SRS rows written) — folds into the standing C0 device test.
-
-**✅ RTL render harness LANDED (2026-06-10):** `@testing-library/react-native@12` + 3 render test files (LearnCardScreen handoff, LearnQuickCheckScreen SRS seed, passive-recognition invariant). 49 suites / 466 tests green. Harness proved RED when `onComplete(batch)` was reverted to bare `onComplete()` — not theater. Issue [#10](https://github.com/rmg007/LexiTap/issues/10) closed. Plan: [plans/RTL_RENDER_HARNESS_PLAN.md](plans/RTL_RENDER_HARNESS_PLAN.md).
+- **Figma design 100% finalized** — all 10 screen pages rebuilt from components to gate=PASS, 20-component library, icon set 40 glyphs, WCAG-AA contrast fixed. ([memory](memory/MEMORY.md))
+- **Rich Word-Detail data model** — Phase 1 schema, Phase 3 mobile read layer, Phase 4 multi-sense UI, Phase 1 content-tool synthesis + pre-write validation (CONTENT-1 ✅) all DONE + green (165 / 474 tests). Phase 2 paid enrichment is **Ryan's next task** (top-N by frequency, top-tier model). Plan: [plans/RICH_WORD_DETAIL_PLAN.md](plans/RICH_WORD_DETAIL_PLAN.md).
+- **Learn-loop wired** (`8fab926`) — LearnCardScreen hands batch to `/learn-check` (SRS seeding step). 474 tests green. RTL harness + Maestro flow (E2E-1 ✅) both landed.
+- **16+ age gate complete** (LEGAL-2 ✅) — AsyncStorage persistence + dead-end rejection screen + 5 render tests.
+- **expo-doctor clean** (STORE-3 ✅) — 16/18 checks pass; metro@0.84.4 benign; `.expo/` untracked from git. No SDK bump needed pre-launch.
 
 **▶ Next, in order:**
-1. **C0 on-device smoke (Ryan — the gate).** Build to a real device, tap Home → "Learn new words" → batch → confirm Quick check appears → answer → confirm an `srs_state` row written. RTL proves wiring; only the device proves native+DB+SRS.
-2. Phase 2 paid enrichment run (Ryan; top-N by frequency, top-tier model).
-3. Maestro `learn-loop.yaml` e2e (follow-up from RTL plan; needs a built sim app).
+1. **C0 on-device smoke (Ryan — THE GATE).** `cd mobile && eas build --platform ios --profile preview`, install on device, tap through learn flow, confirm Quick check appears, confirm an `srs_state` row written. Only this proves native + DB + SRS. Unblocks all of Phase 3+.
+2. **Phase 2 paid enrichment run (Ryan).** CONTENT-1 ✅ — synthesis + pre-write validation exist. Parameters: top-N by frequency, top-tier model (cheap bulk = slop). CONTENT-2 is now `ready` (was blocked on CONTENT-1).
 
 **Tracked, lower priority:**
-- **Dependabot:** ~12 alerts (11 high, 1 moderate) on `main` after the 2026-06-09 patch pass (`93d7500`). Remaining are transitive dev-only / Expo-build-tooling (likely need an SDK bump). Overstated for an offline RN app, but worth a triage session.
-- **Standing launch blockers (Ryan):** physical-device C0 test, fresh EAS build, P-2 beta recruitment, AU2/AU3 native sign-in (deferred to pre-submission build).
+- **Dependabot:** ~11 remaining alerts — transitive Expo-build-tooling (tar×6, xmldom×4, uuid), accepted until next SDK bump. Overstated for an offline RN app.
+- **Standing launch blockers (Ryan):** physical-device C0 test, fresh EAS build, P-2 beta recruitment, AU2/AU3 native sign-in (deferred to pre-submission).
 
 **21 weeks from validation to 1,000 active users.**
 Solo founder. $194 Year 1 budget. **One-time consumer IAP (exam packs + bundle) via RevenueCat — no subscriptions.** B2B licensing and teacher referrals deferred (door left open). See [pricing model](lexitap-docs/08-financial-legal/REVENUE_MODEL_PRICING.md).
