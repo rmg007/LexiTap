@@ -44,6 +44,11 @@ export function SettingsScreen(): React.JSX.Element {
   const [restoring, setRestoring] = useState(false);
   const [restoreResult, setRestoreResult] = useState<'ok' | 'no_backup' | 'error' | null>(null);
 
+  // Restore-purchases (IAP) state: idle | busy | error | restored count.
+  const [purchasesRestore, setPurchasesRestore] = useState<'idle' | 'busy' | 'error' | number>(
+    'idle',
+  );
+
   useEffect(() => {
     queries.getContentDbHealth().then(setDbHealth).catch(() => undefined);
     getAnalyticsOptOut().then(setAnalyticsOptOutLocal).catch(() => undefined);
@@ -81,6 +86,21 @@ export function SettingsScreen(): React.JSX.Element {
     const result = await services.backup.forceRestore();
     setRestoreResult(result);
     setRestoring(false);
+  };
+
+  // App Store guideline 3.1.1: a restore mechanism must be reachable for
+  // non-consumables — always visible, sign-in not required (store-side identity).
+  const handleRestorePurchases = async () => {
+    setPurchasesRestore('busy');
+    void services.analytics.track('restore_purchases_initiated');
+    try {
+      const results = await services.iap.restorePurchases();
+      setPurchasesRestore(results.length);
+      void services.analytics.track('restore_purchases_completed', { count: results.length });
+    } catch {
+      // IapPort.restorePurchases returns [] on SDK errors; defensive only.
+      setPurchasesRestore('error');
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -163,6 +183,39 @@ export function SettingsScreen(): React.JSX.Element {
               </Text>
             </Pressable>
           )}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Restore purchases"
+            accessibilityState={{ disabled: purchasesRestore === 'busy' }}
+            onPress={handleRestorePurchases}
+            disabled={purchasesRestore === 'busy'}
+            style={{ paddingVertical: spacing.s2, paddingHorizontal: spacing.s1, borderRadius: 8 }}
+          >
+            <Text variant="body" color="accent">
+              Restore purchases
+            </Text>
+            {purchasesRestore === 'busy' ? (
+              <ActivityIndicator
+                size="small"
+                color={colors.accent}
+                style={{ alignSelf: 'flex-start', marginTop: spacing.s1 }}
+              />
+            ) : typeof purchasesRestore === 'number' ? (
+              <Text
+                variant="caption"
+                color={purchasesRestore > 0 ? 'success' : 'textSecondary'}
+                style={{ marginTop: spacing.s1 }}
+              >
+                {purchasesRestore > 0
+                  ? `Restored ${purchasesRestore} purchase${purchasesRestore === 1 ? '' : 's'}.`
+                  : 'No previous purchases found.'}
+              </Text>
+            ) : purchasesRestore === 'error' ? (
+              <Text variant="caption" color="destructive" style={{ marginTop: spacing.s1 }}>
+                Could not restore purchases. Please try again.
+              </Text>
+            ) : null}
+          </Pressable>
         </View>
       </Card>
 

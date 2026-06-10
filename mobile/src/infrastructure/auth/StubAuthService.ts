@@ -43,6 +43,17 @@ export class StubAuthService implements AuthPort {
     return ok(this.session);
   }
 
+  async signInWithIdToken(
+    provider: "apple" | "google",
+    _idToken: string,
+  ): Promise<Result<AuthSession>> {
+    // Native-provider flow: any token is accepted; the email encodes the
+    // provider so tests can assert which path produced the session.
+    this.session = this.makeSession(`stub-${provider}@example.com`);
+    this.emit();
+    return ok(this.session);
+  }
+
   async signOut(): Promise<void> {
     this.session = null;
     this.emit();

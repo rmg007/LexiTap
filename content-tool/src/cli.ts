@@ -11,6 +11,7 @@ import { reviewCommand, reviewFinalizeCommand } from '@/commands/review';
 import { exportCommand } from '@/commands/export';
 import { releaseCommand } from '@/commands/release';
 import { ingestSensesCommand } from '@/commands/ingest-senses';
+import { enrichSensesCommand } from '@/commands/enrich-senses';
 import { logger } from '@/lib/logger';
 
 const USAGE = `lexitap-tool <command> [options]
@@ -19,6 +20,8 @@ Commands:
   import           --source <path> --tier <slug> [--type t] [--on-conflict update|skip|error] [--dry-run]
   import-pseudo    --source <path>   (import pseudo_words CSV for DIAG-A false-alarm detection)
   ingest-senses    --source <path.jsonl>  [--dry-run]  (load rich sense/example enrichment)
+  enrich-senses    --limit <n> [--tier <slug>] [--model <id>] [--output <path.jsonl>] [--dry-run] [--no-resume]
+                   (CONTENT-2: generate rich senses via Anthropic into a JSONL for ingest-senses)
   validate         [--tier <slug>] [--strict]
   enrich           (DB mode)  --tier <slug> [--add-definitions] [--add-synonyms] [--add-audio] [--add-images] [--limit n] [--force] [--dry-run]
                    (CSV mode) --input <path> --output <path> [--budget usd] [--dry-run]
@@ -39,6 +42,9 @@ async function main(): Promise<void> {
       break;
     case 'ingest-senses':
       ingestSensesCommand([secondArg ?? '', ...rest].filter(Boolean));
+      break;
+    case 'enrich-senses':
+      await enrichSensesCommand([secondArg ?? '', ...rest].filter(Boolean));
       break;
     case 'validate':
       validateCommand([secondArg ?? '', ...rest].filter(Boolean));

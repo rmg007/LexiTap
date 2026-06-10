@@ -86,6 +86,29 @@ export class RevenueCatIapService implements IapPort {
     return active;
   }
 
+  // Alias the store customer to the Supabase user id (P3_AUTH_PLAN AU2.5).
+  // Best-effort: an unconfigured SDK throws -- swallow, never block sign-in.
+  async logIn(appUserId: string): Promise<void> {
+    try {
+      await Purchases.logIn(appUserId);
+      this.invalidateCache();
+    } catch (err) {
+      logger.warn('RevenueCat logIn failed', { error: String(err) });
+    }
+  }
+
+  // Revert to an anonymous store customer. RevenueCat throws when the current
+  // user is ALREADY anonymous -- expected on every sign-out that follows an
+  // anonymous session, so swallow silently (warn only; never block sign-out).
+  async logOut(): Promise<void> {
+    try {
+      await Purchases.logOut();
+      this.invalidateCache();
+    } catch (err) {
+      logger.warn('RevenueCat logOut skipped', { error: String(err) });
+    }
+  }
+
   invalidateCache(): void {
     this.cachedEntitlements = null;
     this.cacheExpiresAt = 0;

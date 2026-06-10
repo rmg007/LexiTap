@@ -34,6 +34,28 @@ describe("StubAuthService", () => {
     expect(session?.user.email).toBe("learner@example.com");
   });
 
+  it.each(["apple", "google"] as const)(
+    "signInWithIdToken(%s) returns a fake session encoding the provider",
+    async (provider) => {
+      const result = await service.signInWithIdToken(provider, "any-token");
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.user.email).toBe(`stub-${provider}@example.com`);
+      }
+      const session = await service.getSession();
+      expect(session?.user.email).toBe(`stub-${provider}@example.com`);
+    },
+  );
+
+  it("signInWithIdToken fires onAuthStateChange", async () => {
+    const sessions: Array<unknown> = [];
+    const unsubscribe = service.onAuthStateChange((s) => sessions.push(s));
+    await service.signInWithIdToken("apple", "any-token");
+    unsubscribe();
+    expect(sessions).toHaveLength(1);
+    expect(sessions[0]).not.toBeNull();
+  });
+
   it("signOut clears the session", async () => {
     await service.verifyOtp("learner@example.com", "123456");
     await service.signOut();

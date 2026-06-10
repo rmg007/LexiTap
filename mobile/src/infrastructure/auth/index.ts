@@ -6,3 +6,11 @@ export {
   secureStoreAdapter,
   type SecureStorage,
 } from "@/infrastructure/auth/secureStoreAdapter";
+export {
+  AppleSignInAdapter,
+  type AppleAuthModule,
+} from "@/infrastructure/auth/AppleSignInAdapter";
+export {
+  GoogleSignInAdapter,
+  type GoogleSignInModule,
+} from "@/infrastructure/auth/GoogleSignInAdapter";

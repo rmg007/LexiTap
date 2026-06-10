@@ -32,4 +32,11 @@ export interface IapPort {
   // Active RevenueCat entitlement identifiers for the current user.
   // Throws when the SDK is offline; callers should treat that as no access.
   getActiveEntitlements(): Promise<readonly string[]>;
+  // Alias the store customer to the app's authenticated user id (RevenueCat
+  // Purchases.logIn) so entitlements follow the account across devices.
+  // Best-effort: never throws (unconfigured SDK / network errors are swallowed).
+  logIn(appUserId: string): Promise<void>;
+  // Revert to an anonymous store customer on sign-out. Best-effort, never
+  // throws (RevenueCat errors when already anonymous — implementations swallow).
+  logOut(): Promise<void>;
 }

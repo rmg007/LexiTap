@@ -7,6 +7,7 @@ const mockFunctions = {
 const mockAuth = {
   signInWithOtp: jest.fn(),
   verifyOtp: jest.fn(),
+  signInWithIdToken: jest.fn(),
   signOut: jest.fn(),
   getSession: jest.fn(),
   onAuthStateChange: jest.fn(),
@@ -124,6 +125,10 @@ describe("SupabaseAuthService", () => {
       const del = await service.deleteAccount();
       expect(del.ok).toBe(false);
       if (!del.ok) expect(del.error.kind).toBe("not_configured");
+
+      const idToken = await service.signInWithIdToken("apple", "jwt");
+      expect(idToken.ok).toBe(false);
+      if (!idToken.ok) expect(idToken.error.kind).toBe("not_configured");
     });
   });
 
@@ -249,6 +254,73 @@ describe("SupabaseAuthService", () => {
       );
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.error.kind).toBe("network");
+    });
+  });
+
+  describe("signInWithIdToken", () => {
+    it.each(["apple", "google"] as const)(
+      "exchanges a %s ID token for a mapped session",
+      async (provider) => {
+        mockAuth.signInWithIdToken.mockResolvedValue({
+          data: { session: supabaseSession(), user: {} },
+          error: null,
+        });
+        const result = await makeService().signInWithIdToken(
+          provider,
+          "provider-id-jwt",
+        );
+        expect(mockAuth.signInWithIdToken).toHaveBeenCalledWith({
+          provider,
+          token: "provider-id-jwt",
+        });
+        expect(result.ok).toBe(true);
+        if (result.ok) {
+          expect(result.value.user.id).toBe("user-uuid");
+          expect(result.value.accessToken).toBe("jwt-access-token");
+          // epoch seconds → ms, same as verifyOtp.
+          expect(result.value.expiresAt).toBe(1_700_000_000 * 1000);
+        }
+      },
+    );
+
+    it("maps a rejected token (4xx) via mapError", async () => {
+      mockAuth.signInWithIdToken.mockResolvedValue({
+        data: { session: null, user: null },
+        error: authError(400),
+      });
+      const result = await makeService().signInWithIdToken("apple", "bad-jwt");
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.error.kind).toBe("invalid_otp");
+    });
+
+    it("maps a 5xx response to network", async () => {
+      mockAuth.signInWithIdToken.mockResolvedValue({
+        data: { session: null, user: null },
+        error: authError(503),
+      });
+      const result = await makeService().signInWithIdToken("google", "jwt");
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.error.kind).toBe("network");
+    });
+
+    it("treats an accepted-but-sessionless response as unknown", async () => {
+      mockAuth.signInWithIdToken.mockResolvedValue({
+        data: { session: null, user: { id: "x" } },
+        error: null,
+      });
+      const result = await makeService().signInWithIdToken("apple", "jwt");
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.error.kind).toBe("unknown");
+    });
+
+    it("maps a thrown error without leaking it", async () => {
+      mockAuth.signInWithIdToken.mockRejectedValue(new Error("kaboom"));
+      const result = await makeService().signInWithIdToken("google", "jwt");
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.error.kind).toBe("unknown");
+        expect(result.error.message).not.toContain("kaboom");
+      }
     });
   });
 

@@ -9,6 +9,7 @@
  */
 
 import type { WordRow } from '@/schema/types';
+import type { SenseIngestItem } from '@/commands/ingest-senses';
 
 export interface SynonymSet {
   synonyms: string[];
@@ -44,6 +45,33 @@ export interface DefinitionProvider {
   readonly name: string;
   /** Returns null if the word should be skipped (e.g. API failure for a batch). */
   generate(words: WordRow[]): Promise<Map<string, DefinitionResult>>;
+}
+
+/** A word the sense provider declined to enrich (seed-list junk, API failure). */
+export interface SenseSkip {
+  word_id: string;
+  word: string;
+  /** One-line reason, e.g. "proper noun (surname)" or "provider_error". */
+  reason: string;
+}
+
+export interface SenseGenerationResult {
+  /** Valid `SenseIngestItem`s keyed by `word_id`. */
+  items: Map<string, SenseIngestItem>;
+  /** Words deliberately not enriched, with a one-line reason each. */
+  skipped: SenseSkip[];
+}
+
+/**
+ * Generates rich multi-sense teaching content (CONTENT-2): per word, decides
+ * genuinely-distinct senses (conservative — default 1), writes a felt
+ * explanation + 2–3 full-sentence teaching examples per sense, and SKIPS
+ * seed-list junk (proper nouns, demonyms, mislabeled function words,
+ * inflections) instead of dressing it up.
+ */
+export interface SenseProvider {
+  readonly name: string;
+  generate(words: WordRow[]): Promise<SenseGenerationResult>;
 }
 
 export interface ProviderRegistry {

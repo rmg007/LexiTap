@@ -9,6 +9,8 @@ import React, {
 import { AppState, Linking } from 'react-native';
 import { router } from 'expo-router';
 import type { AuthSession, Result } from '@/domain/auth/AuthPort';
+import { AppleSignInAdapter } from '@/infrastructure/auth/AppleSignInAdapter';
+import { GoogleSignInAdapter } from '@/infrastructure/auth/GoogleSignInAdapter';
 import { useServices } from '@/presentation/services';
 
 // Extract ?token_hash=... from a lexitap://auth/callback deep-link URL.
@@ -27,17 +29,66 @@ interface AuthContextValue {
   readonly session: AuthSession | null;
   // true only during the initial getSession() restore on mount.
   readonly isLoading: boolean;
+  // Whether the native provider buttons should render at all. appleAvailable
+  // resolves async (isAvailableAsync); googleAvailable is a build-time constant
+  // (EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID present).
+  readonly appleAvailable: boolean;
+  readonly googleAvailable: boolean;
   signInWithOtp(email: string): Promise<Result>;
   verifyOtp(email: string, token: string): Promise<Result<AuthSession>>;
+  // Native provider flows: present the OS sheet, exchange the ID token for a
+  // Supabase session. err kind 'cancelled' means the user dismissed the sheet —
+  // callers show NO error for it.
+  signInWithApple(): Promise<Result<AuthSession>>;
+  signInWithGoogle(): Promise<Result<AuthSession>>;
   signOut(): Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }): React.JSX.Element {
+// The adapters that drive the native provider sheets. The slices AuthProvider
+// needs are structural so tests inject fakes via AuthProvider props.
+export interface AppleSignIn {
+  isAvailable(): Promise<boolean>;
+  signIn(): Promise<Result<string>>;
+}
+export interface GoogleSignIn {
+  isConfigured(): boolean;
+  signIn(): Promise<Result<string>>;
+}
+
+// Module-level singletons: construction is side-effect free (no native calls
+// until isAvailable/signIn), so this is safe at import time.
+const defaultAppleAdapter: AppleSignIn = new AppleSignInAdapter();
+const defaultGoogleAdapter: GoogleSignIn = new GoogleSignInAdapter();
+
+interface AuthProviderProps {
+  children: ReactNode;
+  // Injectable for tests; default to the real native adapters.
+  apple?: AppleSignIn;
+  google?: GoogleSignIn;
+}
+
+export function AuthProvider({
+  children,
+  apple = defaultAppleAdapter,
+  google = defaultGoogleAdapter,
+}: AuthProviderProps): React.JSX.Element {
   const { auth } = useServices();
   const [session, setSession] = useState<AuthSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [appleAvailable, setAppleAvailable] = useState(false);
+  const googleAvailable = google.isConfigured();
+
+  useEffect(() => {
+    let cancelled = false;
+    apple.isAvailable().then((available) => {
+      if (!cancelled) setAppleAvailable(available);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [apple]);
 
   useEffect(() => {
     let cancelled = false;
@@ -108,13 +159,44 @@ export function AuthProvider({ children }: { children: ReactNode }): React.JSX.E
     [auth],
   );
 
+  // Compose: native sheet → provider ID token → Supabase session. Adapter
+  // failures (cancelled / unavailable / unknown) pass through unchanged — the
+  // err branch of Result<string> is identical to Result<AuthSession>'s.
+  const signInWithApple = useCallback(async (): Promise<Result<AuthSession>> => {
+    const token = await apple.signIn();
+    if (!token.ok) return token;
+    const result = await auth.signInWithIdToken('apple', token.value);
+    if (result.ok) setSession(result.value);
+    return result;
+  }, [apple, auth]);
+
+  const signInWithGoogle = useCallback(async (): Promise<Result<AuthSession>> => {
+    const token = await google.signIn();
+    if (!token.ok) return token;
+    const result = await auth.signInWithIdToken('google', token.value);
+    if (result.ok) setSession(result.value);
+    return result;
+  }, [google, auth]);
+
   const signOut = useCallback(async () => {
     await auth.signOut();
     setSession(null);
   }, [auth]);
 
   return (
-    <AuthContext.Provider value={{ session, isLoading, signInWithOtp, verifyOtp, signOut }}>
+    <AuthContext.Provider
+      value={{
+        session,
+        isLoading,
+        appleAvailable,
+        googleAvailable,
+        signInWithOtp,
+        verifyOtp,
+        signInWithApple,
+        signInWithGoogle,
+        signOut,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

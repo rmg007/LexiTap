@@ -29,12 +29,21 @@ export interface AuthSession {
 // - network:        transient connectivity / fetch / 5xx failure — retryable.
 // - invalid_otp:    the email or one-time code was rejected (expired/wrong).
 // - rate_limited:   too many requests (HTTP 429); back off and retry later.
+// - cancelled:      the user dismissed the native provider sheet (Apple/Google
+//                   sign-in). NOT a failure to surface — the UI shows NO error
+//                   and simply returns to the idle sign-in state.
+// - unavailable:    the provider is not usable on this device/build (e.g.
+//                   Sign in with Apple on a non-iOS device, or the Google
+//                   client ID env var unset). Callers hide/disable the entry
+//                   point rather than showing an error.
 // - unknown:        anything that does not map to the above.
 export type AuthErrorKind =
   | "not_configured"
   | "network"
   | "invalid_otp"
   | "rate_limited"
+  | "cancelled"
+  | "unavailable"
   | "unknown";
 
 export interface AuthError {
@@ -91,4 +100,14 @@ export interface AuthPort {
   // not_configured: Supabase env vars absent — caller should still clear local data.
   // network / rate_limited / unknown: surface to UI for retry.
   deleteAccount(): Promise<Result>;
+
+  // Exchange a native provider ID token (Sign in with Apple identityToken or
+  // Google Sign-In idToken) for a session. The token comes from the platform
+  // sign-in adapter (AppleSignInAdapter / GoogleSignInAdapter); this method
+  // only performs the backend exchange. On success the session is persisted by
+  // the adapter and returned, same as verifyOtp.
+  signInWithIdToken(
+    provider: "apple" | "google",
+    idToken: string,
+  ): Promise<Result<AuthSession>>;
 }
