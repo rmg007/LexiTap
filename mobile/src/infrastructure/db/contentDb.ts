@@ -1,5 +1,8 @@
 import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
+// SDK 56: the classic synchronous FileSystem API (documentDirectory) moved to
+// the `/legacy` subpath. The new File/Paths API is async; this module needs the
+// synchronous documentDirectory, so we stay on the legacy API (supported in 56).
+import * as FileSystem from 'expo-file-system/legacy';
 import {
   BUNDLED_CONTENT_DB_VERSION,
   CONTENT_DB_FILE_NAME,

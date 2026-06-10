@@ -8,6 +8,13 @@ jest.mock('expo-file-system', () => ({
   writeAsStringAsync: jest.fn(),
 }));
 
+// SDK 56: userDbPath.ts reads documentDirectory from the `/legacy` subpath, so
+// it must be mocked separately from the main module above.
+jest.mock('expo-file-system/legacy', () => ({
+  __esModule: true,
+  documentDirectory: 'file:///docs/',
+}));
+
 // Mock the env-gate directly. babel-preset-expo inlines `process.env.EXPO_PUBLIC_*`
 // dot-reads at build time, so runtime mutation of those vars in a test is a no-op
 // (delete is even rewritten away); mocking the gate module is the deterministic

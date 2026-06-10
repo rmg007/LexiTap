@@ -1,4 +1,7 @@
-import * as FileSystem from 'expo-file-system';
+// SDK 56: the classic synchronous FileSystem API (documentDirectory) moved to
+// the `/legacy` subpath. The new File/Paths API is async and would change this
+// module's contract, so we stay on the legacy API — fully supported in SDK 56.
+import * as FileSystem from 'expo-file-system/legacy';
 
 // Single source of truth for the on-device read-write user.db path and the
 // staging path used by the Settings "restore from backup" flow.

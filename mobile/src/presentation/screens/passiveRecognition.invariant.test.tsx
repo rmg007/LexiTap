@@ -1,4 +1,3 @@
-import React from 'react';
 import { fireEvent } from '@testing-library/react-native';
 import { LearnCardScreen } from '@/presentation/screens/LearnCardScreen';
 import { LearnQuickCheckScreen } from '@/presentation/screens/LearnQuickCheckScreen';
@@ -10,6 +9,7 @@ import {
   makeSession,
   renderWithProviders,
   assertNoTextInput,
+  selectOption,
 } from '@/test-utils/renderWithProviders';
 
 // Passive-recognition invariant: NO TextInput must ever appear in quiz/learn
@@ -21,7 +21,7 @@ import {
 
 describe('Passive-recognition invariant — no TextInput', () => {
   it('LearnCardScreen renders no TextInput', async () => {
-    const utils = renderWithProviders(
+    const utils = await renderWithProviders(
       <LearnCardScreen tierId={TIER} onExit={jest.fn()} onComplete={jest.fn()} />,
     );
     await utils.findByText('borrow');
@@ -29,7 +29,7 @@ describe('Passive-recognition invariant — no TextInput', () => {
   });
 
   it('LearnQuickCheckScreen renders no TextInput — question phase', async () => {
-    const utils = renderWithProviders(
+    const utils = await renderWithProviders(
       <LearnQuickCheckScreen
         batch={BATCH}
         tierId={TIER}
@@ -42,7 +42,7 @@ describe('Passive-recognition invariant — no TextInput', () => {
   });
 
   it('LearnQuickCheckScreen renders no TextInput — feedback phase', async () => {
-    const utils = renderWithProviders(
+    const utils = await renderWithProviders(
       <LearnQuickCheckScreen
         batch={BATCH}
         tierId={TIER}
@@ -52,7 +52,7 @@ describe('Passive-recognition invariant — no TextInput', () => {
     );
     await utils.findByText('borrow');
     // Advance to the feedback overlay (correct answer → Submit → feedback).
-    fireEvent.press(utils.getByText(BATCH[0]!.definition));
+    await selectOption(utils, BATCH[0]!.definition);
     fireEvent.press(utils.getByText('Submit'));
     await utils.findByText('Continue');
     assertNoTextInput(utils);
@@ -62,7 +62,7 @@ describe('Passive-recognition invariant — no TextInput', () => {
     const services = defaultServices({
       startQuiz: async () => makeSession(BATCH, 'review'),
     });
-    const utils = renderWithProviders(
+    const utils = await renderWithProviders(
       <QuizScreen tierId={TIER} mode="review" onExit={jest.fn()} />,
       services,
     );
@@ -74,13 +74,13 @@ describe('Passive-recognition invariant — no TextInput', () => {
     const services = defaultServices({
       startQuiz: async () => makeSession(BATCH, 'review'),
     });
-    const utils = renderWithProviders(
+    const utils = await renderWithProviders(
       <QuizScreen tierId={TIER} mode="review" onExit={jest.fn()} />,
       services,
     );
     await utils.findByText('borrow');
     // Select the correct option and submit to trigger the FeedbackLayer overlay.
-    fireEvent.press(utils.getByText(BATCH[0]!.definition));
+    await selectOption(utils, BATCH[0]!.definition);
     fireEvent.press(utils.getByText('Submit'));
     await utils.findByText('Continue');
     assertNoTextInput(utils);

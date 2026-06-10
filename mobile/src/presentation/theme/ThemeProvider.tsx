@@ -64,9 +64,14 @@ export function ThemeProvider({
   }, []);
 
   const value = useMemo<ThemeContextValue>(() => {
-    // Dark is the fallback when "system" is unavailable.
+    // Dark is the fallback when "system" is unavailable. RN 0.85 widened
+    // useColorScheme() to include 'unspecified', so narrow explicitly.
     const resolved: ColorScheme =
-      preference === 'system' ? (osScheme ?? 'dark') : preference;
+      preference === 'system'
+        ? osScheme === 'light' || osScheme === 'dark'
+          ? osScheme
+          : 'dark'
+        : preference;
     return { theme: themeForScheme(resolved), preference, setPreference, reduceMotion, fontScale };
   }, [preference, osScheme, reduceMotion, fontScale]);
 

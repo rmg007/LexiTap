@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemeProvider } from '@/presentation/theme';
@@ -11,9 +10,16 @@ import { OnboardingAgeGateScreen } from '@/presentation/screens/onboarding/Onboa
 const AGE_GATE_PASSED_KEY = 'lexitap.age.gate.passed';
 const AGE_GATE_REJECTED_KEY = 'lexitap.age.gate.rejected';
 
-function renderAgeGate(options?: { onContinue?: jest.Mock }) {
+// React 19 defers certain onPress-driven setState updates (notably the
+// year-picker open toggle). A real-timer tick lets the scheduler flush them;
+// RTL's act-wrapped waitFor does not reliably observe these particular updates.
+const flushDeferred = (): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, 50));
+
+async function renderAgeGate(options?: { onContinue?: jest.Mock }) {
   const onContinue = options?.onContinue ?? jest.fn();
-  const utils = render(
+  // RTL 14 render() is async (React 19 async act).
+  const utils = await render(
     <ThemeProvider initialPreference="dark">
       <OnboardingAgeGateScreen onContinue={onContinue} />
     </ThemeProvider>,
@@ -30,7 +36,7 @@ beforeEach(() => {
 
 describe('OnboardingAgeGateScreen (render)', () => {
   it('renders the date of birth prompt after checking AsyncStorage (fresh install)', async () => {
-    const { findByText } = renderAgeGate();
+    const { findByText } = await renderAgeGate();
 
     // Should show the age gate prompt once AsyncStorage check resolves.
     await findByText("What's your date of birth?");
@@ -44,7 +50,7 @@ describe('OnboardingAgeGateScreen (render)', () => {
     });
 
     const onContinue = jest.fn();
-    renderAgeGate({ onContinue });
+    await renderAgeGate({ onContinue });
 
     // onContinue fires automatically — no user input required.
     await waitFor(() => {
@@ -58,7 +64,7 @@ describe('OnboardingAgeGateScreen (render)', () => {
       return Promise.resolve(null);
     });
 
-    const { findByText, queryByText } = renderAgeGate();
+    const { findByText, queryByText } = await renderAgeGate();
 
     // Rejection heading should appear.
     await findByText('Age requirement not met');
@@ -70,14 +76,18 @@ describe('OnboardingAgeGateScreen (render)', () => {
     const currentYear = new Date().getFullYear();
     const under16Year = currentYear - 10; // 10 years old → clearly under-16.
 
-    const { findByText, getByText, getByLabelText } = renderAgeGate();
+    const { findByText, getByText, getByLabelText, findByLabelText } = await renderAgeGate();
 
     // Wait for the gate to be in pending state.
     await findByText("What's your date of birth?");
 
-    // Open the year picker and select a year that is under 16.
+    // Open the year picker and select a year that is under 16. React 19 defers
+    // these onPress setState updates; a real-timer tick lets them flush (waitFor's
+    // act-wrapped polling does not reliably observe the picker toggle).
     fireEvent.press(getByLabelText('Change year of birth'));
-    fireEvent.press(getByLabelText(`Year ${under16Year}`));
+    await flushDeferred();
+    fireEvent.press(await findByLabelText(`Year ${under16Year}`));
+    await flushDeferred();
 
     // Press Continue — should trigger rejection.
     fireEvent.press(getByText('Continue'));
@@ -96,14 +106,18 @@ describe('OnboardingAgeGateScreen (render)', () => {
     const over16Year = currentYear - 20; // 20 years old → clearly over-16.
 
     const onContinue = jest.fn();
-    const { findByText, getByText, getByLabelText } = renderAgeGate({ onContinue });
+    const { findByText, getByText, getByLabelText, findByLabelText } = await renderAgeGate({ onContinue });
 
     // Wait for the gate to be in pending state.
     await findByText("What's your date of birth?");
 
-    // Open the year picker and select a year that is >=16.
+    // Open the year picker and select a year that is >=16. React 19 defers these
+    // onPress setState updates; a real-timer tick lets them flush (waitFor's
+    // act-wrapped polling does not reliably observe the picker toggle).
     fireEvent.press(getByLabelText('Change year of birth'));
-    fireEvent.press(getByLabelText(`Year ${over16Year}`));
+    await flushDeferred();
+    fireEvent.press(await findByLabelText(`Year ${over16Year}`));
+    await flushDeferred();
 
     // Press Continue.
     fireEvent.press(getByText('Continue'));
@@ -120,10 +134,11 @@ describe('OnboardingAgeGateScreen (render)', () => {
   });
 
   it('no TextInput is rendered (passive-recognition invariant)', async () => {
-    const { UNSAFE_queryAllByType, findByText } = renderAgeGate();
+    const { root, findByText } = await renderAgeGate();
     await findByText("What's your date of birth?");
 
-    const { TextInput } = require('react-native');
-    expect(UNSAFE_queryAllByType(TextInput)).toHaveLength(0);
+    // RTL 14 removed UNSAFE_*ByType; walk the host tree for any TextInput node.
+    const inputs = root?.queryAll((node) => node.type === 'TextInput') ?? [];
+    expect(inputs).toHaveLength(0);
   });
 });

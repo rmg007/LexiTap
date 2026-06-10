@@ -1,5 +1,8 @@
 module.exports = {
   preset: 'jest-expo',
+  // SDK 56 / reanimated 4: resolve react-native-worklets to its Jest-safe
+  // (non-native) build, then delegate to the RN preset resolver. See jest-resolver.js.
+  resolver: '<rootDir>/jest-resolver.js',
   setupFilesAfterEnv: [],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',

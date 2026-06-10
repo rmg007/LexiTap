@@ -12,11 +12,6 @@ const plugins: NonNullable<ExpoConfig['plugins']> = [
   'expo-router',
   'expo-sqlite',
   ['expo-asset', { assets: ['./assets/vocab/words.db'] }],
-  // iOS 26 SDK / Xcode 26 forces a stricter Clang that rejects RN's bundled
-  // fmt (consteval). This local plugin disables FMT_USE_CONSTEVAL in the
-  // generated Podfile. Drop it when on an Expo SDK that builds clean under
-  // Xcode 26. See plugins/withFmtConstevalFix.js.
-  './plugins/withFmtConstevalFix.js',
   // R1.3: RevenueCat — native dep wired via autolinking + Pods (Podfile.lock has
   // RNPurchases/RevenueCat/PurchasesHybridCommon). Plugin string removed because
   // react-native-purchases@10.2.0 has no app.plugin.js, so Expo falls back to

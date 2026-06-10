@@ -1,4 +1,3 @@
-import React from 'react';
 import { fireEvent } from '@testing-library/react-native';
 import { LearnQuickCheckScreen } from '@/presentation/screens/LearnQuickCheckScreen';
 import type { AnswerQuestionInput, AnswerQuestionOutput } from '@/application/quiz/AnswerQuestionUseCase';
@@ -7,6 +6,7 @@ import {
   TIER,
   defaultServices,
   renderWithProviders,
+  selectOption,
 } from '@/test-utils/renderWithProviders';
 
 // Render test for the SRS-seeding half of the learn loop
@@ -26,7 +26,7 @@ describe('LearnQuickCheckScreen (render)', () => {
       answerQuestion: answerQuestion as unknown as () => Promise<AnswerQuestionOutput>,
     });
 
-    const { getByText, findByText } = renderWithProviders(
+    const utils = await renderWithProviders(
       <LearnQuickCheckScreen
         batch={BATCH}
         tierId={TIER}
@@ -35,11 +35,12 @@ describe('LearnQuickCheckScreen (render)', () => {
       />,
       services,
     );
+    const { getByText, findByText } = utils;
 
     for (const word of BATCH) {
       // Prompt is the word; options are definitions. Press the correct one.
       await findByText(word.word);
-      fireEvent.press(getByText(word.definition));
+      await selectOption(utils, word.definition);
       fireEvent.press(getByText('Submit'));
       fireEvent.press(await findByText('Continue'));
     }

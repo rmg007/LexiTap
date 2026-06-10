@@ -1,4 +1,3 @@
-import React from 'react';
 import { fireEvent } from '@testing-library/react-native';
 import { LearnCardScreen } from '@/presentation/screens/LearnCardScreen';
 import type { WordDetail } from '@/presentation/services/ServicesContext';
@@ -31,7 +30,7 @@ const TWO_SENSES: WordSense[] = [
   },
 ];
 
-function renderLearnCard(options?: {
+async function renderLearnCard(options?: {
   onComplete?: jest.Mock;
   onExit?: jest.Mock;
   getWordDetail?: () => Promise<WordDetail | null>;
@@ -41,7 +40,8 @@ function renderLearnCard(options?: {
   const services = defaultServices({
     getWordDetail: options?.getWordDetail,
   });
-  const utils = renderWithProviders(
+  // RTL 14 render() is async (React 19 async act).
+  const utils = await renderWithProviders(
     <LearnCardScreen tierId={TIER} onExit={onExit} onComplete={onComplete} />,
     services,
   );
@@ -50,7 +50,7 @@ function renderLearnCard(options?: {
 
 describe('LearnCardScreen (render)', () => {
   it('hands the full batch to onComplete after tapping through all cards', async () => {
-    const { findByText, getByText, onComplete } = renderLearnCard();
+    const { findByText, getByText, onComplete } = await renderLearnCard();
 
     // Card 1 of 3.
     await findByText('borrow');
@@ -75,7 +75,7 @@ describe('LearnCardScreen (render)', () => {
     // render the rich layout — this catches a regression where the sense cache
     // broke on index > 0 (cards 2 and 3 falling back to flat silently).
     const detail: WordDetail = { word: BATCH[0]!, senses: TWO_SENSES };
-    const { findByText, getByText, queryByText } = renderLearnCard({
+    const { findByText, getByText, queryByText } = await renderLearnCard({
       getWordDetail: async () => detail,
     });
 
@@ -98,7 +98,7 @@ describe('LearnCardScreen (render)', () => {
   });
 
   it('falls back to the flat definition when a word has no rich senses', async () => {
-    const { findByText, queryByText } = renderLearnCard({
+    const { findByText, queryByText } = await renderLearnCard({
       getWordDetail: async () => null,
     });
 
