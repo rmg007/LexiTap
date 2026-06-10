@@ -3,9 +3,11 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
   AnthropicSenseProvider,
+  MaxTokensTruncationError,
   buildSensePrompt,
   loadFewShotExemplars,
   parseSenseResponse,
+  stripMarkdownFences,
   SENSE_BATCH_SIZE,
   DEFAULT_SENSE_MODEL,
 } from '@/providers/anthropicSenseProvider';
@@ -156,14 +158,177 @@ describe('parseSenseResponse', () => {
   });
 
   it('throws on malformed JSON or a missing top-level shape (repair-retry path)', () => {
-    expect(() => parseSenseResponse('```json\n{}\n```')).toThrow(/not valid JSON/);
+    expect(() => parseSenseResponse('Sure! Here is the JSON: {"items"')).toThrow(/not valid JSON/);
     expect(() => parseSenseResponse('{"items":[]}')).toThrow(/"skipped"/);
     expect(() => parseSenseResponse('[]')).toThrow(/JSON object/);
+  });
+
+  it('strips a wrapping ```json fence instead of burning the repair retry', () => {
+    const payload = JSON.stringify({ items: [validItem], skipped: [] });
+    const fenced = '```json\n' + payload + '\n```';
+    const result = parseSenseResponse(fenced);
+    expect(result.items.size).toBe(1);
+    expect(result.items.get('word_abc123')!.word).toBe('bridge');
+    // Bare ``` fence too:
+    expect(parseSenseResponse('```\n' + payload + '\n```').items.size).toBe(1);
+    // A fenced response with the wrong SHAPE still throws (real malformation):
+    expect(() => parseSenseResponse('```json\n{}\n```')).toThrow(/"items"/);
+  });
+
+  it('an item that makes the validator THROW is dropped alone, not the whole batch', () => {
+    const malformed = structuredClone(validItem) as Record<string, unknown>;
+    malformed.word_id = 'word_throw1';
+    // Non-string short_gloss: truthy number → `.trim()` throws inside the validator.
+    (malformed.senses as Array<Record<string, unknown>>)[0]!.short_gloss = 42;
+    const text = JSON.stringify({ items: [validItem, malformed], skipped: [] });
+    const result = parseSenseResponse(text);
+    expect(result.items.size).toBe(1);
+    expect(result.items.has('word_abc123')).toBe(true);
+    expect(result.items.has('word_throw1')).toBe(false);
+    expect(result.invalidDropped).toBe(1);
+  });
+});
+
+describe('stripMarkdownFences', () => {
+  it('removes ```json and bare ``` fences; leaves unfenced text alone', () => {
+    expect(stripMarkdownFences('```json\n{"a":1}\n```')).toBe('{"a":1}');
+    expect(stripMarkdownFences('```\n{"a":1}\n```')).toBe('{"a":1}');
+    expect(stripMarkdownFences('  {"a":1}  ')).toBe('{"a":1}');
+    // Unterminated fence is NOT stripped (truncation symptom — let parse fail):
+    expect(stripMarkdownFences('```json\n{"a":1}')).toBe('```json\n{"a":1}');
   });
 });
 
 describe('constants', () => {
   it('keeps batches small for long-prose output', () => {
     expect(SENSE_BATCH_SIZE).toBe(8);
+  });
+});
+
+// ─── generate() against a mocked Anthropic client (offline) ────────────────
+
+type FakeMessage = { content: Array<{ type: string; text?: string }>; stop_reason: string };
+
+function itemFor(word: { id: string; word: string }): object {
+  return {
+    word_id: word.id,
+    word: word.word,
+    senses: [
+      {
+        sense_index: 0,
+        pos: 'noun',
+        short_gloss: `a one-line gloss for ${word.word}`,
+        explanation: `A felt teaching explanation for ${word.word}. It is concrete and plain, and it differs from the gloss.`,
+        image_path: null,
+        examples: [
+          { example_index: 0, text: `Everyone talked about the ${word.word} all afternoon.` },
+          { example_index: 1, text: `She wrote a story about a ${word.word} last year.` },
+        ],
+      },
+    ],
+  };
+}
+
+function okResponse(words: Array<{ id: string; word: string }>): FakeMessage {
+  return {
+    content: [{ type: 'text', text: JSON.stringify({ items: words.map(itemFor), skipped: [] }) }],
+    stop_reason: 'end_turn',
+  };
+}
+
+const TRUNCATED: FakeMessage = {
+  content: [{ type: 'text', text: '{"items":[{"word_id":"word_' }],
+  stop_reason: 'max_tokens',
+};
+
+/** Provider with the network client replaced by a queue of canned responses. */
+function mockedProvider(responses: FakeMessage[]) {
+  const provider = new AnthropicSenseProvider('test-key');
+  const create = vi.fn(async (_request: unknown) => {
+    void _request;
+    const next = responses.shift();
+    if (!next) throw new Error('mock exhausted — more API calls than expected');
+    return next;
+  });
+  (provider as unknown as { client: { messages: { create: typeof create } } }).client = {
+    messages: { create },
+  };
+  return { provider, create };
+}
+
+describe('AnthropicSenseProvider.generate (mocked client)', () => {
+  const wordA = wordRow({ id: 'word_aaa111', word: 'anchor' });
+  const wordB = wordRow({ id: 'word_bbb222', word: 'beacon' });
+
+  it('stop_reason max_tokens → splits the batch in half and retries each half (no repair retry)', async () => {
+    const { provider, create } = mockedProvider([
+      TRUNCATED, // full batch [A, B] truncates
+      okResponse([wordA]), // left half succeeds
+      okResponse([wordB]), // right half succeeds
+    ]);
+    const result = await provider.generate([wordA, wordB]);
+    expect(create).toHaveBeenCalledTimes(3);
+    expect([...result.items.keys()].sort()).toEqual(['word_aaa111', 'word_bbb222']);
+    expect(result.skipped).toEqual([]);
+  });
+
+  it('recursion floor: a single word that still truncates is skipped as provider_error', async () => {
+    const { provider, create } = mockedProvider([TRUNCATED, TRUNCATED, TRUNCATED]);
+    const result = await provider.generate([wordA, wordB]);
+    // batch → truncated; split to [A] → truncated; [B] → truncated. No 4th call.
+    expect(create).toHaveBeenCalledTimes(3);
+    expect(result.items.size).toBe(0);
+    expect(result.skipped).toEqual([
+      { word_id: 'word_aaa111', word: 'anchor', reason: 'provider_error' },
+      { word_id: 'word_bbb222', word: 'beacon', reason: 'provider_error' },
+    ]);
+  });
+
+  it('empty first response → repair retry sends "(empty response)" as the assistant turn', async () => {
+    const { provider, create } = mockedProvider([
+      { content: [], stop_reason: 'end_turn' }, // no text blocks at all
+      okResponse([wordA]),
+    ]);
+    const result = await provider.generate([wordA]);
+    expect(create).toHaveBeenCalledTimes(2);
+    expect(result.items.has('word_aaa111')).toBe(true);
+    const secondCallArgs = create.mock.calls[1]![0] as unknown as {
+      messages: Array<{ role: string; content: string }>;
+    };
+    const assistantTurn = secondCallArgs.messages.find((m) => m.role === 'assistant')!;
+    expect(assistantTurn.content).toBe('(empty response)'); // never empty — API rejects empty content
+  });
+
+  it('concatenates ALL text blocks of a multi-block response', async () => {
+    const full = JSON.stringify({ items: [itemFor(wordA)], skipped: [] });
+    const mid = Math.floor(full.length / 2);
+    const { provider, create } = mockedProvider([
+      {
+        content: [
+          { type: 'text', text: full.slice(0, mid) },
+          { type: 'text', text: full.slice(mid) },
+        ],
+        stop_reason: 'end_turn',
+      },
+    ]);
+    const result = await provider.generate([wordA]);
+    expect(create).toHaveBeenCalledTimes(1); // no repair retry needed
+    expect(result.items.has('word_aaa111')).toBe(true);
+  });
+
+  it('a ```json-fenced response parses on the first call (no paid repair retry)', async () => {
+    const payload = JSON.stringify({ items: [itemFor(wordA)], skipped: [] });
+    const { provider, create } = mockedProvider([
+      { content: [{ type: 'text', text: '```json\n' + payload + '\n```' }], stop_reason: 'end_turn' },
+    ]);
+    const result = await provider.generate([wordA]);
+    expect(create).toHaveBeenCalledTimes(1);
+    expect(result.items.size).toBe(1);
+  });
+
+  it('MaxTokensTruncationError is a distinct error type', () => {
+    const err = new MaxTokensTruncationError('truncated');
+    expect(err).toBeInstanceOf(Error);
+    expect(err.name).toBe('MaxTokensTruncationError');
   });
 });

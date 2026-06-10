@@ -124,6 +124,21 @@ export function openWorkingDb(path: string = WORKING_DB_PATH): DB {
   return db;
 }
 
+/**
+ * Open the working DB STRICTLY read-only. Unlike `openWorkingDb`, a missing
+ * file is NEVER created — read-only consumers (e.g. `enrich-senses`) must not
+ * silently materialize an empty DB and then report "nothing to do".
+ */
+export function openWorkingDbReadonly(path: string = WORKING_DB_PATH): DB {
+  if (!existsSync(path)) {
+    throw new Error(
+      `working DB not found at ${path} — run the import/release pipeline first ` +
+        `(e.g. \`npm run cli -- import <csv>\` or \`npm run release\`) before enrich-senses`,
+    );
+  }
+  return new Database(path, { readonly: true, fileMustExist: true });
+}
+
 /** Create a brand-new output DB from scratch (deletes any prior file). */
 export function createFreshOutputDb(path: string = OUTPUT_DB_PATH): DB {
   ensureDir(path);

@@ -31,6 +31,19 @@ import { validateSenseIngestItem } from '@/commands/synthesize-senses';
 /** Words per API call. Output is long prose — keep batches small. */
 export const SENSE_BATCH_SIZE = 8;
 export const DEFAULT_SENSE_MODEL = 'claude-opus-4-8';
+
+/**
+ * Thrown when the model response was cut off by `max_tokens`
+ * (`stop_reason === 'max_tokens'`). A repair retry on a truncated response is
+ * guaranteed to fail (the JSON is incomplete by construction) — the correct
+ * recovery is to split the batch in half and retry each half.
+ */
+export class MaxTokensTruncationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'MaxTokensTruncationError';
+  }
+}
 /** Generous output ceiling: 8 words × multi-sense felt prose ≈ 6–10k tokens. */
 const MAX_TOKENS = 16000;
 const SAMPLE_SENSES_PATH = resolve(PROJECT_ROOT, 'data', 'input', 'sample-senses.jsonl');
@@ -147,14 +160,29 @@ export interface ParsedSenseResponse {
 }
 
 /**
+ * Strip a single wrapping markdown code fence (``` or ```json) from the
+ * response text. Models occasionally wrap otherwise-valid JSON in fences
+ * despite the contract — stripping them here reserves the (paid) repair retry
+ * for real malformations.
+ */
+export function stripMarkdownFences(text: string): string {
+  const trimmed = text.trim();
+  const match = /^```(?:json)?\s*\n?([\s\S]*?)\n?```$/.exec(trimmed);
+  return match ? match[1]!.trim() : trimmed;
+}
+
+/**
  * Parse the model's strict-JSON response. Throws on malformed JSON or a
  * missing top-level shape (caller retries once with the error message).
  * Per-item V1–V10 violations do NOT throw — those items are dropped + logged.
+ * A wrapping ```json fence is stripped before parsing (not a malformation
+ * worth a paid retry); an item that makes the validator itself throw (e.g.
+ * non-string field types) is dropped like any other invalid item.
  */
 export function parseSenseResponse(text: string): ParsedSenseResponse {
   let parsed: unknown;
   try {
-    parsed = JSON.parse(text);
+    parsed = JSON.parse(stripMarkdownFences(text));
   } catch (err) {
     throw new Error(`response is not valid JSON: ${err instanceof Error ? err.message : String(err)}`);
   }
@@ -170,7 +198,17 @@ export function parseSenseResponse(text: string): ParsedSenseResponse {
   let invalidDropped = 0;
   for (const candidate of raw.items as unknown[]) {
     const item = candidate as SenseIngestItem;
-    const errors = validateSenseIngestItem(item);
+    // A throw from the validator (non-string field types, null senses, …) is a
+    // one-item defect, not a batch defect — drop the item and continue.
+    let errors: ReturnType<typeof validateSenseIngestItem>;
+    try {
+      errors = validateSenseIngestItem(item);
+    } catch (err) {
+      invalidDropped += 1;
+      const msg = err instanceof Error ? err.message : String(err);
+      logger.warn(`dropping malformed item (word_id: ${item?.word_id ?? 'unknown'}): validator threw: ${msg}`);
+      continue;
+    }
     if (errors.length > 0) {
       invalidDropped += 1;
       const summary = errors.map((e) => `${e.field}: ${e.message}`).join('; ');
@@ -204,6 +242,9 @@ export class AnthropicSenseProvider implements SenseProvider {
   constructor(apiKey?: string, model: string = DEFAULT_SENSE_MODEL) {
     const key = apiKey ?? process.env.ANTHROPIC_API_KEY;
     if (!key) throw new Error('AnthropicSenseProvider requires ANTHROPIC_API_KEY');
+    // Load the few-shot exemplars EAGERLY so a missing/broken sample file fails
+    // at construction — before the driver touches any existing output file.
+    loadFewShotExemplars();
     this.client = new Anthropic({ apiKey: key });
     this.model = model;
   }
@@ -230,26 +271,35 @@ export class AnthropicSenseProvider implements SenseProvider {
   }
 
   private async _generateBatch(words: WordRow[]): Promise<ParsedSenseResponse> {
-    const { system, user } = buildSensePrompt(words);
-    const messages: { role: 'user' | 'assistant'; content: string }[] = [{ role: 'user', content: user }];
-
     try {
-      const first = await this._callModel(system, messages);
-      try {
-        return parseSenseResponse(first);
-      } catch (parseErr) {
-        // One repair retry: re-ask with the parse error appended to the turn.
-        const errMsg = parseErr instanceof Error ? parseErr.message : String(parseErr);
-        logger.warn(`batch parse failed (${errMsg}) — retrying once with repair prompt`);
-        messages.push({ role: 'assistant', content: first });
-        messages.push({
-          role: 'user',
-          content: `Your previous response could not be parsed: ${errMsg}. Respond again with ONLY the strict JSON object ({"items":[...],"skipped":[...]}) — no markdown fences, no other text.`,
-        });
-        const second = await this._callModel(system, messages);
-        return parseSenseResponse(second);
-      }
+      return await this._generateBatchOnce(words);
     } catch (err) {
+      if (err instanceof MaxTokensTruncationError) {
+        // Truncated output: a repair retry is guaranteed to fail — split the
+        // batch in half and retry each half. Recursion floor: a single word
+        // that still truncates goes to skipped as 'provider_error'.
+        if (words.length <= 1) {
+          logger.warn(
+            `response truncated at max_tokens for single word '${words[0]?.word ?? '?'}' — skipped as provider_error`,
+          );
+          return {
+            items: new Map(),
+            skipped: words.map((w) => ({ word_id: w.id, word: w.word, reason: 'provider_error' })),
+            invalidDropped: 0,
+          };
+        }
+        const mid = Math.ceil(words.length / 2);
+        logger.warn(
+          `response truncated at max_tokens for batch of ${words.length} — splitting into ${mid} + ${words.length - mid} and retrying`,
+        );
+        const left = await this._generateBatch(words.slice(0, mid));
+        const right = await this._generateBatch(words.slice(mid));
+        return {
+          items: new Map([...left.items, ...right.items]),
+          skipped: [...left.skipped, ...right.skipped],
+          invalidDropped: left.invalidDropped + right.invalidDropped,
+        };
+      }
       // Fail closed: API error or second parse failure → whole batch skipped.
       const msg = err instanceof Error ? err.message : String(err);
       logger.warn(`batch failed: ${msg} (${words.length} words → skipped as provider_error)`);
@@ -258,6 +308,30 @@ export class AnthropicSenseProvider implements SenseProvider {
         skipped: words.map((w) => ({ word_id: w.id, word: w.word, reason: 'provider_error' })),
         invalidDropped: 0,
       };
+    }
+  }
+
+  /** One call + (at most) one repair retry. Lets MaxTokensTruncationError propagate. */
+  private async _generateBatchOnce(words: WordRow[]): Promise<ParsedSenseResponse> {
+    const { system, user } = buildSensePrompt(words);
+    const messages: { role: 'user' | 'assistant'; content: string }[] = [{ role: 'user', content: user }];
+
+    const first = await this._callModel(system, messages);
+    try {
+      return parseSenseResponse(first);
+    } catch (parseErr) {
+      // One repair retry: re-ask with the parse error appended to the turn.
+      // The API rejects empty assistant content — substitute a placeholder
+      // when the first response had no text.
+      const errMsg = parseErr instanceof Error ? parseErr.message : String(parseErr);
+      logger.warn(`batch parse failed (${errMsg}) — retrying once with repair prompt`);
+      messages.push({ role: 'assistant', content: first.trim().length > 0 ? first : '(empty response)' });
+      messages.push({
+        role: 'user',
+        content: `Your previous response could not be parsed: ${errMsg}. Respond again with ONLY the strict JSON object ({"items":[...],"skipped":[...]}) — no markdown fences, no other text.`,
+      });
+      const second = await this._callModel(system, messages);
+      return parseSenseResponse(second);
     }
   }
 
@@ -271,6 +345,16 @@ export class AnthropicSenseProvider implements SenseProvider {
       system,
       messages,
     });
-    return message.content[0]?.type === 'text' ? message.content[0].text : '';
+    if (message.stop_reason === 'max_tokens') {
+      throw new MaxTokensTruncationError(
+        `response truncated at max_tokens (${MAX_TOKENS}) — JSON is incomplete by construction`,
+      );
+    }
+    // Concatenate ALL text blocks — the response is not guaranteed to be a
+    // single block, and content[0] may be a non-text block.
+    return message.content
+      .filter((block): block is Extract<typeof block, { type: 'text' }> => block.type === 'text')
+      .map((block) => block.text)
+      .join('');
   }
 }
