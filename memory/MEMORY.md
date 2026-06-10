@@ -4,6 +4,20 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 🔄 Session: Content pipeline JSONL redesign — decisions logged, CONTENT-2 on hold (2026-06-10)
+
+**[Full session note](2026-06-10_content-pipeline-jsonl-redesign.md)** — Plan: [`plans/CONTENT_PIPELINE_JSONL_PLAN.md`](../plans/CONTENT_PIPELINE_JSONL_PLAN.md).
+
+**Decisions:** (1) Drop all CSV input files — replace with single `words_master.jsonl` (one object per word, nested senses inside). (2) Merge `cefr_level` + `tiers` → single `categories` array per word (e.g. `["B2", "foundation", "toefl"]`); import routes CEFR values → `words.cefr_level`, tier slugs → `word_tiers`. (3) Add `reviewed` boolean to both JSONL and DB (`words.reviewed INTEGER DEFAULT 0`) — toggleable, Ryan marks after reviewing definition/senses/questions/audio. (4) **No new words** — 2,848 foundation words is the scope until fully seeded. (5) Cross-reference specialty tiers (TOEFL/IELTS/GRE/GMAT/business/advanced/common9k) against existing 2,848 words to add tier tags — tag only, no new words; Ryan to approve word list sources.
+
+**CONTENT-2 enrichment run is blocked** — implement pipeline rewrite (Phase 1: schema + migration, Phase 2: import rewrite) before running enrichment. Running on old pipeline then migrating is worse.
+
+**Specialty tier CSVs are stubs** (5–10 words each) — never cross-referenced. Do NOT re-import them. Move to `data/input/archive/` after Phase 1.
+
+**Pipeline merge:** `ingest-senses` command folded into `import`; `enrich-senses` writes back into master JSONL in-place. New command `export-master` for DB → JSONL round-trip.
+
+---
+
 ## ⚠️ Session: Supabase auto-pause incident + STORE-2 done + build 3 launched (2026-06-10 evening)
 
 **[Evening tail — same note file, bottom section](2026-06-10_frontier-batch-auth-iap-content-store.md)** — Ryan's "we don't have a Supabase project" = **free-tier AUTO-PAUSE** (idle since June 1): paused projects lose DNS entirely (NXDOMAIN, not 5xx) → **TestFlight build 2's auth/backup were silently dead ~2 days**. Restored intact. New blocker **SUPA-1** (Pro plan before submission); keep `SUPABASE_ACCESS_TOKEN` in root `.env` (was missing — blinded MCP+CLI during diagnosis). **STORE-2 ✅ DONE** (lexitap.app live, support@ Active). **AUTH-1 dashboards ✅** verified via API (`/auth/v1/settings` → apple+google true; `eas config` → plugins fired); **EAS build 3 `728f9d28` launched `--auto-submit`** → device verify remains.
