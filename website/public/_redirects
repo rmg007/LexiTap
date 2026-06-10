@@ -1,8 +1,9 @@
 # Apex is canonical; redirect www → apex (301).
 https://www.lexitap.app/* https://lexitap.app/:splat 301
 
-# Friendly aliases for legal pages.
-/privacy   /privacy.html  301
-/terms     /terms.html    301
-/privacy-policy  /privacy.html  301
-/contact-sales  /contact-sales.html  301
+# Friendly aliases. NOTE: Cloudflare Pages' built-in pretty-URL feature already
+# serves /privacy from privacy.html and 308s /privacy.html → /privacy. Aliases
+# must therefore target EXTENSIONLESS paths — pointing one at a .html target
+# creates an infinite 301↔308 loop (bit us: privacy/terms were unreachable).
+/privacy-policy  /privacy  301
+/account-deletion  /delete-account  301

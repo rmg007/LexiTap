@@ -302,7 +302,7 @@ export function SettingsScreen(): React.JSX.Element {
           <Pressable
             accessibilityRole="link"
             accessibilityLabel="Privacy policy"
-            onPress={() => Linking.openURL('https://lexitap.app/privacy.html')}
+            onPress={() => Linking.openURL('https://lexitap.app/privacy')}
             style={{
               paddingVertical: spacing.s2,
               paddingHorizontal: spacing.s1,
@@ -316,7 +316,7 @@ export function SettingsScreen(): React.JSX.Element {
           <Pressable
             accessibilityRole="link"
             accessibilityLabel="Terms of service"
-            onPress={() => Linking.openURL('https://lexitap.app/terms.html')}
+            onPress={() => Linking.openURL('https://lexitap.app/terms')}
             style={{
               paddingVertical: spacing.s2,
               paddingHorizontal: spacing.s1,
