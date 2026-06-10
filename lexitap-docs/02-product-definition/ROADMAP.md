@@ -17,14 +17,16 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 **2026-06-10 PM frontier batch ✅ (CI green):** AUTH-1 code half (native Sign in with Apple + Google → Supabase), IAP-1 code tail (RevenueCat alias + Restore purchases), CONTENT-2 driver (`enrich-senses` — the paid run is one command now), STORE-2 agent half (site was NOT live — redirect loop + no DNS + stale deploy fixed; deployed + verified; `/delete-account` page added). 24 adversarial-review findings fixed same-day; CI revived (dead since SDK-56).
 
+**2026-06-10 evening ✅:** **STORE-2 DONE** — lexitap.app live (DNS + Email Routing; legal pages verified on the apex). **AUTH-1 dashboards done** (Supabase providers + Google client ID + EAS env, API-verified); **EAS build 3 in flight with auto-submit to TestFlight**. ⚠️ Supabase project had **auto-paused** (free tier, idle since June 1 — backend DNS dead under build 2 for ~2 days); restored intact → new pre-submission blocker **SUPA-1** (Pro plan).
+
 **Shipped since 2026-05-31:** BUILD-1 ✅ (device), SDK-56 ✅ (iOS 26 mandate), Figma 100% finalized, Rich Word-Detail model (CONTENT-1 ✅), Learn-loop wired, E2E-1, LEGAL-2, STORE-3, RTL-1, LEGAL-3, STORE-1 — all ✅.
 
-**▶ Next, in order (all Ryan-owned — mostly clicks; exact steps in [ORCHESTRATION.md](../../ORCHESTRATION.md)):**
-1. **STORE-2 tail:** 2 Cloudflare clicks (CNAME records + Email Routing) — until then lexitap.app doesn't resolve and support@ bounces.
+**▶ Next, in order (all Ryan-owned; exact steps in [ORCHESTRATION.md](../../ORCHESTRATION.md)):**
+1. **AUTH-1 tail:** when build 3 clears Apple processing, verify Apple + Google sign-in + magic link on device (`mobile/AUTH_INTEGRATION.md`).
 2. **Recruit 50 beta testers (BETA-2).** TestFlight link is live — share in r/TOEFL, r/IELTS, r/languagelearning, ESL groups. D7 gate: 7 days from first session.
 3. **RC-1 — RevenueCat + App Store Connect products.** IAP-1 code is COMPLETE — after RC-1 it's config + one sandbox device test.
 4. **CONTENT-2 — run the driver** (`content-tool/ENRICH_SENSES.md`): dry-run, then ~$8 approx live run on claude-opus-4-8.
-5. **AUTH-1 tail:** Supabase provider toggles + Google client ID + EAS build 3 + device verify (`mobile/AUTH_INTEGRATION.md`).
+5. **SUPA-1 — Supabase Pro plan** (~$25/mo): free tier auto-paused the backend once already; required before submission.
 
 **Tracked, lower priority:** Pre-submission blockers AUTH-2 (Apple token revocation on deletion, App Review 5.1.1(v)) + RC-2 (RevenueCat customer deletion) — await Ryan-owned secrets. ~11 Dependabot alerts (transitive Expo tooling, accepted until SDK bump). Sentry auth token needed as EAS secret before production builds.
 

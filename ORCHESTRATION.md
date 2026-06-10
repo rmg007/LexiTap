@@ -52,15 +52,17 @@ Shared barrels (`domain/index.ts`, `mobile/package.json`, both `ROADMAP.md`s) ar
 
 **Ryan-only / external-blocked — no agent can advance these (now mostly clicks, not work):**
 
+**2026-06-10 evening ✅ — STORE-2 fully done** (Ryan's DNS + Email Routing clicks landed; lexitap.app live + verified). **AUTH-1 dashboards done** (Supabase Apple/Google providers enabled, Google iOS client ID created, EAS env var set — all verified via API); **EAS build 3 (`728f9d28`) in flight with auto-submit to TestFlight**. ⚠️ **Incident: the Supabase project had AUTO-PAUSED** (free tier, ~7 idle days since the June-1 deploy) — DNS for `xippwvtmkpskldlmouro.supabase.co` was gone, meaning TestFlight build 2's auth/backup were silently dead for ~2 days. Restored same-day, everything survived. → new task `SUPA-1`.
+
 | id | task | blocked_by |
 |---|---|---|
 | `CONTENT-2` | run `npm run enrich:senses` (driver built, see task) | API key + N/model/budget call |
-| `STORE-2` | 2 Cloudflare dashboard clicks: DNS records + Email Routing | Cloudflare account (token on disk lacks DNS scope) |
-| `AUTH-1` | Supabase provider toggles + Google client ID + EAS build 3 | dashboards + device verify |
+| `AUTH-1` | device verify once build 3 hits TestFlight | Apple processing + Ryan's device |
+| `SUPA-1` | upgrade Supabase to Pro (free tier auto-pauses → prod outage) | billing decision |
 | `RC-1` | RevenueCat account + product config | RevenueCat account; App Store Connect products |
 | `BETA-2` | Recruit 50 beta testers | testers; D7 data takes 7 days |
 
-> Agent-doable `ready` tasks: none until RC-1 unblocks IAP-1's live verify or AUTH-1's device verify unblocks BACKUP-1. Critical path: D7 retention gate (7 days) + RC-1 setup in parallel. **Pre-submission blockers added this pass: AUTH-2 (Apple token revocation) + RC-2 (RevenueCat customer deletion) — both in the delete-account Edge Function, both need Ryan-owned secrets.**
+> Agent-doable `ready` tasks: none until RC-1 unblocks IAP-1's live verify or AUTH-1's device verify unblocks BACKUP-1. Critical path: D7 retention gate (7 days) + RC-1 setup in parallel. **Pre-submission blockers: AUTH-2 (Apple token revocation) + RC-2 (RevenueCat customer deletion) — both in the delete-account Edge Function, both need Ryan-owned secrets — and SUPA-1 (Supabase Pro; free tier is incompatible with a launched app).**
 
 ---
 
@@ -214,15 +216,15 @@ commit: 10af213 (+ contract fixes c188bb9)
 ```
 **All code shipped 2026-06-10** (paywall purchase flow + entitlement gating were already done in R4–R6): `IapPort.logIn/logOut` (boolean, never-throw, cache-invalidating), container `syncIapIdentity` (dedup commits only on success; cold-start stale-alias revert), Settings "Restore purchases" row (always visible per 3.1.1; failure ≠ "no purchases" — null contract; screen-reader announced). Legacy duplicate `IapService.ts` deleted. **Remaining = RC-1's dashboard work + EAS secrets (`EXPO_PUBLIC_REVENUECAT_API_KEY_IOS`), then a sandbox purchase/restore/sign-in pass on device.**
 
-### AUTH-1 · Native Google Sign-In + Sign in with Apple (Guideline 4.8) — **code half ✅ done**
+### AUTH-1 · Native Google Sign-In + Sign in with Apple (Guideline 4.8) — **code ✅ + dashboards ✅; build 3 in flight**
 ```
 id: AUTH-1   phase: 3   status: in-progress   owner: ryan
 depends_on: [BUILD-1]   parallel_safe: false   paths: [mobile/src/infrastructure/auth/, mobile/app.config.ts]
-blocked_by: Supabase provider config + Google OAuth client ID + EAS build 3 + device verify
+blocked_by: EAS build 3 (728f9d28, building w/ auto-submit) → TestFlight processing → device verify
 verify: both native flows complete on device; session persists; magic-link still works
 commit: 590de22 (+ review fixes c188bb9)
 ```
-**All code shipped 2026-06-10:** `AuthPort.signInWithIdToken('apple'|'google')`, `AppleSignInAdapter` (expo-apple-authentication ~56.0.4) + `GoogleSignInAdapter` (@react-native-google-signin ^16.1.2, env-gated on `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID`), AuthContext `signInWithApple`/`signInWithGoogle` + availability flags, SignInScreen native buttons (re-entrancy-guarded, cancel = silent), app.config plugins (Google plugin only when env present; `usesAppleSignIn: true`; buildNumber → 3). 520 tests green. **Ryan's exact tail is in [`mobile/AUTH_INTEGRATION.md`](mobile/AUTH_INTEGRATION.md):** (a) Supabase → Providers → Apple: enable + add `com.lexitap.app` to Authorized Client IDs; (b) Google Cloud → iOS OAuth client → copy ID; (c) Supabase → Providers → Google: enable + add it; (d) `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` EAS secret; (e) new EAS build (native modules — cannot ship via EAS Update); (f) verify both flows on device. Unblocks BACKUP-1 once device-verified.
+**All code shipped 2026-06-10:** `AuthPort.signInWithIdToken('apple'|'google')`, `AppleSignInAdapter` (expo-apple-authentication ~56.0.4) + `GoogleSignInAdapter` (@react-native-google-signin ^16.1.2, env-gated on `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID`), AuthContext `signInWithApple`/`signInWithGoogle` + availability flags, SignInScreen native buttons (re-entrancy-guarded, cancel = silent), app.config plugins (Google plugin only when env present; `usesAppleSignIn: true`; buildNumber → 3). 520 tests green. **Dashboards done 2026-06-10 evening (verified via API, not asserted):** Supabase auth settings report `apple: true, google: true`; `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` present in EAS production env; `eas config --profile beta` resolves the production environment and emits both auth plugins with the correctly reversed `iosUrlScheme`. **EAS build 3 (`728f9d28`) launched with `--auto-submit`.** Remaining: Apple processing → (f) verify both flows + magic link on device ([`mobile/AUTH_INTEGRATION.md`](mobile/AUTH_INTEGRATION.md)). Unblocks BACKUP-1 once device-verified.
 
 ### AUTH-2 · Apple token revocation on account deletion (App Review 5.1.1(v))  ⚠ pre-submission blocker
 ```
@@ -280,15 +282,24 @@ commit: 7b7b885 (merged)
 ```
 `plans/STORE_ASSETS_PLAN.md` — full App Store copy, iOS subtitle, Android short desc, keywords (94 chars), 6-screen screenshot spec, 15s App Preview storyboard. Ryan reviews + signs off final icon (ships as vector).
 
-### STORE-2 · Legal site live (privacy/ToS), support email, lexitap.app — **agent half ✅ done; 2 Ryan clicks left**
+### STORE-2 · Legal site live (privacy/ToS), support email, lexitap.app ✅ done
 ```
-id: STORE-2   phase: 5   status: in-progress   owner: ryan
+id: STORE-2   phase: 5   status: done   owner: ryan
 depends_on: []   parallel_safe: true   paths: [website/public/]
-blocked_by: Cloudflare dashboard (DNS records + Email Routing) — wrangler OAuth token lacks DNS-write scope
-verify: https://lexitap.app/privacy + /terms + /delete-account return 200; support@lexitap.app receives mail
+verify: https://lexitap.app/privacy + /terms + /delete-account return 200; support@lexitap.app receives mail — PASSED 2026-06-10
 commit: e5f0e3e (+ privacy updates c188bb9)
 ```
-**Audit 2026-06-10 found the site was NOT live at all** (memory's 2026-05-31 "deployed to lexitap.app" claim was wrong): domain never attached (no DNS records), live deployment was a stale May-31 snapshot, and `/privacy`+`/terms` were unreachable even on pages.dev — the `_redirects` extensionless→`.html` aliases looped against Pages' built-in pretty-URL 308. **Fixed + deployed + verified live on lexitap.pages.dev** (all pages 200, real 404s, new `/delete-account` page for Play's deletion-URL requirement, privacy discloses Apple/Google sign-in, in-app Settings links de-`.html`ed). Custom domains `lexitap.app` + `www` attached to the Pages project via API (status: pending DNS). **Ryan's 2 clicks:** (1) Cloudflare → zone lexitap.app → DNS → add CNAME `@` → `lexitap.pages.dev` (proxied) + CNAME `www` → `lexitap.pages.dev` (proxied) — the pending Pages domains then auto-activate; (2) Cloudflare → Email Routing → enable + route `support@`/`privacy@` → personal inbox (destination verify email will arrive).
+**Closed 2026-06-10 evening.** Agent half: audit found the site was NOT live (memory's 2026-05-31 "deployed" claim was wrong — no DNS, stale deploy, `_redirects` `.html`-alias loop vs Pages pretty-URL 308); fixed + deployed + `/delete-account` page added. Ryan half: CNAME `@` + `www` → `lexitap.pages.dev` (proxied) + Email Routing `support@` → personal inbox (Active). Verified: `https://lexitap.app/privacy` + `/delete-account` load clean on the apex domain.
+
+### SUPA-1 · Supabase Pro plan (free tier auto-pauses → production outage)  ⚠ pre-submission blocker
+```
+id: SUPA-1   phase: 5   status: ready   owner: ryan
+depends_on: []   parallel_safe: true   paths: []
+blocked_by: billing decision (~$25/mo)
+verify: project xippwvtmkpskldlmouro shows plan = Pro (or pause-prevention equivalent); no pause warnings in dashboard
+```
+**Incident 2026-06-10:** the project auto-paused after ~7 idle days (free tier) — DNS for `xippwvtmkpskldlmouro.supabase.co` disappeared entirely, so TestFlight build 2's auth, account deletion, and backups were silently dead for ~2 days. Restore preserved everything (bucket, RLS, Edge Function, providers). A launched app cannot sit on a tier that turns the backend off after a quiet week; beta-period traffic may keep it warm, but that's luck, not a guarantee. **Upgrade before App Store submission at the latest.** Also: keep `SUPABASE_ACCESS_TOKEN` in root `.env` (currently missing on this machine) so the MCP/CLI can see project state.
+
 ### SUBMIT-1 · Apple ($99/yr) + Google ($25) submission — **stub** owner: ryan.
 
 > Expand the Phase-5 block via `/orchestrate` once Phase 4 content + IAP are real.
@@ -301,4 +312,4 @@ ASO, Reddit presence, monthly content drops (GRE wk22, GMAT wk26, Idioms wk30, P
 
 ---
 
-*Maintained by `/orchestrate`. Last sync: 2026-06-10 PM (frontier batch: AUTH-1 code half, IAP-1 code tail, CONTENT-2 driver, STORE-2 agent half; +AUTH-2/RC-2 pre-submission blockers; CI revived). Source of task-level truth for dependencies remains [`plans/RELEASE_PLAN.md`](plans/RELEASE_PLAN.md); this file is the runnable projection of it.*
+*Maintained by `/orchestrate`. Last sync: 2026-06-10 evening (STORE-2 done — domain live; AUTH-1 dashboards done + build 3 in flight; +SUPA-1 after the Supabase auto-pause incident). Source of task-level truth for dependencies remains [`plans/RELEASE_PLAN.md`](plans/RELEASE_PLAN.md); this file is the runnable projection of it.*

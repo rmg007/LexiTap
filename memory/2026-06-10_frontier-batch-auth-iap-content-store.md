@@ -26,7 +26,15 @@
 - **RC-2:** the RevenueCat alias creates account-linked data that deletion never touches. Site copy softened same-day; real fix = `DELETE /v1/subscribers/{id}` in the Edge Function once RC-1 yields a secret key.
 
 ## Ryan's tail (all clicks/runs, no code — also in ORCHESTRATION ▶ Ready now)
-1. Cloudflare: 2 CNAME records + Email Routing (STORE-2).
-2. Supabase provider toggles + Google client ID + EAS secret + build 3 + device verify (AUTH-1, `mobile/AUTH_INTEGRATION.md`).
+1. ~~Cloudflare: 2 CNAME records + Email Routing (STORE-2).~~ ✅ done same evening — lexitap.app live, support@ Active.
+2. ~~Supabase provider toggles + Google client ID + EAS secret~~ ✅ done same evening; build 3 launched with auto-submit → device verify remains (AUTH-1, `mobile/AUTH_INTEGRATION.md`).
 3. RevenueCat account/products/secrets (RC-1) → sandbox test (IAP-1 closes).
 4. `enrich-senses` dry-run → live run → ingest → validate → release (CONTENT-2, `content-tool/ENRICH_SENSES.md`).
+
+## Evening tail (same day): Supabase auto-pause incident + STORE-2/AUTH-1 closeout
+
+- **Ryan reported "we don't have LexiTap supabase project."** Diagnosis chain: `xippwvtmkpskldlmouro.supabase.co` returned curl exit 6 (NO DNS) while lexitap.app resolved fine → not network; no `SUPABASE_ACCESS_TOKEN` anywhere on the machine (root `.env`, CLI keychain — all empty) → couldn't query Management API. **Root cause: free-tier auto-pause** — project idle since the June-1 Edge Function deploy, paused ~June 8. **Paused Supabase projects lose their DNS records entirely** (not a 5xx — NXDOMAIN), and the "missing" project was an account/dashboard confusion on Ryan's side. **Consequence: TestFlight build 2's baked Supabase URL was dead for ~2 days** — auth, account deletion, and backups silently failing for internal testers. Restore preserved everything (bucket+RLS, Edge Function, provider config).
+- **Lesson (generalize):** a backend that auto-pauses is a production outage on a timer. New blocker **SUPA-1**: Pro plan before submission. Also keep `SUPABASE_ACCESS_TOKEN` in root `.env` per `.env.example` — without it neither the MCP nor the CLI can even *see* project state, which is what made this diagnosis slow.
+- **Verify-don't-ask pattern that worked:** provider enablement is publicly verifiable — `GET /auth/v1/settings` with the anon key returns `external: {apple: true, google: true}`. EAS side verifiable via `eas env:list --environment production` + `eas config --profile beta` (which also proved the beta profile resolves the production env and the Google plugin fired with the reversed `iosUrlScheme`). No dashboard screenshots needed.
+- **STORE-2 CLOSED:** Ryan added CNAME `@`+`www` (proxied) + Email Routing (support@ Active); `https://lexitap.app/privacy` + `/delete-account` verified 200 on the apex.
+- **AUTH-1:** all dashboards done; **EAS build 3 (`728f9d28`) launched `--auto-submit`** from this session. Remaining: Apple processing → device verify (then BACKUP-1 unblocks).
