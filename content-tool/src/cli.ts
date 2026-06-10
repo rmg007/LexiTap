@@ -14,6 +14,8 @@ import { releaseCommand } from '@/commands/release';
 import { ingestSensesCommand } from '@/commands/ingest-senses';
 import { enrichSensesCommand } from '@/commands/enrich-senses';
 import { exportMasterCommand } from '@/commands/export-master';
+import { categorizeCommand } from '@/commands/categorize';
+import { enrichMasterCommand } from '@/commands/enrich-master';
 import { logger } from '@/lib/logger';
 
 const USAGE = `lexitap-tool <command> [options]
@@ -25,8 +27,12 @@ Commands:
   import-pseudo    --source <path>   (import pseudo_words CSV for DIAG-A false-alarm detection)
   ingest-senses    --source <path.jsonl>  [--dry-run]  (load rich sense/example enrichment)
   export-master    [--output <path.jsonl>]  (dump working DB -> words_master.jsonl, round-trip/bootstrap)
+  categorize       --limit <n> [--model <id>] [--master <path>] [--tier <slug>] [--dry-run] [--no-resume]
+                   (Phase 3: assign CEFR + specialty tiers per word via OpenAI, merged into words_master.jsonl)
+  enrich-master    --limit <n> [--model <id>] [--master <path>] [--dry-run] [--no-resume]
+                   (Phase 4: generate rich senses + 5 questions per word via OpenAI, written into words_master.jsonl)
   enrich-senses    --limit <n> [--tier <slug>] [--model <id>] [--output <path.jsonl>] [--dry-run] [--no-resume]
-                   (CONTENT-2: generate rich senses via Anthropic into a JSONL for ingest-senses)
+                   (legacy CONTENT-2: senses-only via Anthropic into a separate JSONL for ingest-senses)
   validate         [--tier <slug>] [--strict]
   enrich           (DB mode)  --tier <slug> [--add-definitions] [--add-synonyms] [--add-audio] [--add-images] [--limit n] [--force] [--dry-run]
                    (CSV mode) --input <path> --output <path> [--budget usd] [--dry-run]
@@ -53,6 +59,12 @@ async function main(): Promise<void> {
       break;
     case 'export-master':
       exportMasterCommand([secondArg ?? '', ...rest].filter(Boolean));
+      break;
+    case 'categorize':
+      await categorizeCommand([secondArg ?? '', ...rest].filter(Boolean));
+      break;
+    case 'enrich-master':
+      await enrichMasterCommand([secondArg ?? '', ...rest].filter(Boolean));
       break;
     case 'enrich-senses':
       await enrichSensesCommand([secondArg ?? '', ...rest].filter(Boolean));

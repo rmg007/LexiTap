@@ -1,9 +1,15 @@
 # Content Pipeline JSONL Redesign Plan
 
-**Status:** Phase 1 + Phase 2 (code) IMPLEMENTED — Phase 3 + 4 owner-blocked  
+**Status:** Phases 1–4 CODE-COMPLETE + tested. **Bulk seeding deliberately DEFERRED** — per-word LLM calls do not scale to 2,848 words (see "Why deferred" below).  
 **Decision date:** 2026-06-10  
-**Supersedes:** separate-CSV-per-tier approach (foundation.csv, toefl.csv, etc.)  
-**Blocked by:** nothing for code; Phase 3 needs specialty word lists (Ryan), Phase 4 needs API key + spend approval (Ryan)  
+**Blocked by:** nothing for code. The bulk *run* is on hold by Ryan's call — the per-word approach is too slow/costly for the full set; a cheaper bulk strategy is needed before seeding everything.  
+
+> **2026-06-10 update — Phases 3 & 4 built on OpenAI; bulk run held.** The Anthropic `enrich-senses` driver had no key, so both phases were implemented against the project's `OPENAI_API_KEY`:
+> - **Phase 3** = `categorize` command + `OpenAiCategorizeProvider`: model assigns CEFR (closing the legacy `foundation.csv` CEFR debt) + specialty tiers (toefl/ielts/gre/gmat/business/advanced/common9k/common3k), merged into `categories` in place. Replaces the "source seven external word lists" task.
+> - **Phase 4** = `enrich-master` command + `OpenAiSenseQuestionProvider`: per word, felt senses + examples AND exactly 5 click/drag questions (one per type) with hint + explanation; validated (senses V1–V10, questions Q1–Q9) and written back into `words_master.jsonl`. All content lands `reviewed: 0`.
+> - Shared: `openaiClient.ts` (fetch-based, no SDK), `master-store.ts` (master IO + resume sidecars), `question-validators.ts`. See [`content-tool/PHASE3_4_RUNBOOK.md`](../content-tool/PHASE3_4_RUNBOOK.md).
+>
+> **Why the bulk run is deferred (Ryan, 2026-06-10):** at the observed API latency a full Phase-4 pass is ~50 words/min and ≈$7–30 — multi-hour, and the wrong *unit of work* for bulk seeding. A partial Phase-3 categorize run (~500/2,881 words) was executed to validate the command, then **reverted** (half-categorized master = inconsistent). The commands are correct, tested, and resume-safe; what's missing is a scalable seeding strategy (e.g. OpenAI **Batch API** at ~50% cost + async, many-words-per-call, or seeding in frequency-prioritized waves), not more code. Decide that before running the full set.
 
 ---
 
@@ -274,16 +280,22 @@ Ryan to provide or approve sources. This is a content task, not a code task.
 - [x] Verified end-to-end: real master JSONL loads into a fresh DB → 2,881 words / 2,894 memberships / 15 senses / 45 examples, 0 errors; `validate --strict` = 0 errors / 2,802 known warnings; `release` rebuilt `words.db` (new schema present) → copied to `mobile/assets/vocab/`
 - [ ] **Update `enrich-senses` output to master format + generate questions — DEFERRED to Phase 4.** Coupled to the paid run: it requires extending the Anthropic provider prompt to also produce the 5 questions (with hint/explanation) and the V-rule validators for them. That prompt is a content-quality decision Ryan gates (as he gated the senses prompt), so it lands with the approved enrichment run, not before.
 
-### Phase 3 — Cross-reference specialty tiers
-- [ ] Source word lists for each specialty tier (Ryan to approve)
-- [ ] Match foundation words → add tier slugs to their `categories` in JSONL
-- [ ] Re-import; verify `word_tiers` counts are realistic
+### Phase 3 — Cross-reference specialty tiers + fix CEFR debt — CODE DONE; bulk run HELD
+- [x] `categorize` command + `OpenAiCategorizeProvider` (`gpt-4.1-mini` default) — model assigns CEFR + specialty tiers
+- [x] Merge into `categories` in place (never drops `foundation`/existing tiers; dedup + sort; CEFR first)
+- [x] Resume sidecar `<master>.categorize-done.jsonl`; `--limit` required; cost estimate; `--dry-run`
+- [x] Validated on a partial run (~500 words; CEFR coverage 91 → ~491, tiers populating sensibly) — then reverted
+- [ ] **HELD:** full run on all words. Cheap (~$0.28) — can run anytime, but bundled with the Phase-4 seeding-strategy decision.
+- Command: `npm run cli -- categorize --limit 3000 --model gpt-4.1-mini`
 
-### Phase 4 — CONTENT-2 enrichment run
-- [ ] Run `npm run enrich:senses -- --limit 300 --model claude-opus-4-8`
-- [ ] Enrichment generates: senses (felt explanation + examples) + 5 questions per word (all 5 types, click/drag only, with hint + explanation)
-- [ ] Enrichment writes both back into `words_master.jsonl`
-- [ ] Re-import; validate; release
+### Phase 4 — Rich senses + 5 questions per word — CODE DONE; bulk run HELD
+- [x] `enrich-master` command + `OpenAiSenseQuestionProvider` — felt senses + examples + 5 questions
+- [x] 5 questions/word, one of each type (multiple_choice, definition_match, fill_blank, sentence_order, true_false), click/drag only, each with hint + explanation
+- [x] Senses (V1–V10) + questions (Q1–Q9) validated pre-write; invalid items dropped fail-closed
+- [x] Written back into `words_master.jsonl`; resume via empty-senses selection + `<master>.enrich-skipped.jsonl`
+- [ ] **HELD:** the bulk run (too slow/costly per-word at 2,848-word scale). Needs a Batch-API / many-per-call strategy first.
+- Command (when ready): `npm run cli -- enrich-master --limit <n> --model gpt-4.1` (resume-safe)
+- All generated content is `reviewed: 0` — Ryan flips `reviewed: true` per word after QA.
 
 ---
 
