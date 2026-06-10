@@ -8,7 +8,7 @@ import {
   TIER,
   defaultServices,
   renderWithProviders,
-} from '@/presentation/screens/__fixtures__/learnFixtures';
+} from '@/test-utils/renderWithProviders';
 
 // Render tests for the learn-card handoff (RTL_RENDER_HARNESS_PLAN.md).
 // The final "Got it" must call onComplete WITH the batch — a bare onComplete()

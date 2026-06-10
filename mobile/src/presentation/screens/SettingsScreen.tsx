@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Modal, Pressable, View, type ViewStyle, Switch, Linking } from 'react-native';
+import { ActivityIndicator, Alert, Modal, Pressable, Share, View, type ViewStyle, Switch, Linking } from 'react-native';
 import { router } from 'expo-router';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme, useThemePreference, type ThemePreference } from '@/presentation/theme';
@@ -98,6 +98,15 @@ export function SettingsScreen(): React.JSX.Element {
     } catch {
       setDeleteError('Failed to delete account. Please try again.');
       setDeleting(false);
+    }
+  };
+
+  const handleExportData = async () => {
+    try {
+      const json = await services.exportUserData.execute();
+      await Share.share({ message: json, title: 'My LexiTap Data' });
+    } catch {
+      Alert.alert('Export failed', 'Could not export your data. Please try again.');
     }
   };
 
@@ -262,6 +271,20 @@ export function SettingsScreen(): React.JSX.Element {
           >
             <Text variant="body" color="accent" style={{ textDecorationLine: 'underline' }}>
               Terms of Service
+            </Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Export my data"
+            onPress={handleExportData}
+            style={{
+              paddingVertical: spacing.s2,
+              paddingHorizontal: spacing.s1,
+              borderRadius: 8,
+            }}
+          >
+            <Text variant="body" color="accent">
+              Export my data
             </Text>
           </Pressable>
           <Pressable

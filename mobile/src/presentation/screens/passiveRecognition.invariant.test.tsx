@@ -10,7 +10,7 @@ import {
   makeSession,
   renderWithProviders,
   assertNoTextInput,
-} from '@/presentation/screens/__fixtures__/learnFixtures';
+} from '@/test-utils/renderWithProviders';
 
 // Passive-recognition invariant: NO TextInput must ever appear in quiz/learn
 // screens — in ANY render phase, including the feedback overlay.
