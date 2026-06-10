@@ -2,7 +2,7 @@
 title: Product Roadmap
 category: product
 status: active
-updated: 2026-05-27
+updated: 2026-06-09
 priority: P0
 tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 ---
@@ -11,6 +11,14 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 > **⚠️ SOURCE OF TRUTH:** [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md) is the current, task-level execution plan (updated 2026-05-31). This file mirrors the phase structure and status for quick reference; **consult RELEASE_PLAN.md for actual dependencies, current blockers, and revised task list** (e.g., auth in P3 not P5, content as the long pole, Phase 2 requires analytics instrumentation, per-table sync deleted). Updates below reconcile this file with the audit.
 
+## 🔴 Active Front (2026-06-09)
+
+**Shipped since 2026-05-31:** Figma design 100% finalized (10 pages gate=PASS, 20-component library, 40-glyph icon set, WCAG-AA contrast) — design is now the source of truth, RN port may proceed. **Rich Word-Detail model** (felt explanation per distinct meaning + teaching examples + optional image; **additive, zero quiz/SRS ripple**): Phase 1 schema, Phase 3 mobile read layer, Phase 4 multi-sense UI all DONE + green (459 tests). Phase 2 paid enrichment + Phase 1 content-tool remainder are Ryan's tasks. Plan: [../../plans/RICH_WORD_DETAIL_PLAN.md](../../plans/RICH_WORD_DETAIL_PLAN.md).
+
+**🔴 P0 launch blocker found 2026-06-09 (NOT fixed):** the core **learn loop is disconnected** — LearnCardScreen (exposure) skips the built-but-unreached LearnQuickCheckScreen, which is the *only* place the learn flow writes SRS rows. Result: new words never enter spaced repetition. Fix is presentation/routing only (no `domain/srs` diff). Plan: [../../plans/LEARN_LOOP_WIRING_PLAN.md](../../plans/LEARN_LOOP_WIRING_PLAN.md). **Next code task.**
+
+**Tracked, lower priority:** 16 Dependabot alerts (mostly transitive dev-only; overstated for an offline RN app — triage session); issue #10 RTL render-guard (post-launch); standing launch blockers (physical-device C0 test, fresh EAS build, P-2 beta recruitment, AU2/AU3 native sign-in).
+
 The detailed product roadmap: 6 phases across 21 weeks, two parallel build tracks, deliverables and gates per phase, and the post-launch content-drop cadence. This doc expands the at-a-glance tracker [../../ROADMAP.md](../../ROADMAP.md). Feature detail is in [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md); requirements in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md).
 
 ## Current Status
@@ -18,8 +26,8 @@ The detailed product roadmap: 6 phases across 21 weeks, two parallel build track
 | Item | Value |
 |------|-------|
 | Phase | **1 — Build** (active; ~30% to launch — see [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md)) |
-| Code written | Track A CLI exists; content is Foundation ~2,848/3,000 sourced (2,881 words / 2,894 memberships across 9 tiers; TOEFL + exam tiers still stubs). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. |
-| Last updated | 2026-05-30 |
+| Code written | Track A CLI exists; content is Foundation ~2,848/3,000 sourced (2,881 words / 2,894 memberships across 9 tiers; TOEFL + exam tiers still stubs). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB) + rich word-detail read layer + multi-sense UI (459 tests). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. **🔴 Learn loop disconnected (2026-06-09) — SRS never seeds; see Active Front.** |
+| Last updated | 2026-06-09 (see Active Front above) |
 
 ## Table of Contents
 

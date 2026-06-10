@@ -1,12 +1,28 @@
 ---
 title: LexiTap Roadmap
-updated: 2026-05-27
+updated: 2026-06-09
 status: active
 ---
 
 # LexiTap Roadmap
 
 > **⚠️ Ordering superseded (2026-05-30):** A code+docs audit found this file's phase *ordering* and status claims are stale — auth is a Phase 3 dependency (not Phase 5), `words.db` content delivery is currently broken, Foundation is ~2,848/3,000 sourced (2,881 words total; TOEFL + exam tiers still stubs), per-table sync was deleted, and Phase 2 requires instrumentation coding. The authoritative, task-level execution plan is **[plans/RELEASE_PLAN.md](plans/RELEASE_PLAN.md)**. This file remains the high-level phase mirror; trust RELEASE_PLAN.md where they conflict.
+
+---
+
+## 🔴 Active Front (2026-06-09)
+
+**Shipped since 2026-05-31 (verified, committed):**
+- **Figma design 100% finalized** — all 10 screen pages rebuilt from components to gate=PASS (rawFills 0 · text bound · emoji 0), 20-component library, icon set 40 glyphs, WCAG-AA contrast fixed. Design is the source of truth; RN port may proceed. ([memory](memory/MEMORY.md))
+- **Rich Word-Detail data model** — Ryan's decision: word detail = a *felt explanation* per distinct meaning + full-sentence teaching examples + optional per-sense image. **Additive, zero quiz/SRS ripple.** Phase 1 (schema, `79baec2`), Phase 3 (mobile read layer, `dc529a3`), Phase 4 (multi-sense UI in LearnCardScreen, `b42504a`) all DONE + green (459 tests). Phase 2 (paid enrichment) + Phase 1 content-tool remainder are **Ryan's tasks** (real seedings, top-N by frequency, top-tier model). Plan: [plans/RICH_WORD_DETAIL_PLAN.md](plans/RICH_WORD_DETAIL_PLAN.md).
+
+**🔴 P0 launch blocker found (2026-06-09) — NOT yet fixed:**
+- **The core learn loop is disconnected → SRS is never seeded.** LearnCardScreen (exposure) skips the built-but-unreached LearnQuickCheckScreen (the only place the learn flow writes SRS rows). Learner taps through new words → lands on Home → nothing enters spaced repetition. Fix is presentation/routing only (no `domain/srs` diff). Plan: **[plans/LEARN_LOOP_WIRING_PLAN.md](plans/LEARN_LOOP_WIRING_PLAN.md)**. **This is the next code task — it blocks the primary feature.**
+
+**Tracked, lower priority:**
+- **Dependabot:** 16 alerts (1 critical, 11 high, 4 medium) on `main`. Mostly transitive dev-only (the "critical" vitest is not a direct dependency and never ships; runtime ones — tar/xmldom/postcss/uuid — come from Expo/build tooling and likely need an SDK bump to clear). Overstated for an offline RN app, but worth a triage session.
+- **Issue [#10](https://github.com/rmg007/LexiTap/issues/10):** RTL render-guard for the passive-recognition invariant (post-launch).
+- **Standing launch blockers (Ryan):** physical-device C0 test, fresh EAS build, P-2 beta recruitment, AU2/AU3 native sign-in (deferred to pre-submission build).
 
 **21 weeks from validation to 1,000 active users.**
 Solo founder. $194 Year 1 budget. **One-time consumer IAP (exam packs + bundle) via RevenueCat — no subscriptions.** B2B licensing and teacher referrals deferred (door left open). See [pricing model](lexitap-docs/08-financial-legal/REVENUE_MODEL_PRICING.md).
@@ -23,7 +39,7 @@ This root file is the at-a-glance mirror. The canonical product roadmap is [lexi
 | Code written | Domain logic done + tested (SRS, scheduling, mastery, quiz session, DB, 2 widgets). **Fixed 2026-05-30:** words.db delivery (was loading empty on device), `tiers.ts` monetization model, broken Jest harness. Per-table sync was deleted. Auth is a **Phase 3** dependency (not 5). Content: Foundation ~2,848/3,000 sourced (2,881 words / 2,894 memberships across 9 tiers); TOEFL + exam tiers still stubs — see [memory note](memory/2026-05-31_content_count_regression.md). |
 | Stack | React Native (Expo) + TypeScript + SQLite + Supabase |
 | Target | Global ESL learners (cram schools & test prep individuals) |
-| Last updated | 2026-05-30 |
+| Last updated | 2026-06-09 (see Active Front above) |
 
 ---
 
