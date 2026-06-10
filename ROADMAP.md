@@ -15,6 +15,8 @@ status: active
 ## 🟡 Active Front (2026-06-10)
 
 **Shipped since 2026-05-31 (verified, committed):**
+- **🚀 SUBMITTED TO TESTFLIGHT** — build `9bf46ff6` (Expo SDK 56) accepted by App Store Connect 2026-06-10; awaiting Apple processing → add internal testers.
+- **Expo SDK 52 → 56 upgrade ✅** (`556606c`) — forced by Apple's iOS-26-SDK mandate (error 90725; SDK 52/RN 0.76 won't compile under Xcode 26). RN 0.85 / React 19 / reanimated 4 / RTL 14 / TS 6. 51 suites / 479 tests green, expo-doctor 21/21, build compiled clean under Xcode 26.
 - **BUILD-1 ✅ CLEARED** — EAS preview build succeeded; app confirmed on physical device. Phase 3+ unblocked.
 - **Figma design 100% finalized** — all 10 screen pages gate=PASS, 20-component library, icon set 40 glyphs, WCAG-AA contrast fixed.
 - **Rich Word-Detail data model** — schema + mobile read layer + multi-sense UI + content-tool synthesis + pre-write validation (CONTENT-1 ✅). Phase 2 paid enrichment is Ryan's next content task.
@@ -23,7 +25,7 @@ status: active
 
 **▶ Next, in order (all Ryan-owned or externally blocked):**
 1. **Full on-device smoke (Ryan — recommended before Phase 3).** Tap through learn batch → confirm Quick-check appears → confirm `srs_state` row written. Proves SRS + SQLite on real hardware.
-2. **TestFlight distribution (BETA-1).** Store-signed build `2c37eec9` ready. Blocked on refreshing expired ASC API key — then `eas submit --platform ios --profile beta --id 2c37eec9-603a-48f3-a282-4ec21cfe5af4`. Recruit beta testers.
+2. **TestFlight distribution (BETA-1) — 🟡 submitted, awaiting Apple processing.** Build `9bf46ff6` (SDK 56) accepted by ASC. When Apple finishes processing → App Store Connect → TestFlight → Internal Testing → add testers. Recruit beta testers (BETA-2).
 3. **Phase 2 paid enrichment run (CONTENT-2).** Top-N by frequency, top-tier model. CONTENT-1 ✅ unblocked it.
 4. **RevenueCat account + App Store Connect products (RC-1).** External; unblocks IAP-1 (paywall wiring).
 

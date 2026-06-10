@@ -145,21 +145,29 @@ verify: word + sentence audio generated for shipped content; bundled
 ```
 **Stub:** expand after content is firm.
 
-### BETA-1 · TestFlight + Play Internal distribution
+### BETA-1 · TestFlight + Play Internal distribution  ✅ submitted (awaiting Apple processing)
 ```
-id: BETA-1   phase: 2   status: ready   owner: ryan
-depends_on: [BUILD-1]   parallel_safe: false   paths: []
-blocked_by: TestFlight submission — ASC API key needs refresh (see below)
+id: BETA-1   phase: 2   status: in-progress   owner: ryan
+depends_on: [BUILD-1, SDK-56]   parallel_safe: false   paths: []
 verify: build distributed to internal testers on TestFlight; analytics/Sentry events arriving
 ```
-BUILD-1 ✅ — store-signed beta build already exists: **`2c37eec9-603a-48f3-a282-4ec21cfe5af4`** (profile: `beta`, version 0.1.0 build 1, 2026-06-10). `eas.json` now has a `beta` submit profile (ascAppId `6775245619`). **Do NOT use `--profile preview`** — that's `distribution: internal` (ad-hoc), rejected by App Store Connect.
+**Build `9bf46ff6` (Expo SDK 56 / RN 0.85, version 0.1.0 build 2) compiled under Xcode 26 and was SUBMITTED + accepted to TestFlight 2026-06-10** (submission `74f46a21`, ASC key `PL3GWRNB7B`). Apple is processing (~5–10 min, email on completion).
 
-**Remaining blocker:** ASC API key `YLG2BU44NG` ("[Expo] EAS Submit XoyR86wDwZ") expired — Apple returned 401. Fix:
-1. App Store Connect → Users and Access → Integrations → App Store Connect API → generate new key (role: App Manager), download `.p8`
-2. `eas credentials --platform ios` → add new ASC API key
-3. `eas submit --platform ios --profile beta --id 2c37eec9-603a-48f3-a282-4ec21cfe5af4` — pick the new key
+**Hard-won lesson — two walls hit and cleared:**
+1. `--profile preview` is `distribution: internal` (ad-hoc) → App Store Connect rejects it. Must use `--profile beta` (`distribution: store`). Added a `beta` submit profile (ascAppId `6775245619`).
+2. The original ASC API key `YLG2BU44NG` expired (401). Generated a new one (`PL3GWRNB7B`) via `eas credentials`.
+3. **Apple now mandates the iOS 26 SDK (error 90725).** Expo SDK 52 (RN 0.76) cannot build under Xcode 26 (fmt consteval in RCT-Folly). → drove the **SDK-56 upgrade** (see SDK-56 task / memory note).
 
-Android on hold (iOS-only path). After TestFlight delivery: add internal testers in App Store Connect → TestFlight → Internal Testing.
+**Remaining (Ryan):** once Apple finishes processing → App Store Connect → TestFlight → Internal Testing → add testers. Android on hold (iOS-only path).
+
+### SDK-56 · Expo SDK 52 → 56 upgrade (RN 0.85 / React 19)  ✅ done
+```
+id: SDK-56   phase: 2   status: done   owner: agent
+depends_on: []   parallel_safe: false   paths: [mobile/]
+verify: mobile npm run check green; expo-doctor 21/21; EAS beta build compiles under Xcode 26
+commit: 556606c
+```
+Forced by Apple's iOS-26-SDK mandate. expo 56 / RN 0.85 / React 19.2 / reanimated 4 (+worklets) / Sentry 7.11 / jest-expo 56 / RTL 14 / TS 6. Removed the obsolete SDK-52 metro shim + nativewind patch; expo-file-system→`/legacy`; RTL 14 async render + React-19 deferred-state test flushes. 51 suites / 479 tests green; doctor 21/21; **build `9bf46ff6` compiled clean under Xcode 26.**
 
 ### BETA-2 · Recruit 50 beta testers
 ```

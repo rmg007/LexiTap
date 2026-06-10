@@ -4,6 +4,10 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 🚀 Session: Expo SDK 52→56 upgrade + TestFlight submission (2026-06-10)
+
+**[SDK 56 upgrade + TestFlight (2026-06-10_sdk56-upgrade-testflight.md)](2026-06-10_sdk56-upgrade-testflight.md)** — commit `556606c`. **App SUBMITTED to TestFlight** (build `9bf46ff6`, SDK 56 / RN 0.85 / React 19, v0.1.0 build 2, compiled clean under Xcode 26). Trigger: BETA-1 submit hit Apple **error 90725 — must build with iOS 26 SDK**; Expo 52/RN 0.76 can't compile under Xcode 26 (fmt consteval in RCT-Folly), band-aid plugin failed → Ryan chose the durable **SDK 52→56 upgrade**. Also cleared two earlier walls: `--profile preview` is ad-hoc (ASC rejects → use `beta`/store profile), and the ASC API key had expired (new key `PL3GWRNB7B`). Migration touched deps (reanimated 4+worklets, RTL 14, TS 6, babel-preset-expo direct), config (deleted obsolete SDK-52 metro shim, worklets jest-resolver, expo-file-system `/legacy`), and a long RTL-14/React-19 test tail (async `render`, `root.queryAll` for no-TextInput, deferred-setState flush helpers). 51 suites / 479 tests green; expo-doctor 21/21. **BETA-1 now in-progress** (awaiting Apple processing → add testers).
+
 ## ✅ Session: BUILD-1 cleared — app on physical device (2026-06-10)
 
 EAS preview build succeeded after two fixes: (1) `SENTRY_AUTH_TOKEN` missing → `SENTRY_DISABLE_AUTO_UPLOAD=true` added to preview/beta profiles in `mobile/eas.json` (commits `b8d85de`); (2) stale `eas.json` at repo root (invalid fields: `m1` resourceClass, `appleTeamId`, `serviceAccount`) deleted (`5f373f5`). App confirmed cold-launching on physical iOS device. Full learn-flow smoke (Quick-check → `srs_state` row) recommended before Phase 3. **Phase 3+ unblocked: BETA-1, RC-1, AUTH-1 all `ready`.**
