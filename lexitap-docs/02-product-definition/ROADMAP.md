@@ -19,13 +19,15 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 **2026-06-10 evening ✅:** **STORE-2 DONE** — lexitap.app live (DNS + Email Routing; legal pages verified on the apex). **AUTH-1 dashboards done** (Supabase providers + Google client ID + EAS env, API-verified); **EAS build 3 built + submitted to App Store Connect**. ⚠️ Supabase project had **auto-paused** (free tier, idle since June 1 — backend DNS dead under build 2 for ~2 days); restored intact → new pre-submission blocker **SUPA-1** (Pro plan).
 
+**2026-06-10 ✅ — Content pipeline rebuilt (JSONL + OpenAI), Phases 1–4 code-complete** (`6cda5f1`, 289 tests): single `words_master.jsonl` source of truth; `categorize` (CEFR + specialty tiers/word) + `enrich-master` (felt senses + 5 click/drag questions/word) on `OPENAI_API_KEY`. **Bulk seeding run HELD** — per-word sync calls don't scale to 2,848 words (~$7–30/pass); needs a Batch-API strategy. Replaces the legacy Anthropic `enrich-senses` path; folds in CONTENT-3's tier cross-reference.
+
 **Shipped since 2026-05-31:** BUILD-1 ✅ (device), SDK-56 ✅ (iOS 26 mandate), Figma 100% finalized, Rich Word-Detail model (CONTENT-1 ✅), Learn-loop wired, E2E-1, LEGAL-2, STORE-3, RTL-1, LEGAL-3, STORE-1 — all ✅.
 
 **▶ Next, in order (all Ryan-owned; exact steps in [ORCHESTRATION.md](../../ORCHESTRATION.md)):**
 1. **AUTH-1 tail:** when build 3 clears Apple processing, verify Apple + Google sign-in + magic link on device (`mobile/AUTH_INTEGRATION.md`).
 2. **Recruit 50 beta testers (BETA-2).** TestFlight link is live — share in r/TOEFL, r/IELTS, r/languagelearning, ESL groups. D7 gate: 7 days from first session.
 3. **RC-1 — RevenueCat + App Store Connect products.** IAP-1 code is COMPLETE — after RC-1 it's config + one sandbox device test.
-4. **CONTENT-2 — run the driver** (`content-tool/ENRICH_SENSES.md`): dry-run, then ~$8 approx live run on claude-opus-4-8.
+4. **CONTENT-2 — pick a seeding strategy, then run.** JSONL + OpenAI pipeline (`categorize` + `enrich-master`) is done + tested + resume-safe; bulk run HELD (per-word sync calls don't scale, ~$7–30/pass over 2,848 words) — decide Batch-API vs frequency-waves first. Runbook: `content-tool/PHASE3_4_RUNBOOK.md`.
 5. **SUPA-1 — Supabase Pro plan** (~$25/mo): free tier auto-paused the backend once already; required before submission.
 
 **Tracked, lower priority:** Pre-submission blockers AUTH-2 (Apple token revocation on deletion, App Review 5.1.1(v)) + RC-2 (RevenueCat customer deletion) — await Ryan-owned secrets. ~11 Dependabot alerts (transitive Expo tooling, accepted until SDK bump). Sentry auth token needed as EAS secret before production builds.

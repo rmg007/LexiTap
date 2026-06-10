@@ -56,7 +56,7 @@ Shared barrels (`domain/index.ts`, `mobile/package.json`, both `ROADMAP.md`s) ar
 
 | id | task | blocked_by |
 |---|---|---|
-| `CONTENT-2` | run `npm run enrich:senses` (driver built, see task) | API key + N/model/budget call |
+| `CONTENT-2` | pipeline rebuilt on JSONL+OpenAI (`categorize`+`enrich-master`); bulk run HELD | scalable seeding strategy (e.g. Batch API) |
 | `AUTH-1` | device verify once build 3 hits TestFlight | Apple processing + Ryan's device |
 | `SUPA-1` | upgrade Supabase to Pro (free tier auto-pauses → prod outage) | billing decision |
 | `RC-1` | RevenueCat account + product config | RevenueCat account; App Store Connect products |
@@ -124,33 +124,38 @@ Cold-launch confirmed on device. **Recommend:** run full learn-flow → Quick-ch
 
 # Phase 2 — Content (the long pole) + Beta
 
-### CONTENT-2 · Phase 2 paid enrichment run — **driver BUILT, run is one command**
+### CONTENT-2 · Phase 2 paid enrichment run — **pipeline rebuilt (JSONL + OpenAI); bulk run HELD**
 ```
 id: CONTENT-2   phase: 2   status: ready   owner: ryan
 depends_on: [CONTENT-1]   parallel_safe: false   paths: [content-tool/, mobile/assets/vocab/words.db]
-blocked_by: ANTHROPIC_API_KEY + N/model/budget decision (recommended: 300 / claude-opus-4-8 / ~$8 approx)
-verify: top-N words enriched with rich senses; validate --strict clean (0 errors); words.db rebuilt + copied to mobile
+blocked_by: a scalable seeding strategy — per-word sync calls don't scale to 2,848 words (see note)
+verify: top-N words enriched (senses + 5 questions); validate --strict clean (0 errors); words.db rebuilt + copied to mobile
 ```
-**Driver done 2026-06-10** (commits `b795ae3` + `dff920a`, 216 tests green): `enrich-senses` command + `AnthropicSenseProvider` (feel-it prompt with Ryan-approved `plant`/`borrow` exemplars as few-shots, conservative default-1-sense, junk-word SKIP rule, V1–V10 validation, max_tokens batch-split, resume-safe append, skip-file persistence, read-only DB open). Full runbook: [`content-tool/ENRICH_SENSES.md`](content-tool/ENRICH_SENSES.md). The run:
-```bash
-cd content-tool
-npm run enrich:senses -- --limit 300 --dry-run        # $0 — selection + cost estimate
-export ANTHROPIC_API_KEY=sk-ant-...                    # shell only, never commit
-npm run enrich:senses -- --limit 300 --model claude-opus-4-8   # interruptible, resumes
-npm run cli -- ingest-senses --source data/working/senses-enriched.jsonl
-npm run cli -- validate --strict                       # expect 0 errors / ~2802 known warnings
-npm run release                                        # rebuild words.db + copy to mobile
-```
-Review the printed skip list — it's the seed-junk inventory (proper nouns/demonyms/inflections the model refused to dress up).
+**Pipeline rebuilt around JSONL + OpenAI 2026-06-10** (merge `6cda5f1`, 289 content-tool tests green). The repo has `OPENAI_API_KEY` (no Anthropic key), so enrichment moved OFF the legacy Anthropic `enrich-senses`/`ingest-senses` path (kept inert) onto two OpenAI commands that edit `data/input/words_master.jsonl` in place:
+- **`categorize`** (Phase 3) — per word: CEFR + specialty tiers (this also subsumes CONTENT-3's cross-reference).
+- **`enrich-master`** (Phase 4) — per word: felt senses + examples + 5 click/drag questions (one per type, hint+explanation), validated (senses V1–V10, questions Q1–Q9), fail-closed.
+Both `--limit`-gated, cost-estimated, `--dry-run`, resume-safe. Runbook: [`content-tool/PHASE3_4_RUNBOOK.md`](content-tool/PHASE3_4_RUNBOOK.md).
 
-### CONTENT-3 · Exam-pack word-list sourcing (TOEFL/IELTS)
+**Bulk run HELD (Ryan, 2026-06-10):** per-word synchronous calls run ~50 words/min and cost ≈$7–30 for one Phase-4 pass over 2,848 words — the wrong unit of work at scale. Decide a scalable engine first (OpenAI **Batch API** ~50% cheaper + async; or frequency-prioritized waves; or many-words-per-call). The commands are correct + tested + resume-safe — the open question is the seeding *strategy*, not code. A partial `categorize` run (~500 words) was validated then reverted. When ready:
+```bash
+cd content-tool && set -a && . ../.env && set +a            # OPENAI_API_KEY from repo root .env
+npm run cli -- categorize    --limit 3000 --dry-run         # $0 — selection + cost (~$0.28 full)
+npm run cli -- enrich-master --limit <n> --model gpt-4.1 --dry-run
+# drop --dry-run to run (resume-safe), then:
+npm run cli -- import-master --source data/input/words_master.jsonl
+npm run cli -- validate --strict                            # expect 0 errors / ~2802 known warnings
+npm run release                                             # rebuild words.db + copy to mobile
+```
+All generated content lands `reviewed: 0` (Ryan flips per word after QA).
+
+### CONTENT-3 · Specialty-tier cross-reference (TOEFL/IELTS/…) — **approach changed: now code, not sourcing**
 ```
 id: CONTENT-3   phase: 2   status: blocked   owner: ryan
 depends_on: []   parallel_safe: true   paths: [content-tool/data/input/]
-blocked_by: sourcing decision (which lists)
-verify: exam-tier CSVs populated (currently stubs); import + validate green
+blocked_by: bundled with the CONTENT-2 seeding-strategy decision
+verify: specialty tiers (toefl/ielts/gre/gmat/business/advanced/common9k) populated on real words; import + validate green
 ```
-**Stub:** the paid exam tiers are still stubs. Source lists → import → enrich. Expand when sourcing is decided.
+**Superseded 2026-06-10:** the shipped `categorize` command cross-references every word against the specialty tiers *via the model* — no external CSV sourcing or licence-checking needed. CONTENT-3's deliverable (tiers populated) is now produced by running `categorize` (Phase 3), bundled with the CONTENT-2 run decision. The old `*.csv` tier stubs are dead.
 
 ### CONTENT-4 · Universal audio (neural TTS)
 ```

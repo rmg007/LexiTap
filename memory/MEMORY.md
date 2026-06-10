@@ -4,6 +4,12 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 🏗️ Session: JSONL pipeline Phases 3 & 4 built on OpenAI — bulk seeding HELD (2026-06-10)
+
+**[Full note](2026-06-10_jsonl-phase3-4-openai.md)** — merge `6cda5f1`, 289 content-tool tests green, pushed to main.
+
+Repo has `OPENAI_API_KEY`, no Anthropic key → Phase 3/4 built on OpenAI (legacy Anthropic `enrich-senses` kept inert). New `--limit`-gated, resume-safe commands editing `words_master.jsonl` in place: **`categorize`** (CEFR + specialty tiers per word — subsumes CONTENT-3's cross-reference, closes the CEFR debt) + **`enrich-master`** (felt senses + 5 click/drag questions per word, validated V1–V10 / Q1–Q9). Shared `openaiClient.ts` (fetch, no SDK), `master-store.ts`, `question-validators.ts`; runbook `content-tool/PHASE3_4_RUNBOOK.md`. **Bulk run HELD (Ryan):** per-word sync calls don't scale to 2,848 words (~50/min, ≈$7–30/pass) — partial categorize (~500 words) validated then reverted, no `words.db` rebuild, nothing shipped. ⚠️ **Don't re-launch per-word bulk as-is** — pick a Batch-API / frequency-wave strategy first. No ORCHESTRATION task flipped `done` (CONTENT-2 `verify` did not run); CONTENT-2 prompt + both roadmaps re-pointed off the stale Anthropic path.
+
 ## 🔄 Session: Content pipeline JSONL redesign — decisions logged, CONTENT-2 on hold (2026-06-10)
 
 **[Full session note](2026-06-10_content-pipeline-jsonl-redesign.md)** — Plan: [`plans/CONTENT_PIPELINE_JSONL_PLAN.md`](../plans/CONTENT_PIPELINE_JSONL_PLAN.md).

@@ -15,6 +15,7 @@ status: active
 ## 🟢 Active Front (2026-06-10)
 
 **Shipped since 2026-05-31 (verified, committed):**
+- **2026-06-10 ✅ — Content pipeline rebuilt (JSONL + OpenAI), Phases 1–4 code-complete** (`6cda5f1`, 289 content-tool tests): single `words_master.jsonl` source of truth; `categorize` (CEFR + specialty tiers per word) + `enrich-master` (felt senses + 5 click/drag questions per word) on `OPENAI_API_KEY`. **Bulk seeding run HELD** — per-word sync calls don't scale to 2,848 words (~$7–30/pass); needs a Batch-API strategy first. Replaces the legacy Anthropic `enrich-senses` path + folds in CONTENT-3's tier cross-reference.
 - **2026-06-10 evening ✅:** **STORE-2 DONE** — lexitap.app live (DNS + Email Routing; `/privacy` + `/delete-account` verified on the apex). **AUTH-1 dashboards done** (Supabase Apple/Google providers, Google iOS client ID, EAS env — API-verified) + **EAS build 3 (`728f9d28`) built + submitted to App Store Connect**. ⚠️ **Supabase project had AUTO-PAUSED** (free tier, idle since June 1) — backend DNS was dead under TestFlight build 2 for ~2 days; restored intact → new blocker **SUPA-1** (Pro plan before submission).
 - **2026-06-10 PM frontier batch ✅** (`da530c7`…`cde165d`, CI green): **AUTH-1 code half** (native Sign in with Apple + Google → Supabase, 520 tests), **IAP-1 code tail** (RevenueCat↔Supabase alias + Settings "Restore purchases"), **CONTENT-2 driver** (`enrich-senses` — the paid run is now one command), **STORE-2 agent half** (site was NOT live: redirect loop + stale deploy + no DNS — fixed, deployed, verified; `/delete-account` page added). 30-agent adversarial review: 24 confirmed findings, all fixed same-day. **CI revived** (dead since SDK-56: TS2882 on clean checkouts).
 - **BETA-1 ✅ DONE** — build `9bf46ff6` (SDK 56 / RN 0.85) distributed to internal testers on TestFlight.
@@ -25,7 +26,7 @@ status: active
 1. **AUTH-1 tail:** when build 3 clears Apple processing, verify Apple + Google sign-in + magic link on device (`mobile/AUTH_INTEGRATION.md`).
 2. **Recruit 50 beta testers (BETA-2).** Share TestFlight link — r/TOEFL, r/IELTS, r/languagelearning, ESL groups. D7 gate: 7 days from first session.
 3. **RC-1 — RevenueCat + App Store Connect products.** IAP-1's code is COMPLETE — after RC-1 it's config + one sandbox device test, no code.
-4. **CONTENT-2 — run the driver:** `npm run enrich:senses -- --limit 300 --dry-run`, then live (~$8 approx on claude-opus-4-8). Runbook: `content-tool/ENRICH_SENSES.md`.
+4. **CONTENT-2 — pick a seeding strategy, then run.** Pipeline rebuilt on JSONL + OpenAI (`categorize` + `enrich-master`); commands are done + tested + resume-safe. Bulk run is HELD because per-word sync calls don't scale (~$7–30/pass over 2,848 words) — decide Batch-API vs frequency-waves first. Runbook: `content-tool/PHASE3_4_RUNBOOK.md`.
 5. **SUPA-1 — Supabase Pro plan** (~$25/mo): free tier auto-paused the backend once already; must be on Pro before App Store submission.
 
 **Tracked, lower priority:**
