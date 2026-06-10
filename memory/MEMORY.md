@@ -4,6 +4,10 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## ✅ Session: /review-and-fix self-review — 9 gaps fixed (2026-06-10)
+
+**[/review-and-fix self-review (2026-06-10)](2026-06-10_review-and-fix-self-review.md)** — Ran the skill on its own diff and found 9 logic gaps. Fixed: "search for bugs" moved to Mode A; `git diff HEAD` → correct unstaged commands; Phase 2 verifier prompt template added; Phase 3 sequential+project-heuristic rules added; "never stop at findings table" added to command file; guardrail self-test documented as stdin echo pattern; memory note append rule added; CLAUDE.md trigger list replaced with canonical pointer (single source of truth). Key lesson: instruction files have their own class of bugs — ambiguous routing, undefined references, duplicated state that drifts. ✅
+
 ## ✅ Session: RTL render harness LANDED — issue #10 closed (2026-06-10)
 
 **[RTL render harness (2026-06-10_rtl-render-harness.md)](2026-06-10_rtl-render-harness.md)** — commit `0986398`. `@testing-library/react-native@12.9.0` + `react-test-renderer@18.3.1` (v12 — **v13 forbidden**, needs React 19; must pin `react-test-renderer@18.3.1` explicitly or npm ERESOLVE-fails). 3 new render test files: `LearnCardScreen.render.test.tsx` (batch handoff + multi-sense + flat fallback), `LearnQuickCheckScreen.render.test.tsx` (SRS seed × per word), `passiveRecognition.invariant.test.tsx` (UNSAFE_queryAllByType(TextInput) = 0). **49 suites / 466 tests GREEN.** Proved RED on motivating bug. Issue [#10](https://github.com/rmg007/LexiTap/issues/10) closed. ⚠️ **Known follow-up gaps (code-review confirmed):** (1) BATCH fixture already diverged between test files — extract `__fixtures__/learnFixtures.ts` before next author copy-pastes; (2) multi-sense test covers card 1 only; (3) invariant doesn't check feedback phase; (4) no `renderWithProviders` helper (ThemeProvider+ServicesProvider inlined × 4). Detail in session note.
