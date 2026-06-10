@@ -4,6 +4,10 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 🐛 PaywallScreen dismiss button inaccessible on notched iOS (2026-06-10)
+
+**[Bug note (2026-06-10_paywall-safe-area-bug.md)](2026-06-10_paywall-safe-area-bug.md)** — Found during E2E-1 Maestro run. `PaywallScreen` lacks `useSafeAreaInsets()`; on iPhone 11 Pro Max the dismiss Pressable renders at `[387,17][398,37]` (center y=27) — behind the 44pt status bar safe area. XCUITest tap "completes" but `onPress` never fires; before/after screenshots identical. Fix: `paddingTop: spacing.s4 + insets.top` on the header View. Blocks the free-tier onboarding path on ALL notched iPhones.
+
 ## ✅ Session: AUTH-2 + RC-2 — delete-account Edge Function hardened (2026-06-10)
 
 **Commit `9963f33` (main).** Both agent halves done, 15 Deno tests green, merged+pushed.
