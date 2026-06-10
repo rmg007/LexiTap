@@ -34,6 +34,7 @@ export interface MockServiceHandlers {
   getWordDetail?: (...args: never[]) => Promise<WordDetail | null>;
   backupTriggerIfNeeded?: (nowMs: number) => Promise<void>;
   backupForceRestore?: () => Promise<'ok' | 'no_backup' | 'error'>;
+  exportUserData?: () => Promise<string>;
 }
 
 const notImplemented =
@@ -75,6 +76,9 @@ export function createMockServices(handlers: MockServiceHandlers = {}): Services
     },
     iap: noopIap,
     checkTierAccess: new CheckTierAccessUseCase(noopIap),
+    exportUserData: {
+      execute: handlers.exportUserData ?? (async () => JSON.stringify({ version: 1, stats: null, progress: [], exportedAt: new Date().toISOString() })),
+    },
     clearUserData: async () => undefined,
     queries: {
       getUserStats: handlers.getUserStats ?? (async () => null),

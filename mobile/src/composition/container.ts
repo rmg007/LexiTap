@@ -9,6 +9,8 @@ import {
   SQLiteAnswerWriter,
 } from '@/infrastructure/db';
 import { buildDailyProgressQueries } from '@/infrastructure/db/queries/dailyProgressQueries';
+import { selectAllProgress } from '@/infrastructure/db/queries/progressQueries';
+import { mapUserProgressRow } from '@/infrastructure/db/mappers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AsyncStorageAdapter } from '@/infrastructure/storage';
 import { createRevenueCatIapService } from '@/infrastructure/iap/RevenueCatIapService';
@@ -37,6 +39,7 @@ import { AnswerQuestionUseCase } from '@/application/quiz/AnswerQuestionUseCase'
 import { RunDiagnosticUseCase } from '@/application/onboarding/RunDiagnosticUseCase';
 import { RunAdaptiveDiagnosticUseCase } from '@/application/onboarding/RunAdaptiveDiagnosticUseCase';
 import { SaveOnboardingProfileUseCase } from '@/application/onboarding/SaveOnboardingProfileUseCase';
+import { UserDataExportUseCase } from '@/domain/export/UserDataExportUseCase';
 
 import type { Services, ReadQueries } from '@/presentation/services';
 import { logger } from '@/lib/logger';
@@ -246,6 +249,20 @@ export async function createContainer(): Promise<Container> {
     analytics,
   );
 
+  const exportUserData = new UserDataExportUseCase({
+    getAllProgress: async () => {
+      const rows = await selectAllProgress(db);
+      return rows.map(mapUserProgressRow);
+    },
+    getUserStats: async () => {
+      try {
+        return await stats.get();
+      } catch {
+        return null;
+      }
+    },
+  });
+
   const services: Services = {
     startQuiz: new StartQuizUseCase(words, progress, sessions, analytics, checkTierAccess),
     answerQuestion: new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler, analytics),
@@ -298,6 +315,7 @@ export async function createContainer(): Promise<Container> {
     },
     iap,
     checkTierAccess,
+    exportUserData,
     onboarding: {
       isComplete: () => storage.isOnboardingComplete(),
       markComplete: () => storage.setOnboardingComplete(),

@@ -4,6 +4,7 @@ import type { AnswerQuestionUseCase } from '@/application/quiz/AnswerQuestionUse
 import type { RunDiagnosticUseCase } from '@/application/onboarding/RunDiagnosticUseCase';
 import type { RunAdaptiveDiagnosticUseCase } from '@/application/onboarding/RunAdaptiveDiagnosticUseCase';
 import type { SaveOnboardingProfileUseCase } from '@/application/onboarding/SaveOnboardingProfileUseCase';
+import type { UserDataExportUseCase } from '@/domain/export/UserDataExportUseCase';
 import type { AnalyticsPort } from '@/domain/analytics/AnalyticsPort';
 import type { AuthPort } from '@/domain/auth/AuthPort';
 import type { IapPort } from '@/domain/iap/IapPort';
@@ -96,6 +97,9 @@ export interface Services {
   readonly iap: IapPort;
   // Checks whether the current user has access to a content tier.
   readonly checkTierAccess: CheckTierAccessUseCase;
+  // Data export — Apple Guideline 5.1.1(v). Serializes all local learning data
+  // to a JSON string for the native Share Sheet.
+  readonly exportUserData: UserDataExportUseCase;
   // Wipe all user data from SQLite + AsyncStorage — called on account deletion.
   clearUserData(): Promise<void>;
 }
