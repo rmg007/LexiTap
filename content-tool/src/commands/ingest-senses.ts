@@ -109,23 +109,11 @@ const DELETE_SENSES = `DELETE FROM word_senses WHERE word_id = ?`;
 const INSERT_SENSE = `
 INSERT INTO word_senses (id, word_id, sense_index, pos, short_gloss, explanation, image_path, created_at, deleted_at)
 VALUES (@id, @word_id, @sense_index, @pos, @short_gloss, @explanation, @image_path, @created_at, NULL)
-ON CONFLICT(word_id, sense_index) DO UPDATE SET
-  id          = excluded.id,
-  pos         = excluded.pos,
-  short_gloss = excluded.short_gloss,
-  explanation = excluded.explanation,
-  image_path  = excluded.image_path,
-  created_at  = excluded.created_at,
-  deleted_at  = NULL
 `.trim();
 
 const INSERT_EXAMPLE = `
 INSERT INTO sense_examples (id, sense_id, example_index, text, created_at)
 VALUES (@id, @sense_id, @example_index, @text, @created_at)
-ON CONFLICT(sense_id, example_index) DO UPDATE SET
-  id            = excluded.id,
-  text          = excluded.text,
-  created_at    = excluded.created_at
 `.trim();
 
 export interface IngestSensesResult {
@@ -140,6 +128,7 @@ export function ingestSenses(
   options: { now?: () => number } = {},
 ): IngestSensesResult {
   const now = options.now ?? (() => Date.now());
+  const checkWord = db.prepare(`SELECT 1 FROM words WHERE id = ? AND deleted_at IS NULL`);
   const selectIds = db.prepare(SELECT_SENSE_IDS);
   const deleteExamples = db.prepare(DELETE_EXAMPLES);
   const deleteSenses = db.prepare(DELETE_SENSES);
@@ -151,6 +140,12 @@ export function ingestSenses(
 
   const tx = db.transaction((allItems: SenseIngestItem[]) => {
     for (const item of allItems) {
+      if (!checkWord.get(item.word_id)) {
+        throw new Error(
+          `ingest-senses: word_id '${item.word_id}' (word: '${item.word ?? 'unknown'}') not found in words table — check the word_id in your source file`,
+        );
+      }
+
       // Clean-slate: delete existing examples then senses for this word.
       const existingIds = (selectIds.all(item.word_id) as { id: string }[]).map((r) => r.id);
       for (const senseId of existingIds) {

@@ -75,23 +75,26 @@ describe('LearnCardScreen (render)', () => {
     // render the rich layout — this catches a regression where the sense cache
     // broke on index > 0 (cards 2 and 3 falling back to flat silently).
     const detail: WordDetail = { word: BATCH[0]!, senses: TWO_SENSES };
-    const { findByText, getByText } = renderLearnCard({
+    const { findByText, getByText, queryByText } = renderLearnCard({
       getWordDetail: async () => detail,
     });
 
-    // Card 1 — rich layout.
+    // Card 1 — rich layout replaces flat definition.
     await findByText('MEANING 1 · noun');
     await findByText('MEANING 2 · verb');
+    expect(queryByText(BATCH[0]!.definition)).toBeNull();
 
     // Card 2 — advance, rich layout still renders (cache populated for w2).
     fireEvent.press(getByText('Got it'));
     await findByText('arrive');
     await findByText('MEANING 1 · noun');
+    await findByText('MEANING 2 · verb');
 
     // Card 3 — same check.
     fireEvent.press(getByText('Got it'));
     await findByText('tired');
     await findByText('MEANING 1 · noun');
+    await findByText('MEANING 2 · verb');
   });
 
   it('falls back to the flat definition when a word has no rich senses', async () => {

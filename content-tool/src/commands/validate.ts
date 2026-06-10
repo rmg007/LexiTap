@@ -296,8 +296,8 @@ export function runValidate(
   const memberships = loadMemberships(db, options.tier);
   const wordIssues = validateRows(rows, memberships, config, options, assetExists);
 
-  const senses = loadSenses(db);
-  const examples = loadSenseExamples(db);
+  const senses = loadSenses(db, options.tier);
+  const examples = loadSenseExamples(db, options.tier);
   const wordIds = new Set(rows.map((w) => w.id));
   const senseIssues = validateSenseRows(senses, examples, wordIds, options);
 
@@ -349,7 +349,9 @@ export function flagExists(args: string[], flag: string): boolean {
 
 /** True when explanation reads like a dictionary gloss rather than felt teaching prose. */
 export function isGlossStyle(text: string): boolean {
-  return /^(a|an|the)?\s*(word that|word meaning|term for|term meaning)\b/i.test(text.trim());
+  return /^(a|an|the)?\s*(word that|word meaning|term for|term meaning|person who|thing that|place where|act of|state of|quality of|process of|condition of|type of|kind of|form of)\b/i.test(
+    text.trim(),
+  );
 }
 
 /**
@@ -403,15 +405,14 @@ export function validateSenseRows(
     // Sort by sense_index for S2 contiguity check.
     const sorted = [...wordSenses].sort((a, b) => a.sense_index - b.sense_index);
 
-    // S6 must start at 0
-    if (sorted[0]!.sense_index !== 0) {
-      push('error', wordId, 'sense_index', 'senses must start at sense_index 0');
-    }
-
-    // S2 contiguous (0,1,2,... no gaps)
+    // S2/S6 contiguous from 0 (0,1,2,... no gaps, must start at 0)
     for (let i = 0; i < sorted.length; i++) {
       if (sorted[i]!.sense_index !== i) {
-        push('error', wordId, 'sense_index', `sense_index gap: expected ${i}, found ${sorted[i]!.sense_index}`);
+        const msg =
+          i === 0
+            ? `senses must start at sense_index 0, found ${sorted[i]!.sense_index}`
+            : `sense_index gap: expected ${i}, found ${sorted[i]!.sense_index}`;
+        push('error', wordId, 'sense_index', msg);
       }
     }
 
@@ -499,19 +500,38 @@ export function validateSenseRows(
   return issues;
 }
 
-function loadSenses(db: DB): WordSenseRow[] {
+function loadSenses(db: DB, tier?: string): WordSenseRow[] {
   const hasSenses = db
     .prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='word_senses'`)
     .get();
   if (!hasSenses) return [];
+  if (tier) {
+    return db
+      .prepare(
+        `SELECT ws.* FROM word_senses ws
+         JOIN word_tiers wt ON wt.word_id = ws.word_id
+         WHERE ws.deleted_at IS NULL AND wt.tier_id = ?`,
+      )
+      .all(tier) as WordSenseRow[];
+  }
   return db.prepare(`SELECT * FROM word_senses WHERE deleted_at IS NULL`).all() as WordSenseRow[];
 }
 
-function loadSenseExamples(db: DB): SenseExampleRow[] {
+function loadSenseExamples(db: DB, tier?: string): SenseExampleRow[] {
   const hasExamples = db
     .prepare(`SELECT name FROM sqlite_master WHERE type='table' AND name='sense_examples'`)
     .get();
   if (!hasExamples) return [];
+  if (tier) {
+    return db
+      .prepare(
+        `SELECT se.* FROM sense_examples se
+         JOIN word_senses ws ON ws.id = se.sense_id
+         JOIN word_tiers wt ON wt.word_id = ws.word_id
+         WHERE ws.deleted_at IS NULL AND wt.tier_id = ?`,
+      )
+      .all(tier) as SenseExampleRow[];
+  }
   return db
     .prepare(
       `SELECT se.* FROM sense_examples se

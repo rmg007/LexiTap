@@ -324,6 +324,15 @@ describe('isGlossStyle', () => {
     expect(isGlossStyle('A word meaning happy')).toBe(true);
   });
 
+  it('detects expanded common gloss openers', () => {
+    expect(isGlossStyle('A person who teaches others.')).toBe(true);
+    expect(isGlossStyle('The act of giving something back.')).toBe(true);
+    expect(isGlossStyle('The state of being very tired.')).toBe(true);
+    expect(isGlossStyle('The quality of being honest.')).toBe(true);
+    expect(isGlossStyle('A type of animal with four legs.')).toBe(true);
+    expect(isGlossStyle('The condition of having no money.')).toBe(true);
+  });
+
   it('passes felt prose', () => {
     expect(isGlossStyle('When you cook, heat transforms raw ingredients.')).toBe(false);
     expect(isGlossStyle('Effort is the fuel behind everything hard.')).toBe(false);

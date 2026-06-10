@@ -4,6 +4,10 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## ✅ Session: content-tool sense validation + RTL harness fixes — 8 bugs fixed (2026-06-10)
+
+**[content-tool sense validation + RTL harness fixes (2026-06-10)](2026-06-10_content-tool-sense-validation-fixes.md)** — 8 confirmed/plausible findings from code review all fixed: (1) `loadSenses`/`loadSenseExamples` lacked tier filter → false S1 errors on `validate --tier`; (2) `buildOutputDb` skipped `validateSenseRows` → malformed senses shipped silently; (3) S6+S2 double-fired for same violation; (4) `ingest-senses` had no word_id existence check (FK disabled by `PRAGMA foreign_keys = OFF`); (5) dead `ON CONFLICT` clauses in INSERT_SENSE/INSERT_EXAMPLE; (6) `isGlossStyle` regex missed common gloss patterns; (7/8) RTL multi-sense test missing `MEANING 2` assertions on cards 2+3 and dropped `toBeNull` for flat definition. content-tool 131 tests ✅ / mobile 468 tests ✅. AGENTS.md updated with 6 new content-tool invariants. ✅
+
 ## ✅ Session: /review-and-fix self-review — 9 gaps fixed (2026-06-10)
 
 **[/review-and-fix self-review (2026-06-10)](2026-06-10_review-and-fix-self-review.md)** — Ran the skill on its own diff and found 9 logic gaps. Fixed: "search for bugs" moved to Mode A; `git diff HEAD` → correct unstaged commands; Phase 2 verifier prompt template added; Phase 3 sequential+project-heuristic rules added; "never stop at findings table" added to command file; guardrail self-test documented as stdin echo pattern; memory note append rule added; CLAUDE.md trigger list replaced with canonical pointer (single source of truth). Key lesson: instruction files have their own class of bugs — ambiguous routing, undefined references, duplicated state that drifts. ✅

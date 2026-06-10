@@ -29,7 +29,7 @@ import type { DB } from '@/lib/db';
 import { openWorkingDb, createFreshOutputDb, WORKING_DB_PATH, OUTPUT_DB_PATH } from '@/lib/db';
 import { loadConfig, type AppConfig, type TierConfig, PROJECT_ROOT } from '@/lib/config';
 import { buildWordIndex } from '@/lib/fingerprint';
-import { validateRows } from '@/commands/validate';
+import { validateRows, validateSenseRows } from '@/commands/validate';
 import { importRows } from '@/commands/import';
 import { runEnrich } from '@/commands/enrich';
 import { parseByExtension } from '@/lib/csv';
@@ -223,6 +223,17 @@ export function buildOutputDb(
       .map((e) => `${e.wordId} ${e.field}: ${e.message}`)
       .join('; ');
     throw new Error(`export aborted: ${errors.length} validation error(s): ${detail}`);
+  }
+
+  const wordIds = new Set(words.map((w) => w.id));
+  const senseIssues = validateSenseRows(senses, senseExamples, wordIds, { strict: options.strict });
+  const senseErrors = senseIssues.filter((i) => i.level === 'error');
+  if (senseErrors.length > 0) {
+    const detail = senseErrors
+      .slice(0, 10)
+      .map((e) => `${e.wordId} ${e.field}: ${e.message}`)
+      .join('; ');
+    throw new Error(`export aborted: ${senseErrors.length} sense validation error(s): ${detail}`);
   }
 
   // Observed membership counts per tier (config tiers with zero members still

@@ -247,4 +247,16 @@ describe('ingestSenses', () => {
     expect(result.sensesWritten).toBe(0);
     db.close();
   });
+
+  it('throws a descriptive error when word_id is not in the words table', () => {
+    const db = openMemoryContentDb();
+    // No seedWord — word_id does not exist.
+    expect(() => ingestSenses(db, [minItem()], { now: () => 1 })).toThrow(
+      /not found in words table/,
+    );
+    // No sense rows written (transaction rolled back).
+    const senses = db.prepare('SELECT * FROM word_senses').all();
+    expect(senses).toHaveLength(0);
+    db.close();
+  });
 });
