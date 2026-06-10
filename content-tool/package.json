@@ -11,6 +11,7 @@
     "build:db": "tsx src/cli.ts export",
     "release": "tsx src/cli.ts release",
     "cli": "tsx src/cli.ts",
+    "enrich:senses": "tsx src/cli.ts enrich-senses",
     "qa:sample": "tsx src/qa/cli.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"src/**/*.ts\"",
