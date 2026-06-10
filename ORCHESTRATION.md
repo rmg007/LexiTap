@@ -52,6 +52,7 @@ Shared barrels (`domain/index.ts`, `mobile/package.json`, both `ROADMAP.md`s) ar
 | `CONTENT-2` | Phase 2 paid enrichment run (CONTENT-1 ✅ unblocked) | paid API spend + model choice |
 
 > No agent-doable `ready` tasks remain in Phase 1. Everything in Phase 3+ is `blocked` until `BUILD-1` clears. Phase 2 content tasks are Ryan-only. Stubs stay stubs until deps land.
+> **Pull-forward tasks shipped (2026-06-10):** RTL-1 (test-utils), LEGAL-3 (data export), STORE-1 (store assets plan) — all done, not on the critical path but reduce future work.
 
 ---
 
@@ -91,6 +92,14 @@ depends_on: []   parallel_safe: true   paths: []
 verify: a memory note enumerating expo-doctor findings + a keep/upgrade recommendation with reasons
 ```
 16/18 checks pass. Two findings: (1) metro@0.84.4 — KNOWN-BENIGN per project memory, nativewind side-effect, cannot fix without SDK bump; (2) `.expo/` tracked in git — FIXED inline (`git rm --cached mobile/.expo/types/router.d.ts`, added `.expo/` to `mobile/.gitignore`). **No SDK bump warranted before launch.** See memory note 2026-06-10.
+
+### RTL-1 · Test-utils extraction + renderWithProviders ✅ done
+```
+id: RTL-1   phase: 1   status: done   owner: agent
+paths: [mobile/src/test-utils/]
+commit: 4c14527 (merged)
+```
+`mobile/src/test-utils/learnFixtures.ts` + `renderWithProviders.tsx`. Shared BATCH fixture extracted from both learn test files; inline ThemeProvider+ServicesProvider replaced with `renderWithProviders`. 479 tests green.
 
 ### BUILD-1 · EAS build → C0 on-device smoke  ⚑ THE GATE
 ```
@@ -200,11 +209,21 @@ verify: backup/restore round-trips against the real authenticated user id on dev
 
 # Phase 5 — Launch Prep (Legal + Store)
 
-### LEGAL-3 · Account data export (Apple 5.1.1(v)) — **stub**
-> Account deletion is done (`delete-account` Edge Function, live). Data export remains. owner: both. paths: mobile/ + supabase/.
+### LEGAL-3 · Account data export (Apple 5.1.1(v)) ✅ done
+```
+id: LEGAL-3   phase: 5   status: done   owner: agent
+paths: [mobile/src/domain/export/, mobile/src/presentation/screens/SettingsScreen.tsx]
+commit: 6fdfc07 (merged)
+```
+`UserDataExportUseCase` + 5 tests. Settings "Export my data" → native Share Sheet (JSON). 479 tests green.
 
-### STORE-1 · Store assets — icon, 6 screenshots, description — **stub**
-> Use the `/aso` skill. owner: agent (draft) + ryan (final icon sign-off, ships as vector). paths: website/ + store metadata.
+### STORE-1 · Store assets — copy, keywords, screenshots spec ✅ done (draft)
+```
+id: STORE-1   phase: 5   status: done   owner: agent
+paths: [plans/STORE_ASSETS_PLAN.md]
+commit: 7b7b885 (merged)
+```
+`plans/STORE_ASSETS_PLAN.md` — full App Store copy, iOS subtitle, Android short desc, keywords (94 chars), 6-screen screenshot spec, 15s App Preview storyboard. Ryan reviews + signs off final icon (ships as vector).
 
 ### STORE-2 · Verify legal site live (privacy/ToS), support email, lexitap.app — **stub**
 ### SUBMIT-1 · Apple ($99/yr) + Google ($25) submission — **stub** owner: ryan.

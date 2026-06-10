@@ -21,6 +21,8 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 **✅ expo-doctor clean (STORE-3, 2026-06-10):** 16/18 checks pass; metro@0.84.4 benign; `.expo/` untracked. No SDK bump needed pre-launch.
 
+**✅ Pull-forward batch (2026-06-10):** RTL-1 (`test-utils/learnFixtures.ts` + `renderWithProviders.tsx`, 479 tests green). LEGAL-3 (`UserDataExportUseCase` + Settings export button, Apple 5.1.1(v) done). STORE-1 (`plans/STORE_ASSETS_PLAN.md` — full App Store copy, keywords, 6-screen screenshot spec).
+
 **▶ Next, in order:** (1) **C0 on-device smoke (Ryan — THE GATE):** `eas build --platform ios --profile preview`, install on device, tap through learn flow, confirm Quick check appears, confirm `srs_state` row written — only this proves native+DB+SRS; unblocks all of Phase 3+. (2) **Phase 2 paid enrichment run (Ryan):** CONTENT-1 ✅ done; CONTENT-2 now `ready` — top-N by frequency, top-tier model.
 
 **Tracked, lower priority:** ~11 Dependabot alerts remaining — transitive Expo-build-tooling (accepted until SDK bump); standing launch blockers (physical-device C0 test, fresh EAS build, P-2 beta recruitment, AU2/AU3 native sign-in).

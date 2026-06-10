@@ -4,6 +4,10 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## ✅ Session: Pull-forward batch — RTL-1 + LEGAL-3 + STORE-1 (2026-06-10)
+
+**[Pull-forward batch (2026-06-10)](2026-06-10_pull-forward-rtl1-legal3-store1.md)** — 3 tasks in isolated worktrees, octopus-merged. RTL-1: `test-utils/learnFixtures.ts` + `renderWithProviders.tsx`; shared fixture extracted, inline providers replaced; 479 tests green. LEGAL-3: `UserDataExportUseCase` (5 tests) + Settings "Export my data" → Share Sheet; Apple 5.1.1(v) done; naming note: `export/` dir clashes with eslint `expo*` pattern → used `UserDataExport*`. STORE-1: `plans/STORE_ASSETS_PLAN.md` — full App Store copy, keywords, 6-screen screenshot spec. BUILD-1 still the gate; nothing unblocked by these. ✅
+
 ## ✅ Session: Parallel batch — E2E-1 + CONTENT-1 + LEGAL-2 + STORE-3 (2026-06-10)
 
 **[Parallel batch (2026-06-10)](2026-06-10_parallel-batch-e2e1-content1-legal2-store3.md)** — 4 tasks run concurrently in isolated worktrees, octopus-merged cleanly. E2E-1: `mobile/.maestro/learn-loop.yaml` written (cannot run until BUILD-1). CONTENT-1: `synthesize-senses.ts` — 10-invariant pre-write validator + canonical JSONL serializer; 165 tests green; **CONTENT-2 now unblocked**. LEGAL-2: `OnboardingAgeGateScreen` AsyncStorage persistence (passed/rejected keys) + 5 render tests; 474 tests green. STORE-3: expo-doctor 16/18 pass; metro@0.84.4 benign; `.expo/types/router.d.ts` untracked from git (fixed inline). No Phase 1 agent tasks remain — only Ryan-owned blockers (BUILD-1, CONTENT-2). ✅

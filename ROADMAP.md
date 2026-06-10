@@ -20,6 +20,9 @@ status: active
 - **Learn-loop wired** (`8fab926`) — LearnCardScreen hands batch to `/learn-check` (SRS seeding step). 474 tests green. RTL harness + Maestro flow (E2E-1 ✅) both landed.
 - **16+ age gate complete** (LEGAL-2 ✅) — AsyncStorage persistence + dead-end rejection screen + 5 render tests.
 - **expo-doctor clean** (STORE-3 ✅) — 16/18 checks pass; metro@0.84.4 benign; `.expo/` untracked from git. No SDK bump needed pre-launch.
+- **RTL test-utils + renderWithProviders** (RTL-1 ✅, 2026-06-10) — shared BATCH fixture extracted to `test-utils/`, inline providers replaced; 479 tests green.
+- **LEGAL-3 data export** (✅, 2026-06-10) — `UserDataExportUseCase` + Settings "Export my data" → Share Sheet; Apple 5.1.1(v) done.
+- **STORE-1 store assets draft** (✅, 2026-06-10) — `plans/STORE_ASSETS_PLAN.md`: App Store copy, keywords, 6-screen screenshot spec.
 
 **▶ Next, in order:**
 1. **C0 on-device smoke (Ryan — THE GATE).** `cd mobile && eas build --platform ios --profile preview`, install on device, tap through learn flow, confirm Quick check appears, confirm an `srs_state` row written. Only this proves native + DB + SRS. Unblocks all of Phase 3+.
