@@ -10,8 +10,10 @@ import type { ColorTokens } from '@/presentation/theme/tokens';
 // Path data is the authentic Lucide source (lucide-static). To add a glyph: copy
 // the <path>/<rect> primitives from the real SVG into GLYPHS — never hand-draw.
 //
-// Replaces emoji used as icons (📖 💼 🎓 📝 📚 ✕ …) — emoji render
-// inconsistently across platforms and fail the design system's "emoji 0" gate.
+// Replaces the emoji that were previously used as icons (book / briefcase /
+// graduation-cap / pencil / library / close, etc.) — emoji render inconsistently
+// across platforms and fail the design system's "emoji 0" gate. (Hard rule:
+// guardrails.mjs blocks emoji in mobile UI source, so describe them in words.)
 
 type Primitive =
   | { t: 'path'; d: string }

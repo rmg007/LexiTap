@@ -233,7 +233,7 @@ function ProductCard({
       <View style={{ gap: sp.s3 }}>
         {/* Icon placeholder + title */}
         <View style={{ flexDirection: 'row', gap: sp.s4, alignItems: 'flex-start' }}>
-          {/* Mock icon — placeholder emoji/SVG later */}
+          {/* Tier icon (Lucide "library" glyph via the Icon component) */}
           <View
             style={{
               width: 56,

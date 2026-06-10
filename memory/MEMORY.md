@@ -4,6 +4,12 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 📲 Session: TestFlight feedback fixes + RN Icon system + emoji HARD RULE (2026-06-10)
+
+**[Full triage note](testflight-feedback/2026-06-10_build-feedback.md)** — commits `990abbd` (fixes) + `07e5c65` (emoji guardrail), pushed to main. 54 suites / 520 tests green.
+
+Connected to **App Store Connect API** (ES256 JWT minted from Desktop `.p8`, issuer `e312e0a6-…`, app `6775245619`) → pulled **6 screenshot feedbacks, 0 crashes** (tester mhalim80@hotmail.com, iPhone 13 Pro / iOS 26.5); screenshots archived in `memory/testflight-feedback/` (CDN URLs expired 2026-06-15). **Fixed + committed:** (1) **DOB full date picker** — `OnboardingAgeGateScreen` rebuilt to three scrollable Month/Day/Year `PickerColumn`s with `daysInMonth()` clamping, no `TextInput`; (2) **Paywall safe-area** — `useSafeAreaInsets` so header+close clear the status bar (was a notched-iPhone launch blocker); (3) **Paywall copy** "Subscribe"→"Unlock" (non-consumable IAP, Apple 3.1.1); (4) **NEW `Icon.tsx`** lean hand-curated Lucide registry (`react-native-svg`) — swept **all** emoji out of the app UI (goal-selection, paywall, StreakBadge, MultipleChoice, FeedbackLayer, SessionComplete, LearnQuickCheck, ForgivenessSheet, LearnCard). **Emoji is now an ENFORCED hard rule** — `guardrails.mjs` PreToolUse hook hard-blocks pictographic emoji in non-test `mobile/(src|app)` `.ts(x)` (ranges `2600–27BF / 2B00–2BFF / 1F300–1FAFF / FE0F`; `→ ↔ ─` exempt), documented in CLAUDE.md two tables. ⚠️ **`react-native-svg` is a NATIVE module — Icon system + DOB picker need a NEW EAS build to reach device** (JS-only EAS Update insufficient). **Still flagged (Ryan/device):** knowledge-map 100%-known over-claim (`estimateKnownCount` caps at pool → needs diagnostic retest), version-string opinion, paywall/report visual redesigns (Figma), diagnostic question-count perception. **Gotcha:** the emoji guardrail scans ALL non-test content incl. comments — Icon.tsx's own "replaces 📖💼…" comment would have self-blocked future edits; rewrote it to describe glyphs in words.
+
 ## 🏗️ Session: JSONL pipeline Phases 3 & 4 built on OpenAI — bulk seeding HELD (2026-06-10)
 
 **[Full note](2026-06-10_jsonl-phase3-4-openai.md)** — merge `6cda5f1`, 289 content-tool tests green, pushed to main.
