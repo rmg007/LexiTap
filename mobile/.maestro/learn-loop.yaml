@@ -47,19 +47,20 @@ appId: com.lexitap.app
 - tapOn:
     text: "Continue"
 
-# O-4: Adaptive diagnostic — answer "No, not yet" for every word so the
-# band-walk terminates quickly without requiring us to know any answers.
-# DIAG-A stops after ~15-40 items depending on convergence. Using 50 as a
-# safe ceiling; the runFlow `when:` guard makes extra iterations harmless.
+# O-4: Adaptive diagnostic — answer "No, not yet" for every word.
+# Use repeat-while so the loop exits naturally when the diagnostic ends and
+# the app transitions to O-5 (Knowledge Map). This avoids the XCUITest
+# snapshot-timeout crash that occurred with a fixed repeat+runFlow-when loop
+# (the tight-polling iterations after the diagnostic ends would race the
+# knowledge-map animation). The `times: 50` ceiling is a safety guard;
+# real convergence with all-No answers takes ~15-35 questions.
 - repeat:
+    while:
+      visible: "No, not yet"
     times: 50
     commands:
-      - runFlow:
-          when:
-            visible: "No, not yet"
-          commands:
-            - tapOn:
-                text: "No, not yet"
+      - tapOn:
+          text: "No, not yet"
 
 # O-5: Knowledge Map reveal
 - extendedWaitUntil:
@@ -68,21 +69,12 @@ appId: com.lexitap.app
 - tapOn:
     text: "Start learning"
 
-# O-6: Paywall — dismiss to continue for free (marks onboarding complete)
-# Dismiss Pressable has accessibilityLabel="Dismiss paywall"; inner "✕" is hidden.
-#
-# ⚠️  KNOWN APP BUG — this step FAILS on notched iOS devices (see bug note below).
-#
-# PaywallScreen uses a bare <View> with no safe-area handling. On iPhone 11 Pro
-# Max (and all notched/Dynamic-Island iPhones), the header row renders starting
-# at y=0 (behind the system status bar). The dismiss Pressable's accessibility
-# bounds are [387,17][398,37] — center (392.5, 27) — fully inside the 44pt safe
-# area zone. XCUITest sends the tap to (392.5, 27) but the onPress never fires;
-# before/after screenshots are identical. The fix is to add useSafeAreaInsets()
-# to PaywallScreen and apply insets.top to the header paddingTop.
-# Bug filed in memory: see memory/2026-06-10_paywall-safe-area-bug.md
+# O-6: Paywall — dismiss to continue for free (marks onboarding complete).
+# Dismiss Pressable has accessibilityLabel="Dismiss paywall"; inner Icon is
+# not text-selectable. PaywallScreen applies useSafeAreaInsets() on the
+# header row (safe-area fix landed 2026-06-10, build 3).
 - extendedWaitUntil:
-    visible: "Unlock Exam Prep"
+    visible: "Unlock LexiTap"
     timeout: 10000
 - tapOn:
     text: "Dismiss paywall"
@@ -103,14 +95,12 @@ appId: com.lexitap.app
     visible: "Got it"
     timeout: 15000
 - repeat:
+    while:
+      visible: "Got it"
     times: 10
     commands:
-      - runFlow:
-          when:
-            visible: "Got it"
-          commands:
-            - tapOn:
-                text: "Got it"
+      - tapOn:
+          text: "Got it"
 
 # ── 5. Assert Quick-check screen is visible ──────────────────────────────────
 # LearnQuickCheckScreen renders a "Quick check" caption in the header.
