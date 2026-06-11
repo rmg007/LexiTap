@@ -14,4 +14,4 @@ appId: com.lexitap.app
 - extendedWaitUntil:
     visible: 'Your age'
     timeout: 30000
-- assertVisible: 'Continue'
+- assertVisible: 'Continue to LexiTap'
