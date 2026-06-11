@@ -23,14 +23,15 @@ status: active
 - **BUILD-1 ✅** — app confirmed on physical device. **LEGAL-2, STORE-3, RTL-1, LEGAL-3, STORE-1, CONTENT-1, E2E-1** all ✅.
 
 **▶ Next, in order (all Ryan-owned, exact steps in [ORCHESTRATION.md](ORCHESTRATION.md)):**
-1. **AUTH-1 tail:** when build 3 clears Apple processing, verify Apple + Google sign-in + magic link on device (`mobile/AUTH_INTEGRATION.md`).
-2. **Recruit 50 beta testers (BETA-2).** Share TestFlight link — r/TOEFL, r/IELTS, r/languagelearning, ESL groups. D7 gate: 7 days from first session.
-3. **RC-1 — RevenueCat + App Store Connect products.** IAP-1's code is COMPLETE — after RC-1 it's config + one sandbox device test, no code.
+1. **AUTH-1 tail:** when build 3 clears Apple processing, verify Apple + Google sign-in + magic link on device (`mobile/AUTH_INTEGRATION.md`). While there: delete a test account → confirm RC customer removed in dashboard (closes AUTH-2 live verify).
+2. **IAP-1 sandbox verify (build 4 needed).** RC-1 ✅ done — trigger EAS build 4, then: sandbox purchase → entitlement unlocks pack; "Restore purchases" works; user alias visible in RC dashboard.
+3. **Recruit 50 beta testers (BETA-2).** Share TestFlight link — r/TOEFL, r/IELTS, r/languagelearning, ESL groups. D7 gate: 7 days from first session.
 4. **CONTENT-2 — pick a seeding strategy, then run.** Pipeline rebuilt on JSONL + OpenAI (`categorize` + `enrich-master`); commands are done + tested + resume-safe. Bulk run is HELD because per-word sync calls don't scale (~$7–30/pass over 2,848 words) — decide Batch-API vs frequency-waves first. Runbook: `content-tool/PHASE3_4_RUNBOOK.md`.
 5. **SUPA-1 — Supabase Pro plan** (~$25/mo): free tier auto-paused the backend once already; must be on Pro before App Store submission.
 
 **Tracked, lower priority:**
-- **Pre-submission blockers (from review):** AUTH-2 (Apple token revocation on account deletion — App Review 5.1.1(v)) + RC-2 (RevenueCat customer deletion) — both in the delete-account Edge Function, both await Ryan-owned secrets.
+- **RC-1 ✅ 2026-06-11** — RevenueCat configured: entitlements `foundation_access` + `all_packs`, 3 products matching ASC SKUs, Offering `default` set as Current. IAP-1 now `ready`. RC-2 code + secret done ✅.
+- **AUTH-2** code + Apple secrets complete ✅ — live verify folds into AUTH-1 device pass.
 - **Dependabot:** ~11 remaining alerts — transitive Expo-build-tooling (tar×6, xmldom×4, uuid), accepted until next SDK bump.
 - **Sentry auth token:** add as EAS secret (`eas secret:create --scope project --name SENTRY_AUTH_TOKEN`) before beta/prod builds — preview currently skips source-map upload.
 

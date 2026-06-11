@@ -59,10 +59,10 @@ Shared barrels (`domain/index.ts`, `mobile/package.json`, both `ROADMAP.md`s) ar
 | `CONTENT-2` | pipeline rebuilt on JSONL+OpenAI (`categorize`+`enrich-master`); bulk run HELD | scalable seeding strategy (e.g. Batch API) |
 | `AUTH-1` | device verify once build 3 hits TestFlight | Apple processing + Ryan's device |
 | `SUPA-1` | upgrade Supabase to Pro (free tier auto-pauses → prod outage) | billing decision |
-| `RC-1` | RevenueCat account + product config | RevenueCat account; App Store Connect products |
 | `BETA-2` | Recruit 50 beta testers | testers; D7 data takes 7 days |
+| `IAP-1` | Sandbox purchase/restore/entitlement verify on device | build 4 + RC-1 ✅ |
 
-> Agent-doable `ready` tasks: none until RC-1 unblocks IAP-1's live verify or AUTH-1's device verify unblocks BACKUP-1. Critical path: D7 retention gate (7 days) + RC-1 setup in parallel. **Pre-submission blockers: AUTH-2 (Apple token revocation) + RC-2 (RevenueCat customer deletion) — both in the delete-account Edge Function, both need Ryan-owned secrets — and SUPA-1 (Supabase Pro; free tier is incompatible with a launched app).**
+> **RC-1 ✅ 2026-06-11** — IAP-1 is now `ready` (on-device sandbox verify only; all code + config done). RC-2 ✅ done. AUTH-2 code + secrets done, waiting on AUTH-1 device verify. **Critical path: AUTH-1 device verify → BACKUP-1; IAP-1 sandbox verify; D7 retention gate (7 days). Pre-submission hard blockers: AUTH-2 live verify (folds into AUTH-1 pass) + SUPA-1 (Pro plan).**
 
 ---
 
@@ -202,20 +202,19 @@ BETA-1 ✅ — TestFlight build is live. Share the TestFlight link. Target: r/TO
 
 # Phase 3 — First Paid Pack (Monetization + Auth)
 
-### RC-1 · RevenueCat account + product config
+### RC-1 · RevenueCat account + product config  ✅ done
 ```
-id: RC-1   phase: 3   status: ready   owner: ryan
+id: RC-1   phase: 3   status: done   owner: ryan
 depends_on: [BUILD-1]   parallel_safe: true   paths: [mobile/eas.json]
-blocked_by: RevenueCat account; App Store Connect + Play Console products
-verify: exam_* + all_exams products + entitlements configured; keys in EAS secrets
+verify: entitlements foundation_access + all_packs configured; 3 products (foundation/bundle/upgrade) + Offering default set as Current; EXPO_PUBLIC_REVENUECAT_API_KEY_IOS in .env + EAS secrets; REVENUECAT_SECRET_KEY set in Supabase — PASSED 2026-06-11
 ```
-BUILD-1 ✅ — unblocked. Still needs external accounts. See `plans/P3_REVENUECAT_PLAN.md`. Unblocks IAP-1 once done.
+**Done 2026-06-11.** Entitlements: `foundation_access` (foundation pack) + `all_packs` (bundle + upgrade, superset). Products match ASC SKUs exactly: `com.lexitap.app.pack.foundation` ($9.99) / `com.lexitap.app.pack.bundle` ($24.99) / `com.lexitap.app.pack.upgrade` ($19.99). Offering `default` with 3 packages, set as Current. SDK key `appl_oOjuRqWbTqhsVbWoeJQQjwCYtRT` in `.env` + EAS. Secret key `sk_ix...` set in Supabase function secrets. **Unblocks IAP-1 + RC-2.**
 
-### IAP-1 · Wire RevenueCat into paywall + restore + entitlement gating  ⚠ high-risk path — **code ✅ complete, live verify blocked on RC-1**
+### IAP-1 · Wire RevenueCat into paywall + restore + entitlement gating  ⚠ high-risk path — **code ✅ complete, RC-1 ✅ — on-device sandbox verify only**
 ```
-id: IAP-1   phase: 3   status: blocked   owner: ryan
+id: IAP-1   phase: 3   status: ready   owner: ryan
 depends_on: [RC-1]   parallel_safe: false   paths: [mobile/src/infrastructure/iap/, mobile/src/presentation/screens/SettingsScreen.tsx]
-blocked_by: RC-1 (account + products + EAS secrets) — then on-device sandbox verify only
+blocked_by: on-device sandbox purchase verify (build 4 needed — RC-1 now done, code complete)
 verify: purchase → entitlement unlocks pack; Settings "Restore purchases" works; alias visible in RC dashboard after sign-in; npm run check green
 commit: 10af213 (+ contract fixes c188bb9)
 ```
@@ -231,23 +230,24 @@ commit: 590de22 (+ review fixes c188bb9)
 ```
 **All code shipped 2026-06-10:** `AuthPort.signInWithIdToken('apple'|'google')`, `AppleSignInAdapter` (expo-apple-authentication ~56.0.4) + `GoogleSignInAdapter` (@react-native-google-signin ^16.1.2, env-gated on `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID`), AuthContext `signInWithApple`/`signInWithGoogle` + availability flags, SignInScreen native buttons (re-entrancy-guarded, cancel = silent), app.config plugins (Google plugin only when env present; `usesAppleSignIn: true`; buildNumber → 3). 520 tests green. **Dashboards done 2026-06-10 evening (verified via API, not asserted):** Supabase auth settings report `apple: true, google: true`; `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` present in EAS production env; `eas config --profile beta` resolves the production environment and emits both auth plugins with the correctly reversed `iosUrlScheme`. **Build 3 (`728f9d28`) built + SUBMITTED to App Store Connect** (submission `52c45e6c`). Remaining: Apple processing (~10 min) → (f) verify both flows + magic link on device ([`mobile/AUTH_INTEGRATION.md`](mobile/AUTH_INTEGRATION.md)). Unblocks BACKUP-1 once device-verified.
 
-### AUTH-2 · Apple token revocation on account deletion (App Review 5.1.1(v))  ⚠ pre-submission blocker
+### AUTH-2 · Apple token revocation on account deletion (App Review 5.1.1(v))  ⚠ pre-submission blocker — **code ✅ + secrets ✅; live verify blocked on AUTH-1**
 ```
 id: AUTH-2   phase: 3   status: blocked   owner: both
 depends_on: [AUTH-1]   parallel_safe: true   paths: [supabase/functions/delete-account/]
-blocked_by: Apple Services key (.p8) must exist + be set as a Supabase function secret
+blocked_by: AUTH-1 device verify — SIWA must work on device before the revoke path can be live-tested
 verify: deleting an account whose identities include provider 'apple' revokes the Apple token (appleid.apple.com /auth/revoke); deletion still completes for non-Apple users
+commit: 9963f33
 ```
-**Found by adversarial review 2026-06-10:** once SIWA ships, Apple REQUIRES apps to revoke Sign in with Apple tokens when an account is deleted. The `delete-account` Edge Function has no revoke step. Agent half: mint the client-secret JWT from the .p8, call `/auth/token` + `/auth/revoke` for users with an `apple` identity (via `admin.getUserById().identities`), fail-safe ordering (revoke before the irreversible auth-user delete). Ryan half: create the Apple Services key + store as function secret. **Must land before App Store submission.**
+**Code + secrets complete 2026-06-10/11:** `revokeAppleTokens()` — fetches identities via `admin.getUserById()`, mints ES256 client-secret JWT from P8 (`mintAppleClientSecret`), calls `appleid.apple.com/auth/revoke` with `provider_refresh_token`. Secrets set in Supabase: `APPLE_TEAM_ID=W8FZGT253G`, `APPLE_KEY_ID=CKVTC3Q5NA`, `APPLE_CLIENT_ID=com.lexitap.app`, `APPLE_P8_PRIVATE_KEY` (P8 file). 15 Deno tests green. Function deployed. **Remaining = device-side live verify** once AUTH-1 SIWA works on device. **Must be verified before App Store submission.**
 
-### RC-2 · RevenueCat customer deletion in delete-account  ⚠ erasure-claim accuracy
+### RC-2 · RevenueCat customer deletion in delete-account  ✅ done
 ```
-id: RC-2   phase: 3   status: blocked   owner: both
+id: RC-2   phase: 3   status: done   owner: both
 depends_on: [RC-1]   parallel_safe: true   paths: [supabase/functions/delete-account/]
-blocked_by: RevenueCat secret API key (account doesn't exist yet — RC-1)
-verify: delete-account removes the RevenueCat customer (DELETE /v1/subscribers/{app_user_id}) in the storage-clear phase, fail-fatal like the storage step
+verify: delete-account removes the RevenueCat customer (DELETE /v1/subscribers/{app_user_id}) in the storage-clear phase, fail-fatal like the storage step — code + secret complete
+commit: 9963f33
 ```
-**Found by adversarial review 2026-06-10:** the IAP-1 alias (`Purchases.logIn(supabaseUserId)`) creates account-linked data at RevenueCat that account deletion never touches. Site copy was softened same-day (delete-account.html discloses store/RevenueCat purchase records); this task makes the erasure real once RC-1 provides the secret key.
+**Done 2026-06-11:** `deleteRevenueCatCustomer()` — `DELETE /v1/subscribers/{encodeURIComponent(userId)}` with `Bearer REVENUECAT_SECRET_KEY`; 404 = idempotent success; fail-fatal when secret set. Secret `REVENUECAT_SECRET_KEY=sk_ix…` set in Supabase function secrets (confirmed in secrets list). 15 Deno tests green. Function deployed. RC-1 providing the account + secret key closed the last blocker. **Live erasure verify folds into the AUTH-1 device verify pass (delete an account, confirm RC customer gone in dashboard).**
 
 ### BACKUP-1 · Verify encrypted backup against authenticated uid
 ```
