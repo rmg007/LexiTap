@@ -64,18 +64,20 @@ Shared barrels (`domain/index.ts`, `mobile/package.json`, both `ROADMAP.md`s) ar
 
 > **RC-1 ✅ 2026-06-11** — IAP-1 is now `ready` (on-device sandbox verify only; all code + config done). RC-2 ✅ done. AUTH-2 code + secrets done, waiting on AUTH-1 device verify. **Critical path: AUTH-1 device verify → BACKUP-1; IAP-1 sandbox verify; D7 retention gate (7 days). Pre-submission hard blockers: AUTH-2 live verify (folds into AUTH-1 pass) + SUPA-1 (Pro plan).**
 
+> **2026-06-11 parallel batch reconciled** — all five concurrent chats merged into main: AUTH-2+RC-2 code (`9963f33`), BETA-2 recruitment kit (`a28572b` → [`plans/BETA2_RECRUITMENT_KIT.md`](plans/BETA2_RECRUITMENT_KIT.md)), Dependabot re-triage (**0 open alerts** — SDK-56 cleared tar/xmldom; uuid override `133e5db`), E2E-1 first live Maestro run (`674d6ac` — blocked at the paywall safe-area bug, fixed in `990abbd` → **E2E-1 reopened `ready` for the green re-run**), TestFlight-feedback fixes + ASC 3-product SKU alignment (`990abbd`/`daff1c3`, app version now 0.0.1 matching ASC). **Only agent-runnable frontier task: the E2E-1 green re-run.**
+
 ---
 
 # Phase 1 — Build (finish the gate)
 
-### E2E-1 · Maestro learn-loop end-to-end flow ✅ done
+### E2E-1 · Maestro learn-loop end-to-end flow — **REOPENED: first live run blocked at paywall; fix landed, green re-run pending**
 ```
-id: E2E-1   phase: 1   status: done   owner: agent
+id: E2E-1   phase: 1   status: ready   owner: agent
 depends_on: []     parallel_safe: true   paths: [mobile/.maestro/]
-verify: `learn-loop.yaml` written + lints; runs green once a sim build exists (BUILD-1)
-commit: e6dead3 (merged)
+verify: learn-loop.yaml runs GREEN end-to-end on an iOS sim build that includes 990abbd (age-gate → onboarding → learn batch → quick-check → home)
+commit: e6dead3 (flow) + e19aff1 (selector fixes, merged 674d6ac)
 ```
-`mobile/.maestro/learn-loop.yaml` written. Taps through age-gate → onboarding → learn batch (repeat:10, guarded on "Got it") → asserts Quick-check header → answers one question → asserts Home. Cannot run green until BUILD-1. No production source touched.
+**First live run 2026-06-10 (merge `674d6ac`):** 5 selector bugs fixed en route; flow reaches the paywall correctly, then **blocked at paywall dismiss** — `PaywallScreen` lacked safe-area insets on notched iPhones ([`memory/2026-06-10_paywall-safe-area-bug.md`](memory/2026-06-10_paywall-safe-area-bug.md)). Fix shipped in `990abbd`; **no green re-run since.** Remaining: build a FRESH local sim build (`990abbd` added `react-native-svg`, a NATIVE module — a stale dev build carries neither the fix's Icon system nor new native code), run `maestro test mobile/.maestro/learn-loop.yaml`, and fix any selector drift from `daff1c3`'s paywall reorder (bundle listed first, header copy now "Unlock LexiTap"). YAML-only fixes; real app bugs get reported with full output, never patched from the e2e harness.
 
 ### CONTENT-1 · content-tool synthesis + validator remainder ✅ done
 ```
@@ -196,7 +198,7 @@ depends_on: [BETA-1]   parallel_safe: true   paths: []
 blocked_by: testers; D7 data takes 7 days from first session
 verify: 50 testers enrolled; D7 retention measurable (gate: D7 > 30%)
 ```
-BETA-1 ✅ — TestFlight build is live. Share the TestFlight link. Target: r/TOEFL, r/IELTS, r/languagelearning, ESL Facebook groups, cram-school contacts. See `plans/P2_RECRUITMENT_CHECKLIST.md`. D7 gate: wait 7 days after first tester session before reading retention data.
+**Recruitment kit ready (`a28572b`): [`plans/BETA2_RECRUITMENT_KIT.md`](plans/BETA2_RECRUITMENT_KIT.md)** — subreddit self-promo rules verified per target, ready-to-post copy (r/TOEFL, r/IELTS, r/EnglishLearning, r/languagelearning, ESL Facebook), TestFlight invite blurb, tester onboarding message, D7 tracking checklist. **Remaining = Ryan posts + enrolls 50 testers.** Background detail: `plans/P2_RECRUITMENT_CHECKLIST.md`. D7 gate: wait 7 days after first tester session before reading retention data.
 
 ---
 
@@ -216,9 +218,9 @@ id: IAP-1   phase: 3   status: ready   owner: ryan
 depends_on: [RC-1]   parallel_safe: false   paths: [mobile/src/infrastructure/iap/, mobile/src/presentation/screens/SettingsScreen.tsx]
 blocked_by: on-device sandbox purchase verify (build 4 needed — RC-1 now done, code complete)
 verify: purchase → entitlement unlocks pack; Settings "Restore purchases" works; alias visible in RC dashboard after sign-in; npm run check green
-commit: 10af213 (+ contract fixes c188bb9)
+commit: 10af213 (+ contract fixes c188bb9; SKU/paywall alignment to ASC 3-product model daff1c3 — 522 tests green)
 ```
-**All code shipped 2026-06-10** (paywall purchase flow + entitlement gating were already done in R4–R6): `IapPort.logIn/logOut` (boolean, never-throw, cache-invalidating), container `syncIapIdentity` (dedup commits only on success; cold-start stale-alias revert), Settings "Restore purchases" row (always visible per 3.1.1; failure ≠ "no purchases" — null contract; screen-reader announced). Legacy duplicate `IapService.ts` deleted. **Remaining = RC-1's dashboard work + EAS secrets (`EXPO_PUBLIC_REVENUECAT_API_KEY_IOS`), then a sandbox purchase/restore/sign-in pass on device.**
+**All code shipped 2026-06-10** (paywall purchase flow + entitlement gating were already done in R4–R6; **2026-06-10 PM: SKUs + paywall realigned to the 3 actual ASC products** — foundation $9.99 / bundle $24.99 / upgrade $19.99, bundle shown first, `daff1c3`): `IapPort.logIn/logOut` (boolean, never-throw, cache-invalidating), container `syncIapIdentity` (dedup commits only on success; cold-start stale-alias revert), Settings "Restore purchases" row (always visible per 3.1.1; failure ≠ "no purchases" — null contract; screen-reader announced). Legacy duplicate `IapService.ts` deleted. **Remaining = RC-1's dashboard work + EAS secrets (`EXPO_PUBLIC_REVENUECAT_API_KEY_IOS`), then a sandbox purchase/restore/sign-in pass on device.**
 
 ### AUTH-1 · Native Google Sign-In + Sign in with Apple (Guideline 4.8) — **code ✅ + dashboards ✅; build 3 in flight**
 ```
@@ -317,4 +319,4 @@ ASO, Reddit presence, monthly content drops (GRE wk22, GMAT wk26, Idioms wk30, P
 
 ---
 
-*Maintained by `/orchestrate`. Last sync: 2026-06-10 evening (STORE-2 done — domain live; AUTH-1 dashboards done + build 3 in flight; +SUPA-1 after the Supabase auto-pause incident). Source of task-level truth for dependencies remains [`plans/RELEASE_PLAN.md`](plans/RELEASE_PLAN.md); this file is the runnable projection of it.*
+*Maintained by `/orchestrate`. Last sync: 2026-06-11 (parallel batch reconciled — AUTH-2/RC-2 code, BETA-2 kit, Dependabot 0 alerts, SKU alignment; E2E-1 reopened for the green re-run). Source of task-level truth for dependencies remains [`plans/RELEASE_PLAN.md`](plans/RELEASE_PLAN.md); this file is the runnable projection of it.*

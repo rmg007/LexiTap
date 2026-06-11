@@ -2,7 +2,7 @@
 title: Product Roadmap
 category: product
 status: active
-updated: 2026-06-09
+updated: 2026-06-11
 priority: P0
 tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 ---
@@ -11,7 +11,9 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 > **⚠️ SOURCE OF TRUTH:** [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md) is the current, task-level execution plan (updated 2026-05-31). This file mirrors the phase structure and status for quick reference; **consult RELEASE_PLAN.md for actual dependencies, current blockers, and revised task list** (e.g., auth in P3 not P5, content as the long pole, Phase 2 requires analytics instrumentation, per-table sync deleted). Updates below reconcile this file with the audit.
 
-## 🟢 Active Front (2026-06-10)
+## 🟢 Active Front (2026-06-11)
+
+**2026-06-11 ✅ — RC-1 done + five-chat parallel batch merged:** RevenueCat fully configured (entitlements `foundation_access` + `all_packs`, 3 products matching ASC SKUs, Offering `default` Current) → **IAP-1 ready** (on-device sandbox verify on build 4 is all that remains). **AUTH-2 + RC-2 code + secrets ✅** — delete-account now revokes Apple tokens (App Review 5.1.1(v)) and deletes the RevenueCat customer; 15 Deno tests, deployed; live verify folds into the AUTH-1 device pass. **BETA-2 recruitment kit ready** ([plans/BETA2_RECRUITMENT_KIT.md](../../plans/BETA2_RECRUITMENT_KIT.md)). **Dependabot: 0 open alerts** (post-SDK-56 re-triage; uuid override). **TestFlight tester feedback fixed** (paywall safe-area, full DOB picker, Lucide Icon system — emoji hard-blocked in app UI) + **SKUs/paywall aligned to the ASC 3-product model** (app version 0.0.1, matching the ASC registration). **E2E-1 reopened:** first live Maestro run blocked at the now-fixed paywall safe-area bug — the green re-run is the one agent-runnable frontier task.
 
 **BETA-1 ✅ DONE:** Build `9bf46ff6` (Expo SDK 56 / RN 0.85 / React 19) distributed to internal testers on TestFlight. Phase 2 beta is live.
 
@@ -21,16 +23,17 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 **2026-06-10 ✅ — Content pipeline rebuilt (JSONL + OpenAI), Phases 1–4 code-complete** (`6cda5f1`, 289 tests): single `words_master.jsonl` source of truth; `categorize` (CEFR + specialty tiers/word) + `enrich-master` (felt senses + 5 click/drag questions/word) on `OPENAI_API_KEY`. **Bulk seeding run HELD** — per-word sync calls don't scale to 2,848 words (~$7–30/pass); needs a Batch-API strategy. Replaces the legacy Anthropic `enrich-senses` path; folds in CONTENT-3's tier cross-reference.
 
-**Shipped since 2026-05-31:** BUILD-1 ✅ (device), SDK-56 ✅ (iOS 26 mandate), Figma 100% finalized, Rich Word-Detail model (CONTENT-1 ✅), Learn-loop wired, E2E-1, LEGAL-2, STORE-3, RTL-1, LEGAL-3, STORE-1 — all ✅.
+**Shipped since 2026-05-31:** BUILD-1 ✅ (device), SDK-56 ✅ (iOS 26 mandate), Figma 100% finalized, Rich Word-Detail model (CONTENT-1 ✅), Learn-loop wired, LEGAL-2, STORE-3, RTL-1, LEGAL-3, STORE-1 — all ✅. (E2E-1 reopened 2026-06-11 — see above.)
 
-**▶ Next, in order (all Ryan-owned; exact steps in [ORCHESTRATION.md](../../ORCHESTRATION.md)):**
-1. **AUTH-1 tail:** when build 3 clears Apple processing, verify Apple + Google sign-in + magic link on device (`mobile/AUTH_INTEGRATION.md`).
-2. **Recruit 50 beta testers (BETA-2).** TestFlight link is live — share in r/TOEFL, r/IELTS, r/languagelearning, ESL groups. D7 gate: 7 days from first session.
-3. **RC-1 — RevenueCat + App Store Connect products.** IAP-1 code is COMPLETE — after RC-1 it's config + one sandbox device test.
+**▶ Next, in order (Ryan-owned except item 6; exact steps in [ORCHESTRATION.md](../../ORCHESTRATION.md)):**
+1. **AUTH-1 tail:** when build 3 clears Apple processing, verify Apple + Google sign-in + magic link on device (`mobile/AUTH_INTEGRATION.md`). While there: delete a test account → confirm the RevenueCat customer is gone (closes the AUTH-2/RC-2 live verify).
+2. **IAP-1 sandbox verify (build 4 needed).** RC-1 ✅ — trigger EAS build 4, then: sandbox purchase → entitlement unlocks pack; "Restore purchases" works; alias visible in the RC dashboard.
+3. **Recruit 50 beta testers (BETA-2).** Everything pre-written in [plans/BETA2_RECRUITMENT_KIT.md](../../plans/BETA2_RECRUITMENT_KIT.md) — post + enroll. D7 gate: 7 days from first session.
 4. **CONTENT-2 — pick a seeding strategy, then run.** JSONL + OpenAI pipeline (`categorize` + `enrich-master`) is done + tested + resume-safe; bulk run HELD (per-word sync calls don't scale, ~$7–30/pass over 2,848 words) — decide Batch-API vs frequency-waves first. Runbook: `content-tool/PHASE3_4_RUNBOOK.md`.
 5. **SUPA-1 — Supabase Pro plan** (~$25/mo): free tier auto-paused the backend once already; required before submission.
+6. **E2E-1 green re-run (agent):** Maestro learn-loop on a fresh sim build including `990abbd`.
 
-**Tracked, lower priority:** Pre-submission blockers AUTH-2 (Apple token revocation on deletion, App Review 5.1.1(v)) + RC-2 (RevenueCat customer deletion) — await Ryan-owned secrets. ~11 Dependabot alerts (transitive Expo tooling, accepted until SDK bump). Sentry auth token needed as EAS secret before production builds.
+**Tracked, lower priority:** AUTH-2 + RC-2 code + secrets ✅ done — live verify folds into the AUTH-1 device pass. Dependabot: ✅ 0 open alerts (post-SDK-56 re-triage). Sentry auth token needed as EAS secret before production builds.
 
 The detailed product roadmap: 6 phases across 21 weeks, two parallel build tracks, deliverables and gates per phase, and the post-launch content-drop cadence. This doc expands the at-a-glance tracker [../../ROADMAP.md](../../ROADMAP.md). Feature detail is in [FEATURE_BACKLOG.md](./FEATURE_BACKLOG.md); requirements in [PRODUCT_REQUIREMENTS_DOCUMENT.md](./PRODUCT_REQUIREMENTS_DOCUMENT.md).
 
@@ -40,7 +43,7 @@ The detailed product roadmap: 6 phases across 21 weeks, two parallel build track
 |------|-------|
 | Phase | **1 → 2/3 — Build gate cleared; entering Beta + Phase 3 setup** (see [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md)) |
 | Code written | Track A CLI exists; content is Foundation ~2,848/3,000 sourced (2,881 words / 2,894 memberships across 9 tiers; TOEFL + exam tiers still stubs). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB) + rich word-detail read layer + multi-sense UI (459 tests). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. Learn loop wired end-to-end (card → quick-check → SRS) as of 2026-06-09. |
-| Last updated | 2026-06-10 (BUILD-1 cleared; see Active Front above) |
+| Last updated | 2026-06-11 (RC-1 done + parallel batch reconciled; see Active Front above) |
 
 ## Table of Contents
 

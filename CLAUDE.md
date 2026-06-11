@@ -201,7 +201,7 @@ These rules + automations exist so work doesn't vanish between sessions. **All t
 - **JS/TypeScript-only fixes, UI changes, logic:** Ship via EAS Update immediately (same day).
 - **Native changes, new permissions, build config, version bumps:** Store release required (5–6 weeks lead time for app store review).
 
-**Versioning:** match `mobile/app.config.ts` `version` (currently `0.1.0`).
+**Versioning:** match `mobile/app.config.ts` `version` (currently `0.0.1` — set 2026-06-10 to match the App Store Connect registration, `44ac50e`).
 
 ---
 

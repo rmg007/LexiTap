@@ -12,27 +12,29 @@ status: active
 
 ---
 
-## 🟢 Active Front (2026-06-10)
+## 🟢 Active Front (2026-06-11)
 
 **Shipped since 2026-05-31 (verified, committed):**
+- **2026-06-11 ✅ — RC-1 done + five-chat parallel batch merged:** RevenueCat fully configured (entitlements `foundation_access` + `all_packs`, 3 products matching ASC SKUs, Offering `default` Current) → **IAP-1 ready** (sandbox verify on build 4). **AUTH-2 + RC-2 code + secrets ✅** (Apple token revocation + RevenueCat customer deletion in delete-account, 15 Deno tests, deployed — live verify folds into the AUTH-1 device pass). **BETA-2 recruitment kit** ready ([plans/BETA2_RECRUITMENT_KIT.md](plans/BETA2_RECRUITMENT_KIT.md)). **Dependabot: 0 open alerts** (post-SDK-56 re-triage). **TestFlight tester feedback fixed** (paywall safe-area, full DOB picker, Lucide Icon system — emoji now hard-blocked in app UI) + **SKUs/paywall aligned to the ASC 3-product model** (`daff1c3`, app version 0.0.1). **E2E-1 reopened:** first live Maestro run blocked at the (now-fixed) paywall safe-area bug — green re-run is the one agent-runnable frontier task.
 - **2026-06-10 ✅ — Content pipeline rebuilt (JSONL + OpenAI), Phases 1–4 code-complete** (`6cda5f1`, 289 content-tool tests): single `words_master.jsonl` source of truth; `categorize` (CEFR + specialty tiers per word) + `enrich-master` (felt senses + 5 click/drag questions per word) on `OPENAI_API_KEY`. **Bulk seeding run HELD** — per-word sync calls don't scale to 2,848 words (~$7–30/pass); needs a Batch-API strategy first. Replaces the legacy Anthropic `enrich-senses` path + folds in CONTENT-3's tier cross-reference.
 - **2026-06-10 evening ✅:** **STORE-2 DONE** — lexitap.app live (DNS + Email Routing; `/privacy` + `/delete-account` verified on the apex). **AUTH-1 dashboards done** (Supabase Apple/Google providers, Google iOS client ID, EAS env — API-verified) + **EAS build 3 (`728f9d28`) built + submitted to App Store Connect**. ⚠️ **Supabase project had AUTO-PAUSED** (free tier, idle since June 1) — backend DNS was dead under TestFlight build 2 for ~2 days; restored intact → new blocker **SUPA-1** (Pro plan before submission).
 - **2026-06-10 PM frontier batch ✅** (`da530c7`…`cde165d`, CI green): **AUTH-1 code half** (native Sign in with Apple + Google → Supabase, 520 tests), **IAP-1 code tail** (RevenueCat↔Supabase alias + Settings "Restore purchases"), **CONTENT-2 driver** (`enrich-senses` — the paid run is now one command), **STORE-2 agent half** (site was NOT live: redirect loop + stale deploy + no DNS — fixed, deployed, verified; `/delete-account` page added). 30-agent adversarial review: 24 confirmed findings, all fixed same-day. **CI revived** (dead since SDK-56: TS2882 on clean checkouts).
 - **BETA-1 ✅ DONE** — build `9bf46ff6` (SDK 56 / RN 0.85) distributed to internal testers on TestFlight.
 - **Expo SDK 52 → 56 ✅** (`556606c`) — forced by Apple iOS-26-SDK mandate. RN 0.85 / React 19 / expo-doctor 21/21.
-- **BUILD-1 ✅** — app confirmed on physical device. **LEGAL-2, STORE-3, RTL-1, LEGAL-3, STORE-1, CONTENT-1, E2E-1** all ✅.
+- **BUILD-1 ✅** — app confirmed on physical device. **LEGAL-2, STORE-3, RTL-1, LEGAL-3, STORE-1, CONTENT-1** all ✅. (E2E-1 reopened 2026-06-11 — see above.)
 
 **▶ Next, in order (all Ryan-owned, exact steps in [ORCHESTRATION.md](ORCHESTRATION.md)):**
 1. **AUTH-1 tail:** when build 3 clears Apple processing, verify Apple + Google sign-in + magic link on device (`mobile/AUTH_INTEGRATION.md`). While there: delete a test account → confirm RC customer removed in dashboard (closes AUTH-2 live verify).
 2. **IAP-1 sandbox verify (build 4 needed).** RC-1 ✅ done — trigger EAS build 4, then: sandbox purchase → entitlement unlocks pack; "Restore purchases" works; user alias visible in RC dashboard.
-3. **Recruit 50 beta testers (BETA-2).** Share TestFlight link — r/TOEFL, r/IELTS, r/languagelearning, ESL groups. D7 gate: 7 days from first session.
+3. **Recruit 50 beta testers (BETA-2).** Everything is pre-written in [plans/BETA2_RECRUITMENT_KIT.md](plans/BETA2_RECRUITMENT_KIT.md) (posts per subreddit with self-promo rules verified, invite blurb, tester onboarding message, D7 tracking checklist) — post + enroll. D7 gate: 7 days from first session.
 4. **CONTENT-2 — pick a seeding strategy, then run.** Pipeline rebuilt on JSONL + OpenAI (`categorize` + `enrich-master`); commands are done + tested + resume-safe. Bulk run is HELD because per-word sync calls don't scale (~$7–30/pass over 2,848 words) — decide Batch-API vs frequency-waves first. Runbook: `content-tool/PHASE3_4_RUNBOOK.md`.
 5. **SUPA-1 — Supabase Pro plan** (~$25/mo): free tier auto-paused the backend once already; must be on Pro before App Store submission.
 
 **Tracked, lower priority:**
 - **RC-1 ✅ 2026-06-11** — RevenueCat configured: entitlements `foundation_access` + `all_packs`, 3 products matching ASC SKUs, Offering `default` set as Current. IAP-1 now `ready`. RC-2 code + secret done ✅.
 - **AUTH-2** code + Apple secrets complete ✅ — live verify folds into AUTH-1 device pass.
-- **Dependabot:** ~11 remaining alerts — transitive Expo-build-tooling (tar×6, xmldom×4, uuid), accepted until next SDK bump.
+- **Dependabot: ✅ 0 open alerts** (2026-06-10 re-triage post SDK-56 — the upgrade itself cleared tar×6/xmldom×4; uuid fixed via `overrides`, `133e5db`). The old "accepted until SDK bump" carve-out is closed.
+- **E2E-1 (agent, ready):** Maestro learn-loop green re-run on a fresh sim build including `990abbd` — see [ORCHESTRATION.md](ORCHESTRATION.md).
 - **Sentry auth token:** add as EAS secret (`eas secret:create --scope project --name SENTRY_AUTH_TOKEN`) before beta/prod builds — preview currently skips source-map upload.
 
 **21 weeks from validation to 1,000 active users.**
@@ -50,7 +52,7 @@ This root file is the at-a-glance mirror. The canonical product roadmap is [lexi
 | Code written | Domain logic done + tested (SRS, scheduling, mastery, quiz session, DB, 2 widgets). **Fixed 2026-05-30:** words.db delivery (was loading empty on device), `tiers.ts` monetization model, broken Jest harness. Per-table sync was deleted. Auth is a **Phase 3** dependency (not 5). Content: Foundation ~2,848/3,000 sourced (2,881 words / 2,894 memberships across 9 tiers); TOEFL + exam tiers still stubs — see [memory note](memory/2026-05-31_content_count_regression.md). Learn loop wired end-to-end (card → quick-check → SRS) as of 2026-06-09. |
 | Stack | React Native (Expo) + TypeScript + SQLite + Supabase |
 | Target | Global ESL learners (cram schools & test prep individuals) |
-| Last updated | 2026-06-10 (BUILD-1 cleared; see Active Front above) |
+| Last updated | 2026-06-11 (RC-1 done + parallel batch reconciled; see Active Front above) |
 
 ---
 

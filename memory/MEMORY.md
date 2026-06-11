@@ -102,7 +102,7 @@ EAS preview build succeeded after two fixes: (1) `SENTRY_AUTH_TOKEN` missing →
 
 ## 🛡️ Session: Dependabot triage — 16 alerts, 5 patched incl. critical, 11 expo-pinned ACCEPTED (2026-06-09)
 
-**[Dependabot Triage (2026-06-09_dependabot_triage.md)](2026-06-09_dependabot_triage.md)** — commit `93d7500`, both checks GREEN. ✅ Patched: vitest 2.1.9→3.2.6 in content-tool (clears CRITICAL GHSA-5xrq-8626-4rwp + vite + esbuild, all dev-scope); postcss→8.5.15 via mobile root `overrides` (`@expo/metro-config` pins ~8.4.32). ⚠️ **Remaining 11 (tar ×6, xmldom ×4, uuid) = expo@52-pinned CLI/prebuild tooling, never in app bundle — ACCEPTED until next Expo SDK bump. Do NOT re-investigate; only fix is expo@56 (forbidden major).** Gotcha: plain `npm audit fix` on the Expo tree made it WORSE (nested duplicate expo@56, 20→22 vulns) — reverted lockfile + `npm ci`; targeted bumps/overrides only.
+**[Dependabot Triage (2026-06-09_dependabot_triage.md)](2026-06-09_dependabot_triage.md)** — commit `93d7500`, both checks GREEN. ✅ Patched: vitest 2.1.9→3.2.6 in content-tool (clears CRITICAL GHSA-5xrq-8626-4rwp + vite + esbuild, all dev-scope); postcss→8.5.15 via mobile root `overrides` (`@expo/metro-config` pins ~8.4.32). ~~Remaining 11 ACCEPTED until next Expo SDK bump~~ → **✅ RESOLVED 2026-06-10 (re-triage post SDK-56, see note tail):** tar ×6 + xmldom ×4 cleared by the SDK-56 upgrade itself; uuid fixed via `overrides` (`133e5db`, xcode pkg only calls `uuid.v4()` — source-verified safe). **0 open alerts**; `npm ls` clean both projects. Standing gotcha: plain `npm audit fix` on the Expo tree made it WORSE (nested duplicate expo, 20→22 vulns) — targeted bumps/overrides only.
 
 ## ✅ Session: Learn-loop wiring EXECUTED — P0 closed (2026-06-09)
 
