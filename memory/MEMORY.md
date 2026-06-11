@@ -4,6 +4,10 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 🛡️ Session: GitHub workflow hardening — 21 confirmed findings, every recurring mess class now defended (2026-06-11)
+
+**[Full note](2026-06-11_github-workflow-hardening.md)** — 28-agent audit of "our work with github is super messy". **Server-side:** ruleset `protect-main` (force-push + deletion blocked, NO PR requirement) + secret scanning/push protection enabled (were OFF on a public repo full of live keys). **Repo:** Stop hook was BROKEN since creation (tested dirty tree, not unpushed commits) — fixed; session-context.sh now reports worktree/branch/stash litter + CI red/dead detection; guardrails +6 destructive-git blocks with a CI-enforced 30-case self-test (hook fails open — self-test is what makes that safe); `supabase-ci.yml` (Deno tests had ZERO CI) + `infra.yml` new; broken never-run `deploy.yml` deleted; /orchestrate sync gained step 8 (litter reaper) + fresh-verify rule for external claims; `eas.json requireCommit`. **Verified NOT bugs:** hotmail git email (linked to rmg007 — don't "fix"). ⚠️ Ryan: validity-checks click, Builder.io webhook, stash@{0} + `feat/au1-bk1-consumer-wave` triage.
+
 ## 📲 Session: TestFlight feedback fixes + RN Icon system + emoji HARD RULE (2026-06-10)
 
 **[Full triage note](testflight-feedback/2026-06-10_build-feedback.md)** — commits `990abbd` (fixes) + `07e5c65` (emoji guardrail), pushed to main. 54 suites / 520 tests green.

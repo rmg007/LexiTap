@@ -1,0 +1,59 @@
+# Infra checks: the enforcement layer must itself be checked.
+# Added 2026-06-11: guardrails.mjs fails OPEN by design (any internal error →
+# allow), so a syntax error would silently disable ALL tool-boundary enforcement
+# (secrets, broad-add, force-push, emoji, SQL-interpolation blocks) with no
+# signal. website/ also shipped broken once (e5f0e3e redirect loop) with no CI.
+name: Infra checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.claude/**'
+      - 'scripts/**'
+      - 'website/**'
+      - 'package.json'
+      - '.github/workflows/infra.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.claude/**'
+      - 'scripts/**'
+      - 'website/**'
+      - 'package.json'
+      - '.github/workflows/infra.yml'
+  workflow_dispatch:
+
+jobs:
+  infra:
+    name: Hooks + website static checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+
+      - name: Hook + statusline syntax
+        run: |
+          node --check .claude/hooks/guardrails.mjs
+          node --check .claude/hooks/guardrails-selftest.mjs
+          bash -n .claude/hooks/session-context.sh
+          bash -n .claude/statusline.sh
+
+      # Asserts every guardrail rule blocks (exit 2) and legit near-misses pass
+      # (exit 0) — a broken fail-open hook can never again die silently.
+      - name: Guardrails self-test
+        run: node .claude/hooks/guardrails-selftest.mjs
+
+      # Cloudflare Pages pretty-URLs 308 /x.html → /x, so a _redirects alias
+      # targeting a .html path creates an infinite 301↔308 loop (the exact bug
+      # that made /privacy + /terms unreachable until e5f0e3e).
+      - name: Website _redirects — no .html alias targets
+        run: |
+          f=website/public/_redirects
+          if [ -f "$f" ] && grep -vE '^\s*(#|$)' "$f" | awk '{print $2}' | grep -qE '\.html$'; then
+            echo "::error::_redirects targets a .html path — Pages pretty-URLs will redirect-loop. Target extensionless paths."
+            exit 1
+          fi
+          echo "_redirects clean"

@@ -1,0 +1,35 @@
+# Deno tests for Supabase Edge Functions.
+# Separate workflow (not a ci.yml job) because paths filters are workflow-level:
+# folding supabase/** into ci.yml would run the heavy mobile+content-tool jobs
+# on every supabase-only commit.
+# Added 2026-06-11: delete-account (AUTH-2 Apple revoke + RC-2 RevenueCat deletion,
+# GDPR / App Review 5.1.1(v)) had 15 Deno tests that NO CI ever ran — commit
+# 9963f33 (+779 lines of deletion code) landed on main with zero checks.
+name: Supabase CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/**'
+      - '.github/workflows/supabase-ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'supabase/**'
+      - '.github/workflows/supabase-ci.yml'
+  workflow_dispatch:
+
+jobs:
+  deno-tests:
+    name: Edge Functions — Deno tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      # Exact invocation from supabase/functions/delete-account/README.md
+      # (tests stub fetch/env, so --allow-env suffices).
+      - name: delete-account tests
+        run: deno test --allow-env --node-modules-dir=auto supabase/functions/delete-account/index.test.ts

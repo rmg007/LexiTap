@@ -54,6 +54,25 @@ function checkBash(cmd) {
   if (/git\s+commit\s+(-[a-z]*a[a-z]*\b|--all\b)/.test(cmd)) {
     block('`git commit -a` is forbidden — it stages everything. Use `git add <paths>` then `git commit`.');
   }
+  // Destructive git ops (2026-06-11 GitHub-workflow hardening). The server-side
+  // ruleset `protect-main` is the real gate for main; these give fast local
+  // feedback and also cover non-main refs. NOTE: whole-command scan — a commit
+  // message quoting these literals must go through `git commit -F <file>`.
+  if (/git\s+push\b[^&|;]*(--force(?!-with-lease|-if-includes)\b|\s-f\b|\s\+\S+)/.test(cmd)) {
+    block('force-push is forbidden — it rewrites shared history (the protect-main ruleset blocks it server-side too). If a branch truly needs it, use --force-with-lease on a NON-main branch with Ryan’s explicit go-ahead.');
+  }
+  if (/git\s+push\b[^&|;]*(--delete\s+main\b|\s:main\b)/.test(cmd)) {
+    block('deleting the main ref is forbidden.');
+  }
+  if (/git\s+branch\s+-[a-zA-Z]*D[a-zA-Z]*\b/.test(cmd)) {
+    block('`git branch -D` force-deletes possibly-unmerged work — use `git branch -d` (refuses unmerged). If -d refuses, the branch may hold real work (or be a squash-merge false negative): check `git log main..<branch>` and ask Ryan.');
+  }
+  if (/git\s+worktree\s+remove\b[^&|;]*(--force\b|\s-f\b)/.test(cmd)) {
+    block('`git worktree remove --force` destroys uncommitted work in the worktree — inspect/commit it first, then remove without --force. A dirty worktree may be an ACTIVE parallel session.');
+  }
+  if (/git\s+stash\s+(clear\b|drop\b)/.test(cmd)) {
+    block('`git stash clear`/`drop` destroys stashed work — inspect with `git stash show -p` first and get Ryan’s confirmation. Better: never leave work in a stash (commit to a branch).');
+  }
   process.exit(0);
 }
 

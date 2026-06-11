@@ -30,7 +30,7 @@
           },
           {
             "type": "command",
-            "command": "bash -c 'git rev-parse --git-dir >/dev/null 2>&1 && git diff --quiet HEAD || echo \"⚠️ Unpushed commits detected. Push before /clear.\"' || true"
+            "command": "bash -c 'git rev-parse --git-dir >/dev/null 2>&1 || exit 0; if git rev-parse --abbrev-ref \"@{u}\" >/dev/null 2>&1; then a=$(git rev-list --count \"@{u}..HEAD\" 2>/dev/null); if [ \"${a:-0}\" != \"0\" ]; then echo \"⚠️ ${a} unpushed commit(s) — push before /clear.\"; fi; else echo \"⚠️ branch has no upstream — git push -u origin HEAD before /clear.\"; fi; if [ -n \"$(git status --porcelain 2>/dev/null)\" ]; then echo \"⚠️ uncommitted changes in working tree — commit before /clear (repo is memory).\"; fi; exit 0'"
           },
           {
             "type": "command",
@@ -67,7 +67,7 @@
       "Bash(git remote:*)",
       "Bash(git fetch:*)",
       "Bash(git stash list)",
-      "Bash(git stash:*)",
+      "Bash(git stash show:*)",
       "Bash(git checkout:*)",
       "Bash(git switch:*)",
       "Bash(git merge:*)",
