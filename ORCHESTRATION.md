@@ -323,4 +323,4 @@ ASO, Reddit presence, monthly content drops (GRE wk22, GMAT wk26, Idioms wk30, P
 
 ---
 
-*Maintained by `/orchestrate`. Last sync: 2026-06-11 (parallel batch reconciled — AUTH-2/RC-2 code, BETA-2 kit, Dependabot 0 alerts, SKU alignment; E2E-1 reopened for the green re-run). Source of task-level truth for dependencies remains [`plans/RELEASE_PLAN.md`](plans/RELEASE_PLAN.md); this file is the runnable projection of it.*
+*Maintained by `/orchestrate`. Last sync: 2026-07-05 (E2E-1 re-confirmed green on fresh Release build; memory note added — stale-binary root cause + local build playbook; worktree litter flagged for Ryan triage). Source of task-level truth for dependencies remains [`plans/RELEASE_PLAN.md`](plans/RELEASE_PLAN.md); this file is the runnable projection of it.*
