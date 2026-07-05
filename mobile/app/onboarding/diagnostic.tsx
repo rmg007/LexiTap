@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { OnboardingAdaptiveDiagnosticScreen } from '@/presentation/screens/onboarding';
-import { listActiveTiers } from '@/config/tiers';
+
 import type { LearningGoal, ProficiencyBand } from '@/domain/index';
 
 // Onboarding step 4: Diagnostic (Word Check).
@@ -9,7 +9,7 @@ import type { LearningGoal, ProficiencyBand } from '@/domain/index';
 // Applies goal → starting band default, then passes as partialProfile
 // so the diagnostic screen merges them into the onboarding profile save.
 
-const DEFAULT_TIER = listActiveTiers()[0]?.id ?? 'foundation';
+const DIAGNOSTIC_TIER = 'diagnostic';
 
 const VALID_GOALS = new Set<string>(['exam', 'general', 'professional', 'academic']);
 
@@ -43,7 +43,7 @@ export default function DiagnosticRoute(): React.JSX.Element {
 
   return (
     <OnboardingAdaptiveDiagnosticScreen
-      tierId={DEFAULT_TIER}
+      tierId={DIAGNOSTIC_TIER}
       onComplete={handleComplete}
       partialProfile={partialProfile}
     />
