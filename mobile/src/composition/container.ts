@@ -52,6 +52,29 @@ import { logger } from '@/lib/logger';
 // of them (the layer-boundary ESLint rules only constrain src/{domain,
 // application,infrastructure,presentation}).
 
+// BK2's network calls (auth.getSession() refresh, backup restore download) have
+// no built-in timeout — fetch() hangs on the OS's TCP timeout (60s+) rather than
+// rejecting, so a bare try/catch around them does not bound worst-case startup
+// time. This app is offline-first (see RootLayout comment); a stalled network
+// on cold start must never block first paint. Races the call against a timer
+// and falls back rather than rejecting, since a timeout here is expected
+// (poor connectivity), not exceptional.
+function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve(fallback), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      () => {
+        clearTimeout(timer);
+        resolve(fallback);
+      },
+    );
+  });
+}
+
 function buildReadQueries(
   db: DatabaseHandle,
   words: SQLiteWordRepository,
@@ -185,14 +208,18 @@ export async function createContainer(): Promise<Container> {
   // user.db (fresh install / re-install after device wipe), attempt to restore
   // their backup so migrations run on the recovered schema, not an empty one.
   try {
-    const authSession = await auth.getSession();
+    const authSession = await withTimeout(auth.getSession(), 5000, null);
     if (authSession) {
       const fileInfo = await FileSystem.getInfoAsync(userDbFileUri());
       // Only restore when the local file is missing or effectively empty (<= 512 B).
       // A present, non-trivial file means the device is authoritative — skip.
       const localExists = fileInfo.exists && fileInfo.size > 512;
       if (!localExists) {
-        const result = await backupService.restore(authSession.user.id);
+        const result = await withTimeout(
+          backupService.restore(authSession.user.id),
+          10000,
+          { ok: false, reason: 'offline' } as const,
+        );
         if (result.ok) {
           logger.info('BK2: restored user.db from remote backup');
         } else if (result.reason !== 'no_backup' && result.reason !== 'not_configured') {
