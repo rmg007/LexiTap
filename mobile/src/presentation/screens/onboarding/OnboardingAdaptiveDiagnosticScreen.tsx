@@ -133,7 +133,9 @@ export function OnboardingAdaptiveDiagnosticScreen({
       return;
     }
     m.usedWordIds.add(word.id);
-    setPhase({ kind: 'ask', item: { kind: 'word', word } });
+    // Real words go straight to the meaning quiz — no self-report step.
+    questionKey.current += 1;
+    setPhase({ kind: 'confirm', word });
   }, [finish]);
 
   const load = useCallback(async () => {
@@ -166,7 +168,8 @@ export function OnboardingAdaptiveDiagnosticScreen({
     void load();
   }, [load]);
 
-  // "Do you know this word?" — Yes/No on the current item.
+  // "Do you know this word?" — Yes/No for pseudo-words only (real words go
+  // straight to the meaning quiz in advance()).
   const handleClaim = useCallback(
     (claimed: boolean) => {
       const m = machine.current;
@@ -187,12 +190,24 @@ export function OnboardingAdaptiveDiagnosticScreen({
         advance();
         return;
       }
-      // Claimed Yes → require a meaning check before crediting it.
       questionKey.current += 1;
       setPhase({ kind: 'confirm', word: item.word });
     },
     [phase, advance],
   );
+
+  // "I don't know this word" — skip button on the meaning-quiz phase.
+  const handleSkip = useCallback(() => {
+    const m = machine.current;
+    if (m === null || phase.kind !== 'confirm') return;
+    m.state = processAnswer(m.state, {
+      kind: 'word',
+      word: phase.word,
+      claimed: false,
+      confirmed: false,
+    });
+    advance();
+  }, [phase, advance]);
 
   // Meaning-check result → confirmed/not, then advance the walk.
   const handleConfirm = useCallback(
@@ -244,7 +259,7 @@ export function OnboardingAdaptiveDiagnosticScreen({
       <Screen>
         <View style={{ gap: spacing.s2 }}>
           <Text variant="title" color="textPrimary" accessibilityRole="header">
-            Which meaning?
+            Do you know this word?
           </Text>
           <ProgressBar progress={progress} label="Diagnostic progress" />
         </View>
@@ -256,12 +271,18 @@ export function OnboardingAdaptiveDiagnosticScreen({
           correctValue={question.correctValue}
           onAnswer={(a) => handleConfirm(a, question.correctValue)}
         />
+        <Button
+          label="I don't know this word"
+          variant="secondary"
+          fullWidth
+          onPress={handleSkip}
+        />
       </Screen>
     );
   }
 
-  // phase.kind === 'ask' — the displayed term is the same shape for words and
-  // pseudo-words (no visual flag), so over-claiming on a non-word is detectable.
+  // phase.kind === 'ask' — only reached for pseudo-words (real words go straight
+  // to 'confirm'). Visually identical to a real word so over-claiming is detectable.
   const term = phase.item.kind === 'word' ? phase.item.word.word : phase.item.pseudo.word;
 
   return (
