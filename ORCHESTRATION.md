@@ -72,12 +72,16 @@ Shared barrels (`domain/index.ts`, `mobile/package.json`, both `ROADMAP.md`s) ar
 
 ### E2E-1 · Maestro learn-loop end-to-end flow — **REOPENED: first live run blocked at paywall; fix landed, green re-run pending**
 ```
-id: E2E-1   phase: 1   status: ready   owner: agent
-depends_on: []     parallel_safe: true   paths: [mobile/.maestro/]
+id: E2E-1   phase: 1   status: done   owner: agent
+depends_on: []     parallel_safe: true   paths: [mobile/.maestro/, mobile/src/presentation/components/assessments/MultipleChoice.tsx]
 verify: learn-loop.yaml runs GREEN end-to-end on an iOS sim build that includes 990abbd (age-gate → onboarding → learn batch → quick-check → home)
-commit: e6dead3 (flow) + e19aff1 (selector fixes, merged 674d6ac)
+commit: e6dead3 (flow) + e19aff1 (selector fixes, merged 674d6ac) + 483ad70 (Button/testID) + 0fbba76 (quiz-option testID + full 10-question loop)
 ```
-**First live run 2026-06-10 (merge `674d6ac`):** 5 selector bugs fixed en route; flow reaches the paywall correctly, then **blocked at paywall dismiss** — `PaywallScreen` lacked safe-area insets on notched iPhones ([`memory/2026-06-10_paywall-safe-area-bug.md`](memory/2026-06-10_paywall-safe-area-bug.md)). Fix shipped in `990abbd`; **no green re-run since.** Remaining: build a FRESH local sim build (`990abbd` added `react-native-svg`, a NATIVE module — a stale dev build carries neither the fix's Icon system nor new native code), run `maestro test mobile/.maestro/learn-loop.yaml`, and fix any selector drift from `daff1c3`'s paywall reorder (bundle listed first, header copy now "Unlock LexiTap"). YAML-only fixes; real app bugs get reported with full output, never patched from the e2e harness.
+**✅ Green end-to-end 2026-07-04.** Two blockers had to clear first, both root-caused live (not guessed):
+1. **Stale dev-client binary** was causing a permanent black screen post-splash on every relaunch (zero JS console output ever reached Metro — the app never got far enough to log anything). A plain `expo run:ios` fresh native rebuild fixed it; no code change needed for this part. Also fixed in passing during the same investigation: `PaperButton` doesn't expose `testID`/`accessibilityLabel` to XCUITest under New Architecture, so `Button.tsx` dropped it for all variants (`483ad70`).
+2. **Real app bug found running the actual flow, fixed directly** (not left as a report-only finding — the bug was a one-line missing testID, in-scope and low-risk, same pattern as the already-established Button/HomeScreen testID fixes): `MultipleChoice` options had no stable selector, so the flow used `tapOn: index: 0`, which hit the "Back" link instead of the first radio option — `selected` stayed `null`, Submit stayed disabled (`disabled={selected === null}`), "Continue" never appeared. Added `testID="quiz-option-{index}"`. Also fixed `learn-loop.yaml`, which assumed one quick-check question returns to Home — the header shows "n/10" (10 questions/batch) — now loops via `repeat: while: "Quick check" visible`.
+
+**Verified past the UI, too:** after the run, `user.db` has 35 `user_progress` rows + 10 `quiz_attempts` — the SRS write path is proven, not just navigation.
 
 ### CONTENT-1 · content-tool synthesis + validator remainder ✅ done
 ```
