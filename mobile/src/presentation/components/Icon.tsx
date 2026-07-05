@@ -33,7 +33,8 @@ export type IconName =
   | 'minus'
   | 'volume-2'
   | 'bar-chart-2'
-  | 'settings';
+  | 'settings'
+  | 'chevron-right';
 
 const GLYPHS: Record<IconName, Primitive[]> = {
   'book-open': [
@@ -114,6 +115,7 @@ const GLYPHS: Record<IconName, Primitive[]> = {
     },
     { t: 'circle', cx: 12, cy: 12, r: 3 },
   ],
+  'chevron-right': [{ t: 'path', d: 'm9 18 6-6-6-6' }],
 };
 
 export interface IconProps {

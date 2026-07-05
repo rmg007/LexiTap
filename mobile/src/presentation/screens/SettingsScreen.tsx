@@ -1,18 +1,27 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo, ActivityIndicator, Alert, Modal, Pressable, Share, View, type ViewStyle, Switch, Linking } from 'react-native';
+import {
+  AccessibilityInfo,
+  ActivityIndicator,
+  Alert,
+  Modal,
+  Pressable,
+  Share,
+  StyleSheet,
+  View,
+  type ViewStyle,
+  Switch,
+  Linking,
+} from 'react-native';
 import { router } from 'expo-router';
 import Constants from 'expo-constants';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme, useThemePreference, type ThemePreference } from '@/presentation/theme';
-import { Text, Card } from '@/presentation/components';
+import { Text, Card, Icon } from '@/presentation/components';
+import type { ColorTokens } from '@/presentation/theme/tokens';
 import { APP_ID } from '@/config/app';
 import { useServices, type ContentDbHealth } from '@/presentation/services';
 import { useAuth } from '@/presentation/auth';
 import { getAnalyticsOptOut, setAnalyticsOptOut } from '@/infrastructure/analytics/AnalyticsOptOutStore';
-
-// Settings: theme override (system / dark / light), analytics opt-out toggle, and
-// app metadata. Destructive actions (reset progress, etc.) live behind a confirm sheet
-// and are out of MVP scope here.
 
 const THEME_OPTIONS: ReadonlyArray<{ value: ThemePreference; label: string }> = [
   { value: 'system', label: 'System' },
@@ -21,6 +30,104 @@ const THEME_OPTIONS: ReadonlyArray<{ value: ThemePreference; label: string }> = 
 ];
 
 const DELETE_COUNTDOWN_SECS = 30;
+
+// ─── Internal layout primitives ───────────────────────────────────────────────
+
+function SectionHeader({ children }: { readonly children: string }): React.JSX.Element {
+  const { spacing } = useTheme();
+  return (
+    <View style={{ paddingHorizontal: spacing.s4, paddingTop: spacing.s4, paddingBottom: spacing.s2 }}>
+      <Text variant="headline" color="textPrimary">
+        {children}
+      </Text>
+    </View>
+  );
+}
+
+function RowDivider(): React.JSX.Element {
+  const { colors } = useTheme();
+  return (
+    <View
+      style={{
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: colors.borderSubtle,
+        marginLeft: 16,
+      }}
+    />
+  );
+}
+
+interface SettingsRowProps {
+  label: string;
+  subtitle?: string;
+  onPress?: () => void;
+  disabled?: boolean;
+  labelColor?: keyof ColorTokens;
+  accessibilityRole?: 'button' | 'link';
+  right?: React.ReactNode;
+  showChevron?: boolean;
+}
+
+function SettingsRow({
+  label,
+  subtitle,
+  onPress,
+  disabled = false,
+  labelColor = 'textPrimary',
+  accessibilityRole = 'button',
+  right,
+  showChevron = true,
+}: SettingsRowProps): React.JSX.Element {
+  const { spacing } = useTheme();
+
+  const rowContent = (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: spacing.s3,
+        paddingHorizontal: spacing.s4,
+        minHeight: 50,
+      }}
+    >
+      <View style={{ flex: 1, marginRight: spacing.s2 }}>
+        <Text variant="body" color={labelColor}>
+          {label}
+        </Text>
+        {subtitle !== undefined && (
+          <Text variant="caption" color="textTertiary" style={{ marginTop: 2 }}>
+            {subtitle}
+          </Text>
+        )}
+      </View>
+      {right !== undefined
+        ? right
+        : showChevron && onPress !== undefined
+          ? <Icon name="chevron-right" size={18} color="textTertiary" />
+          : null}
+    </View>
+  );
+
+  if (onPress === undefined) return rowContent;
+
+  return (
+    <Pressable
+      accessibilityRole={accessibilityRole}
+      accessibilityLabel={label}
+      accessibilityState={{ disabled }}
+      onPress={onPress}
+      disabled={disabled}
+      style={({ pressed }: { pressed: boolean }): ViewStyle => ({
+        opacity: pressed || disabled ? 0.55 : 1,
+      })}
+    >
+      {rowContent}
+    </Pressable>
+  );
+}
+
+// ─── Screen ───────────────────────────────────────────────────────────────────
 
 export function SettingsScreen(): React.JSX.Element {
   const { colors, radii, spacing } = useTheme();
@@ -32,19 +139,16 @@ export function SettingsScreen(): React.JSX.Element {
   const [hoverState, setHoverState] = useState<ThemePreference | null>(null);
   const [analyticsOptOut, setAnalyticsOptOutLocal] = useState(false);
 
-  // Delete-account modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteCountdown, setDeleteCountdown] = useState(DELETE_COUNTDOWN_SECS);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Restore-from-backup modal state
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [restoreResult, setRestoreResult] = useState<'ok' | 'no_backup' | 'error' | null>(null);
 
-  // Restore-purchases (IAP) state: idle | busy | error | restored count.
   const [purchasesRestore, setPurchasesRestore] = useState<'idle' | 'busy' | 'error' | number>(
     'idle',
   );
@@ -88,19 +192,13 @@ export function SettingsScreen(): React.JSX.Element {
     setRestoring(false);
   };
 
-  // Screen readers don't re-read text that appears inside an already-focused
-  // labeled Pressable — announce the restore outcome explicitly.
   const announceRestoreOutcome = (message: string) => {
     AccessibilityInfo.announceForAccessibility(message);
   };
 
-  // App Store guideline 3.1.1: a restore mechanism must be reachable for
-  // non-consumables — always visible, sign-in not required (store-side identity).
   const handleRestorePurchases = async () => {
     setPurchasesRestore('busy');
     void services.analytics.track('restore_purchases_initiated');
-    // IapPort contract: null = restore FAILED (unconfigured SDK / network),
-    // [] = succeeded and the user owns nothing. Never throws.
     const results = await services.iap.restorePurchases();
     if (results === null) {
       setPurchasesRestore('error');
@@ -122,7 +220,6 @@ export function SettingsScreen(): React.JSX.Element {
     setDeleteError(null);
     try {
       const result = await services.auth.deleteAccount();
-      // not_configured means no real backend — still wipe local data.
       if (!result.ok && result.error.kind !== 'not_configured') {
         setDeleteError(result.error.message);
         setDeleting(false);
@@ -145,116 +242,102 @@ export function SettingsScreen(): React.JSX.Element {
     }
   };
 
+  const versionLine = (() => {
+    const version = Constants.expoConfig?.version ?? '—';
+    const build = Constants.nativeBuildVersion ?? '—';
+    const rawDate = Constants.expoConfig?.extra?.buildDate as string | undefined;
+    const date = rawDate
+      ? new Date(rawDate).toLocaleDateString(undefined, {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        })
+      : null;
+    return [APP_ID, `v${version}`, `build ${build}`, date].filter(Boolean).join(' · ');
+  })();
+
   return (
     <Screen>
       <Text variant="title" color="textPrimary" accessibilityRole="header">
         Settings
       </Text>
 
-      <Card>
-        <View style={{ gap: spacing.s3 }}>
-          <Text variant="headline" color="textPrimary">
-            Account
-          </Text>
-          {session !== null ? (
-            <View style={{ gap: spacing.s2 }}>
-              <Text variant="body" color="textSecondary">
-                {session.user.email ?? 'Signed in'}
-              </Text>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Restore progress from backup"
-                onPress={() => { setRestoreResult(null); setShowRestoreModal(true); }}
-                style={{ paddingVertical: spacing.s2, paddingHorizontal: spacing.s1, borderRadius: 8 }}
-              >
-                <Text variant="body" color="accent">
-                  Restore from backup
-                </Text>
-              </Pressable>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Sign out"
-                onPress={() => signOut()}
-                style={{ paddingVertical: spacing.s2, paddingHorizontal: spacing.s1, borderRadius: 8 }}
-              >
-                <Text variant="body" color="accent">
-                  Sign out
-                </Text>
-              </Pressable>
-            </View>
-          ) : (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Sign in to sync your progress"
-              onPress={() => router.push('/auth/sign-in')}
-              style={{ paddingVertical: spacing.s2, paddingHorizontal: spacing.s1, borderRadius: 8 }}
-            >
-              <Text variant="body" color="accent">
-                Sign in
-              </Text>
-              <Text variant="caption" color="textTertiary" style={{ marginTop: spacing.s1 }}>
-                Sync and back up your learning progress
-              </Text>
-            </Pressable>
-          )}
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Restore purchases"
-            accessibilityState={{ disabled: purchasesRestore === 'busy' }}
-            onPress={handleRestorePurchases}
-            disabled={purchasesRestore === 'busy'}
-            style={{ paddingVertical: spacing.s2, paddingHorizontal: spacing.s1, borderRadius: 8 }}
-          >
-            <Text variant="body" color="accent">
-              Restore purchases
-            </Text>
-            {purchasesRestore === 'busy' ? (
-              <ActivityIndicator
-                size="small"
-                color={colors.accent}
-                style={{ alignSelf: 'flex-start', marginTop: spacing.s1 }}
-              />
-            ) : null}
-          </Pressable>
-          {/* Result lives OUTSIDE the labeled Pressable (it would be flattened
-              into the button's label and never announced) + a live region for
-              Android; iOS gets the explicit announceForAccessibility call. */}
-          {typeof purchasesRestore === 'number' ? (
+      {/* ── Account ── */}
+      <Card style={{ padding: 0 }}>
+        <SectionHeader>Account</SectionHeader>
+        <RowDivider />
+        {session !== null ? (
+          <>
+            <SettingsRow
+              label={session.user.email ?? 'Signed in'}
+              subtitle="Your account"
+              showChevron={false}
+            />
+            <RowDivider />
+            <SettingsRow
+              label="Restore from backup"
+              onPress={() => { setRestoreResult(null); setShowRestoreModal(true); }}
+            />
+            <RowDivider />
+            <SettingsRow
+              label="Sign out"
+              onPress={() => signOut()}
+            />
+          </>
+        ) : (
+          <SettingsRow
+            label="Sign in"
+            subtitle="Sync and back up your learning progress"
+            onPress={() => router.push('/auth/sign-in')}
+          />
+        )}
+        <RowDivider />
+        <SettingsRow
+          label="Restore purchases"
+          onPress={purchasesRestore !== 'busy' ? handleRestorePurchases : undefined}
+          disabled={purchasesRestore === 'busy'}
+          right={
+            purchasesRestore === 'busy'
+              ? <ActivityIndicator size="small" color={colors.accent} />
+              : undefined
+          }
+          showChevron={purchasesRestore !== 'busy'}
+        />
+        {typeof purchasesRestore === 'number' || purchasesRestore === 'error' ? (
+          <View style={{ paddingHorizontal: spacing.s4, paddingBottom: spacing.s3 }}>
             <Text
               variant="caption"
-              color={purchasesRestore > 0 ? 'success' : 'textSecondary'}
+              color={
+                purchasesRestore === 'error'
+                  ? 'destructive'
+                  : (purchasesRestore as number) > 0
+                    ? 'success'
+                    : 'textSecondary'
+              }
               accessibilityLiveRegion="polite"
-              style={{ paddingHorizontal: spacing.s1 }}
             >
-              {purchasesRestore > 0
-                ? `Restored ${purchasesRestore} purchase${purchasesRestore === 1 ? '' : 's'}.`
-                : 'No previous purchases found.'}
+              {purchasesRestore === 'error'
+                ? 'Could not restore purchases. Please try again.'
+                : (purchasesRestore as number) > 0
+                  ? `Restored ${purchasesRestore as number} purchase${(purchasesRestore as number) === 1 ? '' : 's'}.`
+                  : 'No previous purchases found.'}
             </Text>
-          ) : purchasesRestore === 'error' ? (
-            <Text
-              variant="caption"
-              color="destructive"
-              accessibilityLiveRegion="polite"
-              style={{ paddingHorizontal: spacing.s1 }}
-            >
-              Could not restore purchases. Please try again.
-            </Text>
-          ) : null}
-        </View>
+          </View>
+        ) : null}
       </Card>
 
-      <Card>
-        <View style={{ gap: spacing.s3 }}>
-          <Text variant="headline" color="textPrimary">
-            Appearance
-          </Text>
+      {/* ── Appearance ── */}
+      <Card style={{ padding: 0 }}>
+        <SectionHeader>Appearance</SectionHeader>
+        <RowDivider />
+        <View style={{ padding: spacing.s4 }}>
           <View style={{ flexDirection: 'row', gap: spacing.s2 }}>
             {THEME_OPTIONS.map((option) => {
               const selected = preference === option.value;
               const isHovered = hoverState === option.value;
               const chip: ViewStyle = {
                 flex: 1,
-                minHeight: 48,
+                minHeight: 44,
                 borderRadius: radii.full,
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -263,9 +346,7 @@ export function SettingsScreen(): React.JSX.Element {
                   ? isHovered
                     ? colors.accentPressed
                     : colors.accentSubtle
-                  : isHovered
-                    ? colors.bgSurfaceRaised
-                    : colors.bgSurfaceRaised,
+                  : colors.bgSurfaceRaised,
                 borderWidth: 1,
                 borderColor: selected ? colors.accent : colors.borderSubtle,
               };
@@ -290,20 +371,15 @@ export function SettingsScreen(): React.JSX.Element {
         </View>
       </Card>
 
-      <Card>
-        <View style={{ gap: spacing.s3 }}>
-          <Text variant="headline" color="textPrimary">
-            Privacy
-          </Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <View style={{ flex: 1, marginRight: spacing.s2 }}>
-              <Text variant="label" color="textPrimary">
-                Disable Analytics
-              </Text>
-              <Text variant="caption" color="textTertiary" style={{ marginTop: spacing.s1 }}>
-                Help improve LexiTap (usage only, no personal data)
-              </Text>
-            </View>
+      {/* ── Privacy ── */}
+      <Card style={{ padding: 0 }}>
+        <SectionHeader>Privacy</SectionHeader>
+        <RowDivider />
+        <SettingsRow
+          label="Disable Analytics"
+          subtitle="Usage only, no personal data"
+          showChevron={false}
+          right={
             <Switch
               value={analyticsOptOut}
               onValueChange={handleAnalyticsToggle}
@@ -314,100 +390,52 @@ export function SettingsScreen(): React.JSX.Element {
               accessibilityHint="Toggle to stop sending usage data"
               accessible
             />
-          </View>
-        </View>
+          }
+        />
       </Card>
 
-      <Card>
-        <View style={{ gap: spacing.s3 }}>
-          <Text variant="headline" color="textPrimary">
-            Legal
-          </Text>
-          <Pressable
-            accessibilityRole="link"
-            accessibilityLabel="Privacy policy"
-            onPress={() => Linking.openURL('https://lexitap.app/privacy')}
-            style={{
-              paddingVertical: spacing.s2,
-              paddingHorizontal: spacing.s1,
-              borderRadius: 8,
-            }}
-          >
-            <Text variant="body" color="accent" style={{ textDecorationLine: 'underline' }}>
-              Privacy Policy
-            </Text>
-          </Pressable>
-          <Pressable
-            accessibilityRole="link"
-            accessibilityLabel="Terms of service"
-            onPress={() => Linking.openURL('https://lexitap.app/terms')}
-            style={{
-              paddingVertical: spacing.s2,
-              paddingHorizontal: spacing.s1,
-              borderRadius: 8,
-            }}
-          >
-            <Text variant="body" color="accent" style={{ textDecorationLine: 'underline' }}>
-              Terms of Service
-            </Text>
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Export my data"
-            onPress={handleExportData}
-            style={{
-              paddingVertical: spacing.s2,
-              paddingHorizontal: spacing.s1,
-              borderRadius: 8,
-            }}
-          >
-            <Text variant="body" color="accent">
-              Export my data
-            </Text>
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Delete account"
-            onPress={() => setShowDeleteModal(true)}
-            style={{
-              paddingVertical: spacing.s2,
-              paddingHorizontal: spacing.s1,
-              borderRadius: 8,
-            }}
-          >
-            <Text variant="body" color="destructive" style={{ textDecorationLine: 'underline' }}>
-              Delete Account
-            </Text>
-          </Pressable>
-        </View>
+      {/* ── Legal ── */}
+      <Card style={{ padding: 0 }}>
+        <SectionHeader>Legal</SectionHeader>
+        <RowDivider />
+        <SettingsRow
+          label="Privacy Policy"
+          accessibilityRole="link"
+          onPress={() => Linking.openURL('https://lexitap.app/privacy')}
+        />
+        <RowDivider />
+        <SettingsRow
+          label="Terms of Service"
+          accessibilityRole="link"
+          onPress={() => Linking.openURL('https://lexitap.app/terms')}
+        />
+        <RowDivider />
+        <SettingsRow
+          label="Export my data"
+          onPress={handleExportData}
+        />
+        <RowDivider />
+        <SettingsRow
+          label="Delete Account"
+          labelColor="destructive"
+          showChevron={false}
+          onPress={() => setShowDeleteModal(true)}
+        />
       </Card>
 
-      <Text variant="caption" color="textTertiary">
-        {(() => {
-          const version = Constants.expoConfig?.version ?? '—';
-          const build = Constants.nativeBuildVersion ?? '—';
-          const rawDate = Constants.expoConfig?.extra?.buildDate as string | undefined;
-          const date = rawDate
-            ? new Date(rawDate).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
-            : null;
-          return [APP_ID, `v${version}`, `build ${build}`, date].filter(Boolean).join(' · ');
-        })()}
-      </Text>
+      {/* ── Footer ── */}
+      <View style={{ gap: spacing.s1, paddingBottom: spacing.s2 }}>
+        <Text variant="caption" color="textTertiary">
+          {versionLine}
+        </Text>
+        {dbHealth !== null && (
+          <Text variant="caption" color="textTertiary">
+            {`Content DB · ${dbHealth.wordCount} words · Schema v${dbHealth.dbVersion}`}
+          </Text>
+        )}
+      </View>
 
-      {dbHealth !== null && (
-        <View style={{ gap: spacing.s1 }}>
-          <Text variant="caption" color="textTertiary">
-            Content DB
-          </Text>
-          <Text variant="caption" color="textTertiary">
-            {`Foundation tier · ${dbHealth.wordCount} words`}
-          </Text>
-          <Text variant="caption" color="textTertiary">
-            {`Schema v${dbHealth.dbVersion}`}
-          </Text>
-        </View>
-      )}
-
+      {/* ── Delete Account Modal ── */}
       <Modal
         visible={showDeleteModal}
         transparent
@@ -438,7 +466,8 @@ export function SettingsScreen(): React.JSX.Element {
               Delete Account
             </Text>
             <Text variant="body" color="textPrimary">
-              This will permanently delete your account and all learning progress. This cannot be undone.
+              This will permanently delete your account and all learning progress. This cannot be
+              undone.
             </Text>
 
             {deleteCountdown > 0 ? (
@@ -483,7 +512,9 @@ export function SettingsScreen(): React.JSX.Element {
                   opacity: deleting ? 0.5 : 1,
                 }}
               >
-                <Text variant="label" color="textPrimary">Cancel</Text>
+                <Text variant="label" color="textPrimary">
+                  Cancel
+                </Text>
               </Pressable>
 
               <Pressable
@@ -500,17 +531,15 @@ export function SettingsScreen(): React.JSX.Element {
                   borderRadius: radii.md,
                   backgroundColor: colors.bgSurfaceRaised,
                   borderWidth: 1,
-                  borderColor: deleteCountdown > 0 || deleting ? colors.borderSubtle : colors.destructive,
+                  borderColor:
+                    deleteCountdown > 0 || deleting ? colors.borderSubtle : colors.destructive,
                   opacity: deleteCountdown > 0 ? 0.4 : 1,
                 }}
               >
                 {deleting ? (
                   <ActivityIndicator size="small" color={colors.destructive} />
                 ) : (
-                  <Text
-                    variant="label"
-                    color={deleteCountdown > 0 ? 'textTertiary' : 'destructive'}
-                  >
+                  <Text variant="label" color={deleteCountdown > 0 ? 'textTertiary' : 'destructive'}>
                     Delete Account
                   </Text>
                 )}
@@ -520,6 +549,7 @@ export function SettingsScreen(): React.JSX.Element {
         </View>
       </Modal>
 
+      {/* ── Restore from Backup Modal ── */}
       <Modal
         visible={showRestoreModal}
         transparent
@@ -552,7 +582,8 @@ export function SettingsScreen(): React.JSX.Element {
 
             {restoreResult === null ? (
               <Text variant="body" color="textPrimary">
-                This replaces your local progress with your cloud backup the next time you open the app. Continue?
+                This replaces your local progress with your cloud backup the next time you open the
+                app. Continue?
               </Text>
             ) : restoreResult === 'ok' ? (
               <Text variant="body" color="success">
