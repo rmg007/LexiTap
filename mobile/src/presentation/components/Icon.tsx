@@ -1,5 +1,5 @@
 import React from 'react';
-import Svg, { Path, Rect } from 'react-native-svg';
+import Svg, { Path, Rect, Circle } from 'react-native-svg';
 import { useTheme } from '@/presentation/theme';
 import type { ColorTokens } from '@/presentation/theme/tokens';
 
@@ -8,7 +8,7 @@ import type { ColorTokens } from '@/presentation/theme/tokens';
 // matches the Figma design system 1:1 (Lucide, 24×24, stroke 2, round cap/join).
 //
 // Path data is the authentic Lucide source (lucide-static). To add a glyph: copy
-// the <path>/<rect> primitives from the real SVG into GLYPHS — never hand-draw.
+// the <path>/<rect>/<circle> primitives from the real SVG into GLYPHS — never hand-draw.
 //
 // Replaces the emoji that were previously used as icons (book / briefcase /
 // graduation-cap / pencil / library / close, etc.) — emoji render inconsistently
@@ -17,7 +17,8 @@ import type { ColorTokens } from '@/presentation/theme/tokens';
 
 type Primitive =
   | { t: 'path'; d: string }
-  | { t: 'rect'; w: number; h: number; x: number; y: number; rx: number };
+  | { t: 'rect'; w: number; h: number; x: number; y: number; rx: number }
+  | { t: 'circle'; cx: number; cy: number; r: number };
 
 export type IconName =
   | 'book-open'
@@ -30,7 +31,9 @@ export type IconName =
   | 'snowflake'
   | 'check'
   | 'minus'
-  | 'volume-2';
+  | 'volume-2'
+  | 'bar-chart-2'
+  | 'settings';
 
 const GLYPHS: Record<IconName, Primitive[]> = {
   'book-open': [
@@ -99,6 +102,18 @@ const GLYPHS: Record<IconName, Primitive[]> = {
     { t: 'path', d: 'M16 9a5 5 0 0 1 0 6' },
     { t: 'path', d: 'M19.364 18.364a9 9 0 0 0 0-12.728' },
   ],
+  'bar-chart-2': [
+    { t: 'path', d: 'M18 20V10' },
+    { t: 'path', d: 'M12 20V4' },
+    { t: 'path', d: 'M6 20V14' },
+  ],
+  settings: [
+    {
+      t: 'path',
+      d: 'M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z',
+    },
+    { t: 'circle', cx: 12, cy: 12, r: 3 },
+  ],
 };
 
 export interface IconProps {
@@ -143,6 +158,8 @@ export function Icon({
       {GLYPHS[name].map((p, i) =>
         p.t === 'path' ? (
           <Path key={i} d={p.d} {...common} />
+        ) : p.t === 'circle' ? (
+          <Circle key={i} cx={p.cx} cy={p.cy} r={p.r} {...common} />
         ) : (
           <Rect key={i} x={p.x} y={p.y} width={p.w} height={p.h} rx={p.rx} {...common} />
         ),

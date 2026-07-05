@@ -1,11 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { useTheme } from '@/presentation/theme';
-
-// Core loop tab bar: 2 tabs — Study Session (primary engine) and Settings
-// (global controls). Active tab uses accent, inactive uses textTertiary.
-// Icons come from a line family (Lucide) at integration; labels are always
-// present so meaning is never icon-only.
+import { Icon } from '@/presentation/components';
 
 export default function TabsLayout(): React.JSX.Element {
   const { colors } = useTheme();
@@ -21,9 +17,33 @@ export default function TabsLayout(): React.JSX.Element {
         },
       }}
     >
-      <Tabs.Screen name="study-session" options={{ title: 'Study' }} />
-      <Tabs.Screen name="progress" options={{ title: 'Progress' }} />
-      <Tabs.Screen name="settings" options={{ title: 'Settings' }} />
+      <Tabs.Screen
+        name="study-session"
+        options={{
+          title: 'Study',
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="book-open" size={size} colorValue={color as string} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="progress"
+        options={{
+          title: 'Progress',
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="bar-chart-2" size={size} colorValue={color as string} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="settings" size={size} colorValue={color as string} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
