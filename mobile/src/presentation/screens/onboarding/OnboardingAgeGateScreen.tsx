@@ -116,9 +116,8 @@ export function OnboardingAgeGateScreen({ onContinue }: OnboardingAgeGateScreenP
   const handleContinue = useCallback(() => {
     if (isOldEnough) {
       setError('');
-      void AsyncStorage.setItem(AGE_GATE_PASSED_KEY, '1').then(() => {
-        onContinue();
-      });
+      void AsyncStorage.setItem(AGE_GATE_PASSED_KEY, '1'); // fire-and-forget; navigation is not gated on this write
+      onContinue();
     } else {
       // Persist rejection immediately — user must be permanently blocked on re-launch.
       void AsyncStorage.setItem(AGE_GATE_REJECTED_KEY, '1').then(() => {

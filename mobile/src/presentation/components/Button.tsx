@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import { Pressable, type PressableProps } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Button as PaperButton } from 'react-native-paper';
 import { useTheme } from '@/presentation/theme';
 import { useMotion } from '@/presentation/theme/useMotion';
 import { Text } from '@/presentation/components/Text';
@@ -10,14 +9,12 @@ import { Text } from '@/presentation/components/Text';
 // ─── Button ───────────────────────────────────────────────────────────────────
 // Variants:
 //   primary     → teal gradient CTA (64px height). Press: spring to 0.97.
-//                 Disabled: op 0.3.  Uses Pressable + LinearGradient so the
-//                 gradient surface is preserved across all states.
-//   secondary   → Paper outlined button — thin border, transparent bg.
-//   tertiary    → Paper text button — teal label, no chrome.
-//   destructive → Red text button, confirm-modal use only.
+//   secondary   → outlined border, accent text, 48px height.
+//   tertiary    → no chrome, accent text label, 48px height.
+//   destructive → red text, no chrome, confirm-modal use only.
 //
-// WCAG 2.2 AA: minimum 48×48 touch target enforced on primary; Paper handles
-// it internally for secondary/tertiary.
+// ALL variants use Pressable (not PaperButton) so testID/accessibilityLabel
+// propagate correctly through XCUITest on New Architecture.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'destructive';
@@ -114,7 +111,7 @@ export function Button({
   disabled = false,
   ...rest
 }: ButtonProps): React.JSX.Element {
-  const { colors } = useTheme();
+  const { colors, radii } = useTheme();
 
   if (variant === 'primary') {
     return (
@@ -122,23 +119,39 @@ export function Button({
     );
   }
 
-  const mode = variant === 'secondary' ? ('outlined' as const) : ('text' as const);
-  const textColor = variant === 'destructive' ? colors.destructive : undefined;
+  const labelColor =
+    variant === 'destructive' ? colors.destructive : colors.accentText;
+  const isOutlined = variant === 'secondary';
 
   return (
-    <PaperButton
-      mode={mode}
-      onPress={rest.onPress as () => void}
-      disabled={disabled}
-      textColor={textColor}
+    <Pressable
+      accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ disabled }}
-      style={fullWidth ? { alignSelf: 'stretch' } : undefined}
-      contentStyle={{ height: 48 }}
-      labelStyle={{ fontFamily: 'Inter_600SemiBold', fontSize: 15 }}
+      disabled={disabled}
+      style={({ pressed }) => [
+        {
+          height: 48,
+          minWidth: 48,
+          paddingHorizontal: 16,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: radii.sm,
+          opacity: disabled ? 0.3 : pressed ? 0.7 : 1,
+        },
+        isOutlined && { borderWidth: 1, borderColor: colors.accent },
+        fullWidth ? { alignSelf: 'stretch' } : { alignSelf: 'flex-start' },
+      ]}
+      {...rest}
     >
-      {label}
-    </PaperButton>
+      <Text
+        variant="body"
+        style={{ fontFamily: 'Inter_600SemiBold', fontSize: 15, color: labelColor }}
+      >
+        {label}
+      </Text>
+    </Pressable>
   );
 }
 

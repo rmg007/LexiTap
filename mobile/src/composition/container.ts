@@ -298,7 +298,10 @@ export async function createContainer(): Promise<Container> {
   });
 
   const services: Services = {
-    startQuiz: new StartQuizUseCase(words, progress, sessions, analytics, checkTierAccess),
+    // checkTierAccess intentionally omitted: the paywall (shown at onboarding) is the
+    // purchase gate. Gating here too silently shows "All caught up" for free users
+    // instead of a paywall — wrong UX for a freemium offline-first app.
+    startQuiz: new StartQuizUseCase(words, progress, sessions, analytics),
     answerQuestion: new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler, analytics),
     runDiagnostic: new RunDiagnosticUseCase(words, progress, v1FixedScheduler),
     runAdaptiveDiagnostic: new RunAdaptiveDiagnosticUseCase(

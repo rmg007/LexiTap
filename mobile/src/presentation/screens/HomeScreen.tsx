@@ -105,6 +105,7 @@ export function HomeScreen({
         label={`Learn new words (${dailyProgress.newWordsBudget} left today)`}
         variant="secondary"
         fullWidth
+        testID="learn-new-words"
         onPress={onLearnNewWords}
       />
 

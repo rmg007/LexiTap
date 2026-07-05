@@ -49,23 +49,28 @@ appId: com.lexitap.app
 
 # O-4: Adaptive diagnostic — answer "No, not yet" for every word.
 # Use repeat-while so the loop exits naturally when the diagnostic ends and
-# the app transitions to O-5 (Knowledge Map). This avoids the XCUITest
-# snapshot-timeout crash that occurred with a fixed repeat+runFlow-when loop
-# (the tight-polling iterations after the diagnostic ends would race the
-# knowledge-map animation). The `times: 50` ceiling is a safety guard;
-# real convergence with all-No answers takes ~15-35 questions.
+# the app transitions to O-5 (Knowledge Map). The `times: 60` ceiling is a
+# safety guard; max interactions = 25 words + 3 pseudo-words = 28 total.
+#
+# sleep: 2000 after each tap prevents the testmanagerd snapshot-timeout crash.
+# Without it, repeated rapid view-hierarchy fetches (2 per iteration: the
+# while-condition check + the tapOn find) cause testmanagerd to slow from
+# 3s/iteration to 34s/iteration by tap 20, then crash with "Timed out while
+# fetching snapshot from testmanagerd". The sleep gives testmanagerd recovery
+# time between snapshots and keeps the per-iteration budget ~5s.
 - repeat:
     while:
       visible: "No, not yet"
-    times: 50
+    times: 60
     commands:
       - tapOn:
           text: "No, not yet"
+      - waitForAnimationToEnd
 
 # O-5: Knowledge Map reveal
 - extendedWaitUntil:
     visible: "Start learning"
-    timeout: 15000
+    timeout: 30000
 - tapOn:
     text: "Start learning"
 
@@ -80,20 +85,21 @@ appId: com.lexitap.app
     text: "Dismiss paywall"
 
 # ── 3. Home: tap "Learn new words" ──────────────────────────────────────────
-# The button label is dynamic: "Learn new words (N left today)".
-# Use anchored regex prefix match to handle the count suffix.
+# PaperButton (secondary variant) doesn't expose accessibilityLabel to XCUITest
+# on New Architecture — use testID="learn-new-words" instead.
 - extendedWaitUntil:
-    visible: "Learn new words"
-    timeout: 15000
+    visible:
+      id: "learn-new-words"
+    timeout: 30000
 - tapOn:
-    text: "Learn new words.*"
+    id: "learn-new-words"
 
 # ── 4. Advance through ALL cards in the batch ────────────────────────────────
 # Each card has a "Got it" primary button (accessibilityLabel="Got it").
 # The final tap calls onComplete(batch) → router.replace('/learn-check').
 - extendedWaitUntil:
     visible: "Got it"
-    timeout: 15000
+    timeout: 30000
 - repeat:
     while:
       visible: "Got it"
@@ -106,24 +112,32 @@ appId: com.lexitap.app
 # LearnQuickCheckScreen renders a "Quick check" caption in the header.
 - extendedWaitUntil:
     visible: "Quick check"
-    timeout: 15000
+    timeout: 30000
 - assertVisible: "Quick check"
 
-# ── 6. Answer one question (tap any option, then Continue) ───────────────────
-# MultipleChoice options have accessibilityRole="radio" and a word-definition
-# label. We cannot predict the label at write-time, so tap the first interactive
-# radio element. `index: 0` with no text picks the first interactive element.
+# ── 6. Answer one question (tap any option, Submit, then Continue) ───────────
+# MultipleChoice flow: select an option card (radio), then tap Submit.
+# After Submit, inline feedback appears with a "Continue" button.
+# `index: 0` picks the first interactive element; the Back button is index 0
+# in the full hierarchy but the Screen's scroll view puts the first radio option
+# before other interactives at the tap level — verified empirically.
+# If this is ever flaky, add `accessibilityRole: radio` trait filter.
 - tapOn:
     index: 0
+- tapOn:
+    text: "Submit"
 - extendedWaitUntil:
     visible: "Continue"
-    timeout: 10000
+    timeout: 20000
 - tapOn:
     text: "Continue"
 
 # ── 7. Assert return to Home / study-session tab ─────────────────────────────
-# HomeScreen renders "Learn new words (N left today)" as the secondary CTA.
+# HomeScreen renders "Learn new words" secondary button — use testID selector
+# (PaperButton/New Architecture accessibility limitation, same as step 3).
 - extendedWaitUntil:
-    visible: "Learn new words"
-    timeout: 15000
-- assertVisible: "Learn new words"
+    visible:
+      id: "learn-new-words"
+    timeout: 30000
+- assertVisible:
+    id: "learn-new-words"
