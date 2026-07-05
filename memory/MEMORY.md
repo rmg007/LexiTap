@@ -4,6 +4,10 @@ This directory contains session notes, architectural decisions, and lessons lear
 
 ---
 
+## 🎯 Session: Diagnostic UX overhaul + function word purge + curated 49-word pool (2026-07-05)
+
+**[Full note](2026-07-05_diagnostic-ux-function-word-purge-curated-pool.md)** — commits `446d2d7`, `788c73e`, `2b2c660`, `eab6693`. **Goal-selection screen cut** — welcome now goes straight to diagnostic. **Quiz-first diagnostic**: real words skip `ask` phase, go straight to MultipleChoice quiz; "I don't know this word" secondary button is the skip path. Pseudo-words still use `ask` phase (lie-detection preserved). **161 function words purged** from words.db + words_master.jsonl (articles, pronouns, prepositions, conjunctions, modals, auxiliaries, adverbs of degree + misclassified ones tagged as noun/verb); active count 2,881 → 2,720. **Curated 49-word `diagnostic` tier** created — all words have `frequency_rank` set (required by `selectNearestWord`), spanning A1→B1 difficulty. `diagnostic.tsx` wired to use `DIAGNOSTIC_TIER = 'diagnostic'`. ⚠️ **`learn-loop.yaml` needs updating before next E2E run** — test clicks "No, not yet" which no longer exists for real words; must handle quiz-first flow instead.
+
 ## 🔁 Session: E2E-1 re-run confirmed green; stale-binary + local build playbook (2026-07-05)
 
 **[Full note](2026-07-05_e2e1-rerun-binary-staleness.md)** — E2E-1 re-run on a fresh sim after context compaction. Stale binary (June 2026) caused `quiz-option-0` testID not found even though source had the fix. Root cause: prior session's `expo run:ios` binary predated the `0fbba76` testID commit by 23 days. Fix: `SENTRY_DISABLE_AUTO_UPLOAD=true npx expo run:ios --device <UDID> --configuration Release --no-bundler` from `mobile/` (NOT repo root). XCTest driver recovery: uninstall `dev.mobile.maestro-driver-iosUITests.xctrunner` from sim, then Maestro reinstalls fresh. E2E-1 exits 0 on the rebuilt binary. ⚠️ Ryan: `lexitap-e2e` worktree has a stash + 1 unmerged commit (`ab5ce34`); `feat/au1-bk1-consumer-wave` has 2 unmerged LOCAL-ONLY commits — both need triage.

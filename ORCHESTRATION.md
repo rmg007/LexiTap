@@ -66,6 +66,8 @@ Shared barrels (`domain/index.ts`, `mobile/package.json`, both `ROADMAP.md`s) ar
 
 > **2026-06-11 parallel batch reconciled** — all five concurrent chats merged into main: AUTH-2+RC-2 code (`9963f33`), BETA-2 recruitment kit (`a28572b` → [`plans/BETA2_RECRUITMENT_KIT.md`](plans/BETA2_RECRUITMENT_KIT.md)), Dependabot re-triage (**0 open alerts** — SDK-56 cleared tar/xmldom; uuid override `133e5db`), E2E-1 first live Maestro run (`674d6ac` — blocked at the paywall safe-area bug, fixed in `990abbd` → **E2E-1 reopened `ready` for the green re-run**), TestFlight-feedback fixes + ASC 3-product SKU alignment (`990abbd`/`daff1c3`, app version now 0.0.1 matching ASC). **Only agent-runnable frontier task: the E2E-1 green re-run.**
 
+> **2026-07-05 — Diagnostic UX overhaul** (commits `446d2d7`, `788c73e`, `2b2c660`, `eab6693`): goal-selection screen cut (welcome → diagnostic directly); quiz-first flow (real words skip ask phase, go straight to MultipleChoice; "I don't know" secondary button is the skip path; pseudo-word ask phase preserved for lie-detection); 161 function words purged from words.db + words_master.jsonl (active count 2,881 → 2,720); curated 49-word `diagnostic` tier created (all have `frequency_rank`, spans A1→B1). ⚠️ **`learn-loop.yaml` needs updating before next E2E run** — currently clicks "No, not yet" (gone for real words); must handle quiz-first flow.
+
 ---
 
 # Phase 1 — Build (finish the gate)
