@@ -36,7 +36,7 @@ const DELETE_COUNTDOWN_SECS = 30;
 function SectionHeader({ children }: { readonly children: string }): React.JSX.Element {
   const { spacing } = useTheme();
   return (
-    <View style={{ paddingHorizontal: spacing.s4, paddingTop: spacing.s4, paddingBottom: spacing.s2 }}>
+    <View style={{ paddingHorizontal: spacing.s5, paddingTop: spacing.s4, paddingBottom: spacing.s2 }}>
       <Text variant="headline" color="textPrimary">
         {children}
       </Text>
@@ -51,7 +51,7 @@ function RowDivider(): React.JSX.Element {
       style={{
         height: StyleSheet.hairlineWidth,
         backgroundColor: colors.borderSubtle,
-        marginLeft: 16,
+        marginLeft: 20,
       }}
     />
   );
@@ -87,7 +87,7 @@ function SettingsRow({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingVertical: spacing.s3,
-        paddingHorizontal: spacing.s4,
+        paddingHorizontal: spacing.s5,
         minHeight: 50,
       }}
     >
@@ -304,7 +304,7 @@ export function SettingsScreen(): React.JSX.Element {
           showChevron={purchasesRestore !== 'busy'}
         />
         {typeof purchasesRestore === 'number' || purchasesRestore === 'error' ? (
-          <View style={{ paddingHorizontal: spacing.s4, paddingBottom: spacing.s3 }}>
+          <View style={{ paddingHorizontal: spacing.s5, paddingBottom: spacing.s3 }}>
             <Text
               variant="caption"
               color={
@@ -330,7 +330,7 @@ export function SettingsScreen(): React.JSX.Element {
       <Card style={{ padding: 0 }}>
         <SectionHeader>Appearance</SectionHeader>
         <RowDivider />
-        <View style={{ padding: spacing.s4 }}>
+        <View style={{ padding: spacing.s5 }}>
           <View style={{ flexDirection: 'row', gap: spacing.s2 }}>
             {THEME_OPTIONS.map((option) => {
               const selected = preference === option.value;
