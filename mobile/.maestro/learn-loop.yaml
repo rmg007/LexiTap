@@ -115,22 +115,32 @@ appId: com.lexitap.app
     timeout: 30000
 - assertVisible: "Quick check"
 
-# ── 6. Answer one question (tap any option, Submit, then Continue) ───────────
+# ── 6. Answer every quick-check question (tap an option, Submit, Continue) ───
 # MultipleChoice flow: select an option card (radio), then tap Submit.
-# After Submit, inline feedback appears with a "Continue" button.
-# `index: 0` picks the first interactive element; the Back button is index 0
-# in the full hierarchy but the Screen's scroll view puts the first radio option
-# before other interactives at the tap level — verified empirically.
-# If this is ever flaky, add `accessibilityRole: radio` trait filter.
-- tapOn:
-    index: 0
-- tapOn:
-    text: "Submit"
-- extendedWaitUntil:
-    visible: "Continue"
-    timeout: 20000
-- tapOn:
-    text: "Continue"
+# After Submit, inline feedback appears with a "Continue" button, which
+# advances to the next question — or back to Home on the last one. The
+# header shows "n/10", so this must loop, not run once (confirmed live: a
+# single pass left the flow stuck on question 2/10, not Home).
+#
+# `index: 0` was flaky — it hit the "Back" link (also index 0 in the full
+# hierarchy) instead of the first radio option, leaving `selected === null`,
+# which keeps Submit disabled and "Continue" never appears (confirmed live,
+# not a guess). Fixed by giving each option a stable testID instead of
+# relying on tap order.
+- repeat:
+    while:
+      visible: "Quick check"
+    times: 12
+    commands:
+      - tapOn:
+          id: "quiz-option-0"
+      - tapOn:
+          text: "Submit"
+      - extendedWaitUntil:
+          visible: "Continue"
+          timeout: 20000
+      - tapOn:
+          text: "Continue"
 
 # ── 7. Assert return to Home / study-session tab ─────────────────────────────
 # HomeScreen renders "Learn new words" secondary button — use testID selector

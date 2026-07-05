@@ -93,13 +93,14 @@ function iconColor(state: OptionFeedback): keyof ColorTokens {
 // Per-card component so Reanimated hooks are called unconditionally per item.
 interface OptionCardProps {
   option: AssessmentOption;
+  index: number;
   state: OptionFeedback;
   theme: Theme;
   revealed: boolean;
   onSelect: (value: string) => void;
 }
 
-function OptionCard({ option, state, theme, revealed, onSelect }: OptionCardProps): React.JSX.Element {
+function OptionCard({ option, index, state, theme, revealed, onSelect }: OptionCardProps): React.JSX.Element {
   const { spacing } = theme;
   const { spring } = useMotion();
 
@@ -130,6 +131,7 @@ function OptionCard({ option, state, theme, revealed, onSelect }: OptionCardProp
 
   return (
     <Pressable
+      testID={`quiz-option-${index}`}
       accessibilityRole="radio"
       accessibilityLabel={option.label}
       accessibilityHint={revealed ? undefined : 'Double tap to select this answer'}
@@ -202,7 +204,7 @@ export function MultipleChoice({
       </View>
 
       <View style={{ gap: spacing.s3 }}>
-        {options.map((option) => {
+        {options.map((option, index) => {
           const state = optionFeedback({
             optionValue: option.value,
             selectedValue: selected,
@@ -213,6 +215,7 @@ export function MultipleChoice({
             <OptionCard
               key={option.id}
               option={option}
+              index={index}
               state={state}
               theme={theme}
               revealed={revealed}
