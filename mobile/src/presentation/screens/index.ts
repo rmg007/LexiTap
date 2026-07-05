@@ -18,3 +18,5 @@ export {
   LearnQuickCheckScreen,
   type LearnQuickCheckScreenProps,
 } from '@/presentation/screens/LearnQuickCheckScreen';
+export { ExitSessionSheet, type ExitSessionSheetProps } from '@/presentation/screens/ExitSessionSheet';
+export { SavedWordsScreen, type SavedWordsScreenProps } from '@/presentation/screens/SavedWordsScreen';

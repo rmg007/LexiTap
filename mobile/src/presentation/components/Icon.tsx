@@ -34,7 +34,10 @@ export type IconName =
   | 'volume-2'
   | 'bar-chart-2'
   | 'settings'
-  | 'chevron-right';
+  | 'chevron-right'
+  | 'bookmark'
+  | 'bookmark-check'
+  | 'chevrons-up';
 
 const GLYPHS: Record<IconName, Primitive[]> = {
   'book-open': [
@@ -116,6 +119,23 @@ const GLYPHS: Record<IconName, Primitive[]> = {
     { t: 'circle', cx: 12, cy: 12, r: 3 },
   ],
   'chevron-right': [{ t: 'path', d: 'm9 18 6-6-6-6' }],
+  bookmark: [
+    {
+      t: 'path',
+      d: 'M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z',
+    },
+  ],
+  'bookmark-check': [
+    {
+      t: 'path',
+      d: 'M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z',
+    },
+    { t: 'path', d: 'm9 10 2 2 4-4' },
+  ],
+  'chevrons-up': [
+    { t: 'path', d: 'm17 11-5-5-5 5' },
+    { t: 'path', d: 'm17 18-5-5-5 5' },
+  ],
 };
 
 export interface IconProps {

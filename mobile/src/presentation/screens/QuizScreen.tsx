@@ -54,6 +54,7 @@ type Phase =
       correctValue: string;
       gloss: string;
       assessmentType: AssessmentType;
+      ease?: 'easy'; // set when the learner taps "Too easy" (correct answers only)
     }
   | {
       kind: 'complete';
@@ -79,6 +80,9 @@ export function QuizScreen({ tierId, mode, onExit, onTierLocked }: QuizScreenPro
   const forgivenessShownThisSession = useRef(false);
   const answersThisSession = useRef(0);
   const [forgivenessStreak, setForgivenessStreak] = useState(0);
+
+  // Whether the word currently in feedback is saved (drives the Save toggle).
+  const [feedbackSaved, setFeedbackSaved] = useState(false);
 
   const start = useCallback(async () => {
     try {
@@ -132,6 +136,10 @@ export function QuizScreen({ tierId, mode, onExit, onTierLocked }: QuizScreenPro
       const isCorrect = answer.value === correctValue;
       if (isCorrect) hapticsCorrect();
 
+      // Hydrate the Save toggle for this word (fail-soft; default not-saved).
+      setFeedbackSaved(false);
+      void services.queries.isWordSaved(word.id).then(setFeedbackSaved).catch(() => undefined);
+
       setPhase({
         kind: 'feedback',
         session: phase.session,
@@ -144,8 +152,26 @@ export function QuizScreen({ tierId, mode, onExit, onTierLocked }: QuizScreenPro
         assessmentType: answer.assessmentType,
       });
     },
-    [phase],
+    [phase, services],
   );
+
+  // "Too easy" — flip local state; the accelerated SRS write happens on Continue.
+  const handleMarkEasy = useCallback(() => {
+    setPhase((p) => (p.kind === 'feedback' && p.wasCorrect ? { ...p, ease: 'easy' } : p));
+  }, []);
+
+  // Save toggle in feedback — optimistic, fail-soft, never blocks Continue.
+  const handleToggleSave = useCallback(() => {
+    if (phase.kind !== 'feedback') return;
+    const word = currentWord(phase.session);
+    if (word === null) return;
+    const next = !feedbackSaved;
+    setFeedbackSaved(next);
+    void (next
+      ? services.queries.saveWord(word.id, 'quiz')
+      : services.queries.unsaveWord(word.id)
+    ).catch(() => setFeedbackSaved(!next));
+  }, [phase, feedbackSaved, services]);
 
   // Step 2: user taps Continue in FeedbackLayer → write SRS, advance.
   const handleContinue = useCallback(async () => {
@@ -162,6 +188,7 @@ export function QuizScreen({ tierId, mode, onExit, onTierLocked }: QuizScreenPro
         correctAnswer: phase.correctValue,
         isCorrect: phase.wasCorrect,
         nowMs: Date.now(),
+        ease: phase.ease,
       });
       void services.analytics.track('quiz_submitted', {
         tier_id: tierId,
@@ -340,6 +367,11 @@ export function QuizScreen({ tierId, mode, onExit, onTierLocked }: QuizScreenPro
           correctValue={phase.correctValue}
           gloss={phase.gloss}
           onContinue={() => void handleContinue()}
+          wordLabel={word.word}
+          isSaved={feedbackSaved}
+          onToggleSave={handleToggleSave}
+          onMarkEasy={phase.wasCorrect ? handleMarkEasy : undefined}
+          easeSelected={phase.ease === 'easy'}
         />
       )}
 

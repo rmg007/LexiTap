@@ -10,6 +10,7 @@ import {
   initialStreakState,
   asTierId,
   type UserStats,
+  type ActiveSession,
 } from '@/domain/index';
 import { listActiveTiers } from '@/config/tiers';
 
@@ -22,6 +23,9 @@ export interface HomeScreenProps {
   greetingName?: string;
   onStartReview: () => void;
   onLearnNewWords: () => void;
+  // Resume an in-flight learn session (SESSION_RESUME_PLAN). Called with the
+  // snapshot so the route can navigate by stage. Absent = no resume affordance.
+  onResume?: (session: ActiveSession) => void;
 }
 
 // The MVP active tier is the first free tier in config (no app/variant branch).
@@ -31,10 +35,12 @@ export function HomeScreen({
   greetingName,
   onStartReview,
   onLearnNewWords,
+  onResume,
 }: HomeScreenProps): React.JSX.Element {
   const { spacing } = useTheme();
   const { queries } = useServices();
   const [stats, setStats] = useState<UserStats | null>(null);
+  const [activeSession, setActiveSession] = useState<ActiveSession | null>(null);
   const [dailyProgress, setDailyProgress] = useState<DailyProgressMetrics>({
     reviewsCompletedToday: 0,
     effectiveDailyCap: 40,
@@ -48,6 +54,12 @@ export function HomeScreen({
     } catch {
       // Offline-first: never block Home on a read failure.
       setStats(null);
+    }
+
+    try {
+      setActiveSession(await queries.getActiveSession());
+    } catch {
+      setActiveSession(null);
     }
 
     try {
@@ -83,6 +95,28 @@ export function HomeScreen({
         </Text>
         <StreakBadge streak={streak} atRisk={atRisk} />
       </View>
+
+      {onResume !== undefined && activeSession !== null && activeSession.batch.length > 0 && (
+        <Card>
+          <View style={{ gap: spacing.s4 }}>
+            <View style={{ gap: spacing.s1 }}>
+              <Text variant="headline" color="textPrimary">
+                Resume learning
+              </Text>
+              <Text variant="caption" color="textTertiary" tabularNums>
+                {`Pick up where you left off · ${Math.min(activeSession.index + 1, activeSession.batch.length)}/${activeSession.batch.length}`}
+              </Text>
+            </View>
+            <Button
+              label="Resume"
+              variant="primary"
+              fullWidth
+              testID="resume-session"
+              onPress={() => onResume(activeSession)}
+            />
+          </View>
+        </Card>
+      )}
 
       <Card>
         <View style={{ gap: spacing.s4 }}>

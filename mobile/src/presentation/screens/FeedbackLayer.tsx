@@ -46,6 +46,18 @@ export interface FeedbackLayerProps {
   /** Short word definition — drives teaching copy in correction state. */
   gloss: string;
   onContinue: () => void;
+  // ── Optional secondary controls (WORD_FEEDBACK_PLAN). All optional so existing
+  //    callers/tests are unaffected. Continue always stays the only primary. ──
+  /** The word being answered — labels the Save/Easy controls for a11y. */
+  wordLabel?: string;
+  /** Whether the current word is already saved (drives the Save toggle). */
+  isSaved?: boolean;
+  /** Provide to render a "Save this word" toggle beside Continue (both states). */
+  onToggleSave?: () => void;
+  /** Provide to render a "Too easy — skip ahead" control (CORRECT state only). */
+  onMarkEasy?: () => void;
+  /** Whether "too easy" was already tapped this reveal (disables the control). */
+  easeSelected?: boolean;
 }
 
 // ─── Answer row ───────────────────────────────────────────────────────────────
@@ -97,9 +109,44 @@ export function FeedbackLayer({
   correctValue,
   gloss,
   onContinue,
+  wordLabel,
+  isSaved,
+  onToggleSave,
+  onMarkEasy,
+  easeSelected,
 }: FeedbackLayerProps): React.JSX.Element {
   const { colors, spacing, radii, motion } = useTheme();
   const reduceMotion = useReducedMotion();
+
+  // Optional Save toggle — rendered in BOTH states, above the single-primary
+  // Continue. Absent unless the host wires onToggleSave.
+  const saveControl =
+    onToggleSave === undefined ? null : (
+      <Button
+        label={isSaved === true ? 'Saved' : 'Save this word'}
+        variant="tertiary"
+        fullWidth
+        onPress={onToggleSave}
+        accessibilityLabel={
+          isSaved === true
+            ? `Remove ${wordLabel ?? 'word'} from saved`
+            : `Save ${wordLabel ?? 'word'} for later`
+        }
+      />
+    );
+
+  // Optional "Too easy" accelerator — CORRECT state only, above Continue.
+  const easeControl =
+    onMarkEasy === undefined ? null : (
+      <Button
+        label={easeSelected === true ? 'Skipping ahead' : 'Too easy — skip ahead'}
+        variant="tertiary"
+        fullWidth
+        disabled={easeSelected === true}
+        onPress={onMarkEasy}
+        accessibilityLabel="Mark this word too easy and skip ahead"
+      />
+    );
 
   // Stable copy — pick once on mount, not on every render.
   const affirm = useRef(pickRandom(AFFIRM_BANK)).current;
@@ -175,6 +222,9 @@ export function FeedbackLayer({
             {affirm}
           </Text>
 
+          {easeControl}
+          {saveControl}
+
           <View ref={continueRef}>
             <Button
               label="Continue"
@@ -211,6 +261,9 @@ export function FeedbackLayer({
           <Text variant="body" color="textSecondary" accessibilityRole="text">
             {`Close — this one means "${gloss}". You'll see it again soon.`}
           </Text>
+
+          {/* No "too easy" on a miss — only Save. */}
+          {saveControl}
 
           <View ref={continueRef}>
             <Button

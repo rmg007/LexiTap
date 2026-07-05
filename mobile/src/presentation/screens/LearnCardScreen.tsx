@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme } from '@/presentation/theme';
-import { Text, Button, ProgressBar } from '@/presentation/components';
+import { Text, Button, ProgressBar, Icon } from '@/presentation/components';
+import { ExitSessionSheet } from '@/presentation/screens/ExitSessionSheet';
 import { useServices } from '@/presentation/services';
-import { asTierId, NoWordsAvailableError } from '@/domain/index';
+import { asTierId, asWordId, NoWordsAvailableError } from '@/domain/index';
 import type { Word, WordSense } from '@/domain/vocabulary/Word';
 
 // LearnCard — pressure-free first exposure to new words (Screen 5).
@@ -35,6 +36,10 @@ export interface LearnCardScreenProps {
   // Called with the just-learned batch so the route can hand off to the
   // LearnQuickCheck screen (Screen 6) — the SRS seeding step.
   onComplete: (batch: Word[]) => void;
+  // Resume (SESSION_RESUME_PLAN): when provided, rehydrate this exact batch at
+  // this card index instead of fetching a fresh batch. Absent = fresh session.
+  resumeBatch?: Word[];
+  resumeIndex?: number;
 }
 
 type LearnPhase =
@@ -48,12 +53,19 @@ export function LearnCardScreen({
   tierId,
   onExit,
   onComplete,
+  resumeBatch,
+  resumeIndex,
 }: LearnCardScreenProps): React.JSX.Element {
   const { colors, spacing } = useTheme();
   const services = useServices();
   const [phase, setPhase] = useState<LearnPhase>({ kind: 'loading' });
   // Bump to remount card content on each advance so the view resets cleanly.
   const cardKey = useRef(0);
+  // Whether the word currently on screen is saved (drives the bookmark toggle).
+  const [isSaved, setIsSaved] = useState(false);
+  // Exit confirm sheet (SESSION_RESUME_PLAN Part A) — reassures the learner that
+  // leaving is safe/resumable rather than a silent loss.
+  const [showExit, setShowExit] = useState(false);
   // Lazily-loaded rich senses, cached by word id. Missing key = not yet
   // fetched; [] = fetched, no rich data (flat fallback). The fetch is
   // fail-soft (getWordDetail never throws) so a content DB predating the
@@ -61,6 +73,12 @@ export function LearnCardScreen({
   const [sensesByWordId, setSensesByWordId] = useState<Record<string, WordSense[]>>({});
 
   const loadBatch = useCallback(async () => {
+    // Resume path: rehydrate the exact batch/index from the snapshot — no fetch.
+    if (resumeBatch !== undefined && resumeBatch.length > 0) {
+      const idx = Math.min(Math.max(0, resumeIndex ?? 0), resumeBatch.length - 1);
+      setPhase({ kind: 'card', index: idx, batch: resumeBatch });
+      return;
+    }
     try {
       const session = await services.startQuiz.execute({
         tierId: asTierId(tierId),
@@ -77,7 +95,7 @@ export function LearnCardScreen({
       // Fail safely: treat any load error as empty (offline-first).
       setPhase({ kind: 'empty' });
     }
-  }, [services, tierId]);
+  }, [services, tierId, resumeBatch, resumeIndex]);
 
   useEffect(() => {
     void loadBatch();
@@ -103,6 +121,52 @@ export function LearnCardScreen({
       cancelled = true;
     };
   }, [currentWordId, sensesByWordId, services]);
+
+  // Persist the resume snapshot for the card on screen (SESSION_RESUME_PLAN). One
+  // fail-soft write per card; a failure must never block the learn flow. The
+  // snapshot survives until the quick-check completes (which clears it) or a new
+  // learn session overwrites it.
+  const snapshotIndex = phase.kind === 'card' ? phase.index : undefined;
+  const snapshotBatch = phase.kind === 'card' ? phase.batch : undefined;
+  useEffect(() => {
+    if (snapshotBatch === undefined || snapshotIndex === undefined) return;
+    void services.queries.saveActiveSession({
+      kind: 'learn',
+      tierId,
+      batch: snapshotBatch,
+      stage: 'card',
+      index: snapshotIndex,
+    });
+  }, [snapshotBatch, snapshotIndex, tierId, services]);
+
+  // Hydrate the bookmark toggle for the word on screen (fail-soft, default off).
+  useEffect(() => {
+    if (currentWordId === undefined) return;
+    let cancelled = false;
+    setIsSaved(false);
+    void services.queries
+      .isWordSaved(asWordId(currentWordId))
+      .then((v) => {
+        if (!cancelled) setIsSaved(v);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [currentWordId, services]);
+
+  // Toggle save for the current word — optimistic, fail-soft.
+  const handleToggleSave = useCallback(() => {
+    if (phase.kind !== 'card') return;
+    const word = phase.batch[phase.index];
+    if (word === undefined) return;
+    const next = !isSaved;
+    setIsSaved(next);
+    void (next
+      ? services.queries.saveWord(word.id, 'learn')
+      : services.queries.unsaveWord(word.id)
+    ).catch(() => setIsSaved(!next));
+  }, [phase, isSaved, services]);
 
   const handleGotIt = useCallback(() => {
     if (phase.kind !== 'card') return;
@@ -209,8 +273,8 @@ export function LearnCardScreen({
         <Button
           label="Back"
           variant="tertiary"
-          onPress={onExit}
-          accessibilityLabel="Back to Home"
+          onPress={() => setShowExit(true)}
+          accessibilityLabel="Leave session"
         />
         <View style={{ flex: 1 }}>
           <ProgressBar progress={progress} label="Learn session progress" />
@@ -223,6 +287,19 @@ export function LearnCardScreen({
         >
           {`${position}/${total}`}
         </Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={isSaved ? `Remove ${word.word} from saved` : `Save ${word.word} for later`}
+          onPress={handleToggleSave}
+          hitSlop={8}
+          style={{ padding: spacing.s1 }}
+        >
+          <Icon
+            name={isSaved ? 'bookmark-check' : 'bookmark'}
+            size={22}
+            colorValue={isSaved ? colors.accent : colors.textTertiary}
+          />
+        </Pressable>
       </View>
 
       {/* Word card body */}
@@ -345,6 +422,16 @@ export function LearnCardScreen({
             ? `Advance to card ${position + 1} of ${total}`
             : 'Finish the learn batch'
         }
+      />
+
+      <ExitSessionSheet
+        visible={showExit}
+        onKeepGoing={() => setShowExit(false)}
+        onLeave={() => {
+          // Snapshot is intentionally preserved so Home can offer "Resume".
+          setShowExit(false);
+          onExit();
+        }}
       />
     </Screen>
   );

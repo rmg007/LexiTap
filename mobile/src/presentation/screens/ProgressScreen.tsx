@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
+import { router } from 'expo-router';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme } from '@/presentation/theme';
-import { Text, Card, ProgressBar, StreakBadge } from '@/presentation/components';
+import { Text, Card, ProgressBar, StreakBadge, Icon } from '@/presentation/components';
 import { useServices } from '@/presentation/services';
 import {
   masteryCompletion,
@@ -33,6 +34,7 @@ export function ProgressScreen(): React.JSX.Element {
   const { queries, analytics } = useServices();
   const [stats, setStats] = useState<UserStats | null>(null);
   const [tiers, setTiers] = useState<readonly TierMastery[]>([]);
+  const [savedCount, setSavedCount] = useState(0);
   const [streakEventFired, setStreakEventFired] = useState(false);
 
   const load = useCallback(async () => {
@@ -40,6 +42,11 @@ export function ProgressScreen(): React.JSX.Element {
       setStats(await queries.getUserStats());
     } catch {
       setStats(null);
+    }
+    try {
+      setSavedCount(await queries.getSavedWordCount());
+    } catch {
+      setSavedCount(0);
     }
     const active = listActiveTiers();
     const results: TierMastery[] = [];
@@ -103,6 +110,26 @@ export function ProgressScreen(): React.JSX.Element {
           </Text>
         </View>
       </Card>
+
+      {savedCount > 0 && (
+        <Card>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Saved words, ${savedCount}`}
+            onPress={() => router.push('/saved-words')}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.s3 }}
+          >
+            <Icon name="bookmark" size={22} color="accent" />
+            <Text variant="headline" color="textPrimary" style={{ flex: 1 }}>
+              Saved words
+            </Text>
+            <Text variant="body" color="textSecondary" tabularNums>
+              {String(savedCount)}
+            </Text>
+            <Icon name="chevron-right" size={20} color="textTertiary" />
+          </Pressable>
+        </Card>
+      )}
 
       {tiers.filter((t) => t.total > 0).map((tier) => (
         <Card key={tier.tierId}>

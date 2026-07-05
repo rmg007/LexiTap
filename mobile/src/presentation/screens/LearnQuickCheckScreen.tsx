@@ -1,8 +1,9 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Pressable, View } from 'react-native';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme } from '@/presentation/theme';
 import { Text, Button, ProgressBar, Icon } from '@/presentation/components';
+import { ExitSessionSheet } from '@/presentation/screens/ExitSessionSheet';
 import { MultipleChoice } from '@/presentation/components/assessments';
 import type { AssessmentAnswer } from '@/presentation/components/assessments/types';
 import { useServices } from '@/presentation/services';
@@ -26,6 +27,9 @@ export interface LearnQuickCheckScreenProps {
   tierId: string;
   onComplete: () => void;
   onExit: () => void;
+  // Resume (SESSION_RESUME_PLAN): the check index to start at (words before it
+  // were already answered + SRS-seeded in a prior visit). Absent = start at 0.
+  resumeIndex?: number;
 }
 
 // Inline feedback phase — does not depend on the (not-yet-merged) FeedbackLayer
@@ -74,18 +78,68 @@ export function LearnQuickCheckScreen({
   tierId,
   onComplete,
   onExit,
+  resumeIndex,
 }: LearnQuickCheckScreenProps): React.JSX.Element {
   const { spacing, colors } = useTheme();
   const services = useServices();
 
+  // Clamp the resume index into range (defensive against a stale snapshot).
+  const startIndex = Math.min(Math.max(0, resumeIndex ?? 0), Math.max(0, batch.length - 1));
+
   // Track phase (active question / feedback overlay / done).
-  const [phase, setPhase] = useState<CheckPhase>({ kind: 'active', checkIndex: 0 });
+  const [phase, setPhase] = useState<CheckPhase>({ kind: 'active', checkIndex: startIndex });
 
   // Re-mount MultipleChoice per item so internal selection state resets.
   const questionKey = useRef(0);
 
   // Affirm/correction copy — pick once per feedback reveal and hold.
   const feedbackCopy = useRef('');
+
+  // Whether the word currently in feedback is saved (drives the Save toggle).
+  const [feedbackSaved, setFeedbackSaved] = useState(false);
+  // Exit confirm sheet (SESSION_RESUME_PLAN Part A).
+  const [showExit, setShowExit] = useState(false);
+
+  // Clearing + completing: the snapshot must be cleared when the quick-check
+  // finishes normally so Home stops offering "Resume".
+  const finishAndClear = useCallback(() => {
+    void services.queries.clearActiveSession();
+    onComplete();
+  }, [services, onComplete]);
+
+  // Persist the resume snapshot for the active check question. One fail-soft
+  // write per question; stage 'check' + the current index so resume lands here.
+  const activeCheckIndex = phase.kind === 'active' ? phase.checkIndex : undefined;
+  useEffect(() => {
+    if (activeCheckIndex === undefined) return;
+    void services.queries.saveActiveSession({
+      kind: 'learn',
+      tierId,
+      batch,
+      stage: 'check',
+      index: activeCheckIndex,
+    });
+  }, [activeCheckIndex, batch, tierId, services]);
+
+  // Hydrate the bookmark toggle whenever the current word changes (works in both
+  // the active + feedback phases so the header bookmark is always correct).
+  const currentWordIndex = phase.kind === 'done' ? undefined : phase.checkIndex;
+  useEffect(() => {
+    if (currentWordIndex === undefined) return;
+    const w = batch[currentWordIndex];
+    if (w === undefined) return;
+    let cancelled = false;
+    setFeedbackSaved(false);
+    void services.queries
+      .isWordSaved(w.id)
+      .then((v) => {
+        if (!cancelled) setFeedbackSaved(v);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [currentWordIndex, batch, services]);
 
   const handleAnswer = useCallback(
     async (answer: AssessmentAnswer, correctValue: string, gloss: string, checkIndex: number) => {
@@ -140,23 +194,36 @@ export function LearnQuickCheckScreen({
     (checkIndex: number) => {
       const nextIndex = checkIndex + 1;
       if (nextIndex >= batch.length) {
-        onComplete();
+        finishAndClear();
         return;
       }
       questionKey.current += 1;
       setPhase({ kind: 'active', checkIndex: nextIndex });
     },
-    [batch.length, onComplete],
+    [batch.length, finishAndClear],
+  );
+
+  // Save toggle in the feedback phase — optimistic, fail-soft, never blocks.
+  const handleToggleSave = useCallback(
+    (word: Word) => {
+      const next = !feedbackSaved;
+      setFeedbackSaved(next);
+      void (next
+        ? services.queries.saveWord(word.id, 'learn')
+        : services.queries.unsaveWord(word.id)
+      ).catch(() => setFeedbackSaved(!next));
+    },
+    [feedbackSaved, services],
   );
 
   // Guard: empty batch should not reach this screen, but handle it cleanly.
   if (batch.length === 0) {
-    onComplete();
+    finishAndClear();
     return <></>;
   }
 
   if (phase.kind === 'done') {
-    onComplete();
+    finishAndClear();
     return <></>;
   }
 
@@ -164,7 +231,7 @@ export function LearnQuickCheckScreen({
   const word = batch[checkIndex];
 
   if (word === undefined) {
-    onComplete();
+    finishAndClear();
     return <></>;
   }
 
@@ -180,9 +247,14 @@ export function LearnQuickCheckScreen({
 
   return (
     <Screen>
-      {/* ── Header: back button + "Quick check" label + counter ── */}
+      {/* ── Header: back button + "Quick check" label + counter + bookmark ── */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.s3 }}>
-        <Button label="Back" variant="tertiary" onPress={onExit} />
+        <Button
+          label="Back"
+          variant="tertiary"
+          onPress={() => setShowExit(true)}
+          accessibilityLabel="Leave session"
+        />
         <View style={{ flex: 1, gap: spacing.s1 }}>
           <Text variant="caption" color="textTertiary">
             Quick check
@@ -192,6 +264,19 @@ export function LearnQuickCheckScreen({
         <Text variant="mono" color="textTertiary" tabularNums>
           {`${position}/${total}`}
         </Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={feedbackSaved ? `Remove ${word.word} from saved` : `Save ${word.word} for later`}
+          onPress={() => handleToggleSave(word)}
+          hitSlop={8}
+          style={{ padding: spacing.s1 }}
+        >
+          <Icon
+            name={feedbackSaved ? 'bookmark-check' : 'bookmark'}
+            size={22}
+            colorValue={feedbackSaved ? colors.accent : colors.textTertiary}
+          />
+        </Pressable>
       </View>
 
       {/* ── Question widget ── */}
@@ -266,6 +351,16 @@ export function LearnQuickCheckScreen({
           />
         </View>
       )}
+
+      <ExitSessionSheet
+        visible={showExit}
+        onKeepGoing={() => setShowExit(false)}
+        onLeave={() => {
+          // Snapshot preserved (stage 'check') so Home can offer "Resume".
+          setShowExit(false);
+          onExit();
+        }}
+      />
     </Screen>
   );
 }
