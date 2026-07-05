@@ -21,7 +21,7 @@ export default function WelcomeRoute(): React.JSX.Element {
           label="Get started"
           variant="primary"
           fullWidth
-          onPress={() => router.push('/onboarding/goal-selection')}
+          onPress={() => router.push('/onboarding/diagnostic')}
         />
       </View>
     </Screen>
