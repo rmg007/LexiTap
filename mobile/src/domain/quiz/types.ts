@@ -37,6 +37,10 @@ export interface QuizAttempt {
   preMasteryLevel?: MasteryLevel; // mastery before this attempt (replay)
   scheduledReviewDate?: number; // schedule the scheduler set (replay)
   schedulerVersion?: SchedulerVersion;
+  // Self-reported "too easy" accelerator on a correct answer (replay signal;
+  // absent = normal). Recorded on the append-only attempt so a future FSRS
+  // reconstructs exactly what the learner said (WORD_FEEDBACK_PLAN §F1-light).
+  userEase?: 'easy';
 }
 
 export interface QuizResult {

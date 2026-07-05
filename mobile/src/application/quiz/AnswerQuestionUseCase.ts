@@ -21,6 +21,9 @@ export interface AnswerQuestionInput {
   isCorrect: boolean;
   nowMs: number;
   timeToAnswerMs?: number;
+  // Optional "too easy" accelerator (WORD_FEEDBACK_PLAN §F1-light). Only honored
+  // on a correct answer — see the effectiveEase guard in execute().
+  ease?: 'easy';
 }
 
 export interface AnswerQuestionOutput {
@@ -49,8 +52,18 @@ export class AnswerQuestionUseCase {
     const existing = await this.progress.get(wordId);
     const preMastery: MasteryLevel = existing?.masteryLevel ?? 0;
 
+    // "Too easy" can never accelerate a wrong answer. This is the load-bearing
+    // guard (the UI only shows the control in the correct state — defense in
+    // depth); a stray ease on isCorrect === false is dropped here.
+    const effectiveEase = isCorrect ? input.ease : undefined;
+
     // Compute next SRS state via the version-tagged scheduler.
-    const next = this.scheduler.next({ masteryLevel: preMastery, isCorrect, now: nowMs });
+    const next = this.scheduler.next({
+      masteryLevel: preMastery,
+      isCorrect,
+      now: nowMs,
+      ease: effectiveEase,
+    });
 
     // Updated progress (mutable SRS state).
     const updated: UserProgress = {
@@ -81,6 +94,7 @@ export class AnswerQuestionUseCase {
         preMasteryLevel: preMastery,
         scheduledReviewDate: next.nextReviewDate,
         schedulerVersion: this.scheduler.version,
+        userEase: effectiveEase,
       },
       progress: updated,
       event: {

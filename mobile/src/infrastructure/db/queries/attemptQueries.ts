@@ -21,14 +21,15 @@ export function insertAttempt(
     preMasteryLevel: number | null;
     scheduledReviewDate: number | null;
     schedulerVersion: string | null;
+    userEase: string | null; // 'easy' | null — appended LAST (migration 003)
   },
 ): Promise<{ lastInsertRowId: number; changes: number }> {
   return db.run(
     `INSERT INTO quiz_attempts (
        session_id, word_id, assessment_type, user_answer, correct_answer,
        is_correct, answered_at, time_to_answer_ms, pre_mastery_level,
-       scheduled_review_date, scheduler_version
-     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       scheduled_review_date, scheduler_version, user_ease
+     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       params.sessionId,
       params.wordId,
@@ -41,6 +42,7 @@ export function insertAttempt(
       params.preMasteryLevel,
       params.scheduledReviewDate,
       params.schedulerVersion,
+      params.userEase,
     ],
   );
 }
@@ -56,7 +58,7 @@ export function selectAttemptsBySession(
   return db.all<QuizAttemptRow>(
     `SELECT id, session_id, word_id, assessment_type, user_answer, correct_answer,
             is_correct, answered_at, time_to_answer_ms, pre_mastery_level,
-            scheduled_review_date, scheduler_version
+            scheduled_review_date, scheduler_version, user_ease
      FROM quiz_attempts
      WHERE session_id = ?
      ORDER BY answered_at ASC`,

@@ -31,14 +31,23 @@ function clampMastery(value: number): MasteryLevel {
 
 /**
  * Compute the next SRS state. Pure: time is injected via `now`.
- * Correct: mastery += 1 (cap 5), next = now + interval[newMastery].
- * Incorrect: mastery -= 1 (min 0), next = now + 1d.
+ * Correct:            mastery += 1 (cap 5), next = now + interval[newMastery].
+ * Correct + ease easy: mastery += 2 (cap 5), next = now + interval[newMastery].
+ * Incorrect:          mastery -= 1 (min 0), next = now + 1d (ease ignored).
+ *
+ * `ease` is optional and off by default, so every existing caller (including the
+ * onboarding diagnostic seeders that pass no ease) keeps the +1 behavior exactly
+ * — the interval ladder in CORRECT_INTERVALS_DAYS is reused for the higher
+ * mastery, so the schedule stays inside the frozen v1-fixed math. V1_FIXED_VERSION
+ * is unchanged; replay faithfulness comes from the version tag + the ease signal
+ * recorded on the attempt row, not from a new scheduler version.
  */
 export function computeNextReview(input: SchedulerInput): SchedulerResult {
-  const { masteryLevel, isCorrect, now } = input;
+  const { masteryLevel, isCorrect, now, ease } = input;
 
   if (isCorrect) {
-    const newMastery = clampMastery(masteryLevel + 1);
+    const step = ease === 'easy' ? 2 : 1;
+    const newMastery = clampMastery(masteryLevel + step);
     const intervalDays = CORRECT_INTERVALS_DAYS[newMastery];
     return { masteryLevel: newMastery, nextReviewDate: now + intervalDays * DAY_MS };
   }

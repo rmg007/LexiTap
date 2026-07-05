@@ -93,6 +93,9 @@ export interface QuizAttemptRow {
   pre_mastery_level: number | null;
   scheduled_review_date: number | null;
   scheduler_version: string | null;
+  // 'easy' | null — self-reported "too easy" accelerator (migration 003). NULL on
+  // every pre-003 row and on every non-accelerated answer.
+  user_ease: string | null;
 }
 
 export interface UserStatsRow {
@@ -106,6 +109,32 @@ export interface UserStatsRow {
   freezes_granted_total: number;
   last_catchup_anchor_date: number | null;
   onboarding_state: string | null; // JSON blob
+}
+
+// saved_words (migration 003). word_id PK; hard-deleted on unsave.
+export interface SavedWordRow {
+  word_id: string;
+  saved_at: number;
+  source: string;
+}
+
+// One row of the saved_words ⋈ contentdb.words ⋈ user_progress join for the
+// Saved-words list. Extends WordRow (the query projects a representative tier_id
+// via a min-tier subquery, satisfying mapWordRow) plus the save timestamp and
+// current mastery overlay.
+export interface SavedWordListRow extends WordRow {
+  saved_at: number;
+  mastery_level: number;
+}
+
+// active_session (migration 003). Single row, id = 1. payload is a JSON blob
+// holding the ActiveSession snapshot (batch + stage + index).
+export interface ActiveSessionRow {
+  id: number;
+  kind: string;
+  tier_id: string;
+  payload: string;
+  updated_at: number;
 }
 
 export interface NotificationScheduleRow {

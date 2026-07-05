@@ -10,7 +10,7 @@ import type { AuthPort } from '@/domain/auth/AuthPort';
 import type { IapPort } from '@/domain/iap/IapPort';
 import type { CheckTierAccessUseCase } from '@/application/tier/CheckTierAccessUseCase';
 import type { TierId, WordId } from '@/domain/index';
-import type { UserStats } from '@/domain/index';
+import type { UserStats, SavedWordListItem, SavedWordSource, ActiveSession } from '@/domain/index';
 import type { Word, WordSense } from '@/domain/vocabulary/Word';
 
 // The Services context is the ONLY way the presentation layer reaches the
@@ -56,6 +56,20 @@ export interface ReadQueries {
   // Word + rich-detail senses for the detail screen. Null if the word doesn't
   // resolve; senses [] if the word has no rich data (flat-definition fallback).
   getWordDetail(id: WordId): Promise<WordDetail | null>;
+  // Saved words (WORD_FEEDBACK_PLAN §2). All fail-soft (resolve, never block).
+  isWordSaved(id: WordId): Promise<boolean>;
+  getSavedWordCount(): Promise<number>;
+  listSavedWordsPage(
+    afterSavedAt: number | null,
+    afterWordId: string | null,
+    limit: number,
+  ): Promise<readonly SavedWordListItem[]>;
+  saveWord(id: WordId, source: SavedWordSource): Promise<void>;
+  unsaveWord(id: WordId): Promise<void>;
+  // In-flight learn-session resume snapshot (SESSION_RESUME_PLAN Part B).
+  getActiveSession(): Promise<ActiveSession | null>;
+  saveActiveSession(session: ActiveSession): Promise<void>;
+  clearActiveSession(): Promise<void>;
 }
 
 export interface Services {

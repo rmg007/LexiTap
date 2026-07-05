@@ -243,6 +243,7 @@ describe('mapQuizAttemptRow', () => {
       pre_mastery_level: null,
       scheduled_review_date: null,
       scheduler_version: null,
+      user_ease: null,
     };
     const a = mapQuizAttemptRow(row);
     expect(a.isCorrect).toBe(true);
@@ -250,6 +251,27 @@ describe('mapQuizAttemptRow', () => {
     expect(a.timeToAnswerMs).toBeUndefined();
     expect(a.preMasteryLevel).toBeUndefined();
     expect(a.schedulerVersion).toBeUndefined();
+    expect(a.userEase).toBeUndefined();
+  });
+
+  it('maps user_ease "easy" to the literal and any other value to undefined', () => {
+    const base = {
+      id: 7,
+      session_id: 3,
+      word_id: 'w1',
+      assessment_type: 'multiple_choice',
+      user_answer: 'a',
+      correct_answer: 'a',
+      is_correct: 1,
+      answered_at: 100,
+      time_to_answer_ms: null,
+      pre_mastery_level: null,
+      scheduled_review_date: null,
+      scheduler_version: null,
+    };
+    expect(mapQuizAttemptRow({ ...base, user_ease: 'easy' }).userEase).toBe('easy');
+    expect(mapQuizAttemptRow({ ...base, user_ease: null }).userEase).toBeUndefined();
+    expect(mapQuizAttemptRow({ ...base, user_ease: 'garbage' }).userEase).toBeUndefined();
   });
 
   it('preserves replay context and defaults unknown assessment_type', () => {
@@ -266,6 +288,7 @@ describe('mapQuizAttemptRow', () => {
       pre_mastery_level: 2,
       scheduled_review_date: 9999,
       scheduler_version: 'v1-fixed',
+      user_ease: null,
     });
     expect(a.isCorrect).toBe(false);
     expect(a.assessmentType).toBe('multiple_choice');

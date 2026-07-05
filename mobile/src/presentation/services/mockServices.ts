@@ -4,7 +4,13 @@ import type {
   WordDetail,
 } from '@/presentation/services/ServicesContext';
 import type { AnswerQuestionOutput } from '@/application/quiz/AnswerQuestionUseCase';
-import type { QuizSession, UserStats, OnboardingState } from '@/domain/index';
+import type {
+  QuizSession,
+  UserStats,
+  OnboardingState,
+  SavedWordListItem,
+  ActiveSession,
+} from '@/domain/index';
 import type {
   AdaptiveDiagnosticPool,
   SeedAdaptiveDiagnosticInput,
@@ -32,6 +38,14 @@ export interface MockServiceHandlers {
   getDailyProgress?: () => Promise<DailyProgressMetrics>;
   getContentDbHealth?: () => Promise<{ wordCount: number; dbVersion: number }>;
   getWordDetail?: (...args: never[]) => Promise<WordDetail | null>;
+  isWordSaved?: (...args: never[]) => Promise<boolean>;
+  getSavedWordCount?: () => Promise<number>;
+  listSavedWordsPage?: (...args: never[]) => Promise<readonly SavedWordListItem[]>;
+  saveWord?: (...args: never[]) => Promise<void>;
+  unsaveWord?: (...args: never[]) => Promise<void>;
+  getActiveSession?: () => Promise<ActiveSession | null>;
+  saveActiveSession?: (...args: never[]) => Promise<void>;
+  clearActiveSession?: () => Promise<void>;
   backupTriggerIfNeeded?: (nowMs: number) => Promise<void>;
   backupForceRestore?: () => Promise<'ok' | 'no_backup' | 'error'>;
   exportUserData?: () => Promise<string>;
@@ -93,6 +107,14 @@ export function createMockServices(handlers: MockServiceHandlers = {}): Services
       })),
       getContentDbHealth: handlers.getContentDbHealth ?? (async () => ({ wordCount: 0, dbVersion: 0 })),
       getWordDetail: handlers.getWordDetail ?? (async () => null),
+      isWordSaved: handlers.isWordSaved ?? (async () => false),
+      getSavedWordCount: handlers.getSavedWordCount ?? (async () => 0),
+      listSavedWordsPage: handlers.listSavedWordsPage ?? (async () => []),
+      saveWord: handlers.saveWord ?? (async () => undefined),
+      unsaveWord: handlers.unsaveWord ?? (async () => undefined),
+      getActiveSession: handlers.getActiveSession ?? (async () => null),
+      saveActiveSession: handlers.saveActiveSession ?? (async () => undefined),
+      clearActiveSession: handlers.clearActiveSession ?? (async () => undefined),
     },
   };
   return services as unknown as Services;

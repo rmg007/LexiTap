@@ -11,6 +11,8 @@ import type { UserProgress, MasteryLevel } from '@/domain/user/UserProgress';
 import type { QuizAttempt, AssessmentType } from '@/domain/quiz/types';
 import { asSessionId } from '@/domain/vocabulary/ids';
 import type { UserStats } from '@/domain/user/UserStats';
+import type { SavedWord, SavedWordListItem, SavedWordSource } from '@/domain/user/SavedWord';
+import type { ActiveSession, ActiveSessionStage } from '@/domain/user/ActiveSession';
 import type { OnboardingState, LearningGoal, ProficiencyBand } from '@/domain/onboarding/OnboardingState';
 import type { StreakState } from '@/domain/gamification/streak';
 import type {
@@ -19,6 +21,9 @@ import type {
   UserProgressRow,
   QuizAttemptRow,
   UserStatsRow,
+  SavedWordRow,
+  SavedWordListRow,
+  ActiveSessionRow,
   PseudoWordRow,
   SenseWithExampleRow,
 } from '@/infrastructure/db/rows';
@@ -181,7 +186,68 @@ export function mapQuizAttemptRow(row: QuizAttemptRow): QuizAttempt {
       row.pre_mastery_level === null ? undefined : toMasteryLevel(row.pre_mastery_level),
     scheduledReviewDate: row.scheduled_review_date ?? undefined,
     schedulerVersion: row.scheduler_version ?? undefined,
+    // Narrow the TEXT column back to the literal type; any non-'easy'/null value
+    // (corrupt row) maps to undefined — defensive, mirrors toAssessmentType.
+    userEase: row.user_ease === 'easy' ? 'easy' : undefined,
   };
+}
+
+const SAVED_WORD_SOURCES: ReadonlySet<string> = new Set([
+  'manual',
+  'learn',
+  'quiz',
+  'browser',
+]);
+
+function toSavedWordSource(raw: string): SavedWordSource {
+  // Descriptive only; an unknown stored value defaults to 'manual' rather than
+  // throwing while rendering the saved list.
+  return SAVED_WORD_SOURCES.has(raw) ? (raw as SavedWordSource) : 'manual';
+}
+
+export function mapSavedWordRow(row: SavedWordRow): SavedWord {
+  return {
+    wordId: asWordId(row.word_id),
+    savedAt: row.saved_at,
+    source: toSavedWordSource(row.source),
+  };
+}
+
+export function mapSavedWordListRow(row: SavedWordListRow): SavedWordListItem {
+  return {
+    word: mapWordRow(row),
+    savedAt: row.saved_at,
+    masteryLevel: toMasteryLevel(row.mastery_level),
+  };
+}
+
+const ACTIVE_SESSION_STAGES: ReadonlySet<string> = new Set(['card', 'check']);
+
+// Map the active_session row → domain snapshot. The batch + stage + index live
+// in the JSON `payload`; parse defensively (corrupt blob → null so Home simply
+// shows no resume card rather than crashing). Mirrors parseOnboardingState.
+export function mapActiveSessionRow(row: ActiveSessionRow): ActiveSession | null {
+  if (row.kind !== 'learn') return null;
+  try {
+    const parsed: unknown = JSON.parse(row.payload);
+    if (typeof parsed !== 'object' || parsed === null) return null;
+    const obj = parsed as Record<string, unknown>;
+    const batch = obj['batch'];
+    const stageRaw = obj['stage'];
+    const index = obj['index'];
+    if (!Array.isArray(batch)) return null;
+    if (typeof stageRaw !== 'string' || !ACTIVE_SESSION_STAGES.has(stageRaw)) return null;
+    if (typeof index !== 'number' || !Number.isFinite(index)) return null;
+    return {
+      kind: 'learn',
+      tierId: row.tier_id,
+      batch: batch as ActiveSession['batch'],
+      stage: stageRaw as ActiveSessionStage,
+      index,
+    };
+  } catch {
+    return null;
+  }
 }
 
 

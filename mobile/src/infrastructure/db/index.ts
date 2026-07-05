@@ -17,3 +17,5 @@ export { SQLiteUserProgressRepository } from '@/infrastructure/db/repositories/S
 export { SQLiteQuizSessionRepository } from '@/infrastructure/db/repositories/SQLiteQuizSessionRepository';
 export { SQLiteQuizAttemptRepository } from '@/infrastructure/db/repositories/SQLiteQuizAttemptRepository';
 export { SQLiteUserStatsRepository } from '@/infrastructure/db/repositories/SQLiteUserStatsRepository';
+export { SQLiteSavedWordRepository } from '@/infrastructure/db/repositories/SQLiteSavedWordRepository';
+export { SQLiteActiveSessionRepository } from '@/infrastructure/db/repositories/SQLiteActiveSessionRepository';

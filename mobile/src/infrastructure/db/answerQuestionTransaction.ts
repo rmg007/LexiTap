@@ -37,6 +37,7 @@ export function runAnswerQuestionTransaction(
       preMasteryLevel: write.attempt.preMasteryLevel ?? null,
       scheduledReviewDate: write.attempt.scheduledReviewDate ?? null,
       schedulerVersion: write.attempt.schedulerVersion ?? null,
+      userEase: write.attempt.userEase ?? null,
     });
 
     await upsertProgress(tx, {

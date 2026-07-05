@@ -145,6 +145,69 @@ describe('AnswerQuestionUseCase', () => {
     expect(out.result.isSessionComplete).toBe(true);
   });
 
+  it('records ease "easy" on a correct answer and accelerates mastery +2', async () => {
+    const answerWriter = new MockAnswerWriter();
+    const progress = new MockProgress();
+    progress.store.set('a', {
+      wordId: asWordId('a'),
+      masteryLevel: 1,
+      nextReviewDate: NOW,
+      consecutiveCorrect: 0,
+      totalAttempts: 0,
+      totalCorrect: 0,
+      schedulerVersion: 'v1-fixed',
+    });
+    const uc = new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler, noopAnalytics);
+
+    const out = await uc.execute({
+      session: session([word('a')]),
+      wordId: asWordId('a'),
+      assessmentType: 'multiple_choice',
+      userAnswer: 'x',
+      correctAnswer: 'x',
+      isCorrect: true,
+      nowMs: NOW,
+      ease: 'easy',
+    });
+
+    // +2 jump (mastery 1 -> 3) and the attempt records the ease signal for replay.
+    expect(out.progress.masteryLevel).toBe(3);
+    expect(out.progress.nextReviewDate).toBe(NOW + 7 * DAY_MS); // mastery 3 -> +7d
+    expect(answerWriter.writes[0]!.attempt.userEase).toBe('easy');
+    // scheduler_version stays frozen — replay faithfulness comes from the tag + signal.
+    expect(answerWriter.writes[0]!.attempt.schedulerVersion).toBe('v1-fixed');
+  });
+
+  it('drops ease on a wrong answer (guard) — no acceleration, no recorded signal', async () => {
+    const answerWriter = new MockAnswerWriter();
+    const progress = new MockProgress();
+    progress.store.set('a', {
+      wordId: asWordId('a'),
+      masteryLevel: 3,
+      nextReviewDate: NOW,
+      consecutiveCorrect: 0,
+      totalAttempts: 0,
+      totalCorrect: 0,
+      schedulerVersion: 'v1-fixed',
+    });
+    const uc = new AnswerQuestionUseCase(answerWriter, progress, v1FixedScheduler, noopAnalytics);
+
+    const out = await uc.execute({
+      session: session([word('a')]),
+      wordId: asWordId('a'),
+      assessmentType: 'multiple_choice',
+      userAnswer: 'wrong',
+      correctAnswer: 'right',
+      isCorrect: false,
+      nowMs: NOW,
+      ease: 'easy', // ignored — wrong answers can never accelerate
+    });
+
+    expect(out.progress.masteryLevel).toBe(2); // 3 - 1, ease ignored
+    expect(out.progress.nextReviewDate).toBe(NOW + DAY_MS);
+    expect(answerWriter.writes[0]!.attempt.userEase).toBeUndefined();
+  });
+
   it('throws when the answered word is not the current question', async () => {
     const uc = new AnswerQuestionUseCase(
       new MockAnswerWriter(),

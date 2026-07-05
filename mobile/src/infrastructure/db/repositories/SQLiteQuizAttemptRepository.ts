@@ -22,6 +22,7 @@ export class SQLiteQuizAttemptRepository implements QuizAttemptRepository {
       preMasteryLevel: attempt.preMasteryLevel ?? null,
       scheduledReviewDate: attempt.scheduledReviewDate ?? null,
       schedulerVersion: attempt.schedulerVersion ?? null,
+      userEase: attempt.userEase ?? null,
     });
   }
 }

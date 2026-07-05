@@ -6,6 +6,8 @@ import {
   SQLiteUserProgressRepository,
   SQLiteQuizSessionRepository,
   SQLiteUserStatsRepository,
+  SQLiteSavedWordRepository,
+  SQLiteActiveSessionRepository,
   SQLiteAnswerWriter,
 } from '@/infrastructure/db';
 import { buildDailyProgressQueries } from '@/infrastructure/db/queries/dailyProgressQueries';
@@ -33,6 +35,8 @@ import { Platform } from 'react-native';
 
 import { v1FixedScheduler } from '@/domain/srs/v1-fixed';
 import type { TierId, WordId } from '@/domain/vocabulary/ids';
+import type { SavedWordSource } from '@/domain/user/SavedWord';
+import type { ActiveSession } from '@/domain/user/ActiveSession';
 import type { AuthSession } from '@/domain/auth/AuthPort';
 
 import { StartQuizUseCase } from '@/application/quiz/StartQuizUseCase';
@@ -80,6 +84,8 @@ function buildReadQueries(
   words: SQLiteWordRepository,
   progress: SQLiteUserProgressRepository,
   stats: SQLiteUserStatsRepository,
+  savedWords: SQLiteSavedWordRepository,
+  activeSession: SQLiteActiveSessionRepository,
 ): ReadQueries {
   const dailyProgressQueries = buildDailyProgressQueries(db);
 
@@ -149,6 +155,70 @@ function buildReadQueries(
       } catch (error) {
         logger.warn('getWordDetail failed; returning null', { error: String(error) });
         return null;
+      }
+    },
+    // ── Saved words (WORD_FEEDBACK_PLAN §2). All fail-soft — a bookmark read/write
+    //    must never block the learn path. ──
+    async isWordSaved(id: WordId) {
+      try {
+        return await savedWords.isSaved(id);
+      } catch (error) {
+        logger.warn('isWordSaved failed; returning false', { error: String(error) });
+        return false;
+      }
+    },
+    async getSavedWordCount() {
+      try {
+        return await savedWords.count();
+      } catch (error) {
+        logger.warn('getSavedWordCount failed; returning 0', { error: String(error) });
+        return 0;
+      }
+    },
+    async listSavedWordsPage(afterSavedAt, afterWordId, limit) {
+      try {
+        return await savedWords.listPage(afterSavedAt, afterWordId, limit);
+      } catch (error) {
+        logger.warn('listSavedWordsPage failed; returning empty', { error: String(error) });
+        return [];
+      }
+    },
+    async saveWord(id: WordId, source: SavedWordSource) {
+      try {
+        await savedWords.save(id, source, Date.now());
+      } catch (error) {
+        logger.warn('saveWord failed', { error: String(error) });
+      }
+    },
+    async unsaveWord(id: WordId) {
+      try {
+        await savedWords.unsave(id);
+      } catch (error) {
+        logger.warn('unsaveWord failed', { error: String(error) });
+      }
+    },
+    // ── Active-session resume snapshot (SESSION_RESUME_PLAN Part B). Fail-soft —
+    //    a snapshot failure must never trap or block a learn session. ──
+    async getActiveSession() {
+      try {
+        return await activeSession.get();
+      } catch (error) {
+        logger.warn('getActiveSession failed; returning null', { error: String(error) });
+        return null;
+      }
+    },
+    async saveActiveSession(session: ActiveSession) {
+      try {
+        await activeSession.save(session);
+      } catch (error) {
+        logger.warn('saveActiveSession failed', { error: String(error) });
+      }
+    },
+    async clearActiveSession() {
+      try {
+        await activeSession.clear();
+      } catch (error) {
+        logger.warn('clearActiveSession failed', { error: String(error) });
       }
     },
   };
@@ -257,6 +327,8 @@ export async function createContainer(): Promise<Container> {
   const sessions = new SQLiteQuizSessionRepository(db);
   const answerWriter = new SQLiteAnswerWriter(db);
   const stats = new SQLiteUserStatsRepository(db);
+  const savedWords = new SQLiteSavedWordRepository(db);
+  const activeSession = new SQLiteActiveSessionRepository(db);
 
   void tiers;
 
@@ -384,7 +456,7 @@ export async function createContainer(): Promise<Container> {
       isComplete: () => storage.isOnboardingComplete(),
       markComplete: () => storage.setOnboardingComplete(),
     },
-    queries: buildReadQueries(db, words, progress, stats),
+    queries: buildReadQueries(db, words, progress, stats, savedWords, activeSession),
     async clearUserData() {
       await db.transaction(async (tx) => {
         await tx.run('DELETE FROM user_progress', []);
@@ -393,6 +465,8 @@ export async function createContainer(): Promise<Container> {
         await tx.run('DELETE FROM event_log', []);
         await tx.run('DELETE FROM user_stats', []);
         await tx.run('DELETE FROM notification_schedule', []);
+        await tx.run('DELETE FROM saved_words', []);
+        await tx.run('DELETE FROM active_session', []);
       });
       await AsyncStorage.multiRemove([...ASYNC_STORAGE_KEYS]);
     },
