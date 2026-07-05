@@ -59,10 +59,18 @@ async function applyMigrations(db: SQLiteDatabase): Promise<void> {
   for (const migration of pendingMigrations(current)) {
     await db.withExclusiveTransactionAsync(async (tx) => {
       await tx.execAsync(migration.sql);
+      // Bump user_version INSIDE the same transaction so the schema change and
+      // the version write commit atomically. If the process is killed anywhere
+      // in here, SQLite rolls the whole thing back — so a half-applied migration
+      // can never survive to replay on the next launch. That matters because a
+      // migration may contain a non-idempotent statement (e.g. 003's
+      // `ALTER TABLE ... ADD COLUMN`, which has no IF NOT EXISTS and throws
+      // `duplicate column name` on a second run); a non-atomic bump left exactly
+      // that replay window, which could brick startup. user_version is a header
+      // field and participates in the transaction. It cannot be parameterized;
+      // the value is an internal integer constant from our own ledger.
+      await tx.execAsync(`PRAGMA user_version = ${migration.version}`);
     });
-    // PRAGMA user_version cannot be parameterized; the value is an internal
-    // integer constant from our own migration ledger, never user input.
-    await db.execAsync(`PRAGMA user_version = ${migration.version}`);
   }
 }
 

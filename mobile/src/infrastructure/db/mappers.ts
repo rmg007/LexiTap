@@ -235,9 +235,23 @@ export function mapActiveSessionRow(row: ActiveSessionRow): ActiveSession | null
     const batch = obj['batch'];
     const stageRaw = obj['stage'];
     const index = obj['index'];
-    if (!Array.isArray(batch)) return null;
+    if (!Array.isArray(batch) || batch.length === 0) return null;
     if (typeof stageRaw !== 'string' || !ACTIVE_SESSION_STAGES.has(stageRaw)) return null;
     if (typeof index !== 'number' || !Number.isFinite(index)) return null;
+    // Validate each element is a well-formed Word before the cast. The resume
+    // path is the one deserialization boundary the fresh (DB-mapped) path lacks,
+    // so a corrupt/tampered row could otherwise reach the render and crash on
+    // e.g. word.exampleSentence.trim(). This mapper is the fail-soft chokepoint:
+    // any malformed element → null → Home simply shows no resume card.
+    const wellFormed = batch.every(
+      (w) =>
+        w != null &&
+        typeof w === 'object' &&
+        typeof (w as Record<string, unknown>)['word'] === 'string' &&
+        typeof (w as Record<string, unknown>)['definition'] === 'string' &&
+        typeof (w as Record<string, unknown>)['exampleSentence'] === 'string',
+    );
+    if (!wellFormed) return null;
     return {
       kind: 'learn',
       tierId: row.tier_id,

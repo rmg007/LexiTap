@@ -26,6 +26,9 @@ export interface HomeScreenProps {
   // Resume an in-flight learn session (SESSION_RESUME_PLAN). Called with the
   // snapshot so the route can navigate by stage. Absent = no resume affordance.
   onResume?: (session: ActiveSession) => void;
+  // Bumped by the route on tab focus to re-read stats / active session in place
+  // (no remount, no zero-state flash). Changing value re-runs the load effect.
+  refreshSignal?: number;
 }
 
 // The MVP active tier is the first free tier in config (no app/variant branch).
@@ -36,6 +39,7 @@ export function HomeScreen({
   onStartReview,
   onLearnNewWords,
   onResume,
+  refreshSignal,
 }: HomeScreenProps): React.JSX.Element {
   const { spacing } = useTheme();
   const { queries } = useServices();
@@ -81,7 +85,8 @@ export function HomeScreen({
 
   useEffect(() => {
     void load();
-  }, [load]);
+    // refreshSignal re-runs the reads in place when the tab regains focus.
+  }, [load, refreshSignal]);
 
   const streak = stats?.streak ?? initialStreakState();
   const today = toLocalCivilDate(Date.now(), Intl.DateTimeFormat().resolvedOptions().timeZone);

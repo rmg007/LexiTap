@@ -3,6 +3,8 @@ import { fireEvent } from '@testing-library/react-native';
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
   router: { push: (...args: unknown[]) => mockPush(...args), replace: jest.fn() },
+  // Run the focus callback once on mount (no navigation container in tests).
+  useFocusEffect: (cb: () => void | (() => void)) => require('react').useEffect(cb, []),
 }));
 
 import { ProgressScreen } from '@/presentation/screens/ProgressScreen';

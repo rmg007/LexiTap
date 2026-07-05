@@ -164,6 +164,25 @@ export function LearnQuickCheckScreen({
         // first-review if the seed is missing.
       }
 
+      // Advance the resume snapshot to the NEXT unanswered word the instant this
+      // word's SRS row is committed. Otherwise leaving during the feedback phase
+      // would leave the snapshot pointing at this already-seeded word, and
+      // resuming would re-answer it — double-applying the scheduler (inflated
+      // mastery, mis-scheduled review, duplicate attempt row). On the last word
+      // there's nothing left to resume, so clear the snapshot instead.
+      const nextIndex = checkIndex + 1;
+      if (nextIndex >= batch.length) {
+        void services.queries.clearActiveSession();
+      } else {
+        void services.queries.saveActiveSession({
+          kind: 'learn',
+          tierId,
+          batch,
+          stage: 'check',
+          index: nextIndex,
+        });
+      }
+
       if (isCorrect) {
         hapticsCorrect();
         feedbackCopy.current = pickRandom(AFFIRM);

@@ -91,4 +91,22 @@ describe('SQLiteActiveSessionRepository', () => {
     const repo = new SQLiteActiveSessionRepository(db);
     expect(await repo.get()).toBeNull();
   });
+
+  // Regression (review 2026-07-05, LOW): a tampered/corrupt row with malformed
+  // batch elements must map to null (fresh session) rather than reach the render
+  // and crash on word.exampleSentence.trim().
+  it.each([
+    ['a null batch element', JSON.stringify({ batch: [null], stage: 'card', index: 0 })],
+    ['a non-Word element', JSON.stringify({ batch: [{ nope: 1 }], stage: 'card', index: 0 })],
+    ['an empty batch', JSON.stringify({ batch: [], stage: 'card', index: 0 })],
+    ['a missing exampleSentence', JSON.stringify({ batch: [{ word: 'w', definition: 'd' }], stage: 'card', index: 0 })],
+  ])('maps %s to null (defensive)', async (_label, payload) => {
+    const db = {
+      all: jest.fn(),
+      first: jest.fn(async () => ({ id: 1, kind: 'learn', tier_id: 'foundation', payload, updated_at: 1 })),
+      run: jest.fn(),
+      transaction: jest.fn(),
+    } as unknown as DatabaseHandle;
+    expect(await new SQLiteActiveSessionRepository(db).get()).toBeNull();
+  });
 });

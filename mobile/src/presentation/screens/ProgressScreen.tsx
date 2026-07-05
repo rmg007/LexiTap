@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme } from '@/presentation/theme';
 import { Text, Card, ProgressBar, StreakBadge, Icon } from '@/presentation/components';
@@ -69,9 +69,14 @@ export function ProgressScreen(): React.JSX.Element {
     setTiers(results);
   }, [queries]);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  // Refresh on every focus (not just mount): the tab stays mounted across
+  // focus changes, so without this the "Saved words" section + count would go
+  // stale after the learner saves/unsaves a word from another screen.
+  useFocusEffect(
+    useCallback(() => {
+      void load();
+    }, [load]),
+  );
 
   // Fire streak_maintained event once after stats load.
   useEffect(() => {
