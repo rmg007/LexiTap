@@ -1,6 +1,8 @@
 # Word Feedback Plan — Save-for-later + Difficulty self-signal
 
-**Status:** proposed (2026-07-05)
+**Status:** ✅ IMPLEMENTED (2026-07-05) — commits `801248b` (data), `c4d800e` (UI), `14dc450` (review fixes). Both Feature 2 (Save) and Feature 1-light (optional "Too easy" accelerator) shipped as specced; a 28-agent adversarial review found + fixed 5 defects. Session-resume shipped alongside per [SESSION_RESUME_PLAN.md](SESSION_RESUME_PLAN.md). 62 suites / 570 tests green. Open questions Q1–Q4 below were resolved as recommended (decoupled saved list; Progress section not a tab; ease = +2; both F1-light + F2 shipped; ease + save also wired into QuizScreen review flow, closing the coverage gap).
+
+**Original status:** proposed (2026-07-05)
 **Scope:** two learner-requested features — (1) save/bookmark a word to review later, (2) tell the app a word is easy / hard / needs review.
 **Grounded in:** 28-file SRS call-chain map + DB vertical-slice map (this session's two Explore agents), `SRS_FORGIVENESS_MECHANICS.md`, `QuizFeedbackStates.md`, `WordDetailBrowser.md §12`.
 
