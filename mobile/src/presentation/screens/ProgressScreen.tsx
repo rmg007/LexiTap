@@ -104,7 +104,7 @@ export function ProgressScreen(): React.JSX.Element {
         </View>
       </Card>
 
-      {tiers.map((tier) => (
+      {tiers.filter((t) => t.total > 0).map((tier) => (
         <Card key={tier.tierId}>
           <View style={{ gap: spacing.s3 }}>
             <Text variant="headline" color="textPrimary">

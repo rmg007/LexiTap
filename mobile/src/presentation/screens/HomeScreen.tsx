@@ -86,9 +86,14 @@ export function HomeScreen({
 
       <Card>
         <View style={{ gap: spacing.s4 }}>
-          <Text variant="headline" color="textPrimary">
-            Ready for today
-          </Text>
+          <View style={{ gap: spacing.s1 }}>
+            <Text variant="headline" color="textPrimary">
+              Ready for today
+            </Text>
+            <Text variant="caption" color="textTertiary">
+              {`${dailyProgress.reviewsCompletedToday} of ${dailyProgress.effectiveDailyCap} reviews done`}
+            </Text>
+          </View>
           <ProgressBar
             progress={
               dailyProgress.effectiveDailyCap > 0
@@ -101,19 +106,27 @@ export function HomeScreen({
         </View>
       </Card>
 
-      <Button
-        label={`Learn new words (${dailyProgress.newWordsBudget} left today)`}
-        variant="secondary"
-        fullWidth
-        testID="learn-new-words"
-        onPress={onLearnNewWords}
-      />
-
-      {ACTIVE_TIER && (
-        <Text variant="caption" color="textTertiary">
-          {`${ACTIVE_TIER.displayName} · ${ACTIVE_TIER.cefr.join('–')}`}
-        </Text>
-      )}
+      <Card>
+        <View style={{ gap: spacing.s4 }}>
+          <View style={{ gap: spacing.s1 }}>
+            <Text variant="headline" color="textPrimary">
+              Learn new words
+            </Text>
+            <Text variant="caption" color="textTertiary">
+              {ACTIVE_TIER
+                ? `${ACTIVE_TIER.displayName} · ${ACTIVE_TIER.cefr.join('–')} · ${dailyProgress.newWordsBudget} left today`
+                : `${dailyProgress.newWordsBudget} left today`}
+            </Text>
+          </View>
+          <Button
+            label="Start learning"
+            variant="secondary"
+            fullWidth
+            testID="learn-new-words"
+            onPress={onLearnNewWords}
+          />
+        </View>
+      </Card>
     </Screen>
   );
 }
