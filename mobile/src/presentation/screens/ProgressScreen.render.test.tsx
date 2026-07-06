@@ -1,4 +1,5 @@
 import { fireEvent } from '@testing-library/react-native';
+import { initialStreakState } from '@/domain/index';
 
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
@@ -29,5 +30,75 @@ describe('ProgressScreen — saved words section', () => {
     await findByText('Saved words');
     fireEvent.press(getByLabelText('Saved words, 4'));
     expect(mockPush).toHaveBeenCalledWith('/saved-words');
+  });
+});
+
+describe('ProgressScreen — known/learning/new hero', () => {
+  beforeEach(() => mockPush.mockClear());
+
+  it('renders the KnowledgeMapBar hero + legend and routes to /learn on press', async () => {
+    // listActiveTiers() currently returns 3 active tiers; the mock ignores the
+    // tierId argument, so all 3 render identical segments — assert on the
+    // Foundation Pack card specifically and allow the legend text to repeat.
+    const services = defaultServices({
+      getMasteryLevels: async () => [5, 5, 2, 0, 0],
+    });
+    const { findByText, findAllByText, getByLabelText } = await renderWithProviders(
+      <ProgressScreen />,
+      services,
+    );
+    await findByText('2 / 5 known · Foundation Pack');
+    expect((await findAllByText('Known · 2')).length).toBeGreaterThan(0);
+    fireEvent.press(getByLabelText('Study Foundation Pack'));
+    expect(mockPush).toHaveBeenCalledWith({ pathname: '/learn', params: { tierId: 'foundation' } });
+  });
+
+  it('shows the "First goal" motivational copy when nothing is mastered yet', async () => {
+    const services = defaultServices({ getMasteryLevels: async () => [0, 0, 2] });
+    const { findAllByText } = await renderWithProviders(<ProgressScreen />, services);
+    expect((await findAllByText('First goal: master 10 words')).length).toBeGreaterThan(0);
+  });
+});
+
+describe('ProgressScreen — first-run vs returning-learner streak card', () => {
+  it('replaces the Streak card with an encouragement card when the learner has never studied', async () => {
+    const services = defaultServices({
+      getUserStats: async () => ({
+        streak: initialStreakState(),
+        totalSessions: 0,
+        totalWordsMastered: 0,
+      }),
+    });
+    const { findByText, queryByText } = await renderWithProviders(<ProgressScreen />, services);
+    await findByText('No study sessions yet');
+    expect(queryByText('Streak')).toBeNull();
+  });
+
+  it('shows the Streak card with ListRow stats for a returning learner', async () => {
+    const services = defaultServices({
+      getUserStats: async () => ({
+        streak: { ...initialStreakState(), currentStreak: 3, longestStreak: 12 },
+        totalSessions: 5,
+        totalWordsMastered: 7,
+      }),
+    });
+    const { findByText } = await renderWithProviders(<ProgressScreen />, services);
+    await findByText('Streak');
+    expect(await findByText('12 days')).toBeTruthy();
+    expect(await findByText('5')).toBeTruthy();
+    expect(await findByText('7')).toBeTruthy();
+  });
+
+  it('does not mistake a stats read failure for a first-run zero (fail-soft, silent)', async () => {
+    const services = defaultServices({
+      getUserStats: async () => {
+        throw new Error('read failed');
+      },
+    });
+    const { findByText, queryByText } = await renderWithProviders(<ProgressScreen />, services);
+    await findByText('Progress');
+    // Falls back to the normal Streak card, not the "never studied" encouragement copy.
+    expect(await findByText('Streak')).toBeTruthy();
+    expect(queryByText('No study sessions yet')).toBeNull();
   });
 });

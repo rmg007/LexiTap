@@ -1,40 +1,56 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme } from '@/presentation/theme';
-import { Text, Card, ProgressBar, StreakBadge, Icon } from '@/presentation/components';
-import { useServices } from '@/presentation/services';
 import {
-  masteryCompletion,
-  countMastered,
+  Text,
+  Button,
+  Card,
+  ListRow,
+  KnowledgeMapBar,
+  SectionHeader,
+  StreakBadge,
+} from '@/presentation/components';
+import { useServices, type DailyProgressMetrics } from '@/presentation/services';
+import {
   evaluateStreakAtRisk,
   toLocalCivilDate,
   initialStreakState,
   asTierId,
+  knowledgeMapSegments,
+  type KnowledgeMapSegments,
   type MasteryLevel,
   type UserStats,
 } from '@/domain/index';
 import { listActiveTiers } from '@/config/tiers';
 
-// Progress: streak summary + per-tier mastery (rings/bars driven by the pure
-// mastery aggregation helpers). Offline-first reads; failures fall back to an
-// empty dashboard rather than an error.
+// Progress — realigned to the finalized Figma (`360:2`, DESIGN_LEVELUP_PLAN.md
+// Phase 2.2): the known/learning/new KnowledgeMapBar + legend is the hero
+// (replaces the old flat completion bar + "0 of 2848 mastered" run-on line),
+// stats render as ListRows (Figma `365:16`), the Saved-words row gets the
+// 48px WCAG touch target it was missing, and a genuinely first-run learner
+// (never studied) sees an invitation instead of a discouraging zeroed streak
+// card. A read failure stays fail-soft/silent here (unlike Home) — Progress's
+// existing offline-first convention, kept deliberately: a transient read
+// failure must never be mistaken for "you haven't started" (tactical
+// UI_UX_FIXES_PLAN.md Decision #5).
 
-interface TierMastery {
+const DEFAULT_TIER_ID = listActiveTiers()[0]?.id ?? 'foundation';
+
+interface TierProgress {
   tierId: string;
   displayName: string;
-  completion: number;
-  mastered: number;
-  total: number;
+  segments: KnowledgeMapSegments;
 }
 
 export function ProgressScreen(): React.JSX.Element {
   const { spacing } = useTheme();
   const { queries, analytics } = useServices();
   const [stats, setStats] = useState<UserStats | null>(null);
-  const [tiers, setTiers] = useState<readonly TierMastery[]>([]);
+  const [tiers, setTiers] = useState<readonly TierProgress[]>([]);
   const [savedCount, setSavedCount] = useState(0);
+  const [dailyProgress, setDailyProgress] = useState<DailyProgressMetrics | null>(null);
   const [streakEventFired, setStreakEventFired] = useState(false);
 
   const load = useCallback(async () => {
@@ -48,8 +64,14 @@ export function ProgressScreen(): React.JSX.Element {
     } catch {
       setSavedCount(0);
     }
+    try {
+      setDailyProgress(await queries.getDailyProgress(asTierId(DEFAULT_TIER_ID)));
+    } catch {
+      setDailyProgress(null);
+    }
+
     const active = listActiveTiers();
-    const results: TierMastery[] = [];
+    const results: TierProgress[] = [];
     for (const tier of active) {
       let levels: readonly number[] = [];
       try {
@@ -57,13 +79,10 @@ export function ProgressScreen(): React.JSX.Element {
       } catch {
         levels = [];
       }
-      const masteryLevels = levels as readonly MasteryLevel[];
       results.push({
         tierId: tier.id,
         displayName: tier.displayName,
-        completion: masteryCompletion(masteryLevels),
-        mastered: countMastered(masteryLevels),
-        total: masteryLevels.length,
+        segments: knowledgeMapSegments(levels as readonly MasteryLevel[]),
       });
     }
     setTiers(results);
@@ -96,59 +115,82 @@ export function ProgressScreen(): React.JSX.Element {
   const today = toLocalCivilDate(Date.now(), Intl.DateTimeFormat().resolvedOptions().timeZone);
   const { atRisk } = evaluateStreakAtRisk(streak, today);
 
+  // A read failure (stats === null) must never trip the first-run branch —
+  // only a genuine zero, on a successful read, means "never studied".
+  const firstRun = stats !== null && stats.totalSessions === 0;
+
+  const goToTier = (tierId: string): void => {
+    router.push({ pathname: '/learn', params: { tierId } });
+  };
+
   return (
     <Screen>
       <Text variant="title" color="textPrimary" accessibilityRole="header">
         Progress
       </Text>
 
-      <Card>
-        <View style={{ gap: spacing.s3 }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Text variant="headline" color="textPrimary">
-              Streak
-            </Text>
-            <StreakBadge streak={streak} atRisk={atRisk} />
-          </View>
-          <Text variant="body" color="textSecondary" tabularNums>
-            {`Longest: ${streak.longestStreak} · Sessions: ${stats?.totalSessions ?? 0} · Mastered: ${stats?.totalWordsMastered ?? 0}`}
-          </Text>
-        </View>
-      </Card>
-
-      {savedCount > 0 && (
-        <Card>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={`Saved words, ${savedCount}`}
-            onPress={() => router.push('/saved-words')}
-            style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.s3 }}
-          >
-            <Icon name="bookmark" size={22} color="accent" />
-            <Text variant="headline" color="textPrimary" style={{ flex: 1 }}>
-              Saved words
-            </Text>
-            <Text variant="body" color="textSecondary" tabularNums>
-              {String(savedCount)}
-            </Text>
-            <Icon name="chevron-right" size={20} color="textTertiary" />
-          </Pressable>
-        </Card>
-      )}
-
-      {tiers.filter((t) => t.total > 0).map((tier) => (
-        <Card key={tier.tierId}>
+      {tiers.filter((t) => t.segments.total > 0).map((tier) => (
+        <Card key={tier.tierId} onPress={() => goToTier(tier.tierId)} accessibilityLabel={`Study ${tier.displayName}`}>
           <View style={{ gap: spacing.s3 }}>
-            <Text variant="headline" color="textPrimary">
-              {tier.displayName}
+            <SectionHeader>{tier.displayName.toUpperCase()}</SectionHeader>
+            <KnowledgeMapBar segments={tier.segments} showLegend />
+            <Text variant="headline" color="textPrimary" tabularNums>
+              {`${tier.segments.known.toLocaleString()} / ${tier.segments.total.toLocaleString()} known · ${tier.displayName}`}
             </Text>
-            <ProgressBar progress={tier.completion} label={`${tier.displayName} mastery`} />
-            <Text variant="caption" color="textTertiary" tabularNums>
-              {`${tier.mastered} of ${tier.total} mastered`}
+            <Text variant="caption" color="textTertiary">
+              {tier.segments.known === 0
+                ? 'First goal: master 10 words'
+                : `${tier.segments.learning.toLocaleString()} in progress`}
             </Text>
           </View>
         </Card>
       ))}
+
+      {savedCount > 0 && (
+        <Card>
+          <ListRow
+            label="Saved words"
+            value={String(savedCount)}
+            leadingIcon="bookmark"
+            onPress={() => router.push('/saved-words')}
+            accessibilityLabel={`Saved words, ${savedCount}`}
+          />
+        </Card>
+      )}
+
+      {firstRun ? (
+        <Card raised>
+          <View style={{ gap: spacing.s3 }}>
+            <Text variant="headline" color="textPrimary">
+              No study sessions yet
+            </Text>
+            <Text variant="body" color="textSecondary">
+              Complete your first word set to start building progress.
+            </Text>
+            <Button label="Start studying" variant="primary" fullWidth onPress={() => goToTier(DEFAULT_TIER_ID)} />
+          </View>
+        </Card>
+      ) : (
+        <Card>
+          <View style={{ gap: spacing.s3 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Text variant="headline" color="textPrimary">
+                Streak
+              </Text>
+              <StreakBadge streak={streak} atRisk={atRisk} />
+            </View>
+            <ListRow label="Longest streak" value={`${streak.longestStreak} days`} />
+            <ListRow label="Sessions" value={String(stats?.totalSessions ?? 0)} />
+            <ListRow label="Mastered" value={String(stats?.totalWordsMastered ?? 0)} />
+            {dailyProgress != null && (
+              <ListRow
+                label="Reviewed today"
+                value={`${dailyProgress.reviewsCompletedToday}/${dailyProgress.effectiveDailyCap}`}
+              />
+            )}
+          </View>
+        </Card>
+      )}
     </Screen>
   );
 }
