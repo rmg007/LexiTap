@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, View, StyleSheet, useWindowDimensions } from 'react-native';
+import { Modal, Pressable, View, StyleSheet, useWindowDimensions } from 'react-native';
 import { useTheme } from '@/presentation/theme';
 import { Text } from '@/presentation/components/Text';
 import { Button } from '@/presentation/components/Button';
@@ -7,11 +7,14 @@ import { Button } from '@/presentation/components/Button';
 // ExitSessionSheet — shown when the learner taps "Back" mid learn-session
 // (SESSION_RESUME_PLAN Part A). Same calm, no-guilt voice as ForgivenessSheet:
 // leaving is safe, progress is saved, and Home offers "Resume" afterward.
+// Reframed as a calm decision, not reassurance (DESIGN_LEVELUP_PLAN.md
+// Phase 4.2) — the sheet exists specifically to gate a choice (stay vs. leave).
 //
 // Design rules (mirror ForgivenessSheet):
 // - No red, no guilt, no "you'll lose progress" copy.
-// - "Keep going" is the safe default (swipe-to-dismiss = keep going).
-// - "Leave" preserves the snapshot so the session is resumable.
+// - "Keep studying" is the safe default (tap outside the sheet = keep studying).
+// - "Pause for now" preserves the snapshot so the session is resumable — the
+//   label says exactly that, since nothing is ever actually "left" behind.
 
 export interface ExitSessionSheetProps {
   visible: boolean;
@@ -36,7 +39,9 @@ export function ExitSessionSheet({
       onRequestClose={onKeepGoing}
       accessibilityViewIsModal
     >
-      <View
+      <Pressable
+        testID="exit-sheet-scrim"
+        onPress={onKeepGoing}
         style={[styles.scrim, { height: screenHeight }]}
         accessible={false}
         importantForAccessibility="no"
@@ -54,7 +59,7 @@ export function ExitSessionSheet({
           },
         ]}
         accessibilityRole="none"
-        accessibilityLabel="Leave this session?"
+        accessibilityLabel="Take a break?"
       >
         <View
           style={[styles.handle, { backgroundColor: colors.borderSubtle }]}
@@ -68,25 +73,25 @@ export function ExitSessionSheet({
           accessibilityRole="header"
           style={{ textAlign: 'center' }}
         >
-          Your progress is saved.
+          Take a break?
         </Text>
 
         <Text variant="body" color="textSecondary" style={{ textAlign: 'center' }}>
-          Pick up right where you left off, anytime.
+          Your progress is saved — you can continue from this word later.
         </Text>
 
-        {/* Keep going — primary, safe default. */}
+        {/* Keep studying — primary, safe default. */}
         <Button
-          label="Keep going"
+          label="Keep studying"
           variant="primary"
           fullWidth
           onPress={onKeepGoing}
-          accessibilityHint="Stay in this session"
+          accessibilityHint="Continue this session"
         />
 
-        {/* Leave — secondary; the snapshot is preserved for resume. */}
+        {/* Pause for now — secondary; the snapshot is preserved for resume. */}
         <Button
-          label="Leave"
+          label="Pause for now"
           variant="secondary"
           fullWidth
           onPress={onLeave}
@@ -103,7 +108,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.35)',
   },
   sheet: {
     position: 'absolute',
