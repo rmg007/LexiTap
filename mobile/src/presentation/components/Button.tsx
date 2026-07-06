@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { Pressable, type PressableProps } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/presentation/theme';
-import { useMotion } from '@/presentation/theme/useMotion';
+import { usePressScale } from '@/presentation/hooks/usePressScale';
 import { Text } from '@/presentation/components/Text';
 
 // ─── Button ───────────────────────────────────────────────────────────────────
@@ -34,25 +34,7 @@ function PrimaryButton({
   ...rest
 }: ButtonProps): React.JSX.Element {
   const { radii } = useTheme();
-  const { spring } = useMotion();
-
-  const scale = useSharedValue(1);
-  const opacity = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-    opacity: opacity.value,
-  }));
-
-  const handlePressIn = useCallback(() => {
-    scale.value = withSpring(0.97, spring('snap'));
-    opacity.value = withTiming(0.9, { duration: 80 });
-  }, [scale, opacity, spring]);
-
-  const handlePressOut = useCallback(() => {
-    scale.value = withSpring(1.0, spring('snap'));
-    opacity.value = withTiming(1, { duration: 120 });
-  }, [scale, opacity, spring]);
+  const { animatedStyle, onPressIn: handlePressIn, onPressOut: handlePressOut } = usePressScale();
 
   const GRAD_DEFAULT = ['#20B2AA', '#178F88'] as const;
 
