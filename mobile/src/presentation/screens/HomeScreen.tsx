@@ -2,22 +2,34 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme } from '@/presentation/theme';
-import { Text, Button, Card, ProgressBar, StreakBadge } from '@/presentation/components';
+import {
+  Text,
+  Button,
+  Card,
+  DailyCapMeter,
+  KnowledgeMapBar,
+  StreakBadge,
+} from '@/presentation/components';
 import { useServices, type DailyProgressMetrics } from '@/presentation/services';
 import {
   evaluateStreakAtRisk,
   toLocalCivilDate,
   initialStreakState,
   asTierId,
+  knowledgeMapSegments,
   type UserStats,
   type ActiveSession,
+  type MasteryLevel,
 } from '@/domain/index';
 import { listActiveTiers } from '@/config/tiers';
 
-// Home: greeting + streak chip, "words due today" card with a calm daily-cap
-// meter and the primary Start review action, a secondary Learn new words
-// action, and the active tier line. Offline-first: a stats read failure falls
-// back to a seeded zero-state, never an error screen.
+// Home — realigned to the finalized Figma (`300:2`, DESIGN_LEVELUP_PLAN.md
+// Phase 2.1): exactly one raised focal card carrying the single teal-gradient
+// primary at a time (Resume when a learn session is in flight, else Start
+// review — never both), a DailyCapMeter for the daily goal, and a flat
+// Core-pack card whose KnowledgeMapBar shows the known/learning/new split
+// with a demoted outlined secondary CTA. Offline-first: a read failure shows
+// a neutral "couldn't load" retry, distinct from a genuine first-run zero.
 
 export interface HomeScreenProps {
   greetingName?: string;
@@ -31,8 +43,22 @@ export interface HomeScreenProps {
   refreshSignal?: number;
 }
 
+const DEFAULT_DAILY_PROGRESS: DailyProgressMetrics = {
+  reviewsCompletedToday: 0,
+  effectiveDailyCap: 40,
+  newWordsCompletedToday: 0,
+  newWordsBudget: 10,
+};
+
 // The MVP active tier is the first free tier in config (no app/variant branch).
 const ACTIVE_TIER = listActiveTiers()[0];
+
+function timeOfDayGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 18) return 'Good afternoon';
+  return 'Good evening';
+}
 
 export function HomeScreen({
   greetingName,
@@ -44,20 +70,22 @@ export function HomeScreen({
   const { spacing } = useTheme();
   const { queries } = useServices();
   const [stats, setStats] = useState<UserStats | null>(null);
+  const [statsError, setStatsError] = useState(false);
   const [activeSession, setActiveSession] = useState<ActiveSession | null>(null);
-  const [dailyProgress, setDailyProgress] = useState<DailyProgressMetrics>({
-    reviewsCompletedToday: 0,
-    effectiveDailyCap: 40,
-    newWordsCompletedToday: 0,
-    newWordsBudget: 10,
-  });
+  const [dailyProgress, setDailyProgress] = useState<DailyProgressMetrics>(DEFAULT_DAILY_PROGRESS);
+  const [masteryLevels, setMasteryLevels] = useState<readonly MasteryLevel[]>([]);
+  const [masteryError, setMasteryError] = useState(false);
 
   const load = useCallback(async () => {
     try {
       setStats(await queries.getUserStats());
+      setStatsError(false);
     } catch {
-      // Offline-first: never block Home on a read failure.
+      // Offline-first, but distinguish a genuine read failure from a
+      // brand-new zero-state — a returning learner should never see their
+      // real streak silently replaced by zero with no explanation.
       setStats(null);
+      setStatsError(true);
     }
 
     try {
@@ -67,19 +95,23 @@ export function HomeScreen({
     }
 
     try {
-      const activeTier = listActiveTiers()[0];
-      if (activeTier) {
-        const progress = await queries.getDailyProgress(asTierId(activeTier.id));
+      if (ACTIVE_TIER) {
+        const progress = await queries.getDailyProgress(asTierId(ACTIVE_TIER.id));
         setDailyProgress(progress);
       }
     } catch {
-      // Offline-first: never block Home on a read failure.
-      setDailyProgress({
-        reviewsCompletedToday: 0,
-        effectiveDailyCap: 40,
-        newWordsCompletedToday: 0,
-        newWordsBudget: 10,
-      });
+      setDailyProgress(DEFAULT_DAILY_PROGRESS);
+    }
+
+    try {
+      if (ACTIVE_TIER) {
+        const levels = await queries.getMasteryLevels(asTierId(ACTIVE_TIER.id));
+        setMasteryLevels(levels as readonly MasteryLevel[]);
+        setMasteryError(false);
+      }
+    } catch {
+      setMasteryLevels([]);
+      setMasteryError(true);
     }
   }, [queries]);
 
@@ -92,24 +124,56 @@ export function HomeScreen({
   const today = toLocalCivilDate(Date.now(), Intl.DateTimeFormat().resolvedOptions().timeZone);
   const { atRisk } = evaluateStreakAtRisk(streak, today);
 
+  const hasResume = onResume !== undefined && activeSession !== null && activeSession.batch.length > 0;
+  const atCap =
+    dailyProgress.effectiveDailyCap > 0 &&
+    dailyProgress.reviewsCompletedToday >= dailyProgress.effectiveDailyCap;
+
+  const segments = knowledgeMapSegments(masteryLevels);
+  const knowledgeLabel = ACTIVE_TIER
+    ? `${segments.known.toLocaleString()} / ${segments.total.toLocaleString()} known · ${ACTIVE_TIER.displayName}`
+    : `${segments.known.toLocaleString()} / ${segments.total.toLocaleString()} known`;
+
+  const resumeWord =
+    hasResume && activeSession
+      ? activeSession.batch[Math.min(activeSession.index, activeSession.batch.length - 1)]?.word
+      : undefined;
+  const resumePosition = hasResume && activeSession ? Math.min(activeSession.index + 1, activeSession.batch.length) : 0;
+
   return (
-    <Screen>
+    <Screen contentStyle={{ gap: spacing.s4 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text variant="title" color="textPrimary" accessibilityRole="header">
-          {greetingName ? `Hi, ${greetingName}` : 'Welcome back'}
-        </Text>
-        <StreakBadge streak={streak} atRisk={atRisk} />
+        <View>
+          {greetingName != null && (
+            <Text variant="caption" color="textSecondary">
+              {`${timeOfDayGreeting()},`}
+            </Text>
+          )}
+          <Text variant="title" color="textPrimary" accessibilityRole="header">
+            {greetingName ?? 'Welcome back'}
+          </Text>
+        </View>
+        {statsError ? (
+          <Text variant="caption" color="textTertiary">
+            Streak unavailable
+          </Text>
+        ) : (
+          <StreakBadge streak={streak} atRisk={atRisk} />
+        )}
       </View>
 
-      {onResume !== undefined && activeSession !== null && activeSession.batch.length > 0 && (
-        <Card>
+      {/* Exactly one raised focal card at a time: Resume beats Start review. */}
+      {hasResume && activeSession !== null ? (
+        <Card raised>
           <View style={{ gap: spacing.s4 }}>
             <View style={{ gap: spacing.s1 }}>
               <Text variant="headline" color="textPrimary">
                 Resume learning
               </Text>
               <Text variant="caption" color="textTertiary" tabularNums>
-                {`Pick up where you left off · ${Math.min(activeSession.index + 1, activeSession.batch.length)}/${activeSession.batch.length}`}
+                {resumeWord != null
+                  ? `Pick up where you left off · ${resumePosition}/${activeSession.batch.length} · "${resumeWord}"`
+                  : `Pick up where you left off · ${resumePosition}/${activeSession.batch.length}`}
               </Text>
             </View>
             <Button
@@ -117,48 +181,54 @@ export function HomeScreen({
               variant="primary"
               fullWidth
               testID="resume-session"
-              onPress={() => onResume(activeSession)}
+              onPress={() => onResume?.(activeSession)}
             />
+          </View>
+        </Card>
+      ) : (
+        <Card raised>
+          <View style={{ gap: spacing.s4 }}>
+            <View style={{ gap: spacing.s1 }}>
+              <Text variant="headline" color="textPrimary">
+                Words ready to review
+              </Text>
+              <Text variant="caption" color="textTertiary">
+                {atCap
+                  ? 'Today\'s reviews are done'
+                  : `${dailyProgress.reviewsCompletedToday} of ${dailyProgress.effectiveDailyCap} reviews done`}
+              </Text>
+            </View>
+            <DailyCapMeter
+              completed={dailyProgress.reviewsCompletedToday}
+              cap={dailyProgress.effectiveDailyCap}
+            />
+            {/* No dead CTA once today's cap is reached — nothing left to review. */}
+            {!atCap && <Button label="Start review" variant="primary" fullWidth onPress={onStartReview} />}
           </View>
         </Card>
       )}
 
       <Card>
         <View style={{ gap: spacing.s4 }}>
-          <View style={{ gap: spacing.s1 }}>
+          <View style={{ gap: spacing.s2 }}>
             <Text variant="headline" color="textPrimary">
-              Ready for today
+              {ACTIVE_TIER?.displayName ?? 'Your words'}
             </Text>
-            <Text variant="caption" color="textTertiary">
-              {`${dailyProgress.reviewsCompletedToday} of ${dailyProgress.effectiveDailyCap} reviews done`}
-            </Text>
-          </View>
-          <ProgressBar
-            progress={
-              dailyProgress.effectiveDailyCap > 0
-                ? Math.min(dailyProgress.reviewsCompletedToday / dailyProgress.effectiveDailyCap, 1)
-                : 0
-            }
-            label={`${dailyProgress.reviewsCompletedToday}/${dailyProgress.effectiveDailyCap} reviews`}
-          />
-          <Button label="Start review" variant="primary" fullWidth onPress={onStartReview} />
-        </View>
-      </Card>
-
-      <Card>
-        <View style={{ gap: spacing.s4 }}>
-          <View style={{ gap: spacing.s1 }}>
-            <Text variant="headline" color="textPrimary">
-              Learn new words
-            </Text>
-            <Text variant="caption" color="textTertiary">
-              {ACTIVE_TIER
-                ? `${ACTIVE_TIER.displayName} · ${ACTIVE_TIER.cefr.join('–')} · ${dailyProgress.newWordsBudget} left today`
-                : `${dailyProgress.newWordsBudget} left today`}
-            </Text>
+            {masteryError ? (
+              <Text variant="caption" color="textTertiary">
+                Couldn't load your progress
+              </Text>
+            ) : (
+              <>
+                <KnowledgeMapBar segments={segments} />
+                <Text variant="caption" color="textTertiary" tabularNums>
+                  {knowledgeLabel}
+                </Text>
+              </>
+            )}
           </View>
           <Button
-            label="Start learning"
+            label="Keep learning"
             variant="secondary"
             fullWidth
             testID="learn-new-words"

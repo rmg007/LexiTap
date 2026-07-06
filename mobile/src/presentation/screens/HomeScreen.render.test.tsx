@@ -33,8 +33,8 @@ describe('HomeScreen — resume card', () => {
       services,
     );
     await findByText('Resume learning');
-    // index 1 (0-based) → "2/<total>"
-    expect(getByText(`Pick up where you left off · 2/${BATCH.length}`)).toBeTruthy();
+    // index 1 (0-based) → "2/<total>" · next word is BATCH[1] ("arrive")
+    expect(getByText(`Pick up where you left off · 2/${BATCH.length} · "arrive"`)).toBeTruthy();
     fireEvent.press(getByTestId('resume-session'));
     expect(onResume).toHaveBeenCalledWith(snapshot);
   });
@@ -46,8 +46,91 @@ describe('HomeScreen — resume card', () => {
       services,
     );
     // Home still renders its usual content…
-    await findByText('Ready for today');
+    await findByText('Words ready to review');
     // …but no resume affordance without a handler.
     expect(queryByText('Resume learning')).toBeNull();
+  });
+
+  it('never shows two primary CTAs at once — Resume replaces the review card entirely', async () => {
+    const services = defaultServices({ getActiveSession: async () => snapshot });
+    const { findByText, queryByText } = await renderWithProviders(
+      <HomeScreen onStartReview={jest.fn()} onLearnNewWords={jest.fn()} onResume={jest.fn()} />,
+      services,
+    );
+    await findByText('Resume learning');
+    // The review card (and its "Start review" primary) is entirely absent while Resume is focal.
+    expect(queryByText('Words ready to review')).toBeNull();
+    expect(queryByText('Start review')).toBeNull();
+  });
+});
+
+describe('HomeScreen — daily cap states', () => {
+  it('shows the Start review primary + progress copy below cap', async () => {
+    const services = defaultServices({
+      getActiveSession: async () => null,
+      getDailyProgress: async () => ({
+        reviewsCompletedToday: 8,
+        effectiveDailyCap: 15,
+        newWordsCompletedToday: 0,
+        newWordsBudget: 10,
+      }),
+    });
+    const { findByText } = await renderWithProviders(
+      <HomeScreen onStartReview={jest.fn()} onLearnNewWords={jest.fn()} />,
+      services,
+    );
+    await findByText('8 of 15 reviews done');
+    expect(await findByText('Start review')).toBeTruthy();
+  });
+
+  it('drops the dead CTA and shows the done copy at cap — no dead-end button', async () => {
+    const services = defaultServices({
+      getActiveSession: async () => null,
+      getDailyProgress: async () => ({
+        reviewsCompletedToday: 15,
+        effectiveDailyCap: 15,
+        newWordsCompletedToday: 0,
+        newWordsBudget: 10,
+      }),
+    });
+    const { findByText, queryByText } = await renderWithProviders(
+      <HomeScreen onStartReview={jest.fn()} onLearnNewWords={jest.fn()} />,
+      services,
+    );
+    await findByText("Today's reviews are done");
+    expect(queryByText('Start review')).toBeNull();
+  });
+});
+
+describe('HomeScreen — read-failure honesty', () => {
+  it('shows a neutral retry message instead of a false zero when mastery levels fail to load', async () => {
+    const services = defaultServices({
+      getActiveSession: async () => null,
+      getMasteryLevels: async () => {
+        throw new Error('read failed');
+      },
+    });
+    const { findByText, queryByText } = await renderWithProviders(
+      <HomeScreen onStartReview={jest.fn()} onLearnNewWords={jest.fn()} />,
+      services,
+    );
+    await findByText("Couldn't load your progress");
+    expect(queryByText(/known ·/)).toBeNull();
+    // The secondary CTA still works even when the mastery read fails.
+    expect(await findByText('Keep learning')).toBeTruthy();
+  });
+
+  it('shows a neutral streak note instead of a false zero streak when stats fail to load', async () => {
+    const services = defaultServices({
+      getActiveSession: async () => null,
+      getUserStats: async () => {
+        throw new Error('read failed');
+      },
+    });
+    const { findByText } = await renderWithProviders(
+      <HomeScreen onStartReview={jest.fn()} onLearnNewWords={jest.fn()} />,
+      services,
+    );
+    expect(await findByText('Streak unavailable')).toBeTruthy();
   });
 });
