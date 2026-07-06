@@ -63,7 +63,10 @@ export function selectWordsDueForReview(
 }
 
 // Active words the user has never seen (no progress row), for the learn flow.
-// Active filter applies.
+// Active filter applies. Ordered easiest-first by `difficulty` (1-4, 100%
+// foundation coverage), `frequency_rank` as the common-first tiebreak. NOT
+// `created_at` (pipeline insertion order = noise) and NOT `cefr_level` (only
+// ~2% of foundation is labelled — revisit once backfilled). See AGENTS.md.
 export function selectNewWords(
   db: DatabaseHandle,
   tierId: string,
@@ -75,7 +78,7 @@ export function selectNewWords(
      JOIN contentdb.word_tiers wt ON wt.word_id = w.id
      LEFT JOIN user_progress p ON w.id = p.word_id
      WHERE wt.tier_id = ? AND w.deleted_at IS NULL AND p.word_id IS NULL
-     ORDER BY w.created_at ASC
+     ORDER BY w.difficulty ASC, w.frequency_rank ASC
      LIMIT ?`,
     [tierId, limit],
   );
