@@ -16,6 +16,8 @@
     "e2e": "maestro test .maestro"
   },
   "dependencies": {
+    "@expo-google-fonts/inter": "^0.4.2",
+    "@expo-google-fonts/playfair-display": "^0.4.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-google-signin/google-signin": "^16.1.2",
     "@sentry/react-native": "~7.11.0",
@@ -32,6 +34,7 @@
     "expo-linking": "~56.0.13",
     "expo-router": "~56.2.9",
     "expo-secure-store": "~56.0.4",
+    "expo-splash-screen": "~56.0.12",
     "expo-sqlite": "~56.0.4",
     "expo-status-bar": "~56.0.4",
     "nativewind": "^4.2.5",

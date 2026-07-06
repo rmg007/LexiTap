@@ -4,7 +4,16 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Stack, router } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { ThemeProvider } from '@/presentation/theme';
+import * as SplashScreen from 'expo-splash-screen';
+import { useFonts } from 'expo-font';
+import {
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from '@expo-google-fonts/inter';
+import { PlayfairDisplay_700Bold } from '@expo-google-fonts/playfair-display';
+import { ThemeProvider, useTheme } from '@/presentation/theme';
 import { ServicesProvider, type Services } from '@/presentation/services';
 import { AuthProvider } from '@/presentation/auth';
 import { createContainer } from '@/composition/container';
@@ -17,14 +26,36 @@ import '../global.css';
 // crashes are captured. Inert until a DSN is configured (see infrastructure/crash).
 initCrashReporting();
 
+// Hold the native splash screen until fonts + the services container both
+// resolve — every `typography` token in tokens.ts names one of these families;
+// without this, screens silently fall back to the system font.
+SplashScreen.preventAutoHideAsync().catch(() => {
+  // Expo Go / a second call can reject; the splash simply won't be manually
+  // held in that case, which is a harmless no-op degrade.
+});
+
 // Root layout. Opens the database and wires the composition root, then provides
 // the resulting `Services` to the tree. The quiz/review path is offline-first,
 // so bootstrap only awaits local SQLite (sync is bound lazily and never blocks).
 // Until services resolve, a splash spinner renders; screens calling useServices()
 // only mount inside the provider.
 
+// Status bar text must invert with the active color scheme — "light" content is
+// invisible against the light theme's near-white bgBase.
+function ThemedStatusBar(): React.JSX.Element {
+  const { scheme } = useTheme();
+  return <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />;
+}
+
 function RootLayout(): React.JSX.Element {
   const [services, setServices] = useState<Services | null>(null);
+  const [fontsLoaded, fontError] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+    PlayfairDisplay_700Bold,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -40,6 +71,23 @@ function RootLayout(): React.JSX.Element {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    if (fontError) {
+      logger.error('Failed to load fonts', { error: String(fontError) });
+      captureException(fontError);
+    }
+  }, [fontError]);
+
+  const ready = services !== null && (fontsLoaded || fontError != null);
+
+  useEffect(() => {
+    if (ready) {
+      SplashScreen.hideAsync().catch(() => {
+        // Already hidden or unsupported host (Expo Go) — no-op.
+      });
+    }
+  }, [ready]);
 
   useSessionLifecycle(services);
 
@@ -65,8 +113,8 @@ function RootLayout(): React.JSX.Element {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <StatusBar style="light" />
-          {services === null ? (
+          <ThemedStatusBar />
+          {!ready || services === null ? (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
               <ActivityIndicator />
             </View>

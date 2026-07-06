@@ -11,6 +11,7 @@ const sentryConfigured = Boolean(
 const plugins: NonNullable<ExpoConfig['plugins']> = [
   'expo-router',
   'expo-sqlite',
+  'expo-splash-screen',
   ['expo-asset', { assets: ['./assets/vocab/words.db'] }],
   // AUTH-1: Sign in with Apple (AU3) — entitlement wired by the plugin +
   // ios.usesAppleSignIn below. Mandatory per App Store Guideline 4.8 once
