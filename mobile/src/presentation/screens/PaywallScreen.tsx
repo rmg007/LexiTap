@@ -247,7 +247,13 @@ function ProductCard({
           ) : (
             <Button
               label="Unlock"
-              variant="primary"
+              // Scarce teal: only the highlighted/recommended pack gets the
+              // primary gradient button — up to 3 packs render at once here,
+              // and 3 simultaneous teal-gradient primaries is the same
+              // dual-glow bug Home had (DESIGN_LEVELUP_PLAN.md coverage-gap
+              // audit). Every card stays independently purchasable; only the
+              // visual weight is demoted.
+              variant={isHighlighted ? 'primary' : 'secondary'}
               onPress={onPress}
               accessibilityLabel={`Unlock ${tier.displayName} for $${price?.toFixed(2) ?? ''}`}
             />
