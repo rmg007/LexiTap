@@ -144,7 +144,7 @@ All buttons: min 48x48 touch target even when visually smaller (see accessibilit
 
 ### Cards
 
-`bg.surface`, `radius.md`, `border.subtle`, `space.4` padding. The **word card** (Home "due today", Progress list rows) shows the word in `headline`, a one-line definition in `text.secondary`, and a small mastery ring on the trailing edge. No drop shadows in dark mode.
+`bg.surface`, `radius.md`, `border.subtle`, `space.4` padding. Optional `interactive`/`onPress` wraps the card in the same snap-spring press-scale as Button's primary, enforcing the 48px touch target (`Card`, `usePressScale`) — used for tappable dashboard cards (Progress's per-tier hero, Home's Core-pack card). No drop shadows in dark mode.
 
 ### Quiz widgets
 
@@ -163,9 +163,49 @@ Pill (`radius.full`) with the `streak` flame glyph + integer in `mono` tabular f
 
 ### Progress rings and bars
 
-- **Mastery ring** — circular progress, `accent` arc on `border.subtle` track, 2.5px stroke. Used on the Knowledge Map and Progress screen to show per-tier mastery.
-- **Knowledge Map bar** — segmented horizontal bar showing Known / Learning / New as `success` / `accent` / `text.tertiary` segments. Drives the endowed-progress reveal (see [ONBOARDING_FLOW_SPEC.md](./ONBOARDING_FLOW_SPEC.md)).
-- **Daily-cap meter** — small linear meter showing reviews completed against the soft daily cap; fills `accent`, and when the cap is reached it shows a calm "You're done for today" state, not a lockout.
+**No ring** — an earlier mastery-ring concept was cut in favor of the two
+components below; it survives only in Figma's `Archive — pre-rebuild
+originals (do not ship)` sections. Reviving it would mint a third design
+language (constraint 9) — don't.
+
+- **`KnowledgeMapBar`** (`presentation/components/KnowledgeMapBar.tsx`) —
+  segmented horizontal bar showing Known / Learning / New as `success` /
+  `accent` / `border.strong` segments, animated fill, optional dot legend
+  (`showLegend`). Used on Home (bare) and Progress (with legend) to show
+  per-tier mastery, and on the onboarding Knowledge Map reveal for the
+  endowed-progress estimate (see [ONBOARDING_FLOW_SPEC.md](./ONBOARDING_FLOW_SPEC.md)).
+  Segments come from `knowledgeMapSegments()` (`domain/gamification/mastery.ts`),
+  a pure cut of the same `MasteryLevel[]` array `countMastered`/
+  `masteryCompletion` already aggregate.
+- **`DailyCapMeter`** (`presentation/components/DailyCapMeter.tsx`) — ~34px
+  linear meter, teal-gradient fill (`#20B2AA`→`#178F88`, same stops as the
+  primary Button), animated; flips to a solid `success` fill + check icon
+  once the cap is reached, alongside the calm "You're done for today" copy
+  (never a lockout) — color never carries the done state alone.
+- **`ProgressBar`** (generic, `presentation/components/ProgressBar.tsx`) —
+  the thin session/diagnostic progress line. Takes an explicit `tone`
+  prop (`'accent'` default, `'success'` opt-in); only renders a check icon
+  at `tone="success"` and `progress>=1` together — session counters never
+  pass `tone`, so they're visually unaffected by the completion treatment.
+
+### Layout primitives
+
+- **`ListRow`** (`presentation/components/ListRow.tsx`) — label/subtitle/
+  value/leadingIcon/trailing row, enforces the 48px WCAG touch target via
+  `layout.minTouchTarget` on every row (fixed a live sub-48px Saved-words
+  bug). `labelColor="destructive"` auto-bumps the label to `bodyLg` (18px)
+  — `destructive` on `bg.surface` fails 4.5:1 AA at 15px but passes the
+  3:1 large-text threshold at 18px. Used for Home rows, Progress stats,
+  Settings rows, Profile.
+- **`SectionHeader`** (`presentation/components/SectionHeader.tsx`) — the
+  `smallCaps` eyebrow label (11/0.15em Inter Bold). Used for LearnCard's
+  "MEANING n"/"EXAMPLES" labels and dashboard section eyebrows (Progress's
+  per-tier `SectionHeader`, Settings' card-group titles).
+- **`EmptyState`** (`presentation/components/EmptyState.tsx`) — centered
+  icon + headline + optional body + optional single CTA. `iconColor`
+  defaults to `text.tertiary` (neutral empty state); pass `success` for an
+  earned/accomplishment moment. Used for Learn's all-caught-up, Saved
+  Words' empty list, Progress first-run.
 
 ### Chips, tabs, sheets
 

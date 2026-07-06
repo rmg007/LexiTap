@@ -1,6 +1,6 @@
 # UI/UX Fixes — Home CTA/status-bar, Learn Card readability/nav, Progress dashboard, Settings cleanup
 
-**Status:** draft (2026-07-05) — pending Ryan's accept.
+**Status:** ✅ DONE (2026-07-06) — all 24 phases executed, most absorbed into the richer [`DESIGN_LEVELUP_PLAN.md`](DESIGN_LEVELUP_PLAN.md) treatment per this doc's own "where they overlap, the elevation version wins" rule (noted per-phase below where that happened). Landed alongside DESIGN_LEVELUP_PLAN.md in the same 18-commit session. Full session note: [`memory/2026-07-06_design-levelup-execution.md`](../memory/2026-07-06_design-levelup-execution.md).
 **Goal:** Fix concrete, verified UI defects across Home, Learn Card,
 Progress, and Settings — CTA collision, unreadable status bar, cramped
 header, blended examples, dead space after the CTA, a weak button label, a
