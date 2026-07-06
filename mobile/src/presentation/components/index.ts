@@ -12,4 +12,7 @@ export {
   type StreakBadgeProps,
   type StreakVisualState,
 } from '@/presentation/components/StreakBadge';
+export { EmptyState, type EmptyStateProps } from '@/presentation/components/EmptyState';
+export { SectionHeader, type SectionHeaderProps } from '@/presentation/components/SectionHeader';
+export { ListRow, type ListRowProps } from '@/presentation/components/ListRow';
 export * from '@/presentation/components/assessments';
