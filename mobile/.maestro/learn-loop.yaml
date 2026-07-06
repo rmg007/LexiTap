@@ -95,18 +95,23 @@ appId: com.lexitap.app
     id: "learn-new-words"
 
 # ── 4. Advance through ALL cards in the batch ────────────────────────────────
-# Each card has a "Got it" primary button (accessibilityLabel="Got it").
+# Each card has a "Next" primary button, testID="learn-card-next" (selected by
+# id, not text — the header now also has a "Next word" chevron whose
+# accessibility label would ambiguously substring-match a plain "Next" text
+# selector; DESIGN_LEVELUP_PLAN.md Phase 3.1 renamed "Got it" -> "Next").
 # The final tap calls onComplete(batch) → router.replace('/learn-check').
 - extendedWaitUntil:
-    visible: "Got it"
+    visible:
+      id: "learn-card-next"
     timeout: 30000
 - repeat:
     while:
-      visible: "Got it"
+      visible:
+        id: "learn-card-next"
     times: 10
     commands:
       - tapOn:
-          text: "Got it"
+          id: "learn-card-next"
 
 # ── 5. Assert Quick-check screen is visible ──────────────────────────────────
 # LearnQuickCheckScreen renders a "Quick check" caption in the header.

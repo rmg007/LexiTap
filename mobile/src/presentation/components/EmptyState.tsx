@@ -4,6 +4,7 @@ import { useTheme } from '@/presentation/theme';
 import { Text } from '@/presentation/components/Text';
 import { Button, type ButtonVariant } from '@/presentation/components/Button';
 import { Icon, type IconName } from '@/presentation/components/Icon';
+import type { ColorTokens } from '@/presentation/theme/tokens';
 
 // ─── EmptyState ───────────────────────────────────────────────────────────────
 // Shared empty/done-state layout (Figma `EmptyState`, 302:75 / 377:135):
@@ -15,6 +16,9 @@ import { Icon, type IconName } from '@/presentation/components/Icon';
 
 export interface EmptyStateProps {
   icon?: IconName;
+  /** Icon color token. Default 'textTertiary' (neutral empty state); pass
+   * 'success' for an earned/accomplishment moment (e.g. session complete). */
+  iconColor?: keyof ColorTokens;
   headline: string;
   body?: string;
   ctaLabel?: string;
@@ -24,6 +28,7 @@ export interface EmptyStateProps {
 
 export function EmptyState({
   icon,
+  iconColor = 'textTertiary',
   headline,
   body,
   ctaLabel,
@@ -34,7 +39,7 @@ export function EmptyState({
 
   return (
     <View style={{ alignItems: 'center', gap: spacing.s3, paddingVertical: spacing.s6 }}>
-      {icon != null && <Icon name={icon} size={40} color="textTertiary" />}
+      {icon != null && <Icon name={icon} size={40} color={iconColor} />}
       <Text
         variant="headline"
         color="textPrimary"

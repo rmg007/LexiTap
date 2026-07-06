@@ -1,17 +1,23 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { AccessibilityInfo, findNodeHandle, Pressable, View } from 'react-native';
+import { router } from 'expo-router';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme } from '@/presentation/theme';
-import { Text, Button, ProgressBar, Icon } from '@/presentation/components';
+import { useMotion } from '@/presentation/theme/useMotion';
+import { usePressScale } from '@/presentation/hooks/usePressScale';
+import { Text, Button, ProgressBar, Icon, Card, EmptyState } from '@/presentation/components';
 import { ExitSessionSheet } from '@/presentation/screens/ExitSessionSheet';
-import { useServices } from '@/presentation/services';
+import { useServices, type DailyProgressMetrics } from '@/presentation/services';
 import { asTierId, asWordId, NoWordsAvailableError } from '@/domain/index';
 import type { Word, WordSense } from '@/domain/vocabulary/Word';
 
-// LearnCard — pressure-free first exposure to new words (Screen 5).
-//
-// Fetches a batch of new words via StartQuizUseCase (mode='learn') and
-// presents them one at a time. The learner reads and taps "Got it" to advance.
+// LearnCard — pressure-free first exposure to new words (Screen 5), realigned
+// to a premium-reader treatment (DESIGN_LEVELUP_PLAN.md Phase 3.1): a two-tier
+// header (full-bleed progress line + a compact close/nav/bookmark row),
+// examples as sunken-well citations with the target word bolded, a Playfair
+// h1 word treatment, multi-sense meaning cards, and a cross-fade between
+// words instead of an abrupt remount.
 //
 // Rich detail (Rich Word-Detail Plan, Phase 4): for the displayed word we
 // lazily fetch its felt-explanation senses via queries.getWordDetail(id) and
@@ -49,6 +55,27 @@ type LearnPhase =
 
 const BATCH_LIMIT = 10;
 
+// ~66ch reading measure for the felt explanation (RN has no `ch` unit — this
+// approximates it at the `body` variant's ~15px Inter average glyph width).
+const EXPLANATION_MAX_WIDTH = 520;
+
+// Bolds the first case-insensitive occurrence of `targetWord` within `text`.
+// Falls back to the plain sentence (no bolding) when the exact base form
+// isn't found — e.g. an inflected form ("arrived" vs "arrive") — never throws.
+function renderExampleWithBoldTarget(text: string, targetWord: string): React.ReactNode {
+  const idx = text.toLowerCase().indexOf(targetWord.toLowerCase());
+  if (idx === -1) return text;
+  return (
+    <>
+      {text.slice(0, idx)}
+      <Text variant="body" color="textSecondary" style={{ fontWeight: '700' }}>
+        {text.slice(idx, idx + targetWord.length)}
+      </Text>
+      {text.slice(idx + targetWord.length)}
+    </>
+  );
+}
+
 export function LearnCardScreen({
   tierId,
   onExit,
@@ -56,11 +83,10 @@ export function LearnCardScreen({
   resumeBatch,
   resumeIndex,
 }: LearnCardScreenProps): React.JSX.Element {
-  const { colors, spacing } = useTheme();
+  const { colors, spacing, radii, layout } = useTheme();
+  const { timing } = useMotion();
   const services = useServices();
   const [phase, setPhase] = useState<LearnPhase>({ kind: 'loading' });
-  // Bump to remount card content on each advance so the view resets cleanly.
-  const cardKey = useRef(0);
   // Whether the word currently on screen is saved (drives the bookmark toggle).
   const [isSaved, setIsSaved] = useState(false);
   // Exit confirm sheet (SESSION_RESUME_PLAN Part A) — reassures the learner that
@@ -71,6 +97,12 @@ export function LearnCardScreen({
   // fail-soft (getWordDetail never throws) so a content DB predating the
   // senses tables just yields [] and the flat layout shows.
   const [sensesByWordId, setSensesByWordId] = useState<Record<string, WordSense[]>>({});
+  // Distinguishes "hit today's new-word budget" (temporary) from "the tier's
+  // content is genuinely exhausted" (rare) once the empty phase is reached.
+  const [emptyDailyProgress, setEmptyDailyProgress] = useState<DailyProgressMetrics | null>(null);
+
+  const cardBodyRef = useRef<View>(null);
+  const bookmarkPress = usePressScale({ pressedScale: 0.88 });
 
   const loadBatch = useCallback(async () => {
     // Resume path: rehydrate the exact batch/index from the snapshot — no fetch.
@@ -101,6 +133,24 @@ export function LearnCardScreen({
     void loadBatch();
   }, [loadBatch]);
 
+  // On reaching the empty phase, read today's new-word budget so the copy can
+  // distinguish "come back tomorrow" from the rare genuinely-exhausted case.
+  useEffect(() => {
+    if (phase.kind !== 'empty') return;
+    let cancelled = false;
+    void services.queries
+      .getDailyProgress(asTierId(tierId))
+      .then((p) => {
+        if (!cancelled) setEmptyDailyProgress(p);
+      })
+      .catch(() => {
+        if (!cancelled) setEmptyDailyProgress(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [phase.kind, services, tierId]);
+
   // Lazily fetch the rich senses for the card currently on screen. One
   // fail-soft call per word, cached so re-renders / back-and-forth don't refetch.
   const currentWordId = phase.kind === 'card' ? phase.batch[phase.index]?.id : undefined;
@@ -123,9 +173,9 @@ export function LearnCardScreen({
   }, [currentWordId, sensesByWordId, services]);
 
   // Persist the resume snapshot for the card on screen (SESSION_RESUME_PLAN). One
-  // fail-soft write per card; a failure must never block the learn flow. The
-  // snapshot survives until the quick-check completes (which clears it) or a new
-  // learn session overwrites it.
+  // fail-soft write per card; a failure must never block the learn flow. Fires
+  // identically whether index just advanced or went back — the snapshot is
+  // just "whatever the learner is looking at now", not forward-only.
   const snapshotIndex = phase.kind === 'card' ? phase.index : undefined;
   const snapshotBatch = phase.kind === 'card' ? phase.batch : undefined;
   useEffect(() => {
@@ -155,6 +205,16 @@ export function LearnCardScreen({
     };
   }, [currentWordId, services]);
 
+  // Move screen-reader focus to the new word each time it swaps in — without
+  // this, VoiceOver/TalkBack silently stays on the old (now-gone) card body.
+  useEffect(() => {
+    if (currentWordId === undefined) return;
+    const tag = findNodeHandle(cardBodyRef.current);
+    if (tag != null) {
+      AccessibilityInfo.setAccessibilityFocus(tag);
+    }
+  }, [currentWordId]);
+
   // Toggle save for the current word — optimistic, fail-soft.
   const handleToggleSave = useCallback(() => {
     if (phase.kind !== 'card') return;
@@ -177,9 +237,14 @@ export function LearnCardScreen({
       onComplete(phase.batch);
       return;
     }
-    cardKey.current += 1;
     setPhase({ kind: 'card', index: next, batch: phase.batch });
   }, [phase, onComplete]);
+
+  const handlePrevious = useCallback(() => {
+    if (phase.kind !== 'card') return;
+    if (phase.index <= 0) return;
+    setPhase({ kind: 'card', index: phase.index - 1, batch: phase.batch });
+  }, [phase]);
 
   // ── Loading ────────────────────────────────────────────────────────────────
   if (phase.kind === 'loading') {
@@ -194,16 +259,30 @@ export function LearnCardScreen({
 
   // ── Empty (no new words) ───────────────────────────────────────────────────
   if (phase.kind === 'empty') {
+    const budgetReached =
+      emptyDailyProgress != null &&
+      emptyDailyProgress.newWordsCompletedToday >= emptyDailyProgress.newWordsBudget;
+
     return (
-      <Screen scroll={false}>
-        <View style={{ gap: spacing.s4, flex: 1, justifyContent: 'center' }}>
-          <Text variant="title" color="textPrimary" accessibilityRole="header">
-            All caught up
-          </Text>
-          <Text variant="body" color="textSecondary">
-            You're all caught up on new words.
-          </Text>
+      <Screen scroll={false} contentStyle={{ flex: 1, justifyContent: 'center' }}>
+        <EmptyState
+          icon="check"
+          iconColor="success"
+          headline={budgetReached ? "You've hit today's new-word limit" : "You're all caught up"}
+          body={
+            budgetReached
+              ? 'Come back tomorrow for more new words.'
+              : "You're all caught up on new words."
+          }
+        />
+        <View style={{ gap: spacing.s3 }}>
           <Button label="Back to Home" variant="primary" fullWidth onPress={onExit} />
+          <Button
+            label="See your progress"
+            variant="tertiary"
+            fullWidth
+            onPress={() => router.push('/(tabs)/progress')}
+          />
         </View>
       </Screen>
     );
@@ -260,169 +339,214 @@ export function LearnCardScreen({
         .filter(Boolean)
         .join('. ');
 
-  return (
-    <Screen>
-      {/* Header: back + progress + counter */}
+  const targetWord = word.word;
+  function exampleCard(text: string, key: React.Key): React.JSX.Element {
+    return (
       <View
+        key={key}
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.s3,
+          backgroundColor: colors.bgSurfaceSunken,
+          borderRadius: radii.sm,
+          borderLeftWidth: 2,
+          borderLeftColor: colors.accent,
+          padding: spacing.s3,
         }}
       >
-        <Button
-          label="Back"
-          variant="tertiary"
-          onPress={() => setShowExit(true)}
-          accessibilityLabel="Leave session"
-        />
-        <View style={{ flex: 1 }}>
-          <ProgressBar progress={progress} label="Learn session progress" />
-        </View>
-        <Text
-          variant="mono"
-          color="textTertiary"
-          tabularNums
-          accessibilityLabel={`Card ${position} of ${total}`}
-        >
-          {`${position}/${total}`}
+        <Text variant="body" color="textSecondary">
+          {renderExampleWithBoldTarget(text, targetWord)}
         </Text>
+      </View>
+    );
+  }
+
+  return (
+    <Screen
+      footer={
+        <Button
+          label="Next"
+          variant="primary"
+          fullWidth
+          testID="learn-card-next"
+          onPress={handleGotIt}
+          accessibilityLabel="Next"
+          accessibilityHint={
+            position < total
+              ? `Advance to card ${position + 1} of ${total}`
+              : 'Finish the learn batch'
+          }
+        />
+      }
+    >
+      {/* Tier 1: full-bleed thin progress line. */}
+      <View style={{ marginHorizontal: -layout.screenGutter }}>
+        <ProgressBar progress={progress} label="Learn session progress" height={4} />
+      </View>
+
+      {/* Tier 2: compact close / word-nav / counter / bookmark row. */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Leave session"
+          onPress={() => setShowExit(true)}
+          hitSlop={8}
+          style={{ padding: spacing.s2, minWidth: layout.minTouchTarget, alignItems: 'flex-start' }}
+        >
+          <Icon name="x" size={20} colorValue={colors.textSecondary} />
+        </Pressable>
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.s2 }}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Previous word"
+            accessibilityState={{ disabled: index === 0 }}
+            disabled={index === 0}
+            onPress={handlePrevious}
+            hitSlop={8}
+            style={{ padding: spacing.s1, opacity: index === 0 ? 0.3 : 1 }}
+          >
+            <Icon name="chevron-left" size={18} colorValue={colors.textTertiary} />
+          </Pressable>
+          <Text
+            variant="mono"
+            color="textTertiary"
+            tabularNums
+            accessibilityLabel={`Card ${position} of ${total}`}
+          >
+            {`${position}/${total}`}
+          </Text>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Next word"
+            accessibilityState={{ disabled: position >= total }}
+            disabled={position >= total}
+            onPress={handleGotIt}
+            hitSlop={8}
+            style={{ padding: spacing.s1, opacity: position >= total ? 0.3 : 1 }}
+          >
+            <Icon name="chevron-right" size={18} colorValue={colors.textTertiary} />
+          </Pressable>
+        </View>
+
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={isSaved ? `Remove ${word.word} from saved` : `Save ${word.word} for later`}
           onPress={handleToggleSave}
+          onPressIn={bookmarkPress.onPressIn}
+          onPressOut={bookmarkPress.onPressOut}
           hitSlop={8}
-          style={{ padding: spacing.s1 }}
+          style={{ padding: spacing.s2, minWidth: layout.minTouchTarget, alignItems: 'flex-end' }}
         >
-          <Icon
-            name={isSaved ? 'bookmark-check' : 'bookmark'}
-            size={22}
-            colorValue={isSaved ? colors.accent : colors.textTertiary}
-          />
+          <Animated.View style={bookmarkPress.animatedStyle}>
+            <Icon
+              name={isSaved ? 'bookmark-check' : 'bookmark'}
+              size={22}
+              colorValue={isSaved ? colors.accent : colors.textTertiary}
+            />
+          </Animated.View>
         </Pressable>
       </View>
 
-      {/* Word card body */}
-      <View
-        key={`card-${cardKey.current}`}
+      {/* Word card body — cross-fades between words (key = word.id). */}
+      <Animated.View
+        key={word.id}
+        entering={FadeIn.duration(timing('base').duration ?? 0)}
+        exiting={FadeOut.duration(timing('fast').duration ?? 0)}
         style={{ gap: spacing.s3 }}
-        accessible
-        accessibilityLabel={accessibilityLabel}
       >
-        {/* Word + audio button row */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.s2 }}>
-          <Text variant="display" color="textPrimary" style={{ fontWeight: '700', flex: 1 }}>
-            {word.word}
-          </Text>
-          {/* Audio button: only show when audioPath exists */}
-          {word.audioPath != null && (
-            <Button
-              label="Listen"
-              variant="tertiary"
-              accessibilityLabel="Play pronunciation"
-              onPress={() => {
-                // Audio stub: log until audio infrastructure is wired.
-                // eslint-disable-next-line no-console
-                console.log('[LearnCard] play audio:', word.audioPath);
-              }}
-            />
+        <View ref={cardBodyRef} style={{ gap: spacing.s3 }} accessible accessibilityLabel={accessibilityLabel}>
+          {/* Word + audio button row */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.s2 }}>
+            <Text variant="h1" color="textPrimary" style={{ flex: 1 }}>
+              {word.word}
+            </Text>
+            {/* Audio button: only show when audioPath exists */}
+            {word.audioPath != null && (
+              <Button
+                label="Listen"
+                variant="tertiary"
+                accessibilityLabel="Play pronunciation"
+                onPress={() => {
+                  // Audio stub: log until audio infrastructure is wired.
+                  // eslint-disable-next-line no-console
+                  console.log('[LearnCard] play audio:', word.audioPath);
+                }}
+              />
+            )}
+          </View>
+
+          {hasSenses ? (
+            // ── Rich multi-sense layout (mirrors Figma page 07 · Word Detail) ──
+            <View style={{ gap: spacing.s3 }}>
+              {senses.map((sense, i) => {
+                const body = (
+                  <View style={{ gap: spacing.s2 }}>
+                    {/* "MEANING n · POS" — number only when the word has >1 sense */}
+                    {multiSense ? (
+                      <Text variant="smallCaps" color="textTertiary">
+                        {`MEANING ${i + 1}${sense.pos != null && sense.pos.trim().length > 0 ? ` · ${sense.pos}` : ''}`}
+                      </Text>
+                    ) : (
+                      sense.pos != null &&
+                      sense.pos.trim().length > 0 && (
+                        <Text variant="caption" color="textTertiary">
+                          {sense.pos}
+                        </Text>
+                      )
+                    )}
+
+                    {/* Dictionary one-liner */}
+                    <Text variant="bodyLg" color="textSecondary">
+                      {sense.shortGloss}
+                    </Text>
+
+                    {/* Felt explanation — the teaching text, still the star. */}
+                    <Text
+                      variant="body"
+                      color="textPrimary"
+                      style={{ marginTop: spacing.s3, maxWidth: EXPLANATION_MAX_WIDTH }}
+                    >
+                      {sense.explanation}
+                    </Text>
+
+                    {/* Teaching examples as sunken-well citations (full sentences, no blank) */}
+                    {sense.examples.length > 0 && (
+                      <View style={{ gap: spacing.s2, marginTop: spacing.s1 }}>
+                        <Text variant="smallCaps" color="textTertiary">
+                          EXAMPLES
+                        </Text>
+                        {sense.examples.map((ex) => exampleCard(ex.text, ex.exampleIndex))}
+                      </View>
+                    )}
+                  </View>
+                );
+
+                // Multiple meanings each get their own Card; a single sense
+                // stays flat (matches the Word Detail spec).
+                return multiSense ? (
+                  <Card key={sense.senseIndex}>{body}</Card>
+                ) : (
+                  <React.Fragment key={sense.senseIndex}>{body}</React.Fragment>
+                );
+              })}
+            </View>
+          ) : (
+            // ── Flat fallback (un-backfilled words / pre-rich content DB) ──
+            <View style={{ gap: spacing.s3 }}>
+              {word.pos != null && word.pos.trim().length > 0 && (
+                <Text variant="caption" color="textTertiary">
+                  {word.pos}
+                </Text>
+              )}
+
+              <Text variant="bodyLg" color="textSecondary">
+                {word.definition}
+              </Text>
+
+              {exampleText != null && exampleCard(exampleText, 'flat-example')}
+            </View>
           )}
         </View>
-
-        {hasSenses ? (
-          // ── Rich multi-sense layout (mirrors Figma page 07 · Word Detail) ──
-          senses.map((sense, i) => (
-            <View key={sense.senseIndex} style={{ gap: spacing.s2 }}>
-              {/* Divider between meanings */}
-              {i > 0 && (
-                <View
-                  style={{
-                    height: 1,
-                    backgroundColor: colors.borderSubtle,
-                    marginVertical: spacing.s2,
-                  }}
-                />
-              )}
-
-              {/* "MEANING n · POS" — number only when the word has >1 sense */}
-              {multiSense ? (
-                <Text variant="smallCaps" color="textTertiary">
-                  {`MEANING ${i + 1}${sense.pos != null && sense.pos.trim().length > 0 ? ` · ${sense.pos}` : ''}`}
-                </Text>
-              ) : (
-                sense.pos != null &&
-                sense.pos.trim().length > 0 && (
-                  <Text variant="caption" color="textTertiary">
-                    {sense.pos}
-                  </Text>
-                )
-              )}
-
-              {/* Dictionary one-liner */}
-              <Text variant="bodyLg" color="textSecondary">
-                {sense.shortGloss}
-              </Text>
-
-              {/* Felt explanation — the teaching text */}
-              <Text variant="body" color="textPrimary">
-                {sense.explanation}
-              </Text>
-
-              {/* Teaching examples (full sentences, no blank) */}
-              {sense.examples.length > 0 && (
-                <View style={{ gap: spacing.s1, marginTop: spacing.s1 }}>
-                  <Text variant="smallCaps" color="textTertiary">
-                    EXAMPLES
-                  </Text>
-                  {sense.examples.map((ex) => (
-                    <Text
-                      key={ex.exampleIndex}
-                      variant="body"
-                      color="textSecondary"
-                      style={{ fontStyle: 'italic' }}
-                    >
-                      {`"${ex.text}"`}
-                    </Text>
-                  ))}
-                </View>
-              )}
-            </View>
-          ))
-        ) : (
-          // ── Flat fallback (un-backfilled words / pre-rich content DB) ──
-          <>
-            {word.pos != null && word.pos.trim().length > 0 && (
-              <Text variant="caption" color="textTertiary">
-                {word.pos}
-              </Text>
-            )}
-
-            <Text variant="bodyLg" color="textSecondary">
-              {word.definition}
-            </Text>
-
-            {exampleText != null && (
-              <Text variant="body" color="textSecondary" style={{ fontStyle: 'italic' }}>
-                {`"${exampleText}"`}
-              </Text>
-            )}
-          </>
-        )}
-      </View>
-
-      {/* Got it CTA */}
-      <Button
-        label="Got it"
-        variant="primary"
-        fullWidth
-        onPress={handleGotIt}
-        accessibilityLabel="Got it"
-        accessibilityHint={
-          position < total
-            ? `Advance to card ${position + 1} of ${total}`
-            : 'Finish the learn batch'
-        }
-      />
+      </Animated.View>
 
       <ExitSessionSheet
         visible={showExit}

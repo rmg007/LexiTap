@@ -35,6 +35,7 @@ export type IconName =
   | 'bar-chart-2'
   | 'settings'
   | 'chevron-right'
+  | 'chevron-left'
   | 'bookmark'
   | 'bookmark-check'
   | 'chevrons-up';
@@ -119,6 +120,7 @@ const GLYPHS: Record<IconName, Primitive[]> = {
     { t: 'circle', cx: 12, cy: 12, r: 3 },
   ],
   'chevron-right': [{ t: 'path', d: 'm9 18 6-6-6-6' }],
+  'chevron-left': [{ t: 'path', d: 'm15 18-6-6 6-6' }],
   bookmark: [
     {
       t: 'path',
