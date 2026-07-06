@@ -26,3 +26,31 @@ export function masteryCompletion(levels: readonly MasteryLevel[]): number {
   if (levels.length === 0) return 0;
   return countMastered(levels) / levels.length;
 }
+
+export interface KnowledgeMapSegments {
+  /** Level 5 — the mastered top of the v1-fixed ladder. */
+  known: number;
+  /** Levels 1–4 — seen at least once, not yet mastered. */
+  learning: number;
+  /** Level 0 — never studied (includes words with no progress row yet). */
+  new: number;
+  total: number;
+}
+
+/**
+ * Splits a tier's per-word mastery levels into the three-segment
+ * known/learning/new breakdown (`KnowledgeMapBar`). Pure aggregation, same
+ * shape as `countMastered`/`masteryCompletion` — no new domain concept, just
+ * a different cut of the same `MasteryLevel[]` those already consume.
+ */
+export function knowledgeMapSegments(levels: readonly MasteryLevel[]): KnowledgeMapSegments {
+  let known = 0;
+  let learning = 0;
+  let brandNew = 0;
+  for (const level of levels) {
+    if (isMastered(level)) known += 1;
+    else if (level > 0) learning += 1;
+    else brandNew += 1;
+  }
+  return { known, learning, new: brandNew, total: levels.length };
+}

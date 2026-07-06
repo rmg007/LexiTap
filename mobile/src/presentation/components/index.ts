@@ -15,4 +15,6 @@ export {
 export { EmptyState, type EmptyStateProps } from '@/presentation/components/EmptyState';
 export { SectionHeader, type SectionHeaderProps } from '@/presentation/components/SectionHeader';
 export { ListRow, type ListRowProps } from '@/presentation/components/ListRow';
+export { DailyCapMeter, type DailyCapMeterProps } from '@/presentation/components/DailyCapMeter';
+export { KnowledgeMapBar, type KnowledgeMapBarProps } from '@/presentation/components/KnowledgeMapBar';
 export * from '@/presentation/components/assessments';
