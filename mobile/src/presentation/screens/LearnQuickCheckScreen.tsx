@@ -4,6 +4,7 @@ import { Screen } from '@/presentation/screens/Screen';
 import { useTheme } from '@/presentation/theme';
 import { Text, Button, ProgressBar, Icon } from '@/presentation/components';
 import { ExitSessionSheet } from '@/presentation/screens/ExitSessionSheet';
+import { AFFIRM_BANK, CORRECTION_BANK, pickRandom } from '@/presentation/screens/FeedbackLayer';
 import { MultipleChoice } from '@/presentation/components/assessments';
 import type { AssessmentAnswer } from '@/presentation/components/assessments/types';
 import { useServices } from '@/presentation/services';
@@ -46,17 +47,12 @@ type CheckPhase =
     }
   | { kind: 'done' };
 
-const AFFIRM = ['Nice!', 'Got it.', 'Exactly.', "That's right.", 'Correct.'] as const;
-const CORRECTION = [
-  'Almost.',
-  'Not quite—here it is.',
-  'Review this one.',
-  'Take another look.',
-] as const;
-
-function pickRandom<T>(arr: readonly T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)] as T;
-}
+// AFFIRM_BANK/CORRECTION_BANK/pickRandom now share FeedbackLayer's copy bank
+// (DESIGN_LEVELUP_PLAN.md Phase 4.1) — this file used to keep its own
+// hand-duplicated arrays (predating FeedbackLayer, per the phase comment
+// above) and had silently drifted from it: "Not quite—here it is." (no
+// spaces around the dash) here vs "Not quite — here it is." there. One
+// source of truth now; this class of drift can't recur.
 
 // Build a minimal QuizSession stub for AnswerQuestionUseCase.
 // The use case guards that session.words[session.currentIndex].id === wordId,
@@ -185,9 +181,9 @@ export function LearnQuickCheckScreen({
 
       if (isCorrect) {
         hapticsCorrect();
-        feedbackCopy.current = pickRandom(AFFIRM);
+        feedbackCopy.current = pickRandom(AFFIRM_BANK);
       } else {
-        feedbackCopy.current = pickRandom(CORRECTION);
+        feedbackCopy.current = pickRandom(CORRECTION_BANK);
       }
 
       void services.analytics.track('quiz_submitted', {

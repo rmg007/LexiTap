@@ -286,7 +286,7 @@ export function QuizScreen({ tierId, mode, onExit, onTierLocked }: QuizScreenPro
       <Screen scroll={false}>
         <View style={{ gap: spacing.s4, flex: 1, justifyContent: 'center' }}>
           <Text variant="title" color="textPrimary" accessibilityRole="header">
-            All caught up
+            You're all caught up
           </Text>
           <Text variant="body" color="textSecondary">
             You're done for today. Nice work.

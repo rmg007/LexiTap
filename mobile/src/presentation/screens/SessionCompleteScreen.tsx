@@ -85,7 +85,7 @@ export function SessionCompleteScreen({
           <Text variant="headline" color="textPrimary" accessibilityRole="header">
             {variant === 'learn'
               ? `You met ${wordsReviewed} new ${wordsReviewed === 1 ? 'word' : 'words'} today.`
-              : 'Reviews done for today'}
+              : "You're done for today"}
           </Text>
 
           {/* C — streak summary, post-increment count */}

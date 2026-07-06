@@ -20,7 +20,7 @@ describe('SessionCompleteScreen — review variant (default, unchanged)', () => 
         onKeepPracticing={jest.fn()}
       />,
     );
-    await findByText('Reviews done for today');
+    await findByText("You're done for today");
     expect(getByText('5 words reviewed')).toBeTruthy();
     fireEvent.press(getByText('Done'));
     expect(onDone).toHaveBeenCalledTimes(1);

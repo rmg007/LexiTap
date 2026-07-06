@@ -2,9 +2,9 @@
 title: Design System
 category: ux-design
 status: active
-updated: 2026-06-09
+updated: 2026-07-06
 priority: P0
-tags: [design-system, brand, colors, typography, components, dark-mode, tokens, motion, haptics]
+tags: [design-system, brand, colors, typography, components, dark-mode, tokens, motion, haptics, voice]
 ---
 
 # Design System
@@ -22,6 +22,7 @@ This document is the source of truth for visual and interaction tokens and for t
 - [Elevation and Surfaces](#elevation-and-surfaces)
 - [Iconography](#iconography)
 - [Component Library](#component-library)
+- [Empty & Done-State Voice](#empty--done-state-voice)
 - [Motion and Haptics](#motion-and-haptics)
 - [Token Implementation Notes](#token-implementation-notes)
 - [Open Questions](#open-questions)
@@ -171,6 +172,51 @@ Pill (`radius.full`) with the `streak` flame glyph + integer in `mono` tabular f
 - **Chips** — `radius.full`, `label` text, `bg.surface.raised`; selected = `accent.subtle` fill + `accent` text.
 - **Tab bar** — 4 tabs (Home, Quiz, Progress, Settings) per the locked MVP screen set. Line icons + `label`; active tab `accent`, inactive `text.tertiary`.
 - **Bottom sheets** — `radius.lg` top corners, `bg.surface.raised`, grabber handle, used for Paywall, confirmations, and the daily-cap catch-up offer.
+
+## Empty & Done-State Voice
+
+One copy contract across every "nothing left to do" moment — Learn's
+all-caught-up screen, the Review pool-exhausted screen, Session Complete,
+the Forgiveness Sheet (soft daily-cap), Saved Words' empty list, and the
+Exit-Session Sheet. These used to drift independently per screen (added
+2026-07-06 after an audit found `LearnQuickCheckScreen` had silently
+forked its own copy of `FeedbackLayer`'s affirm/correction banks, with a
+punctuation difference nobody caught) — one contract now, enforced by
+routing shared copy through one source (`FeedbackLayer.tsx`'s
+`AFFIRM_BANK`/`CORRECTION_BANK`) instead of re-typing it per screen.
+
+**Rules:**
+1. **"Done for today" moments share one headline family: `"You're done for
+   today"` / `"You're all caught up"`.** Second person, present tense,
+   states the fact — never a bare noun phrase ("All caught up" with no
+   pronoun reads flatter and doesn't match the rest of the app's voice).
+   Applies to: Review empty (`QuizScreen`), Learn all-caught-up
+   (`LearnCardScreen`), Session Complete's review variant
+   (`SessionCompleteScreen`), and the Forgiveness Sheet.
+2. **A genuinely different trigger gets genuinely different body copy** —
+   don't force "hit the daily budget" and "the whole pool is exhausted"
+   into identical sentences just because the headline family matches.
+   `LearnCardScreen`'s empty phase splits "come back tomorrow" (temporary)
+   from "you're all caught up on new words" (the rare true-exhausted case)
+   for exactly this reason.
+3. **A "here's what you accomplished" moment is not a "done for today"
+   moment — don't force the family match.** `SessionCompleteScreen`'s
+   `variant="learn"` headline ("You met N new words today.") intentionally
+   breaks rule 1's phrasing because it's naming an accomplishment, not
+   announcing an empty queue.
+4. **Empty-collection states (never-populated, not "done for now") are
+   their own category** — plain, declarative, no pronoun needed. Saved
+   Words' "No saved words yet" is not part of the "done for today" family;
+   forcing "You have no saved words yet" would be more awkward, not more
+   consistent.
+5. **No score language, no red, no guilt, ever**, in any of the above —
+   see Design Principle 4. "Nice work" / "Let's build from there" is the
+   register; "you missed N reviews" is never the register.
+6. **One source of truth for randomized affirm/correction banks.** Any
+   screen that needs a random "nice!"/"almost" pick imports
+   `AFFIRM_BANK`/`CORRECTION_BANK`/`pickRandom` from `FeedbackLayer.tsx` —
+   never hand-duplicates the array. That duplication is exactly what
+   produced the punctuation drift this section was written to prevent.
 
 ## Motion and Haptics
 
