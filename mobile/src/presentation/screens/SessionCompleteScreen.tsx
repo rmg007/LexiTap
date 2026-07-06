@@ -14,6 +14,11 @@ import { hapticsStreakIncrement } from '@/presentation/services/haptics';
 // It does NOT fire on the Done button tap (Done is a plain navigation action).
 
 export interface SessionCompleteScreenProps {
+  // 'review' (default) is the original quiz-flow tone, unchanged. 'learn' is
+  // the learn-loop recap (DESIGN_LEVELUP_PLAN.md Phase 3.2) — same calm
+  // no-score shape, just a headline naming what was learned instead of
+  // reviewed.
+  variant?: 'review' | 'learn';
   // Neutral count of items covered this session — NOT an accuracy score.
   wordsReviewed: number;
   // True when this session incremented the streak (first completion of the day).
@@ -30,6 +35,7 @@ export interface SessionCompleteScreenProps {
 }
 
 export function SessionCompleteScreen({
+  variant = 'review',
   wordsReviewed,
   streakIncremented,
   currentStreak,
@@ -66,7 +72,9 @@ export function SessionCompleteScreen({
 
         {/* B — headline */}
         <Text variant="headline" color="textPrimary" accessibilityRole="header">
-          Reviews done for today
+          {variant === 'learn'
+            ? `You met ${wordsReviewed} new ${wordsReviewed === 1 ? 'word' : 'words'} today.`
+            : 'Reviews done for today'}
         </Text>
 
         {/* C — streak summary, post-increment count */}
@@ -76,10 +84,13 @@ export function SessionCompleteScreen({
           freezeConsumed={false}
         />
 
-        {/* D — neutral recap: count only, no accuracy */}
-        <Text variant="body" color="textSecondary" tabularNums>
-          {`${wordsReviewed} ${wordsReviewed === 1 ? 'word' : 'words'} reviewed`}
-        </Text>
+        {/* D — neutral recap: count only, no accuracy. Omitted for the learn
+            variant — the headline already states the count. */}
+        {variant === 'review' && (
+          <Text variant="body" color="textSecondary" tabularNums>
+            {`${wordsReviewed} ${wordsReviewed === 1 ? 'word' : 'words'} reviewed`}
+          </Text>
+        )}
 
         {/* Buttons */}
         <View style={{ width: '100%', gap: spacing.s3 }}>
