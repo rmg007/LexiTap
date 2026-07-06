@@ -30,6 +30,7 @@ export interface ListRowProps {
   labelColor?: keyof ColorTokens;
   accessibilityLabel?: string;
   accessibilityHint?: string;
+  accessibilityRole?: 'button' | 'link';
   showChevron?: boolean;
 }
 
@@ -44,6 +45,7 @@ export function ListRow({
   labelColor = 'textPrimary',
   accessibilityLabel,
   accessibilityHint,
+  accessibilityRole = 'button',
   showChevron = true,
 }: ListRowProps): React.JSX.Element {
   const { spacing, layout } = useTheme();
@@ -88,7 +90,7 @@ export function ListRow({
 
   return (
     <Pressable
-      accessibilityRole="button"
+      accessibilityRole={accessibilityRole}
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityHint={accessibilityHint}
       accessibilityState={{ disabled }}

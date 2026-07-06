@@ -16,8 +16,7 @@ import { router } from 'expo-router';
 import Constants from 'expo-constants';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme, useThemePreference, type ThemePreference } from '@/presentation/theme';
-import { Text, Card, Icon } from '@/presentation/components';
-import type { ColorTokens } from '@/presentation/theme/tokens';
+import { Text, Card, ListRow, SectionHeader } from '@/presentation/components';
 import { APP_ID } from '@/config/app';
 import { useServices, type ContentDbHealth } from '@/presentation/services';
 import { useAuth } from '@/presentation/auth';
@@ -32,17 +31,11 @@ const THEME_OPTIONS: ReadonlyArray<{ value: ThemePreference; label: string }> = 
 const DELETE_COUNTDOWN_SECS = 30;
 
 // ─── Internal layout primitives ───────────────────────────────────────────────
-
-function SectionHeader({ children }: { readonly children: string }): React.JSX.Element {
-  const { spacing } = useTheme();
-  return (
-    <View style={{ paddingHorizontal: spacing.s5, paddingTop: spacing.s4, paddingBottom: spacing.s2 }}>
-      <Text variant="headline" color="textPrimary">
-        {children}
-      </Text>
-    </View>
-  );
-}
+// Rows/section headers now route through the shared design-system primitives
+// (DESIGN_LEVELUP_PLAN.md Phase 4.4) instead of local duplicates — ListRow
+// enforces the 48px WCAG touch target and auto-bumps destructive labels to
+// bodyLg for AA contrast; SectionHeader is the same smallCaps eyebrow used on
+// LearnCard/Progress, replacing the bespoke headline-sized card title.
 
 function RowDivider(): React.JSX.Element {
   const { colors } = useTheme();
@@ -54,76 +47,6 @@ function RowDivider(): React.JSX.Element {
         marginLeft: 20,
       }}
     />
-  );
-}
-
-interface SettingsRowProps {
-  label: string;
-  subtitle?: string;
-  onPress?: () => void;
-  disabled?: boolean;
-  labelColor?: keyof ColorTokens;
-  accessibilityRole?: 'button' | 'link';
-  right?: React.ReactNode;
-  showChevron?: boolean;
-}
-
-function SettingsRow({
-  label,
-  subtitle,
-  onPress,
-  disabled = false,
-  labelColor = 'textPrimary',
-  accessibilityRole = 'button',
-  right,
-  showChevron = true,
-}: SettingsRowProps): React.JSX.Element {
-  const { spacing } = useTheme();
-
-  const rowContent = (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingVertical: spacing.s3,
-        paddingHorizontal: spacing.s5,
-        minHeight: 50,
-      }}
-    >
-      <View style={{ flex: 1, marginRight: spacing.s2 }}>
-        <Text variant="body" color={labelColor}>
-          {label}
-        </Text>
-        {subtitle !== undefined && (
-          <Text variant="caption" color="textTertiary" style={{ marginTop: 2 }}>
-            {subtitle}
-          </Text>
-        )}
-      </View>
-      {right !== undefined
-        ? right
-        : showChevron && onPress !== undefined
-          ? <Icon name="chevron-right" size={18} color="textTertiary" />
-          : null}
-    </View>
-  );
-
-  if (onPress === undefined) return rowContent;
-
-  return (
-    <Pressable
-      accessibilityRole={accessibilityRole}
-      accessibilityLabel={label}
-      accessibilityState={{ disabled }}
-      onPress={onPress}
-      disabled={disabled}
-      style={({ pressed }: { pressed: boolean }): ViewStyle => ({
-        opacity: pressed || disabled ? 0.55 : 1,
-      })}
-    >
-      {rowContent}
-    </Pressable>
   );
 }
 
@@ -264,45 +187,50 @@ export function SettingsScreen(): React.JSX.Element {
 
       {/* ── Account ── */}
       <Card style={{ padding: 0 }}>
-        <SectionHeader>Account</SectionHeader>
+        <View style={{ paddingHorizontal: spacing.s5, paddingTop: spacing.s4, paddingBottom: spacing.s2 }}>
+          <SectionHeader>Account</SectionHeader>
+        </View>
         <RowDivider />
         {session !== null ? (
           <>
-            <SettingsRow
-              label={session.user.email ?? 'Signed in'}
-              subtitle="Your account"
-              showChevron={false}
-            />
+            <View style={{ paddingHorizontal: spacing.s5 }}>
+              <ListRow label={session.user.email ?? 'Signed in'} subtitle="Your account" showChevron={false} />
+            </View>
             <RowDivider />
-            <SettingsRow
-              label="Restore from backup"
-              onPress={() => { setRestoreResult(null); setShowRestoreModal(true); }}
-            />
+            <View style={{ paddingHorizontal: spacing.s5 }}>
+              <ListRow
+                label="Restore from backup"
+                onPress={() => { setRestoreResult(null); setShowRestoreModal(true); }}
+              />
+            </View>
             <RowDivider />
-            <SettingsRow
-              label="Sign out"
-              onPress={() => signOut()}
-            />
+            <View style={{ paddingHorizontal: spacing.s5 }}>
+              <ListRow label="Sign out" onPress={() => signOut()} />
+            </View>
           </>
         ) : (
-          <SettingsRow
-            label="Sign in"
-            subtitle="Sync and back up your learning progress"
-            onPress={() => router.push('/auth/sign-in')}
-          />
+          <View style={{ paddingHorizontal: spacing.s5 }}>
+            <ListRow
+              label="Sign in"
+              subtitle="Sync and back up your learning progress"
+              onPress={() => router.push('/auth/sign-in')}
+            />
+          </View>
         )}
         <RowDivider />
-        <SettingsRow
-          label="Restore purchases"
-          onPress={purchasesRestore !== 'busy' ? handleRestorePurchases : undefined}
-          disabled={purchasesRestore === 'busy'}
-          right={
-            purchasesRestore === 'busy'
-              ? <ActivityIndicator size="small" color={colors.accent} />
-              : undefined
-          }
-          showChevron={purchasesRestore !== 'busy'}
-        />
+        <View style={{ paddingHorizontal: spacing.s5 }}>
+          <ListRow
+            label="Restore purchases"
+            onPress={purchasesRestore !== 'busy' ? handleRestorePurchases : undefined}
+            disabled={purchasesRestore === 'busy'}
+            trailing={
+              purchasesRestore === 'busy'
+                ? <ActivityIndicator size="small" color={colors.accent} />
+                : undefined
+            }
+            showChevron={purchasesRestore !== 'busy'}
+          />
+        </View>
         {typeof purchasesRestore === 'number' || purchasesRestore === 'error' ? (
           <View style={{ paddingHorizontal: spacing.s5, paddingBottom: spacing.s3 }}>
             <Text
@@ -324,11 +252,24 @@ export function SettingsScreen(): React.JSX.Element {
             </Text>
           </View>
         ) : null}
+        <RowDivider />
+        {/* Delete Account moved here from Legal (tactical Phase 16) — it's an
+            account action, not a legal document. */}
+        <View style={{ paddingHorizontal: spacing.s5 }}>
+          <ListRow
+            label="Delete Account"
+            labelColor="destructive"
+            showChevron={false}
+            onPress={() => setShowDeleteModal(true)}
+          />
+        </View>
       </Card>
 
       {/* ── Appearance ── */}
       <Card style={{ padding: 0 }}>
-        <SectionHeader>Appearance</SectionHeader>
+        <View style={{ paddingHorizontal: spacing.s5, paddingTop: spacing.s4, paddingBottom: spacing.s2 }}>
+          <SectionHeader>Appearance</SectionHeader>
+        </View>
         <RowDivider />
         <View style={{ padding: spacing.s5 }}>
           <View style={{ flexDirection: 'row', gap: spacing.s2 }}>
@@ -373,58 +314,65 @@ export function SettingsScreen(): React.JSX.Element {
 
       {/* ── Privacy ── */}
       <Card style={{ padding: 0 }}>
-        <SectionHeader>Privacy</SectionHeader>
+        <View style={{ paddingHorizontal: spacing.s5, paddingTop: spacing.s4, paddingBottom: spacing.s2 }}>
+          <SectionHeader>Privacy</SectionHeader>
+        </View>
         <RowDivider />
-        <SettingsRow
-          label="Disable Analytics"
-          subtitle="Usage only, no personal data"
-          showChevron={false}
-          right={
-            <Switch
-              value={analyticsOptOut}
-              onValueChange={handleAnalyticsToggle}
-              trackColor={{ false: colors.borderSubtle, true: colors.accentSubtle }}
-              thumbColor={analyticsOptOut ? colors.accent : colors.bgSurface}
-              accessibilityRole="switch"
-              accessibilityLabel="Disable analytics"
-              accessibilityHint="Toggle to stop sending usage data"
-              accessible
-            />
-          }
-        />
+        <View style={{ paddingHorizontal: spacing.s5 }}>
+          <ListRow
+            label="Share usage analytics"
+            subtitle="Help improve the app with anonymous usage data"
+            showChevron={false}
+            accessibilityLabel="Share usage analytics"
+            trailing={
+              <Switch
+                // Displayed value is the positive framing ("sharing"); the
+                // stored flag (analyticsOptOut) and everything that reads it
+                // in infrastructure/analytics/ are untouched — only this
+                // file's display + handler invert it (tactical Phase 15).
+                value={!analyticsOptOut}
+                onValueChange={(shared) => void handleAnalyticsToggle(!shared)}
+                trackColor={{ false: colors.bgSurfaceRaised, true: colors.accentSubtle }}
+                thumbColor={analyticsOptOut ? colors.textTertiary : colors.accent}
+                accessibilityRole="switch"
+                accessibilityLabel="Share usage analytics"
+                accessibilityHint="Help improve the app with anonymous usage data"
+                accessible
+              />
+            }
+          />
+        </View>
       </Card>
 
       {/* ── Legal ── */}
       <Card style={{ padding: 0 }}>
-        <SectionHeader>Legal</SectionHeader>
+        <View style={{ paddingHorizontal: spacing.s5, paddingTop: spacing.s4, paddingBottom: spacing.s2 }}>
+          <SectionHeader>Legal</SectionHeader>
+        </View>
         <RowDivider />
-        <SettingsRow
-          label="Privacy Policy"
-          accessibilityRole="link"
-          onPress={() => Linking.openURL('https://lexitap.app/privacy')}
-        />
+        <View style={{ paddingHorizontal: spacing.s5 }}>
+          <ListRow
+            label="Privacy Policy"
+            accessibilityRole="link"
+            onPress={() => Linking.openURL('https://lexitap.app/privacy')}
+          />
+        </View>
         <RowDivider />
-        <SettingsRow
-          label="Terms of Service"
-          accessibilityRole="link"
-          onPress={() => Linking.openURL('https://lexitap.app/terms')}
-        />
+        <View style={{ paddingHorizontal: spacing.s5 }}>
+          <ListRow
+            label="Terms of Service"
+            accessibilityRole="link"
+            onPress={() => Linking.openURL('https://lexitap.app/terms')}
+          />
+        </View>
         <RowDivider />
-        <SettingsRow
-          label="Export my data"
-          onPress={handleExportData}
-        />
-        <RowDivider />
-        <SettingsRow
-          label="Delete Account"
-          labelColor="destructive"
-          showChevron={false}
-          onPress={() => setShowDeleteModal(true)}
-        />
+        <View style={{ paddingHorizontal: spacing.s5 }}>
+          <ListRow label="Export my data" onPress={handleExportData} />
+        </View>
       </Card>
 
       {/* ── Footer ── */}
-      <View style={{ gap: spacing.s1, paddingBottom: spacing.s2 }}>
+      <View style={{ gap: 2, paddingTop: spacing.s3, paddingBottom: spacing.s3 }}>
         <Text variant="caption" color="textTertiary">
           {versionLine}
         </Text>
