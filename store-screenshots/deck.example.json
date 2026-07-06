@@ -1,0 +1,58 @@
+{
+  "appName": "LexiTap: English Vocabulary",
+  "device": "iphone",
+  "locale": "en",
+  "theme": {
+    "navy": "#0E1112",
+    "navyDeep": "#0A0C0D",
+    "navyLift": "#20B2AA55",
+    "ivory": "#F2F5F6",
+    "gold": "#FF9A3D",
+    "muted": "#A9B2B6"
+  },
+  "slides": [
+    {
+      "id": "01-no-typing",
+      "layout": "device-bottom",
+      "label": "NO TYPING, EVER",
+      "headline": "Tap to answer.\nInstant feedback.",
+      "screenshot": "01_quiz.png"
+    },
+    {
+      "id": "02-srs",
+      "layout": "device-top",
+      "label": "SPACED REPETITION",
+      "headline": "Studies what\nyou forget.",
+      "screenshot": "02_srs.png"
+    },
+    {
+      "id": "03-offline",
+      "layout": "device-bottom",
+      "label": "WORKS OFFLINE",
+      "headline": "No Wi-Fi\nneeded.",
+      "screenshot": "03_offline.png"
+    },
+    {
+      "id": "04-exam",
+      "layout": "device-top",
+      "label": "TOEFL · IELTS · GRE",
+      "headline": "Exam-ready\nvocabulary.",
+      "screenshot": "04_exam.png",
+      "callout": { "x": 50, "y": 30, "zoom": 2.4, "label": "1000+ words per pack" }
+    },
+    {
+      "id": "05-paywall",
+      "layout": "device-bottom",
+      "label": "ONE-TIME PURCHASE",
+      "headline": "Own it forever.\nNo subscriptions.",
+      "screenshot": "05_paywall.png"
+    },
+    {
+      "id": "06-knowledge-map",
+      "layout": "device-top",
+      "label": "KNOWLEDGE MAP",
+      "headline": "See what you know.\nPlan what's next.",
+      "screenshot": "06_knowledge_map.png"
+    }
+  ]
+}

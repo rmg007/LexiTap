@@ -1,0 +1,20 @@
+{
+  "name": "lexitap-store-screenshots",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render": "node render.mjs",
+    "render:quick": "node render.mjs --direction=all --treatment=frameless --sizes=6.9",
+    "render:all": "node render.mjs --direction=all --treatment=frameless --sizes=all",
+    "render:compare": "node render.mjs --direction=all --treatment=both --sizes=6.9",
+    "render:fancy": "node render.mjs --direction=fancy --treatment=frameless --sizes=6.9",
+    "render:bold": "node render.mjs --direction=bold --treatment=frameless --sizes=6.9"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.2.5",
+    "@fontsource/playfair-display": "^5.2.8",
+    "@fontsource/space-grotesk": "^5.2.8",
+    "playwright": "^1.49.0",
+    "sharp": "^0.33.5"
+  }
+}

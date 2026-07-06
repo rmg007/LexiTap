@@ -57,7 +57,7 @@ Each sub-project has its own `package.json` + scripts. "Done" = `npm run check` 
 |------|-----------------|
 | `.claude/settings.json` | Model, effort level, hooks, statusLine, `autoMemoryEnabled:false` (home-folder auto-memory off — repo `memory/` is the only memory), deny-list permissions |
 | `.claude/commands/` | Project slash commands (`/snip`, `/gen-image`, `/plan` — grounded implementation plan into `plans/`) |
-| `.claude/skills/` | Project skills (`aso` — App Store Optimization; `orchestrate` — maintains the living task graph: sync state / pick next / expand stubs) |
+| `.claude/skills/` | Project skills (`aso` — App Store Optimization; `orchestrate` — maintains the living task graph: sync state / pick next / expand stubs; `store-screenshots` — renders launch-ready App Store screenshot decks from raw simulator captures via Playwright, LexiTap-branded) |
 | `.claude/hooks/` | `guardrails.mjs` (PreToolUse enforcement) + `session-context.sh` (SessionStart — injects open GitHub issues + git ahead/behind into context) |
 | `.claude/statusline.sh` | Status line: live model · branch · ↑unpushed/↓behind · PR# · context% (makes the never-lose-work state always visible) |
 | `.mcp.json` | Project MCP servers — **Supabase** (read-only; needs `SUPABASE_ACCESS_TOKEN` in env, see `.env.example`). Figma MCP is connected at the app level. |

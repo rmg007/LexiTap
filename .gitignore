@@ -55,5 +55,9 @@ iconikai-icon-pack.zip
 lexitap_svg_assets/
 scripts/out/
 
+# Store screenshot renderer (.claude/skills/store-screenshots) — regenerable output
+store-screenshots/out/
+store-screenshots/raw/
+
 # macOS
 .DS_Store

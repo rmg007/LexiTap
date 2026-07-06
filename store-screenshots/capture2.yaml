@@ -1,0 +1,24 @@
+appId: com.lexitap.app
+---
+- launchApp:
+    clearState: false
+
+- extendedWaitUntil:
+    visible:
+      id: "learn-new-words"
+    timeout: 15000
+
+- tapOn:
+    point: "92%,93%"
+    optional: true
+- waitForAnimationToEnd
+
+- tapOn:
+    point: "50%,84%"
+- waitForAnimationToEnd
+- takeScreenshot: 02_progress
+
+- tapOn:
+    point: "83%,84%"
+- waitForAnimationToEnd
+- takeScreenshot: 03_settings

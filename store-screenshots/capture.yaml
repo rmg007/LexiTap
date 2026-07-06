@@ -1,0 +1,104 @@
+appId: com.lexitap.app
+---
+- launchApp:
+    clearState: true
+
+- extendedWaitUntil:
+    visible: "Your age"
+    timeout: 30000
+- tapOn:
+    text: "Continue to LexiTap"
+
+- extendedWaitUntil:
+    visible: "Get started"
+    timeout: 10000
+- tapOn:
+    text: "Get started"
+
+# Diagnostic (quiz-first, per 2026-07-05 UX overhaul): goal-selection is gone,
+# welcome goes straight to diagnostic. Real words are MultipleChoice quizzes
+# (quiz-option-0/Submit) — this IS screen 1's content. Pseudo-words still use
+# the old ask phase ("No, not yet" / "I don't know this word"). Loop until
+# Knowledge Map's "Start learning" appears.
+- repeat:
+    times: 40
+    commands:
+      - runFlow:
+          when:
+            visible: "Start learning"
+          commands:
+            - takeScreenshot: 06_knowledge_map
+            - tapOn: "Start learning"
+      - runFlow:
+          when:
+            visible: "No, not yet"
+          commands:
+            - tapOn: "No, not yet"
+            - waitForAnimationToEnd
+      - runFlow:
+          when:
+            visible:
+              id: "quiz-option-0"
+          commands:
+            - takeScreenshot: 01_quiz
+            - tapOn:
+                id: "quiz-option-0"
+            - tapOn: "Submit"
+            - waitForAnimationToEnd:
+                timeout: 4000
+
+# Paywall — screenshot 5
+- extendedWaitUntil:
+    visible: "Unlock LexiTap"
+    timeout: 10000
+- takeScreenshot: 05_paywall
+- tapOn:
+    text: "Dismiss paywall"
+
+# Home — screenshot 0 (reference)
+- extendedWaitUntil:
+    visible:
+      id: "learn-new-words"
+    timeout: 30000
+- takeScreenshot: 00_home
+
+- tapOn:
+    id: "learn-new-words"
+
+- extendedWaitUntil:
+    visible: "Got it"
+    timeout: 30000
+- repeat:
+    while:
+      visible: "Got it"
+    times: 10
+    commands:
+      - tapOn:
+          text: "Got it"
+
+- extendedWaitUntil:
+    visible: "Quick check"
+    timeout: 30000
+
+# Multiple-choice quiz (quick-check) — fallback hero shot
+- takeScreenshot: 01_quiz_quickcheck
+
+- repeat:
+    while:
+      visible: "Quick check"
+    times: 12
+    commands:
+      - tapOn:
+          id: "quiz-option-0"
+      - tapOn:
+          text: "Submit"
+      - extendedWaitUntil:
+          visible: "Continue"
+          timeout: 20000
+      - tapOn:
+          text: "Continue"
+
+- extendedWaitUntil:
+    visible:
+      id: "learn-new-words"
+    timeout: 30000

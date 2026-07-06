@@ -4,6 +4,8 @@
 
 LexiTap app store screenshots must reflect **real app state** (simulator captures, not mockups). This spec defines what each of the 5 core screenshots should show, the copy overlay, and capture method.
 
+**Rendering:** once raw captures exist, the `/store-screenshots` skill (`.claude/skills/store-screenshots/`) composes them into a launch-ready, exact-dimension screenshot deck (headline/eyebrow overlay, three visual directions, HTML showcase) via deterministic Playwright rendering. It ports the 6 shots below into a pre-filled `deck.json` — update this spec first if the copy changes, then re-sync the deck.
+
 ---
 
 ## iOS Screenshots (5–7 images)
