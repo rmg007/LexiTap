@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
-import { ProgressBar as PaperProgressBar } from 'react-native-paper';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useTheme } from '@/presentation/theme';
+import { useMotion } from '@/presentation/theme/useMotion';
+import { Icon } from '@/presentation/components/Icon';
 
 // ─── ProgressBar ──────────────────────────────────────────────────────────────
-// Linear progress meter (daily-cap meter, session header). Built on Paper's
-// ProgressBar so theme color and accessibility are inherited automatically.
-// Accessibility: progressbar role + value range handled by Paper.
+// Linear progress meter (daily-cap meter, session header). Fill is a plain
+// Animated.View absolutely positioned inside the track (Paper's own
+// ProgressBar can't be driven from outside, so it isn't used here) — width
+// interpolates 0→value on mount and on every value change via
+// useMotion().timing('base'), degrading to an instant snap under Reduce Motion.
+//
+// `tone` is an explicit, opt-in prop — default 'accent' keeps every existing
+// call site (session/diagnostic progress counters) visually unchanged. Callers
+// that track a real completion state (daily cap, tier mastery) pass
+// tone="success" once the underlying value has actually reached its goal;
+// only then, at progress >= 1, does the bar render a check icon — color alone
+// never carries the "done" state (WCAG 1.4.1).
 // ─────────────────────────────────────────────────────────────────────────────
 
 export interface ProgressBarProps {
@@ -14,6 +25,7 @@ export interface ProgressBarProps {
   progress: number;
   label?: string;
   height?: number;
+  tone?: 'accent' | 'success';
 }
 
 /** Clamp a value into [0, 1]. Exported for unit testing. */
@@ -28,31 +40,55 @@ export function ProgressBar({
   progress,
   label,
   height = 8,
+  tone = 'accent',
 }: ProgressBarProps): React.JSX.Element {
   const { colors, radii } = useTheme();
+  const { timing } = useMotion();
   const value = clampProgress(progress);
+  const complete = tone === 'success' && value >= 1;
+  const fillColor = tone === 'success' ? colors.success : colors.accent;
+
+  const width = useSharedValue(0);
+  useEffect(() => {
+    width.value = withTiming(value * 100, timing('base'));
+  }, [value, width, timing]);
+
+  const fillStyle = useAnimatedStyle(() => ({
+    width: `${width.value}%`,
+  }));
+
+  // Enough room for a legible check glyph without clipping thin session bars.
+  const showCheckIcon = complete && height >= 16;
 
   return (
     <View
       accessibilityRole="progressbar"
-      accessibilityLabel={label}
+      accessibilityLabel={complete ? `${label ?? 'Progress'}, complete` : label}
       accessibilityValue={{ min: 0, max: 1, now: value }}
       style={{
         height,
         borderRadius: radii.full,
         overflow: 'hidden',
         backgroundColor: colors.borderSubtle,
+        flexDirection: 'row',
+        alignItems: 'center',
       }}
     >
-      <PaperProgressBar
-        progress={value}
-        color={colors.accent}
-        style={{
-          height,
-          borderRadius: radii.full,
-          backgroundColor: 'transparent',
-        }}
+      <Animated.View
+        style={[
+          {
+            height,
+            borderRadius: radii.full,
+            backgroundColor: fillColor,
+          },
+          fillStyle,
+        ]}
       />
+      {showCheckIcon && (
+        <View style={{ position: 'absolute', right: 2 }}>
+          <Icon name="check" size={height - 2} colorValue={colors.onAccent} />
+        </View>
+      )}
     </View>
   );
 }
@@ -84,7 +120,7 @@ export function SegmentedProgress({
       accessibilityRole="progressbar"
       accessibilityLabel={label}
       accessibilityValue={{ min: 0, max: total, now: current }}
-      className="flex-row gap-[6px]"
+      style={{ flexDirection: 'row', gap: 6 }}
     >
       {Array.from({ length: total }, (_, i) => {
         const isComplete = i < current;
@@ -93,15 +129,15 @@ export function SegmentedProgress({
         return (
           <View
             key={i}
-            className="flex-1"
             style={{
+              flex: 1,
               height: 4,
               borderRadius: 2,
               backgroundColor: isComplete
                 ? colors.accent
                 : isActive
                   ? 'rgba(32,178,170,0.4)' // in-progress: 40% teal
-                  : 'rgba(255,255,255,0.10)',
+                  : colors.borderSubtle,
             }}
           />
         );
