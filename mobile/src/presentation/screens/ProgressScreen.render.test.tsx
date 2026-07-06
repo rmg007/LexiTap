@@ -102,3 +102,36 @@ describe('ProgressScreen — first-run vs returning-learner streak card', () => 
     expect(queryByText('No study sessions yet')).toBeNull();
   });
 });
+
+describe('ProgressScreen — first-run endowed copy (Phase 4.3)', () => {
+  it('shows the endowed estimate on a fresh-in-tier hero when a frontier rank exists', async () => {
+    const services = defaultServices({
+      getUserStats: async () => ({
+        streak: initialStreakState(),
+        totalSessions: 0,
+        totalWordsMastered: 0,
+        onboardingState: { frontierRank: 1200, completedAt: Date.now() },
+      }),
+      getMasteryLevels: async () => new Array(2848).fill(0),
+    });
+    const { findAllByText } = await renderWithProviders(<ProgressScreen />, services);
+    expect(
+      (await findAllByText("You're starting from an estimated 1,200 words already known.")).length,
+    ).toBeGreaterThan(0);
+  });
+
+  it('omits the estimate once real in-tier progress exists', async () => {
+    const services = defaultServices({
+      getUserStats: async () => ({
+        streak: initialStreakState(),
+        totalSessions: 3,
+        totalWordsMastered: 1,
+        onboardingState: { frontierRank: 1200, completedAt: Date.now() },
+      }),
+      getMasteryLevels: async () => [5, 2, 0, 0, 0],
+    });
+    const { findAllByText, queryByText } = await renderWithProviders(<ProgressScreen />, services);
+    expect((await findAllByText(/known ·/)).length).toBeGreaterThan(0);
+    expect(queryByText(/already known/)).toBeNull();
+  });
+});

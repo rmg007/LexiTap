@@ -1,6 +1,7 @@
 import { fireEvent } from '@testing-library/react-native';
 import { HomeScreen } from '@/presentation/screens/HomeScreen';
-import type { ActiveSession } from '@/domain/index';
+import type { ActiveSession, UserStats } from '@/domain/index';
+import { initialStreakState } from '@/domain/index';
 import { BATCH, defaultServices, renderWithProviders } from '@/test-utils/renderWithProviders';
 
 // Proves the "Resume" card (SESSION_RESUME_PLAN): hidden when there is no active
@@ -132,5 +133,61 @@ describe('HomeScreen — read-failure honesty', () => {
       services,
     );
     expect(await findByText('Streak unavailable')).toBeTruthy();
+  });
+});
+
+describe('HomeScreen — first-run endowed copy (Phase 4.3)', () => {
+  const statsWithFrontier = (frontierRank: number): UserStats => ({
+    streak: initialStreakState(),
+    totalSessions: 0,
+    totalWordsMastered: 0,
+    onboardingState: { frontierRank, completedAt: Date.now() },
+  });
+
+  it('shows the endowed estimate when the tier is fresh and a frontier rank exists', async () => {
+    // A large fake pool (2848, matching the real Foundation Pack size) so the
+    // 1200 frontier estimate isn't clamped by estimateKnownCount's pool cap.
+    const services = defaultServices({
+      getActiveSession: async () => null,
+      getUserStats: async () => statsWithFrontier(1200),
+      getMasteryLevels: async () => new Array(2848).fill(0), // fresh in-tier: no known, no learning
+    });
+    const { findByText } = await renderWithProviders(
+      <HomeScreen onStartReview={jest.fn()} onLearnNewWords={jest.fn()} />,
+      services,
+    );
+    await findByText("You're starting from an estimated 1,200 words already known.");
+  });
+
+  it('omits the estimate once real in-tier progress exists (not just a fresh install)', async () => {
+    const services = defaultServices({
+      getActiveSession: async () => null,
+      getUserStats: async () => statsWithFrontier(1200),
+      getMasteryLevels: async () => [5, 2, 0, 0, 0], // known + learning present
+    });
+    const { queryByText, findByText } = await renderWithProviders(
+      <HomeScreen onStartReview={jest.fn()} onLearnNewWords={jest.fn()} />,
+      services,
+    );
+    await findByText(/known ·/);
+    expect(queryByText(/already known/)).toBeNull();
+  });
+
+  it('omits the estimate when no frontier rank was ever recorded', async () => {
+    const services = defaultServices({
+      getActiveSession: async () => null,
+      getUserStats: async () => ({
+        streak: initialStreakState(),
+        totalSessions: 0,
+        totalWordsMastered: 0,
+      }),
+      getMasteryLevels: async () => [0, 0, 0],
+    });
+    const { queryByText, findByText } = await renderWithProviders(
+      <HomeScreen onStartReview={jest.fn()} onLearnNewWords={jest.fn()} />,
+      services,
+    );
+    await findByText(/known ·/);
+    expect(queryByText(/already known/)).toBeNull();
   });
 });

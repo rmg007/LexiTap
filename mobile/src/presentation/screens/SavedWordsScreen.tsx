@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Screen } from '@/presentation/screens/Screen';
 import { useTheme } from '@/presentation/theme';
-import { Text, Button, Card, Icon } from '@/presentation/components';
+import { Text, Button, Card, Icon, EmptyState } from '@/presentation/components';
 import { useServices } from '@/presentation/services';
 import { asWordId } from '@/domain/index';
 import type { SavedWordListItem } from '@/domain/index';
@@ -81,13 +81,12 @@ export function SavedWordsScreen({ onExit }: SavedWordsScreenProps): React.JSX.E
       </View>
 
       {!loading && items.length === 0 ? (
-        <View style={{ gap: spacing.s3, flex: 1, justifyContent: 'center' }}>
-          <Text variant="body" color="textSecondary" style={{ textAlign: 'center' }}>
-            No saved words yet.
-          </Text>
-          <Text variant="caption" color="textTertiary" style={{ textAlign: 'center' }}>
-            Tap the bookmark on a word to save it for later.
-          </Text>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <EmptyState
+            icon="bookmark"
+            headline="No saved words yet"
+            body="Tap the bookmark on a word to save it for later."
+          />
         </View>
       ) : (
         <>

@@ -18,7 +18,7 @@ describe('SavedWordsScreen (render)', () => {
       <SavedWordsScreen onExit={jest.fn()} />,
       services,
     );
-    await findByText('No saved words yet.');
+    await findByText('No saved words yet');
   });
 
   it('renders saved items with word + definition', async () => {

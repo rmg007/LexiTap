@@ -19,6 +19,7 @@ import {
   initialStreakState,
   asTierId,
   knowledgeMapSegments,
+  estimateKnownCount,
   type KnowledgeMapSegments,
   type MasteryLevel,
   type UserStats,
@@ -123,28 +124,45 @@ export function ProgressScreen(): React.JSX.Element {
     router.push({ pathname: '/learn', params: { tierId } });
   };
 
+  // Same endowed-copy reasoning as Home (Phase 4.3): a fresh-in-tier learner's
+  // real tracked mastery is honestly zero, but onboarding already estimated a
+  // frontier of known words — surface that once here instead of a bare "0".
+  const frontierRank = stats?.onboardingState?.frontierRank;
+
   return (
     <Screen>
       <Text variant="title" color="textPrimary" accessibilityRole="header">
         Progress
       </Text>
 
-      {tiers.filter((t) => t.segments.total > 0).map((tier) => (
-        <Card key={tier.tierId} onPress={() => goToTier(tier.tierId)} accessibilityLabel={`Study ${tier.displayName}`}>
-          <View style={{ gap: spacing.s3 }}>
-            <SectionHeader>{tier.displayName.toUpperCase()}</SectionHeader>
-            <KnowledgeMapBar segments={tier.segments} showLegend />
-            <Text variant="headline" color="textPrimary" tabularNums>
-              {`${tier.segments.known.toLocaleString()} / ${tier.segments.total.toLocaleString()} known · ${tier.displayName}`}
-            </Text>
-            <Text variant="caption" color="textTertiary">
-              {tier.segments.known === 0
-                ? 'First goal: master 10 words'
-                : `${tier.segments.learning.toLocaleString()} in progress`}
-            </Text>
-          </View>
-        </Card>
-      ))}
+      {tiers.filter((t) => t.segments.total > 0).map((tier) => {
+        const freshInTier = tier.segments.known === 0 && tier.segments.learning === 0;
+        const knownEstimate =
+          freshInTier && frontierRank != null
+            ? estimateKnownCount(frontierRank, tier.segments.total)
+            : 0;
+        return (
+          <Card key={tier.tierId} onPress={() => goToTier(tier.tierId)} accessibilityLabel={`Study ${tier.displayName}`}>
+            <View style={{ gap: spacing.s3 }}>
+              <SectionHeader>{tier.displayName.toUpperCase()}</SectionHeader>
+              <KnowledgeMapBar segments={tier.segments} showLegend />
+              <Text variant="headline" color="textPrimary" tabularNums>
+                {`${tier.segments.known.toLocaleString()} / ${tier.segments.total.toLocaleString()} known · ${tier.displayName}`}
+              </Text>
+              <Text variant="caption" color="textTertiary">
+                {tier.segments.known === 0
+                  ? 'First goal: master 10 words'
+                  : `${tier.segments.learning.toLocaleString()} in progress`}
+              </Text>
+              {knownEstimate > 0 && (
+                <Text variant="caption" color="textSecondary">
+                  {`You're starting from an estimated ${knownEstimate.toLocaleString()} words already known.`}
+                </Text>
+              )}
+            </View>
+          </Card>
+        );
+      })}
 
       {savedCount > 0 && (
         <Card>

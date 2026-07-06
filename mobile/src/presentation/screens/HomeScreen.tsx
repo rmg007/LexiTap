@@ -17,6 +17,7 @@ import {
   initialStreakState,
   asTierId,
   knowledgeMapSegments,
+  estimateKnownCount,
   type UserStats,
   type ActiveSession,
   type MasteryLevel,
@@ -134,6 +135,18 @@ export function HomeScreen({
     ? `${segments.known.toLocaleString()} / ${segments.total.toLocaleString()} known · ${ACTIVE_TIER.displayName}`
     : `${segments.known.toLocaleString()} / ${segments.total.toLocaleString()} known`;
 
+  // First-run endowed copy: a fresh install's real tracked mastery is (rightly)
+  // all-zero, but the onboarding diagnostic already estimated a frontier of
+  // known words — showing bare "0 known" here would silently contradict what
+  // onboarding just told the learner. Only shown before any in-tier progress
+  // exists; reuses the frontier estimate already computed at onboarding
+  // (estimateKnownCount, same helper as the Knowledge Map reveal) — no new
+  // domain concept, no new query (segments.total is already fetched).
+  const frontierRank = stats?.onboardingState?.frontierRank;
+  const isFreshInTier = segments.total > 0 && segments.known === 0 && segments.learning === 0;
+  const knownEstimate =
+    isFreshInTier && frontierRank != null ? estimateKnownCount(frontierRank, segments.total) : 0;
+
   const resumeWord =
     hasResume && activeSession
       ? activeSession.batch[Math.min(activeSession.index, activeSession.batch.length - 1)]?.word
@@ -224,6 +237,11 @@ export function HomeScreen({
                 <Text variant="caption" color="textTertiary" tabularNums>
                   {knowledgeLabel}
                 </Text>
+                {knownEstimate > 0 && (
+                  <Text variant="caption" color="textSecondary">
+                    {`You're starting from an estimated ${knownEstimate.toLocaleString()} words already known.`}
+                  </Text>
+                )}
               </>
             )}
           </View>
