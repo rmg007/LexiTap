@@ -107,7 +107,7 @@ describe('HomeScreen — read-failure honesty', () => {
   it('shows a neutral retry message instead of a false zero when mastery levels fail to load', async () => {
     const services = defaultServices({
       getActiveSession: async () => null,
-      getMasteryLevels: async () => {
+      getTierKnowledgeMap: async () => {
         throw new Error('read failed');
       },
     });
@@ -150,7 +150,8 @@ describe('HomeScreen — first-run endowed copy (Phase 4.3)', () => {
     const services = defaultServices({
       getActiveSession: async () => null,
       getUserStats: async () => statsWithFrontier(1200),
-      getMasteryLevels: async () => new Array(2848).fill(0), // fresh in-tier: no known, no learning
+      // fresh in-tier: no known, no learning
+      getTierKnowledgeMap: async () => ({ known: 0, learning: 0, new: 2848, total: 2848 }),
     });
     const { findByText } = await renderWithProviders(
       <HomeScreen onStartReview={jest.fn()} onLearnNewWords={jest.fn()} />,
@@ -163,7 +164,8 @@ describe('HomeScreen — first-run endowed copy (Phase 4.3)', () => {
     const services = defaultServices({
       getActiveSession: async () => null,
       getUserStats: async () => statsWithFrontier(1200),
-      getMasteryLevels: async () => [5, 2, 0, 0, 0], // known + learning present
+      // known + learning present
+      getTierKnowledgeMap: async () => ({ known: 1, learning: 1, new: 3, total: 5 }),
     });
     const { queryByText, findByText } = await renderWithProviders(
       <HomeScreen onStartReview={jest.fn()} onLearnNewWords={jest.fn()} />,
@@ -181,7 +183,7 @@ describe('HomeScreen — first-run endowed copy (Phase 4.3)', () => {
         totalSessions: 0,
         totalWordsMastered: 0,
       }),
-      getMasteryLevels: async () => [0, 0, 0],
+      getTierKnowledgeMap: async () => ({ known: 0, learning: 0, new: 3, total: 3 }),
     });
     const { queryByText, findByText } = await renderWithProviders(
       <HomeScreen onStartReview={jest.fn()} onLearnNewWords={jest.fn()} />,

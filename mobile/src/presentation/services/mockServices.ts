@@ -10,6 +10,7 @@ import type {
   OnboardingState,
   SavedWordListItem,
   ActiveSession,
+  KnowledgeMapSegments,
 } from '@/domain/index';
 import type {
   AdaptiveDiagnosticPool,
@@ -34,7 +35,7 @@ export interface MockServiceHandlers {
   adaptiveLoadPool?: () => Promise<AdaptiveDiagnosticPool>;
   adaptiveSeed?: (input: SeedAdaptiveDiagnosticInput) => Promise<void>;
   getUserStats?: () => Promise<UserStats | null>;
-  getMasteryLevels?: () => Promise<readonly number[]>;
+  getTierKnowledgeMap?: () => Promise<KnowledgeMapSegments>;
   getDailyProgress?: () => Promise<DailyProgressMetrics>;
   getContentDbHealth?: () => Promise<{ wordCount: number; dbVersion: number }>;
   getWordDetail?: (...args: never[]) => Promise<WordDetail | null>;
@@ -98,7 +99,8 @@ export function createMockServices(handlers: MockServiceHandlers = {}): Services
     clearUserData: async () => undefined,
     queries: {
       getUserStats: handlers.getUserStats ?? (async () => null),
-      getMasteryLevels: handlers.getMasteryLevels ?? (async () => []),
+      getTierKnowledgeMap:
+        handlers.getTierKnowledgeMap ?? (async () => ({ known: 0, learning: 0, new: 0, total: 0 })),
       getDailyProgress: handlers.getDailyProgress ?? (async () => ({
         reviewsCompletedToday: 0,
         effectiveDailyCap: 40,

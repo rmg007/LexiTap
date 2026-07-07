@@ -16,11 +16,10 @@ import {
   toLocalCivilDate,
   initialStreakState,
   asTierId,
-  knowledgeMapSegments,
   estimateKnownCount,
   type UserStats,
   type ActiveSession,
-  type MasteryLevel,
+  type KnowledgeMapSegments,
 } from '@/domain/index';
 import { listActiveTiers } from '@/config/tiers';
 
@@ -51,6 +50,8 @@ const DEFAULT_DAILY_PROGRESS: DailyProgressMetrics = {
   newWordsBudget: 10,
 };
 
+const ZERO_SEGMENTS: KnowledgeMapSegments = { known: 0, learning: 0, new: 0, total: 0 };
+
 // The MVP active tier is the first free tier in config (no app/variant branch).
 const ACTIVE_TIER = listActiveTiers()[0];
 
@@ -74,7 +75,7 @@ export function HomeScreen({
   const [statsError, setStatsError] = useState(false);
   const [activeSession, setActiveSession] = useState<ActiveSession | null>(null);
   const [dailyProgress, setDailyProgress] = useState<DailyProgressMetrics>(DEFAULT_DAILY_PROGRESS);
-  const [masteryLevels, setMasteryLevels] = useState<readonly MasteryLevel[]>([]);
+  const [segments, setSegments] = useState<KnowledgeMapSegments>(ZERO_SEGMENTS);
   const [masteryError, setMasteryError] = useState(false);
 
   const load = useCallback(async () => {
@@ -106,12 +107,11 @@ export function HomeScreen({
 
     try {
       if (ACTIVE_TIER) {
-        const levels = await queries.getMasteryLevels(asTierId(ACTIVE_TIER.id));
-        setMasteryLevels(levels as readonly MasteryLevel[]);
+        setSegments(await queries.getTierKnowledgeMap(asTierId(ACTIVE_TIER.id)));
         setMasteryError(false);
       }
     } catch {
-      setMasteryLevels([]);
+      setSegments(ZERO_SEGMENTS);
       setMasteryError(true);
     }
   }, [queries]);
@@ -130,7 +130,6 @@ export function HomeScreen({
     dailyProgress.effectiveDailyCap > 0 &&
     dailyProgress.reviewsCompletedToday >= dailyProgress.effectiveDailyCap;
 
-  const segments = knowledgeMapSegments(masteryLevels);
   const knowledgeLabel = ACTIVE_TIER
     ? `${segments.known.toLocaleString()} / ${segments.total.toLocaleString()} known · ${ACTIVE_TIER.displayName}`
     : `${segments.known.toLocaleString()} / ${segments.total.toLocaleString()} known`;

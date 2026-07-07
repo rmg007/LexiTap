@@ -77,6 +77,39 @@ export function selectProgressReviewedSince(
   );
 }
 
+// Aggregate known/learning/total for a tier's knowledge-map breakdown in a
+// single round trip. Replaces a per-word progress.get() loop (O(n) round
+// trips through the JS↔native bridge — 2.7k of them for the Foundation tier,
+// the Progress/Home screens' ~20s stall) with one indexed JOIN + conditional
+// SUM. LEFT JOIN so a word never studied (no user_progress row) falls through
+// both SUMs (NULL comparisons are falsy) and lands in "new" via the
+// total-known-learning identity the caller computes — same semantics as
+// domain/gamification/mastery.ts's knowledgeMapSegments(levels), just
+// aggregated in SQL instead of over a materialized per-word levels array.
+export interface TierKnowledgeMapRow {
+  total: number;
+  known: number | null;
+  learning: number | null;
+}
+
+export function selectTierKnowledgeMap(
+  db: DatabaseHandle,
+  tierId: string,
+  masteredLevel: number,
+): Promise<TierKnowledgeMapRow | null> {
+  return db.first<TierKnowledgeMapRow>(
+    `SELECT
+       COUNT(*) AS total,
+       SUM(CASE WHEN p.mastery_level >= ? THEN 1 ELSE 0 END) AS known,
+       SUM(CASE WHEN p.mastery_level > 0 AND p.mastery_level < ? THEN 1 ELSE 0 END) AS learning
+     FROM contentdb.words w
+     JOIN contentdb.word_tiers wt ON wt.word_id = w.id
+     LEFT JOIN user_progress p ON p.word_id = w.id
+     WHERE wt.tier_id = ? AND w.deleted_at IS NULL`,
+    [masteredLevel, masteredLevel, tierId],
+  );
+}
+
 // Count active words in a tier whose review is due. Joins content (ATTACHed)
 // via the word_tiers junction for the category filter; active filter applies
 // (deleted_at IS NULL).

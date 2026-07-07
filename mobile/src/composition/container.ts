@@ -11,7 +11,7 @@ import {
   SQLiteAnswerWriter,
 } from '@/infrastructure/db';
 import { buildDailyProgressQueries } from '@/infrastructure/db/queries/dailyProgressQueries';
-import { selectAllProgress } from '@/infrastructure/db/queries/progressQueries';
+import { selectAllProgress, selectTierKnowledgeMap } from '@/infrastructure/db/queries/progressQueries';
 import { mapUserProgressRow } from '@/infrastructure/db/mappers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AsyncStorageAdapter } from '@/infrastructure/storage';
@@ -34,6 +34,8 @@ import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
 import { v1FixedScheduler } from '@/domain/srs/v1-fixed';
+import { MASTERED_LEVEL } from '@/domain/gamification/mastery';
+import type { KnowledgeMapSegments } from '@/domain/gamification/mastery';
 import type { TierId, WordId } from '@/domain/vocabulary/ids';
 import type { SavedWordSource } from '@/domain/user/SavedWord';
 import type { ActiveSession } from '@/domain/user/ActiveSession';
@@ -82,7 +84,6 @@ function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T
 function buildReadQueries(
   db: DatabaseHandle,
   words: SQLiteWordRepository,
-  progress: SQLiteUserProgressRepository,
   stats: SQLiteUserStatsRepository,
   savedWords: SQLiteSavedWordRepository,
   activeSession: SQLiteActiveSessionRepository,
@@ -98,19 +99,16 @@ function buildReadQueries(
         return null;
       }
     },
-    async getMasteryLevels(tierId: TierId) {
+    async getTierKnowledgeMap(tierId: TierId): Promise<KnowledgeMapSegments> {
       try {
-        const tierWords = await words.getWordsByTier(tierId);
-        const levels = await Promise.all(
-          tierWords.map(async (w) => {
-            const p = await progress.get(w.id);
-            return p?.masteryLevel ?? 0;
-          }),
-        );
-        return levels;
+        const row = await selectTierKnowledgeMap(db, tierId, MASTERED_LEVEL);
+        const total = row?.total ?? 0;
+        const known = row?.known ?? 0;
+        const learning = row?.learning ?? 0;
+        return { known, learning, new: Math.max(0, total - known - learning), total };
       } catch (error) {
-        logger.warn('getMasteryLevels failed; returning empty', { error: String(error) });
-        return [];
+        logger.warn('getTierKnowledgeMap failed; returning zero-state', { error: String(error) });
+        return { known: 0, learning: 0, new: 0, total: 0 };
       }
     },
     async getDailyProgress(tierId: TierId) {
@@ -456,7 +454,7 @@ export async function createContainer(): Promise<Container> {
       isComplete: () => storage.isOnboardingComplete(),
       markComplete: () => storage.setOnboardingComplete(),
     },
-    queries: buildReadQueries(db, words, progress, stats, savedWords, activeSession),
+    queries: buildReadQueries(db, words, stats, savedWords, activeSession),
     async clearUserData() {
       await db.transaction(async (tx) => {
         await tx.run('DELETE FROM user_progress', []);

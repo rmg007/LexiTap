@@ -10,7 +10,13 @@ import type { AuthPort } from '@/domain/auth/AuthPort';
 import type { IapPort } from '@/domain/iap/IapPort';
 import type { CheckTierAccessUseCase } from '@/application/tier/CheckTierAccessUseCase';
 import type { TierId, WordId } from '@/domain/index';
-import type { UserStats, SavedWordListItem, SavedWordSource, ActiveSession } from '@/domain/index';
+import type {
+  UserStats,
+  SavedWordListItem,
+  SavedWordSource,
+  ActiveSession,
+  KnowledgeMapSegments,
+} from '@/domain/index';
 import type { Word, WordSense } from '@/domain/vocabulary/Word';
 
 // The Services context is the ONLY way the presentation layer reaches the
@@ -47,8 +53,11 @@ export interface WordDetail {
 export interface ReadQueries {
   // Aggregate stats for Home / Progress (streak, totals, mastered count).
   getUserStats(): Promise<UserStats | null>;
-  // Per-tier mastery levels for the Progress dashboard rings/bars.
-  getMasteryLevels(tierId: TierId): Promise<readonly number[]>;
+  // Per-tier known/learning/new mastery breakdown for the Home/Progress
+  // KnowledgeMapBar. Aggregated server-side (single SQL query) rather than
+  // returning per-word levels — avoids shipping thousands of rows to the JS
+  // side just to bucket them.
+  getTierKnowledgeMap(tierId: TierId): Promise<KnowledgeMapSegments>;
   // Daily progress: reviews completed vs cap, new words learned vs budget.
   getDailyProgress(tierId: TierId): Promise<DailyProgressMetrics>;
   // Content DB health: word count + schema version (for device verification).

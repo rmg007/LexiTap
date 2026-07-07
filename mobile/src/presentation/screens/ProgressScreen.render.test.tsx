@@ -1,5 +1,5 @@
 import { fireEvent } from '@testing-library/react-native';
-import { initialStreakState } from '@/domain/index';
+import { initialStreakState, type UserStats } from '@/domain/index';
 
 const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
@@ -41,7 +41,7 @@ describe('ProgressScreen — known/learning/new hero', () => {
     // tierId argument, so all 3 render identical segments — assert on the
     // Foundation Pack card specifically and allow the legend text to repeat.
     const services = defaultServices({
-      getMasteryLevels: async () => [5, 5, 2, 0, 0],
+      getTierKnowledgeMap: async () => ({ known: 2, learning: 1, new: 2, total: 5 }),
     });
     const { findByText, findAllByText, getByLabelText } = await renderWithProviders(
       <ProgressScreen />,
@@ -54,7 +54,9 @@ describe('ProgressScreen — known/learning/new hero', () => {
   });
 
   it('shows the "First goal" motivational copy when nothing is mastered yet', async () => {
-    const services = defaultServices({ getMasteryLevels: async () => [0, 0, 2] });
+    const services = defaultServices({
+      getTierKnowledgeMap: async () => ({ known: 0, learning: 1, new: 2, total: 3 }),
+    });
     const { findAllByText } = await renderWithProviders(<ProgressScreen />, services);
     expect((await findAllByText('First goal: master 10 words')).length).toBeGreaterThan(0);
   });
@@ -112,7 +114,7 @@ describe('ProgressScreen — first-run endowed copy (Phase 4.3)', () => {
         totalWordsMastered: 0,
         onboardingState: { frontierRank: 1200, completedAt: Date.now() },
       }),
-      getMasteryLevels: async () => new Array(2848).fill(0),
+      getTierKnowledgeMap: async () => ({ known: 0, learning: 0, new: 2848, total: 2848 }),
     });
     const { findAllByText } = await renderWithProviders(<ProgressScreen />, services);
     expect(
@@ -128,10 +130,51 @@ describe('ProgressScreen — first-run endowed copy (Phase 4.3)', () => {
         totalWordsMastered: 1,
         onboardingState: { frontierRank: 1200, completedAt: Date.now() },
       }),
-      getMasteryLevels: async () => [5, 2, 0, 0, 0],
+      getTierKnowledgeMap: async () => ({ known: 1, learning: 1, new: 3, total: 5 }),
     });
     const { findAllByText, queryByText } = await renderWithProviders(<ProgressScreen />, services);
     expect((await findAllByText(/known ·/)).length).toBeGreaterThan(0);
     expect(queryByText(/already known/)).toBeNull();
+  });
+});
+
+describe('ProgressScreen — loading skeleton (atomic reveal, no partial pop)', () => {
+  // The bug this proves fixed: stats resolved fast while the tier read stalled
+  // (an N+1 query), so the Streak card appeared alone for ~20s before the
+  // Foundation Pack card popped in. Every read is now awaited together and
+  // committed in one batch, so the screen must go loading-placeholder →
+  // fully-populated in a single transition — never stats-without-tiers.
+  function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
+    let resolve!: (value: T) => void;
+    const promise = new Promise<T>((res) => {
+      resolve = res;
+    });
+    return { promise, resolve };
+  }
+
+  it('shows the loading placeholder — not the Streak card alone, not a blank gap — until every read resolves', async () => {
+    const statsGate = deferred<UserStats>();
+    const services = defaultServices({
+      getUserStats: () => statsGate.promise,
+      getTierKnowledgeMap: async () => ({ known: 2, learning: 1, new: 2, total: 5 }),
+    });
+    const { getByLabelText, queryByText, queryByLabelText, findByText } = await renderWithProviders(
+      <ProgressScreen />,
+      services,
+    );
+
+    // Stats hasn't resolved yet: the loading placeholder is up, and neither the
+    // Streak card nor the tier card (whose read already finished) has appeared —
+    // proving the reveal waits for ALL reads, not just the fastest one.
+    expect(getByLabelText('Loading progress')).toBeTruthy();
+    expect(queryByText('Streak')).toBeNull();
+    expect(queryByText('2 / 5 known · Foundation Pack')).toBeNull();
+
+    statsGate.resolve({ streak: initialStreakState(), totalSessions: 5, totalWordsMastered: 1 });
+
+    // Now both appear together, in the same transition, and the placeholder is gone.
+    await findByText('Streak');
+    await findByText('2 / 5 known · Foundation Pack');
+    expect(queryByLabelText('Loading progress')).toBeNull();
   });
 });

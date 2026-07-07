@@ -11,6 +11,7 @@ import {
   KnowledgeMapBar,
   SectionHeader,
   StreakBadge,
+  Skeleton,
 } from '@/presentation/components';
 import { useServices, type DailyProgressMetrics } from '@/presentation/services';
 import {
@@ -18,10 +19,8 @@ import {
   toLocalCivilDate,
   initialStreakState,
   asTierId,
-  knowledgeMapSegments,
   estimateKnownCount,
   type KnowledgeMapSegments,
-  type MasteryLevel,
   type UserStats,
 } from '@/domain/index';
 import { listActiveTiers } from '@/config/tiers';
@@ -38,11 +37,46 @@ import { listActiveTiers } from '@/config/tiers';
 // UI_UX_FIXES_PLAN.md Decision #5).
 
 const DEFAULT_TIER_ID = listActiveTiers()[0]?.id ?? 'foundation';
+const ZERO_SEGMENTS: KnowledgeMapSegments = { known: 0, learning: 0, new: 0, total: 0 };
 
 interface TierProgress {
   tierId: string;
   displayName: string;
   segments: KnowledgeMapSegments;
+}
+
+// Loading placeholders for the very first load only (see hasLoadedOnce below).
+// Mirror the real cards' Card > View{gap} > [eyebrow, bar, headline, caption]
+// shape so nothing shifts when the swap to real content happens.
+function TierCardSkeleton(): React.JSX.Element {
+  const { spacing, radii } = useTheme();
+  return (
+    <Card>
+      <View style={{ gap: spacing.s3 }}>
+        <Skeleton width={120} height={16} />
+        <Skeleton width="100%" height={12} style={{ borderRadius: radii.full }} />
+        <Skeleton width={180} height={22} />
+        <Skeleton width={140} height={18} />
+      </View>
+    </Card>
+  );
+}
+
+function StreakCardSkeleton(): React.JSX.Element {
+  const { spacing, radii } = useTheme();
+  return (
+    <Card>
+      <View style={{ gap: spacing.s3 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Skeleton width={72} height={22} />
+          <Skeleton width={56} height={28} style={{ borderRadius: radii.full }} />
+        </View>
+        <Skeleton width="60%" height={18} />
+        <Skeleton width="40%" height={18} />
+        <Skeleton width="50%" height={18} />
+      </View>
+    </Card>
+  );
 }
 
 export function ProgressScreen(): React.JSX.Element {
@@ -53,40 +87,36 @@ export function ProgressScreen(): React.JSX.Element {
   const [savedCount, setSavedCount] = useState(0);
   const [dailyProgress, setDailyProgress] = useState<DailyProgressMetrics | null>(null);
   const [streakEventFired, setStreakEventFired] = useState(false);
+  // Gates the skeleton vs. real content, not a per-field spinner: every read
+  // below is fetched in parallel and committed in one batch, so the very
+  // first load goes skeleton → fully-populated in a single transition (no
+  // section popping in ahead of the others). Later focus-triggered reloads
+  // (see useFocusEffect below) never flip this back to false, so a returning
+  // visit updates the numbers in place instead of re-showing the skeleton.
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   const load = useCallback(async () => {
-    try {
-      setStats(await queries.getUserStats());
-    } catch {
-      setStats(null);
-    }
-    try {
-      setSavedCount(await queries.getSavedWordCount());
-    } catch {
-      setSavedCount(0);
-    }
-    try {
-      setDailyProgress(await queries.getDailyProgress(asTierId(DEFAULT_TIER_ID)));
-    } catch {
-      setDailyProgress(null);
-    }
-
     const active = listActiveTiers();
-    const results: TierProgress[] = [];
-    for (const tier of active) {
-      let levels: readonly number[] = [];
-      try {
-        levels = await queries.getMasteryLevels(asTierId(tier.id));
-      } catch {
-        levels = [];
-      }
-      results.push({
-        tierId: tier.id,
-        displayName: tier.displayName,
-        segments: knowledgeMapSegments(levels as readonly MasteryLevel[]),
-      });
-    }
-    setTiers(results);
+    const [statsResult, savedCountResult, dailyProgressResult, tierResults] = await Promise.all([
+      queries.getUserStats().catch(() => null),
+      queries.getSavedWordCount().catch(() => 0),
+      queries.getDailyProgress(asTierId(DEFAULT_TIER_ID)).catch(() => null),
+      Promise.all(
+        active.map(async (tier) => {
+          try {
+            const segments = await queries.getTierKnowledgeMap(asTierId(tier.id));
+            return { tierId: tier.id, displayName: tier.displayName, segments };
+          } catch {
+            return { tierId: tier.id, displayName: tier.displayName, segments: ZERO_SEGMENTS };
+          }
+        }),
+      ),
+    ]);
+    setStats(statsResult);
+    setSavedCount(savedCountResult);
+    setDailyProgress(dailyProgressResult);
+    setTiers(tierResults);
+    setHasLoadedOnce(true);
   }, [queries]);
 
   // Refresh on every focus (not just mount): the tab stays mounted across
@@ -135,79 +165,88 @@ export function ProgressScreen(): React.JSX.Element {
         Progress
       </Text>
 
-      {tiers.filter((t) => t.segments.total > 0).map((tier) => {
-        const freshInTier = tier.segments.known === 0 && tier.segments.learning === 0;
-        const knownEstimate =
-          freshInTier && frontierRank != null
-            ? estimateKnownCount(frontierRank, tier.segments.total)
-            : 0;
-        return (
-          <Card key={tier.tierId} onPress={() => goToTier(tier.tierId)} accessibilityLabel={`Study ${tier.displayName}`}>
-            <View style={{ gap: spacing.s3 }}>
-              <SectionHeader>{tier.displayName.toUpperCase()}</SectionHeader>
-              <KnowledgeMapBar segments={tier.segments} showLegend />
-              <Text variant="headline" color="textPrimary" tabularNums>
-                {`${tier.segments.known.toLocaleString()} / ${tier.segments.total.toLocaleString()} known · ${tier.displayName}`}
-              </Text>
-              <Text variant="caption" color="textTertiary">
-                {tier.segments.known === 0
-                  ? 'First goal: master 10 words'
-                  : `${tier.segments.learning.toLocaleString()} in progress`}
-              </Text>
-              {knownEstimate > 0 && (
-                <Text variant="caption" color="textSecondary">
-                  {`You're starting from an estimated ${knownEstimate.toLocaleString()} words already known.`}
-                </Text>
-              )}
-            </View>
-          </Card>
-        );
-      })}
-
-      {savedCount > 0 && (
-        <Card>
-          <ListRow
-            label="Saved words"
-            value={String(savedCount)}
-            leadingIcon="bookmark"
-            onPress={() => router.push('/saved-words')}
-            accessibilityLabel={`Saved words, ${savedCount}`}
-          />
-        </Card>
-      )}
-
-      {firstRun ? (
-        <Card raised>
-          <View style={{ gap: spacing.s3 }}>
-            <Text variant="headline" color="textPrimary">
-              No study sessions yet
-            </Text>
-            <Text variant="body" color="textSecondary">
-              Complete your first word set to start building progress.
-            </Text>
-            <Button label="Start studying" variant="primary" fullWidth onPress={() => goToTier(DEFAULT_TIER_ID)} />
-          </View>
-        </Card>
+      {!hasLoadedOnce ? (
+        <View accessibilityRole="text" accessibilityLabel="Loading progress" style={{ gap: spacing.s4 }}>
+          <TierCardSkeleton />
+          <StreakCardSkeleton />
+        </View>
       ) : (
-        <Card>
-          <View style={{ gap: spacing.s3 }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text variant="headline" color="textPrimary">
-                Streak
-              </Text>
-              <StreakBadge streak={streak} atRisk={atRisk} />
-            </View>
-            <ListRow label="Longest streak" value={`${streak.longestStreak} days`} />
-            <ListRow label="Sessions" value={String(stats?.totalSessions ?? 0)} />
-            <ListRow label="Mastered" value={String(stats?.totalWordsMastered ?? 0)} />
-            {dailyProgress != null && (
+        <>
+          {tiers.filter((t) => t.segments.total > 0).map((tier) => {
+            const freshInTier = tier.segments.known === 0 && tier.segments.learning === 0;
+            const knownEstimate =
+              freshInTier && frontierRank != null
+                ? estimateKnownCount(frontierRank, tier.segments.total)
+                : 0;
+            return (
+              <Card key={tier.tierId} onPress={() => goToTier(tier.tierId)} accessibilityLabel={`Study ${tier.displayName}`}>
+                <View style={{ gap: spacing.s3 }}>
+                  <SectionHeader>{tier.displayName.toUpperCase()}</SectionHeader>
+                  <KnowledgeMapBar segments={tier.segments} showLegend />
+                  <Text variant="headline" color="textPrimary" tabularNums>
+                    {`${tier.segments.known.toLocaleString()} / ${tier.segments.total.toLocaleString()} known · ${tier.displayName}`}
+                  </Text>
+                  <Text variant="caption" color="textTertiary">
+                    {tier.segments.known === 0
+                      ? 'First goal: master 10 words'
+                      : `${tier.segments.learning.toLocaleString()} in progress`}
+                  </Text>
+                  {knownEstimate > 0 && (
+                    <Text variant="caption" color="textSecondary">
+                      {`You're starting from an estimated ${knownEstimate.toLocaleString()} words already known.`}
+                    </Text>
+                  )}
+                </View>
+              </Card>
+            );
+          })}
+
+          {savedCount > 0 && (
+            <Card>
               <ListRow
-                label="Reviewed today"
-                value={`${dailyProgress.reviewsCompletedToday}/${dailyProgress.effectiveDailyCap}`}
+                label="Saved words"
+                value={String(savedCount)}
+                leadingIcon="bookmark"
+                onPress={() => router.push('/saved-words')}
+                accessibilityLabel={`Saved words, ${savedCount}`}
               />
-            )}
-          </View>
-        </Card>
+            </Card>
+          )}
+
+          {firstRun ? (
+            <Card raised>
+              <View style={{ gap: spacing.s3 }}>
+                <Text variant="headline" color="textPrimary">
+                  No study sessions yet
+                </Text>
+                <Text variant="body" color="textSecondary">
+                  Complete your first word set to start building progress.
+                </Text>
+                <Button label="Start studying" variant="primary" fullWidth onPress={() => goToTier(DEFAULT_TIER_ID)} />
+              </View>
+            </Card>
+          ) : (
+            <Card>
+              <View style={{ gap: spacing.s3 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Text variant="headline" color="textPrimary">
+                    Streak
+                  </Text>
+                  <StreakBadge streak={streak} atRisk={atRisk} />
+                </View>
+                <ListRow label="Longest streak" value={`${streak.longestStreak} days`} />
+                <ListRow label="Sessions" value={String(stats?.totalSessions ?? 0)} />
+                <ListRow label="Mastered" value={String(stats?.totalWordsMastered ?? 0)} />
+                {dailyProgress != null && (
+                  <ListRow
+                    label="Reviewed today"
+                    value={`${dailyProgress.reviewsCompletedToday}/${dailyProgress.effectiveDailyCap}`}
+                  />
+                )}
+              </View>
+            </Card>
+          )}
+        </>
       )}
     </Screen>
   );

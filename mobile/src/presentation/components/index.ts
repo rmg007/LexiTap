@@ -6,6 +6,7 @@ export { SelectionCard, type SelectionCardProps } from '@/presentation/component
 export { ProgressBar, clampProgress, SegmentedProgress, type ProgressBarProps, type SegmentedProgressProps } from '@/presentation/components/ProgressBar';
 export { RadioButton, type RadioButtonProps } from '@/presentation/components/RadioButton';
 export { Checkbox, type CheckboxProps } from '@/presentation/components/Checkbox';
+export { Skeleton, type SkeletonProps } from '@/presentation/components/Skeleton';
 export {
   StreakBadge,
   resolveStreakVisualState,
