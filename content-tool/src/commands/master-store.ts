@@ -21,6 +21,17 @@ import {
 import { parseMasterFile } from '@/commands/import-master';
 import type { WordRow } from '@/schema/types';
 
+/**
+ * Placeholder `definition` for a bare-stub word ingested before enrichment
+ * (e.g. a word list with no definitions yet). Non-empty so `parseMasterFile`'s
+ * required-field check doesn't throw; `enrich-master` detects this sentinel to
+ * know the word also needs its base fields (pos/definition/example_sentence/
+ * word_type/theme) generated, not just senses/questions.
+ */
+export const PENDING_DEFINITION = '__PENDING_ENRICHMENT__';
+/** Matching placeholder example_sentence — non-empty, exactly one blank, never the real word. */
+export const PENDING_EXAMPLE_SENTENCE = `${PENDING_DEFINITION} _`;
+
 /** Load + validate the master file into ordered MasterWord[]. Throws on any bad line. */
 export function readMasterRecords(path: string): MasterWord[] {
   const validSlugs = new Set(tierSlugs(loadConfig()));

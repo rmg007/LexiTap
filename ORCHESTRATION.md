@@ -70,6 +70,8 @@ Shared barrels (`domain/index.ts`, `mobile/package.json`, both `ROADMAP.md`s) ar
 
 > **2026-07-05 — Word feedback + resumable sessions** (commits `801248b`, `c4d800e`, `14dc450`; plans [`WORD_FEEDBACK_PLAN.md`](plans/WORD_FEEDBACK_PLAN.md) + [`SESSION_RESUME_PLAN.md`](plans/SESSION_RESUME_PLAN.md)). Three Ryan-requested features shipped, all additive via **migration 003** (`saved_words` + `quiz_attempts.user_ease` + `active_session`): **(1) Save word to review later** (bookmark → `/saved-words` list + Progress section; decoupled from SRS); **(2) optional "Too easy" accelerator** (v1-fixed mastery +2, version tag frozen + ease on the append-only attempt = replay-faithful; NOT SM-2 — see plan §0); **(3) resumable sessions** (`active_session` snapshot, ExitSessionSheet, Home "Resume (n/10)" card, stage-based rehydration). 62 suites / 570 tests green. A 28-agent adversarial review found + fixed 5 defects (2 HIGH: migration version-bump now atomic inside the txn; quick-check snapshot advances past the answered word). ⚠️ **On-device verify pending (Ryan):** needs a fresh build; confirm migration 003 applies cleanly on a real v2 device before relying on it.
 
+> **2026-07-06 — CONTENT-2 done + CONTENT-3 (TOEFL) done** (plan [`TOEFL_INGEST_PLAN.md`](plans/TOEFL_INGEST_PLAN.md), [memory note](memory/2026-07-06_toefl-ingest-enrichment.md)). Ryan supplied a bare 3000-word TOEFL list; resolved CONTENT-2's held seeding-strategy question (`gpt-4o-mini` sync is cheap enough — ~$8 total, no Batch API needed) and ran the actual bulk enrichment for the first time. **Shipped: `words.db` user_version=3, 4,560 words (was 2,881) — 1,837 real TOEFL words + ~1,500 previously-empty-senses foundation words enriched.** content-tool 303 / mobile 614 tests green. 4 real pipeline bugs found+fixed along the way (empty-definition sentinel broke the whole-file parser; `NULL frequency_rank` sorts FIRST in SQLite ASC — would've queue-jumped new words; **pre-existing** `diagnostic` tier was never registered in `lexitap.config.json`, silently blocking the JSONL pipeline for a month; model misread a new prompt flag as a skip-reason, caught pre-spend). Content-safety review removed an explicit-content word ("bestiality") that had been fully quizzed into the 13+ app, fixed a broken quiz question, and fixed 3 duplicate-definition pairs — but the review itself only got ~2% full coverage before a sustained Anthropic rate limit stopped further passes (residual risk, documented, not eliminated — see plan). Spawned separately (`task_31c2a3fd`): ~36 **pre-existing** foundation-corpus proper nouns (washington/london/trump/etc.) the safety sweep incidentally surfaced — unrelated to TOEFL, needs per-word triage not a blanket purge.
+
 ---
 
 # Phase 1 — Build (finish the gate)
@@ -134,38 +136,23 @@ Cold-launch confirmed on device. **Recommend:** run full learn-flow → Quick-ch
 
 # Phase 2 — Content (the long pole) + Beta
 
-### CONTENT-2 · Phase 2 paid enrichment run — **pipeline rebuilt (JSONL + OpenAI); bulk run HELD**
+### CONTENT-2 · Phase 2 paid enrichment run ✅ done (2026-07-06)
 ```
-id: CONTENT-2   phase: 2   status: ready   owner: ryan
+id: CONTENT-2   phase: 2   status: done   owner: agent
 depends_on: [CONTENT-1]   parallel_safe: false   paths: [content-tool/, mobile/assets/vocab/words.db]
-blocked_by: a scalable seeding strategy — per-word sync calls don't scale to 2,848 words (see note)
-verify: top-N words enriched (senses + 5 questions); validate --strict clean (0 errors); words.db rebuilt + copied to mobile
+verify: top-N words enriched (senses + 5 questions); validate --strict clean (0 errors); words.db rebuilt + copied to mobile — ALL PASSED fresh this session
 ```
-**Pipeline rebuilt around JSONL + OpenAI 2026-06-10** (merge `6cda5f1`, 289 content-tool tests green). The repo has `OPENAI_API_KEY` (no Anthropic key), so enrichment moved OFF the legacy Anthropic `enrich-senses`/`ingest-senses` path (kept inert) onto two OpenAI commands that edit `data/input/words_master.jsonl` in place:
-- **`categorize`** (Phase 3) — per word: CEFR + specialty tiers (this also subsumes CONTENT-3's cross-reference).
-- **`enrich-master`** (Phase 4) — per word: felt senses + examples + 5 click/drag questions (one per type, hint+explanation), validated (senses V1–V10, questions Q1–Q9), fail-closed.
-Both `--limit`-gated, cost-estimated, `--dry-run`, resume-safe. Runbook: [`content-tool/PHASE3_4_RUNBOOK.md`](content-tool/PHASE3_4_RUNBOOK.md).
+**Seeding-strategy question resolved: `gpt-4o-mini` sync, no Batch API needed.** The 2026-06-10 hold worried about $7–30/pass on a premium model; at `gpt-4o-mini` the same corpus cost **~$8 total across 4 resume-safe passes** — cheap enough that the Batch API rewrite (async, 50% cheaper, more moving parts) wasn't worth building. `enrich-master` also gained a new capability this session: it now generates base fields (`pos`/`definition`/`example_sentence`/`word_type`/`theme`) for a bare-stub word in the same call as its senses/questions (see AGENTS.md content-tool invariants, `PENDING_DEFINITION` sentinel) — needed for CONTENT-3's TOEFL ingest below, and reusable for any future word list.
+**Result:** ~1,500 previously-empty-senses foundation words enriched + `words.db` rebuilt (`user_version=3`, 4,560 words, was 2,881), copied to `mobile/assets/vocab/`. content-tool 303 / mobile 614 tests green. Full detail + defects found: [`plans/TOEFL_INGEST_PLAN.md`](plans/TOEFL_INGEST_PLAN.md), [memory note](memory/2026-07-06_toefl-ingest-enrichment.md). **Residual, not blocking:** a content-quality audit of the newly-enriched words only got partial coverage (~2%) before hitting a sustained Anthropic rate limit mid-review — real defects were found and fixed in the sample that completed (an explicit-content word removed, a broken quiz question fixed, 3 duplicate-definition pairs fixed), so there is a nonzero chance similar issues exist unreviewed in the rest; mitigated by the existing `reviewed:false` convention, not eliminated.
 
-**Bulk run HELD (Ryan, 2026-06-10):** per-word synchronous calls run ~50 words/min and cost ≈$7–30 for one Phase-4 pass over 2,848 words — the wrong unit of work at scale. Decide a scalable engine first (OpenAI **Batch API** ~50% cheaper + async; or frequency-prioritized waves; or many-words-per-call). The commands are correct + tested + resume-safe — the open question is the seeding *strategy*, not code. A partial `categorize` run (~500 words) was validated then reverted. When ready:
-```bash
-cd content-tool && set -a && . ../.env && set +a            # OPENAI_API_KEY from repo root .env
-npm run cli -- categorize    --limit 3000 --dry-run         # $0 — selection + cost (~$0.28 full)
-npm run cli -- enrich-master --limit <n> --model gpt-4.1 --dry-run
-# drop --dry-run to run (resume-safe), then:
-npm run cli -- import-master --source data/input/words_master.jsonl
-npm run cli -- validate --strict                            # expect 0 errors / ~2802 known warnings
-npm run release                                             # rebuild words.db + copy to mobile
+### CONTENT-3 · Specialty-tier cross-reference (TOEFL/IELTS/…) — **TOEFL done, 6 tiers remain**
 ```
-All generated content lands `reviewed: 0` (Ryan flips per word after QA).
-
-### CONTENT-3 · Specialty-tier cross-reference (TOEFL/IELTS/…) — **approach changed: now code, not sourcing**
-```
-id: CONTENT-3   phase: 2   status: blocked   owner: ryan
-depends_on: []   parallel_safe: true   paths: [content-tool/data/input/]
-blocked_by: bundled with the CONTENT-2 seeding-strategy decision
+id: CONTENT-3   phase: 2   status: ready   owner: ryan
+depends_on: [CONTENT-2]   parallel_safe: true   paths: [content-tool/data/input/]
 verify: specialty tiers (toefl/ielts/gre/gmat/business/advanced/common9k) populated on real words; import + validate green
 ```
-**Superseded 2026-06-10:** the shipped `categorize` command cross-references every word against the specialty tiers *via the model* — no external CSV sourcing or licence-checking needed. CONTENT-3's deliverable (tiers populated) is now produced by running `categorize` (Phase 3), bundled with the CONTENT-2 run decision. The old `*.csv` tier stubs are dead.
+**`toefl` done 2026-07-06 — but via a bigger playbook than originally scoped here.** The original CONTENT-3 concept assumed `categorize` would cross-reference *already-sourced* foundation words against each specialty tier. TOEFL didn't have that luxury — Ryan supplied a bare 3000-word list with no existing overlap (only 154/2895 words already existed in the corpus), so it needed full sourcing: **Phase 0** offline filter (dedup/lemmatize/zipf-obscurity, no API — `wordfreq`+`simplemma`) → **Phase 1** stub ingest → **Phase 2** `enrich-master`'s new base-field generation (see CONTENT-2) → **Phase 3** `validate --strict` + `release`. Result: **1,837 real TOEFL words shipped** (`toefl` tier), 708 obscure candidates held for Ryan's review (`content-tool/data/input/toefl_candidates/toefl_flag_review.csv`), 188 stub words that never got enriched held out (`toefl_candidates/still_pending_holdout.jsonl`) rather than shipped with placeholder content.
+**Remaining: ielts/gre/gmat/business/advanced/common9k are still ~5-word stubs.** The TOEFL playbook is now proven and repeatable — the blocker for each remaining tier is **Ryan sourcing (or approving) a real word list** for it, same as TOEFL this session; the pipeline work itself is agent-runnable once a list exists. `owner: ryan` reflects that sourcing step, not any remaining code work.
 
 ### CONTENT-4 · Universal audio (neural TTS)
 ```

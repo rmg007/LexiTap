@@ -2,7 +2,7 @@
 title: Product Roadmap
 category: product
 status: active
-updated: 2026-07-04
+updated: 2026-07-06
 priority: P0
 tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 ---
@@ -11,7 +11,9 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 > **⚠️ SOURCE OF TRUTH:** [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md) is the current, task-level execution plan (updated 2026-05-31). This file mirrors the phase structure and status for quick reference; **consult RELEASE_PLAN.md for actual dependencies, current blockers, and revised task list** (e.g., auth in P3 not P5, content as the long pole, Phase 2 requires analytics instrumentation, per-table sync deleted). Updates below reconcile this file with the audit.
 
-## 🟢 Active Front (2026-07-04)
+## 🟢 Active Front (2026-07-06)
+
+**2026-07-06 ✅ — CONTENT-2 done + CONTENT-3 (TOEFL) done:** resolved CONTENT-2's held seeding-strategy question (`gpt-4o-mini` sync is cheap enough — ~$8 total across 4 passes, no Batch API rewrite needed) and ran the actual bulk enrichment for the first time. Shipped `words.db` `user_version=3`, 4,560 words (was 2,881) — 1,837 real TOEFL words + ~1,500 previously-empty-senses foundation words enriched. content-tool 303 / mobile 614 tests green. Found + fixed 4 real pipeline bugs (a pre-existing config gap had silently blocked the whole JSONL pipeline for a month) and, via content-safety review, removed an explicit-content word that had been fully quizzed into the 13+ app. See [memory note](../../memory/2026-07-06_toefl-ingest-enrichment.md).
 
 **2026-07-04 ✅ — E2E-1 done (last agent-runnable code-track task):** the black-screen sim blocker was a stale dev-client binary — a fresh `expo run:ios` rebuild fixed it, no code change needed. Found + fixed 3 real bugs live: an unbounded network await in `createContainer()`'s BK2 gate that could hang cold start forever on a bad connection, a missing `testID` on quiz options that left Submit permanently disabled, and `learn-loop.yaml` assuming 1 quick-check question when there are 10/batch. Full green run verified past the UI — `user.db` shows real `user_progress`/`quiz_attempts` rows after. Also: new app icon (bold custom "LT" monogram replacing a font-dependent placeholder that was technically wrong for the App Store spec) and Dependabot back to 0 open alerts.
 
@@ -31,8 +33,8 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 1. **AUTH-1 tail:** when build 3 clears Apple processing, verify Apple + Google sign-in + magic link on device (`mobile/AUTH_INTEGRATION.md`). While there: delete a test account → confirm the RevenueCat customer is gone (closes the AUTH-2/RC-2 live verify).
 2. **IAP-1 sandbox verify (build 4 needed).** RC-1 ✅ — trigger EAS build 4, then: sandbox purchase → entitlement unlocks pack; "Restore purchases" works; alias visible in the RC dashboard.
 3. **Recruit 50 beta testers (BETA-2).** Everything pre-written in [plans/BETA2_RECRUITMENT_KIT.md](../../plans/BETA2_RECRUITMENT_KIT.md) — post + enroll. D7 gate: 7 days from first session.
-4. **CONTENT-2 — pick a seeding strategy, then run.** JSONL + OpenAI pipeline (`categorize` + `enrich-master`) is done + tested + resume-safe; bulk run HELD (per-word sync calls don't scale, ~$7–30/pass over 2,848 words) — decide Batch-API vs frequency-waves first. Runbook: `content-tool/PHASE3_4_RUNBOOK.md`.
-5. **SUPA-1 — Supabase Pro plan** (~$25/mo): free tier auto-paused the backend once already; required before submission.
+4. **SUPA-1 — Supabase Pro plan** (~$25/mo): free tier auto-paused the backend once already; required before submission.
+5. **CONTENT-3 remaining tiers (ielts/gre/gmat/business/advanced/common9k) — source a word list per tier.** TOEFL is done; the playbook is proven and repeatable (see [`plans/TOEFL_INGEST_PLAN.md`](../../plans/TOEFL_INGEST_PLAN.md)) — the blocker per tier is Ryan sourcing/approving a real word list, same as TOEFL this round.
 6. **New EAS build needed** to ship E2E-1's fixes + the new app icon (both compiled into the binary, not JS-updatable via EAS Update) — bump `buildNumber` in `app.config.ts`.
 
 **Tracked, lower priority:** AUTH-2 + RC-2 code + secrets ✅ done — live verify folds into the AUTH-1 device pass. Dependabot: ✅ 0 open alerts (2026-07-04 re-triage). Splash screen still shows the old icon mark — cheap follow-up, same asset pipeline. Sentry auth token needed as EAS secret before production builds.
@@ -44,8 +46,8 @@ The detailed product roadmap: 6 phases across 21 weeks, two parallel build track
 | Item | Value |
 |------|-------|
 | Phase | **1 → 2/3 — Build gate cleared; entering Beta + Phase 3 setup** (see [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md)) |
-| Code written | Track A CLI exists; content is Foundation ~2,848/3,000 sourced (2,881 words / 2,894 memberships across 9 tiers; TOEFL + exam tiers still stubs). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB) + rich word-detail read layer + multi-sense UI (459 tests). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. Learn loop wired end-to-end (card → quick-check → SRS) as of 2026-06-09. |
-| Last updated | 2026-07-04 (E2E-1 done — last agent-runnable code-track task; see Active Front above) |
+| Code written | Track A CLI exists; content is Foundation 2,848 + TOEFL 1,837 words enriched (4,560 words shipped, `user_version=3`, was 2,881; ielts/gre/gmat/business/advanced/common9k specialty tiers still ~5-word stubs, need Ryan to source a list per the now-proven TOEFL playbook). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB) + rich word-detail read layer + multi-sense UI (459 tests). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. Learn loop wired end-to-end (card → quick-check → SRS) as of 2026-06-09. |
+| Last updated | 2026-07-06 (CONTENT-2 done + CONTENT-3 TOEFL done — see [../../memory/2026-07-06_toefl-ingest-enrichment.md](../../memory/2026-07-06_toefl-ingest-enrichment.md)) |
 
 ## Table of Contents
 

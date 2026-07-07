@@ -70,6 +70,24 @@ describe('buildSenseQuestionPrompt', () => {
     expect(system).toMatch(/EXACTLY 5 questions/);
     expect(system).toMatch(/NEVER by typing/);
   });
+
+  it('marks a defined word needs_base:false and a bare-stub word needs_base:true', () => {
+    const { user } = buildSenseQuestionPrompt([
+      wordRow({ id: 'word_defined', definition: 'a real definition' }),
+      wordRow({ id: 'word_stub', word: 'sergeant', definition: '__PENDING_ENRICHMENT__' }),
+    ]);
+    const inputs = JSON.parse(user.slice(user.indexOf('['), user.lastIndexOf(']') + 1)) as { word_id: string; needs_base: boolean }[];
+    expect(inputs.find((i) => i.word_id === 'word_defined')?.needs_base).toBe(false);
+    expect(inputs.find((i) => i.word_id === 'word_stub')?.needs_base).toBe(true);
+  });
+
+  // Regression: a live gpt-4o-mini run once skipped good words with reason
+  // "Needs base fields to be created" — it misread needs_base as a defect to
+  // reject instead of an instruction to fill in. Pin the prompt's guard text.
+  it('explicitly forbids skipping a word merely because it needs base fields', () => {
+    const { system } = buildSenseQuestionPrompt([wordRow()]);
+    expect(system).toMatch(/needs_base.*(is not|is never|NEVER).*(a )?reason to skip/i);
+  });
 });
 
 describe('generate', () => {

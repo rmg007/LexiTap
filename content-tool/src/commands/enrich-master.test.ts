@@ -6,10 +6,11 @@ import {
   enrichMasterCommand,
   enrichSkipPath,
   validateEnrichItem,
+  validateEnrichBaseFields,
   toSenseIngestItem,
 } from '@/commands/enrich-master';
 import { serializeMasterRecords, type MasterWord } from '@/commands/export-master';
-import { readMasterRecords } from '@/commands/master-store';
+import { readMasterRecords, PENDING_DEFINITION, PENDING_EXAMPLE_SENTENCE } from '@/commands/master-store';
 import type { WordRow } from '@/schema/types';
 import type {
   SenseQuestionProvider,
@@ -99,7 +100,7 @@ function fakeProvider(opts: {
   };
 }
 
-function wordRow(word: string): WordRow {
+function wordRow(word: string, overrides: Partial<WordRow> = {}): WordRow {
   return {
     id: 'word_x',
     word,
@@ -121,6 +122,7 @@ function wordRow(word: string): WordRow {
     reviewed: 0,
     created_at: 0,
     deleted_at: null,
+    ...overrides,
   };
 }
 
@@ -154,6 +156,81 @@ describe('validateEnrichItem', () => {
   it('toSenseIngestItem numbers examples 0-based', () => {
     const s = toSenseIngestItem(fullEnrich('word_x', 'negotiate'));
     expect(s.senses[0]!.examples.map((e) => e.example_index)).toEqual([0, 1]);
+  });
+
+  describe('bare-stub words (definition === PENDING_DEFINITION)', () => {
+    const stub = () => wordRow('negotiate', { definition: PENDING_DEFINITION, example_sentence: PENDING_EXAMPLE_SENTENCE });
+
+    it('rejects a stub item missing base fields even if senses/questions are valid', () => {
+      const v = validateEnrichItem(fullEnrich('word_x', 'negotiate'), stub());
+      expect(v.ok).toBe(false);
+      expect(v.reason).toMatch(/^base:/);
+    });
+
+    it('accepts a stub item that supplies valid base fields', () => {
+      const item = fullEnrich('word_x', 'negotiate');
+      item.definition = 'To discuss to reach agreement.';
+      item.example_sentence = 'They met to _ the deal.';
+      item.pos = 'verb';
+      item.word_type = 'vocabulary';
+      item.theme = 'Work & Career';
+      expect(validateEnrichItem(item, stub()).ok).toBe(true);
+    });
+
+    it('does not require base fields for a non-stub word', () => {
+      expect(validateEnrichItem(fullEnrich('word_x', 'negotiate'), wordRow('negotiate')).ok).toBe(true);
+    });
+  });
+
+  describe('validateEnrichBaseFields', () => {
+    const base = (): MasterEnrichItem => ({
+      word_id: 'x',
+      word: 'negotiate',
+      definition: 'To discuss to reach agreement.',
+      example_sentence: 'They met to _ the deal.',
+      pos: 'verb',
+      word_type: 'vocabulary',
+      theme: 'Work & Career',
+      senses: [],
+      questions: [],
+    });
+
+    it('rejects a missing definition', () => {
+      const v = validateEnrichBaseFields({ ...base(), definition: '' }, 'negotiate');
+      expect(v.ok).toBe(false);
+      expect(v.reason).toMatch(/definition required/);
+    });
+
+    it('rejects an example_sentence with zero blanks', () => {
+      const v = validateEnrichBaseFields({ ...base(), example_sentence: 'They met to negotiate.' }, 'negotiate');
+      expect(v.ok).toBe(false);
+      expect(v.reason).toMatch(/exactly one/);
+    });
+
+    it('rejects an example_sentence that leaks the answer word', () => {
+      const v = validateEnrichBaseFields(
+        { ...base(), example_sentence: 'They met to _ and negotiate the deal.' },
+        'negotiate',
+      );
+      expect(v.ok).toBe(false);
+      expect(v.reason).toMatch(/leaks the answer/);
+    });
+
+    it('rejects an invalid theme', () => {
+      const v = validateEnrichBaseFields({ ...base(), theme: 'Not A Real Theme' }, 'negotiate');
+      expect(v.ok).toBe(false);
+      expect(v.reason).toMatch(/invalid theme/);
+    });
+
+    it('rejects an invalid word_type', () => {
+      const v = validateEnrichBaseFields({ ...base(), word_type: 'not-a-type' }, 'negotiate');
+      expect(v.ok).toBe(false);
+      expect(v.reason).toMatch(/invalid word_type/);
+    });
+
+    it('accepts a fully valid base-fields payload', () => {
+      expect(validateEnrichBaseFields(base(), 'negotiate').ok).toBe(true);
+    });
   });
 });
 
@@ -215,6 +292,63 @@ describe('enrichMasterCommand', () => {
     await expect(
       enrichMasterCommand(['--limit', '5', '--master', path], { providerFactory: () => throwing }),
     ).resolves.toBeUndefined();
+  });
+
+  it('writes base fields back for a bare-stub word (PENDING_DEFINITION)', async () => {
+    const stubWord = masterWord({
+      word: 'sergeant',
+      definition: PENDING_DEFINITION,
+      example_sentence: PENDING_EXAMPLE_SENTENCE,
+      pos: null,
+      word_type: null,
+      theme: null,
+      frequency_rank: 3000,
+    });
+    const path = writeMaster([stubWord]);
+    const item = fullEnrich('x', 'sergeant');
+    item.definition = 'A military rank above corporal.';
+    item.example_sentence = 'The _ gave the order.';
+    item.pos = 'noun';
+    item.word_type = 'vocabulary';
+    item.theme = 'Society & Culture';
+    await enrichMasterCommand(['--limit', '5', '--master', path], {
+      providerFactory: () => fakeProvider({ items: { sergeant: item } }),
+    });
+    const rec = readMasterRecords(path).find((r) => r.word === 'sergeant')!;
+    expect(rec.definition).toBe('A military rank above corporal.');
+    expect(rec.example_sentence).toBe('The _ gave the order.');
+    expect(rec.pos).toBe('noun');
+    expect(rec.theme).toBe('Society & Culture');
+    expect(rec.senses).toHaveLength(1);
+    expect(rec.questions).toHaveLength(5);
+  });
+
+  it('drops a stub item whose base fields fail validation (no partial write)', async () => {
+    const stubWord = masterWord({
+      word: 'sergeant',
+      definition: PENDING_DEFINITION,
+      example_sentence: PENDING_EXAMPLE_SENTENCE,
+      frequency_rank: 3000,
+    });
+    const path = writeMaster([stubWord]);
+    const item = fullEnrich('x', 'sergeant'); // no base fields supplied — invalid for a stub
+    await enrichMasterCommand(['--limit', '5', '--master', path], {
+      providerFactory: () => fakeProvider({ items: { sergeant: item } }),
+    });
+    const rec = readMasterRecords(path).find((r) => r.word === 'sergeant')!;
+    expect(rec.definition).toBe(PENDING_DEFINITION);
+    expect(rec.senses).toHaveLength(0);
+  });
+
+  it('does not overwrite an existing definition even if the item carries base fields', async () => {
+    const path = writeMaster([masterWord({ word: 'negotiate', definition: 'original def.', frequency_rank: 1 })]);
+    const item = fullEnrich('x', 'negotiate');
+    item.definition = 'a different definition the model should not apply';
+    await enrichMasterCommand(['--limit', '5', '--master', path], {
+      providerFactory: () => fakeProvider({ items: { negotiate: item } }),
+    });
+    const rec = readMasterRecords(path).find((r) => r.word === 'negotiate')!;
+    expect(rec.definition).toBe('original def.');
   });
 
   it('dry-run writes nothing', async () => {

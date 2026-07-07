@@ -33,7 +33,7 @@ export interface ValidateOptions {
   strict?: boolean;
 }
 
-const VALID_THEMES: ReadonlySet<string> = new Set([
+export const VALID_THEMES: ReadonlySet<string> = new Set([
   'Daily Life',
   'People & Relationships',
   'Work & Career',

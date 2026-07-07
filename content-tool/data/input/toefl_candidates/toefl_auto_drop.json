@@ -1,0 +1,1634 @@
+[
+ {
+  "word": "secondary",
+  "source_rank": 4,
+  "lemma": "secondary",
+  "zipf": 4.53,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "income",
+  "source_rank": 18,
+  "lemma": "income",
+  "zipf": 4.97,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "technique",
+  "source_rank": 20,
+  "lemma": "technique",
+  "zipf": 4.47,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "petition",
+  "source_rank": 27,
+  "lemma": "petition",
+  "zipf": 4.3,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "characteristic",
+  "source_rank": 34,
+  "lemma": "characteristic",
+  "zipf": 3.97,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "license",
+  "source_rank": 44,
+  "lemma": "license",
+  "zipf": 4.52,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "annual",
+  "source_rank": 73,
+  "lemma": "annual",
+  "zipf": 4.94,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "philosophy",
+  "source_rank": 114,
+  "lemma": "philosophy",
+  "zipf": 4.49,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "independence",
+  "source_rank": 123,
+  "lemma": "independence",
+  "zipf": 4.58,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "interpretation",
+  "source_rank": 215,
+  "lemma": "interpretation",
+  "zipf": 4.22,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "senate",
+  "source_rank": 219,
+  "lemma": "senate",
+  "zipf": 4.8,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "competitive",
+  "source_rank": 220,
+  "lemma": "competitive",
+  "zipf": 4.57,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "namely",
+  "source_rank": 247,
+  "lemma": "namely",
+  "zipf": 4.02,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "deteriorate",
+  "source_rank": 281,
+  "lemma": "deteriorate",
+  "zipf": 3.15,
+  "band": "rare",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "parliament",
+  "source_rank": 282,
+  "lemma": "parliament",
+  "zipf": 4.74,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "boundary",
+  "source_rank": 290,
+  "lemma": "boundary",
+  "zipf": 4.13,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "vast",
+  "source_rank": 302,
+  "lemma": "vast",
+  "zipf": 4.49,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "basin",
+  "source_rank": 308,
+  "lemma": "basin",
+  "zipf": 4.08,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "seasoning",
+  "source_rank": 314,
+  "lemma": "season",
+  "zipf": 3.28,
+  "band": "rare",
+  "flags": [
+   "inflection->season",
+   "lemma_in_master"
+  ]
+ },
+ {
+  "word": "combination",
+  "source_rank": 324,
+  "lemma": "combination",
+  "zipf": 4.61,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "partial",
+  "source_rank": 348,
+  "lemma": "partial",
+  "zipf": 4.17,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "valuable",
+  "source_rank": 377,
+  "lemma": "valuable",
+  "zipf": 4.51,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "theory",
+  "source_rank": 386,
+  "lemma": "theory",
+  "zipf": 4.88,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "collective",
+  "source_rank": 395,
+  "lemma": "collective",
+  "zipf": 4.3,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "vertical",
+  "source_rank": 400,
+  "lemma": "vertical",
+  "zipf": 4.15,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "situation",
+  "source_rank": 414,
+  "lemma": "situation",
+  "zipf": 5.09,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "freedom",
+  "source_rank": 417,
+  "lemma": "freedom",
+  "zipf": 4.86,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "searching",
+  "source_rank": 438,
+  "lemma": "search",
+  "zipf": 4.36,
+  "band": "common",
+  "flags": [
+   "inflection->search",
+   "lemma_in_master"
+  ]
+ },
+ {
+  "word": "commercial",
+  "source_rank": 439,
+  "lemma": "commercial",
+  "zipf": 4.92,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "expansion",
+  "source_rank": 442,
+  "lemma": "expansion",
+  "zipf": 4.54,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "valid",
+  "source_rank": 445,
+  "lemma": "valid",
+  "zipf": 4.38,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "temporary",
+  "source_rank": 454,
+  "lemma": "temporary",
+  "zipf": 4.48,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "ability",
+  "source_rank": 457,
+  "lemma": "ability",
+  "zipf": 4.96,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "bulletin",
+  "source_rank": 459,
+  "lemma": "bulletin",
+  "zipf": 3.79,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "management",
+  "source_rank": 474,
+  "lemma": "management",
+  "zipf": 5.13,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "retrieve",
+  "source_rank": 503,
+  "lemma": "retrieve",
+  "zipf": 3.69,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "percentage",
+  "source_rank": 510,
+  "lemma": "percentage",
+  "zipf": 4.48,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "representation",
+  "source_rank": 528,
+  "lemma": "representation",
+  "zipf": 4.34,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "fundamental",
+  "source_rank": 540,
+  "lemma": "fundamental",
+  "zipf": 4.33,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "enforcement",
+  "source_rank": 549,
+  "lemma": "enforcement",
+  "zipf": 4.45,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "origin",
+  "source_rank": 574,
+  "lemma": "origin",
+  "zipf": 4.55,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "evaluation",
+  "source_rank": 602,
+  "lemma": "evaluation",
+  "zipf": 4.21,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "inspection",
+  "source_rank": 604,
+  "lemma": "inspection",
+  "zipf": 4.14,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "employment",
+  "source_rank": 606,
+  "lemma": "employment",
+  "zipf": 4.56,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "finance",
+  "source_rank": 622,
+  "lemma": "finance",
+  "zipf": 4.65,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "obtain",
+  "source_rank": 649,
+  "lemma": "obtain",
+  "zipf": 4.4,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "partnership",
+  "source_rank": 683,
+  "lemma": "partnership",
+  "zipf": 4.48,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "ancient",
+  "source_rank": 685,
+  "lemma": "ancient",
+  "zipf": 4.68,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "century",
+  "source_rank": 714,
+  "lemma": "century",
+  "zipf": 5.02,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "gifted",
+  "source_rank": 747,
+  "lemma": "gift",
+  "zipf": 3.89,
+  "band": "common",
+  "flags": [
+   "inflection->gift",
+   "lemma_in_master"
+  ]
+ },
+ {
+  "word": "slight",
+  "source_rank": 762,
+  "lemma": "slight",
+  "zipf": 4.22,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "basis",
+  "source_rank": 804,
+  "lemma": "basis",
+  "zipf": 4.81,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "responsibility",
+  "source_rank": 840,
+  "lemma": "responsibility",
+  "zipf": 4.75,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "distinction",
+  "source_rank": 844,
+  "lemma": "distinction",
+  "zipf": 4.1,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "majority",
+  "source_rank": 846,
+  "lemma": "majority",
+  "zipf": 4.94,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "typical",
+  "source_rank": 870,
+  "lemma": "typical",
+  "zipf": 4.59,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "compensation",
+  "source_rank": 874,
+  "lemma": "compensation",
+  "zipf": 4.33,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "species",
+  "source_rank": 875,
+  "lemma": "species",
+  "zipf": 4.85,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "chamber",
+  "source_rank": 887,
+  "lemma": "chamber",
+  "zipf": 4.47,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "seeming",
+  "source_rank": 893,
+  "lemma": "seem",
+  "zipf": 3.42,
+  "band": "rare",
+  "flags": [
+   "inflection->seem",
+   "lemma_in_master"
+  ]
+ },
+ {
+  "word": "atmosphere",
+  "source_rank": 917,
+  "lemma": "atmosphere",
+  "zipf": 4.46,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "network",
+  "source_rank": 949,
+  "lemma": "network",
+  "zipf": 5.02,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "population",
+  "source_rank": 970,
+  "lemma": "population",
+  "zipf": 5.01,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "traditional",
+  "source_rank": 975,
+  "lemma": "traditional",
+  "zipf": 4.84,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "satisfactory",
+  "source_rank": 997,
+  "lemma": "satisfactory",
+  "zipf": 3.57,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "conference",
+  "source_rank": 1002,
+  "lemma": "conference",
+  "zipf": 5.01,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "particular",
+  "source_rank": 1016,
+  "lemma": "particular",
+  "zipf": 5.0,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "examination",
+  "source_rank": 1029,
+  "lemma": "examination",
+  "zipf": 4.26,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "intensity",
+  "source_rank": 1035,
+  "lemma": "intensity",
+  "zipf": 4.14,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "observation",
+  "source_rank": 1049,
+  "lemma": "observation",
+  "zipf": 4.13,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "medium",
+  "source_rank": 1051,
+  "lemma": "medium",
+  "zipf": 4.61,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "recording",
+  "source_rank": 1059,
+  "lemma": "record",
+  "zipf": 4.51,
+  "band": "common",
+  "flags": [
+   "inflection->record",
+   "lemma_in_master"
+  ]
+ },
+ {
+  "word": "probability",
+  "source_rank": 1063,
+  "lemma": "probability",
+  "zipf": 4.02,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "democracy",
+  "source_rank": 1092,
+  "lemma": "democracy",
+  "zipf": 4.51,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "access",
+  "source_rank": 1101,
+  "lemma": "access",
+  "zipf": 5.05,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "production",
+  "source_rank": 1110,
+  "lemma": "production",
+  "zipf": 5.14,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "factor",
+  "source_rank": 1121,
+  "lemma": "factor",
+  "zipf": 4.67,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "narrow",
+  "source_rank": 1130,
+  "lemma": "narrow",
+  "zipf": 4.39,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "applicable",
+  "source_rank": 1144,
+  "lemma": "applicable",
+  "zipf": 4.13,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "primarily",
+  "source_rank": 1159,
+  "lemma": "primarily",
+  "zipf": 4.48,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "climate",
+  "source_rank": 1162,
+  "lemma": "climate",
+  "zipf": 4.71,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "existence",
+  "source_rank": 1180,
+  "lemma": "existence",
+  "zipf": 4.55,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "introduction",
+  "source_rank": 1186,
+  "lemma": "introduction",
+  "zipf": 4.52,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "security",
+  "source_rank": 1197,
+  "lemma": "security",
+  "zipf": 5.2,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "stability",
+  "source_rank": 1202,
+  "lemma": "stability",
+  "zipf": 4.31,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "mechanical",
+  "source_rank": 1234,
+  "lemma": "mechanical",
+  "zipf": 4.33,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "scientific",
+  "source_rank": 1235,
+  "lemma": "scientific",
+  "zipf": 4.67,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "arrangement",
+  "source_rank": 1246,
+  "lemma": "arrangement",
+  "zipf": 4.25,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "identification",
+  "source_rank": 1256,
+  "lemma": "identification",
+  "zipf": 4.18,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "recovery",
+  "source_rank": 1258,
+  "lemma": "recovery",
+  "zipf": 4.58,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "balanced",
+  "source_rank": 1260,
+  "lemma": "balance",
+  "zipf": 4.18,
+  "band": "common",
+  "flags": [
+   "inflection->balance",
+   "lemma_in_master"
+  ]
+ },
+ {
+  "word": "laboratory",
+  "source_rank": 1269,
+  "lemma": "laboratory",
+  "zipf": 4.31,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "learned",
+  "source_rank": 1292,
+  "lemma": "learn",
+  "zipf": 4.85,
+  "band": "common",
+  "flags": [
+   "already_in_master",
+   "inflection->learn",
+   "lemma_in_master"
+  ]
+ },
+ {
+  "word": "failure",
+  "source_rank": 1306,
+  "lemma": "failure",
+  "zipf": 4.72,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "confidence",
+  "source_rank": 1340,
+  "lemma": "confidence",
+  "zipf": 4.65,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "poverty",
+  "source_rank": 1345,
+  "lemma": "poverty",
+  "zipf": 4.46,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "possibility",
+  "source_rank": 1378,
+  "lemma": "possibility",
+  "zipf": 4.58,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "relation",
+  "source_rank": 1379,
+  "lemma": "relation",
+  "zipf": 4.31,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "frequency",
+  "source_rank": 1380,
+  "lemma": "frequency",
+  "zipf": 4.36,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "essential",
+  "source_rank": 1402,
+  "lemma": "essential",
+  "zipf": 4.61,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "immediately",
+  "source_rank": 1405,
+  "lemma": "immediately",
+  "zipf": 4.98,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "magnetic",
+  "source_rank": 1411,
+  "lemma": "magnetic",
+  "zipf": 4.17,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "academic",
+  "source_rank": 1413,
+  "lemma": "academic",
+  "zipf": 4.57,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "ensure",
+  "source_rank": 1419,
+  "lemma": "ensure",
+  "zipf": 4.7,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "personality",
+  "source_rank": 1421,
+  "lemma": "personality",
+  "zipf": 4.55,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "neighborhood",
+  "source_rank": 1426,
+  "lemma": "neighbourhood",
+  "zipf": 4.5,
+  "band": "common",
+  "flags": [
+   "inflection->neighbourhood",
+   "lemma_in_master"
+  ]
+ },
+ {
+  "word": "league",
+  "source_rank": 1428,
+  "lemma": "league",
+  "zipf": 5.13,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "commanding",
+  "source_rank": 1438,
+  "lemma": "command",
+  "zipf": 3.84,
+  "band": "common",
+  "flags": [
+   "inflection->command",
+   "lemma_in_master"
+  ]
+ },
+ {
+  "word": "tendency",
+  "source_rank": 1452,
+  "lemma": "tendency",
+  "zipf": 3.96,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "becoming",
+  "source_rank": 1485,
+  "lemma": "become",
+  "zipf": 4.81,
+  "band": "common",
+  "flags": [
+   "already_in_master",
+   "inflection->become",
+   "lemma_in_master"
+  ]
+ },
+ {
+  "word": "considerable",
+  "source_rank": 1487,
+  "lemma": "considerable",
+  "zipf": 4.25,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "campaign",
+  "source_rank": 1492,
+  "lemma": "campaign",
+  "zipf": 5.0,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "kingdom",
+  "source_rank": 1515,
+  "lemma": "kingdom",
+  "zipf": 4.62,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "membership",
+  "source_rank": 1522,
+  "lemma": "membership",
+  "zipf": 4.47,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "treasury",
+  "source_rank": 1536,
+  "lemma": "treasury",
+  "zipf": 4.24,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "significant",
+  "source_rank": 1546,
+  "lemma": "significant",
+  "zipf": 4.98,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "serious",
+  "source_rank": 1562,
+  "lemma": "serious",
+  "zipf": 5.1,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "improvement",
+  "source_rank": 1575,
+  "lemma": "improvement",
+  "zipf": 4.49,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "separation",
+  "source_rank": 1576,
+  "lemma": "separation",
+  "zipf": 4.13,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "component",
+  "source_rank": 1577,
+  "lemma": "component",
+  "zipf": 4.32,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "emergency",
+  "source_rank": 1581,
+  "lemma": "emergency",
+  "zipf": 4.72,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "novel",
+  "source_rank": 1595,
+  "lemma": "novel",
+  "zipf": 4.63,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "session",
+  "source_rank": 1615,
+  "lemma": "session",
+  "zipf": 4.72,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "experiment",
+  "source_rank": 1617,
+  "lemma": "experiment",
+  "zipf": 4.38,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "individual",
+  "source_rank": 1618,
+  "lemma": "individual",
+  "zipf": 5.0,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "interview",
+  "source_rank": 1643,
+  "lemma": "interview",
+  "zipf": 4.86,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "administration",
+  "source_rank": 1649,
+  "lemma": "administration",
+  "zipf": 4.93,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "translation",
+  "source_rank": 1651,
+  "lemma": "translation",
+  "zipf": 4.39,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "insurance",
+  "source_rank": 1764,
+  "lemma": "insurance",
+  "zipf": 4.94,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "personnel",
+  "source_rank": 1772,
+  "lemma": "personnel",
+  "zipf": 4.56,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "foundation",
+  "source_rank": 1911,
+  "lemma": "foundation",
+  "zipf": 4.81,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "attribute",
+  "source_rank": 1912,
+  "lemma": "attribute",
+  "zipf": 3.77,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "faculty",
+  "source_rank": 1929,
+  "lemma": "faculty",
+  "zipf": 4.32,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "amendment",
+  "source_rank": 1939,
+  "lemma": "amendment",
+  "zipf": 4.38,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "fiscal",
+  "source_rank": 1941,
+  "lemma": "fiscal",
+  "zipf": 4.26,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "executive",
+  "source_rank": 2009,
+  "lemma": "executive",
+  "zipf": 4.87,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "clause",
+  "source_rank": 2063,
+  "lemma": "clause",
+  "zipf": 3.99,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "linear",
+  "source_rank": 2068,
+  "lemma": "linear",
+  "zipf": 4.12,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "civil",
+  "source_rank": 2078,
+  "lemma": "civil",
+  "zipf": 4.93,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "expenditure",
+  "source_rank": 2115,
+  "lemma": "expenditure",
+  "zipf": 3.74,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "legislation",
+  "source_rank": 2131,
+  "lemma": "legislation",
+  "zipf": 4.55,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "phenomenon",
+  "source_rank": 2232,
+  "lemma": "phenomenon",
+  "zipf": 4.13,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "theoretical",
+  "source_rank": 2247,
+  "lemma": "theoretical",
+  "zipf": 4.01,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "edition",
+  "source_rank": 2286,
+  "lemma": "edition",
+  "zipf": 4.8,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "minister",
+  "source_rank": 2334,
+  "lemma": "minister",
+  "zipf": 5.04,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "commissioner",
+  "source_rank": 2381,
+  "lemma": "commissioner",
+  "zipf": 4.43,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "patent",
+  "source_rank": 2385,
+  "lemma": "patent",
+  "zipf": 4.18,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "gentleman",
+  "source_rank": 2428,
+  "lemma": "gentleman",
+  "zipf": 4.16,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "assistant",
+  "source_rank": 2450,
+  "lemma": "assistant",
+  "zipf": 4.72,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "organic",
+  "source_rank": 2486,
+  "lemma": "organic",
+  "zipf": 4.4,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "global",
+  "source_rank": 2499,
+  "lemma": "global",
+  "zipf": 4.95,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "agricultural",
+  "source_rank": 2556,
+  "lemma": "agricultural",
+  "zipf": 4.34,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "chemistry",
+  "source_rank": 2596,
+  "lemma": "chemistry",
+  "zipf": 4.35,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "resistance",
+  "source_rank": 2618,
+  "lemma": "resistance",
+  "zipf": 4.55,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "international",
+  "source_rank": 2628,
+  "lemma": "international",
+  "zipf": 5.36,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "industrial",
+  "source_rank": 2664,
+  "lemma": "industrial",
+  "zipf": 4.71,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "mortgage",
+  "source_rank": 2728,
+  "lemma": "mortgage",
+  "zipf": 4.39,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "invoice",
+  "source_rank": 2757,
+  "lemma": "invoice",
+  "zipf": 3.27,
+  "band": "rare",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "efficiency",
+  "source_rank": 2769,
+  "lemma": "efficiency",
+  "zipf": 4.38,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "establishment",
+  "source_rank": 2770,
+  "lemma": "establishment",
+  "zipf": 4.42,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "apparatus",
+  "source_rank": 2782,
+  "lemma": "apparatus",
+  "zipf": 3.78,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ },
+ {
+  "word": "substantial",
+  "source_rank": 2790,
+  "lemma": "substantial",
+  "zipf": 4.33,
+  "band": "common",
+  "flags": [
+   "already_in_master"
+  ]
+ }
+]

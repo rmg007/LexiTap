@@ -23,6 +23,8 @@ import type { WordRow } from '@/schema/types';
 import type { MasterSense, MasterQuestion } from '@/commands/export-master';
 import type { SenseSkip } from '@/providers/types';
 import { loadFewShotExemplars } from '@/providers/anthropicSenseProvider';
+import { VALID_THEMES } from '@/commands/validate';
+import { PENDING_DEFINITION } from '@/commands/master-store';
 import {
   type OpenAiChatFn,
   OpenAiTruncationError,
@@ -38,6 +40,12 @@ const MAX_TOKENS = 16000;
 export interface MasterEnrichItem {
   word_id: string;
   word: string;
+  /** Base fields — only populated (by the model) for bare-stub words; see `needs_base`. */
+  pos?: string | null;
+  definition?: string;
+  example_sentence?: string;
+  word_type?: string | null;
+  theme?: string | null;
   senses: MasterSense[];
   questions: MasterQuestion[];
 }
@@ -61,12 +69,24 @@ interface PromptWordInput {
   definition: string;
   example_sentence: string;
   cefr_level: string | null;
+  /** True when this word has no definition yet — a bare stub needing base fields too. */
+  needs_base: boolean;
 }
 
 export function buildSenseQuestionPrompt(words: WordRow[]): { system: string; user: string } {
   const exemplars = loadFewShotExemplars();
+  const themeList = [...VALID_THEMES].join(', ');
 
-  const system = `You write felt vocabulary teaching content for LexiTap, an offline ESL vocabulary app for global non-native English learners aged 13+. For each input word you produce SENSES and QUESTIONS.
+  const system = `You write felt vocabulary teaching content for LexiTap, an offline ESL vocabulary app for global non-native English learners aged 13+. For each input word you produce SENSES and QUESTIONS (and BASE FIELDS when "needs_base" is true).
+
+═══ BASE FIELDS (REQUIRED for words with "needs_base": true — they have no entry yet) ═══
+"needs_base": true is routine, not a defect — most input words will have it. It means ONLY that this word has no definition on file yet, so YOU must author one as part of this same call, in the SAME "items" entry as its senses/questions. It is never, by itself, a reason to skip a word — a word with "needs_base": true and no other problem is a completely normal, generatable word. Only use the SKIP RULE below if the word itself is bad (proper noun, function word, demonym, wrong-lemma inflection, or too obscure) — regardless of "needs_base".
+For a "needs_base": true word, in addition to senses/questions, also include on the SAME item: "pos" (one grammatical part of speech: noun/verb/adjective/adverb/etc), "definition" (ONE simple ESL-friendly dictionary sentence, B1-appropriate phrasing), "example_sentence" (ONE natural sentence using the word, with the word itself REMOVED and replaced by a single standalone "_" character — the word must NOT appear spelled out anywhere in this sentence, blanked or not), "word_type" ("vocabulary" unless the word is a multi-word expression/idiom/phrasal verb, in which case "expression"/"idiom"/"phrasal_verb"), and "theme" (pick the single best fit from exactly this list: ${themeList}).
+This top-level "example_sentence" blank is a DIFFERENT convention from the QUESTIONS "fill_blank" prompt below — do not confuse them:
+  RIGHT (word "hypothesis"): "example_sentence": "The scientist tested her _ carefully." (word removed, one bare underscore)
+  WRONG: "example_sentence": "The scientist tested her hypothesis carefully." (word left in — NOT blanked, will be rejected)
+  WRONG: "example_sentence": "The scientist tested her ___ carefully." (triple underscore — that convention is ONLY for questions[2].fill_blank.prompt, never here)
+Do NOT include these base fields for words with "needs_base": false — they already have them.
 
 ═══ SENSES ═══
 - SENSE COUNT: default to exactly 1. Add a 2nd/3rd sense ONLY when genuinely distinct (a different core meaning, not a shade) AND learner-relevant. Most words stay single-sense. Never invent filler senses.
@@ -85,11 +105,12 @@ Produce EXACTLY 5 questions, "question_index" 0–4, ONE of each "type" in this 
 The "correct" answer must NEVER also appear among the "distractors". "reviewed": false on every question.
 
 ═══ SKIP RULE ═══
-The seed list contains junk; do not spend tokens dressing it up. If a word is (a) a proper noun, (b) a bare function word mislabeled as content vocab, (c) a demonym, or (d) an inflected form whose lemma should be taught instead, DO NOT generate content — return it in "skipped" with a one-line reason.
+The seed list contains junk; do not spend tokens dressing it up. If a word is (a) a proper noun, (b) a bare function word mislabeled as content vocab, (c) a demonym, (d) an inflected form whose lemma should be taught instead, or (e) so archaic/obscure that no real learner-facing exam tests it, DO NOT generate content — return it in "skipped" with a one-line reason. "needs_base": true is NEVER one of these reasons — do not skip a word merely because it needs base fields; generate them.
 
 ═══ OUTPUT CONTRACT ═══
 Respond with STRICT JSON only (no markdown, no prose) of exactly this shape:
-{"items":[{"word_id":"<given>","word":"<given>","senses":[{"sense_index":0,"pos":"...","short_gloss":"...","explanation":"...","image_path":null,"examples":["...","..."]}],"questions":[{"question_index":0,"type":"multiple_choice","prompt":"...","correct":"...","distractors":["...","...","..."],"hint":"...","explanation":"...","reviewed":false}, ... 5 total ...]}],"skipped":[{"word_id":"...","word":"...","reason":"..."}]}
+{"items":[{"word_id":"<given>","word":"<given>","pos":"...","definition":"...","example_sentence":"...","word_type":"vocabulary","theme":"...","senses":[{"sense_index":0,"pos":"...","short_gloss":"...","explanation":"...","image_path":null,"examples":["...","..."]}],"questions":[{"question_index":0,"type":"multiple_choice","prompt":"...","correct":"...","distractors":["...","...","..."],"hint":"...","explanation":"...","reviewed":false}, ... 5 total ...]}],"skipped":[{"word_id":"...","word":"...","reason":"..."}]}
+("pos"/"definition"/"example_sentence"/"word_type"/"theme" are ONLY required when "needs_base" was true for that word — omit them otherwise.)
 Every input word must appear exactly once — in "items" or in "skipped". Use each word's "word_id" verbatim.`;
 
   const inputs: PromptWordInput[] = words.map((w) => ({
@@ -99,6 +120,7 @@ Every input word must appear exactly once — in "items" or in "skipped". Use ea
     definition: w.definition,
     example_sentence: w.example_sentence,
     cefr_level: w.cefr_level,
+    needs_base: w.definition === PENDING_DEFINITION,
   }));
 
   const user = `Generate senses + 5 questions for these words:
@@ -181,6 +203,11 @@ export function parseSenseQuestionResponse(text: string): ParsedSenseQuestionRes
     items.set(c.word_id, {
       word_id: c.word_id,
       word: typeof c.word === 'string' ? c.word : '',
+      pos: typeof c.pos === 'string' ? c.pos : null,
+      definition: typeof c.definition === 'string' ? c.definition : undefined,
+      example_sentence: typeof c.example_sentence === 'string' ? c.example_sentence : undefined,
+      word_type: typeof c.word_type === 'string' ? c.word_type : null,
+      theme: typeof c.theme === 'string' ? c.theme : null,
       senses,
       questions,
     });

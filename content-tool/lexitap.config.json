@@ -90,6 +90,16 @@
       "display_order": 9,
       "requires_theme": false,
       "audio": true
+    },
+    {
+      "slug": "diagnostic",
+      "name": "Onboarding Diagnostic",
+      "description": "Curated pool used by the onboarding diagnostic — not a purchasable tier.",
+      "is_free": true,
+      "sku": null,
+      "display_order": 0,
+      "requires_theme": false,
+      "audio": true
     }
   ]
 }

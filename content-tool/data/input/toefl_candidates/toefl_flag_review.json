@@ -1,0 +1,7094 @@
+[
+ {
+  "word": "commonsensical",
+  "source_rank": 5,
+  "lemma": "commonsensical",
+  "zipf": 1.48,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "huffy",
+  "source_rank": 6,
+  "lemma": "huffy",
+  "zipf": 2.21,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "lumpish",
+  "source_rank": 8,
+  "lemma": "lumpish",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "paralytic",
+  "source_rank": 23,
+  "lemma": "paralytic",
+  "zipf": 2.48,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "banditry",
+  "source_rank": 28,
+  "lemma": "banditry",
+  "zipf": 2.18,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "truant",
+  "source_rank": 31,
+  "lemma": "truant",
+  "zipf": 2.43,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "demoralize",
+  "source_rank": 37,
+  "lemma": "demoralize",
+  "zipf": 2.2,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "dissatisfactory",
+  "source_rank": 38,
+  "lemma": "dissatisfactory",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "blockish",
+  "source_rank": 40,
+  "lemma": "blockish",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "misemploy",
+  "source_rank": 43,
+  "lemma": "misemploy",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "warble",
+  "source_rank": 48,
+  "lemma": "warble",
+  "zipf": 2.08,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "burglarize",
+  "source_rank": 51,
+  "lemma": "burglarize",
+  "zipf": 1.61,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "humpy",
+  "source_rank": 56,
+  "lemma": "humpy",
+  "zipf": 1.81,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "unsuspected",
+  "source_rank": 76,
+  "lemma": "unsuspected",
+  "zipf": 2.16,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "scornful",
+  "source_rank": 83,
+  "lemma": "scornful",
+  "zipf": 2.29,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "pommel",
+  "source_rank": 90,
+  "lemma": "pommel",
+  "zipf": 2.47,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "inestimable",
+  "source_rank": 91,
+  "lemma": "inestimable",
+  "zipf": 2.13,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "situate",
+  "source_rank": 109,
+  "lemma": "situate",
+  "zipf": 2.41,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "reactant",
+  "source_rank": 119,
+  "lemma": "reactant",
+  "zipf": 2.26,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "yowl",
+  "source_rank": 120,
+  "lemma": "yowl",
+  "zipf": 1.56,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "hesitance",
+  "source_rank": 121,
+  "lemma": "hesitance",
+  "zipf": 1.91,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "neglectful",
+  "source_rank": 122,
+  "lemma": "neglectful",
+  "zipf": 2.46,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "quaver",
+  "source_rank": 131,
+  "lemma": "quaver",
+  "zipf": 1.74,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "inapparent",
+  "source_rank": 133,
+  "lemma": "inapparent",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "revengeful",
+  "source_rank": 136,
+  "lemma": "revengeful",
+  "zipf": 1.8,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "rudiment",
+  "source_rank": 148,
+  "lemma": "rudiment",
+  "zipf": 1.27,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "spidery",
+  "source_rank": 160,
+  "lemma": "spidery",
+  "zipf": 1.95,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "fretful",
+  "source_rank": 184,
+  "lemma": "fretful",
+  "zipf": 1.96,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "ruffian",
+  "source_rank": 188,
+  "lemma": "ruffian",
+  "zipf": 2.36,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "toddle",
+  "source_rank": 189,
+  "lemma": "toddle",
+  "zipf": 1.89,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "dumpy",
+  "source_rank": 191,
+  "lemma": "dumpy",
+  "zipf": 2.32,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "sputter",
+  "source_rank": 196,
+  "lemma": "sputter",
+  "zipf": 2.22,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "timeworn",
+  "source_rank": 199,
+  "lemma": "timeworn",
+  "zipf": 1.64,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "bestrewn",
+  "source_rank": 211,
+  "lemma": "bestrew",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "inflection->bestrew",
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "thunderstruck",
+  "source_rank": 213,
+  "lemma": "thunderstrike",
+  "zipf": 2.24,
+  "band": "obscure",
+  "flags": [
+   "inflection->thunderstrike",
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "cockeyed",
+  "source_rank": 214,
+  "lemma": "cockeyed",
+  "zipf": 1.89,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "overachieve",
+  "source_rank": 224,
+  "lemma": "overachieve",
+  "zipf": 1.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "herbivorous",
+  "source_rank": 225,
+  "lemma": "herbivorous",
+  "zipf": 2.31,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "accusatory",
+  "source_rank": 226,
+  "lemma": "accusatory",
+  "zipf": 2.35,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "seaward",
+  "source_rank": 228,
+  "lemma": "seaward",
+  "zipf": 2.48,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "yammer",
+  "source_rank": 233,
+  "lemma": "yammer",
+  "zipf": 2.04,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "fidgety",
+  "source_rank": 239,
+  "lemma": "fidgety",
+  "zipf": 2.3,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "precursory",
+  "source_rank": 248,
+  "lemma": "precursory",
+  "zipf": 1.51,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "trudge",
+  "source_rank": 256,
+  "lemma": "trudge",
+  "zipf": 2.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "changeability",
+  "source_rank": 286,
+  "lemma": "changeability",
+  "zipf": 1.31,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "inaccessibility",
+  "source_rank": 295,
+  "lemma": "inaccessibility",
+  "zipf": 2.2,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "fictionalize",
+  "source_rank": 296,
+  "lemma": "fictionalize",
+  "zipf": 1.28,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "destructible",
+  "source_rank": 298,
+  "lemma": "destructible",
+  "zipf": 1.96,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "plenteous",
+  "source_rank": 301,
+  "lemma": "plenteous",
+  "zipf": 1.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "idealize",
+  "source_rank": 303,
+  "lemma": "idealize",
+  "zipf": 2.09,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "bumpkin",
+  "source_rank": 316,
+  "lemma": "bumpkin",
+  "zipf": 2.12,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "mishmash",
+  "source_rank": 325,
+  "lemma": "mishmash",
+  "zipf": 2.28,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "afflict",
+  "source_rank": 328,
+  "lemma": "afflict",
+  "zipf": 2.43,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "certifiable",
+  "source_rank": 331,
+  "lemma": "certifiable",
+  "zipf": 2.18,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "cheapskate",
+  "source_rank": 332,
+  "lemma": "cheapskate",
+  "zipf": 2.26,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "stargaze",
+  "source_rank": 333,
+  "lemma": "stargaze",
+  "zipf": 1.55,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "impracticable",
+  "source_rank": 339,
+  "lemma": "impracticable",
+  "zipf": 2.2,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "disentangle",
+  "source_rank": 340,
+  "lemma": "disentangle",
+  "zipf": 2.27,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "abuzz",
+  "source_rank": 343,
+  "lemma": "abuzz",
+  "zipf": 2.3,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "distend",
+  "source_rank": 346,
+  "lemma": "distend",
+  "zipf": 1.45,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "electrify",
+  "source_rank": 350,
+  "lemma": "electrify",
+  "zipf": 2.36,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "pitiless",
+  "source_rank": 351,
+  "lemma": "pitiless",
+  "zipf": 2.31,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "chirrup",
+  "source_rank": 361,
+  "lemma": "chirrup",
+  "zipf": 1.48,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "paunch",
+  "source_rank": 363,
+  "lemma": "paunch",
+  "zipf": 2.02,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "foolery",
+  "source_rank": 373,
+  "lemma": "foolery",
+  "zipf": 1.96,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "quietude",
+  "source_rank": 389,
+  "lemma": "quietude",
+  "zipf": 1.87,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "deodorize",
+  "source_rank": 392,
+  "lemma": "deodorize",
+  "zipf": 1.32,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "clomp",
+  "source_rank": 399,
+  "lemma": "clomp",
+  "zipf": 1.48,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "reluctancy",
+  "source_rank": 416,
+  "lemma": "reluctancy",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "destine",
+  "source_rank": 419,
+  "lemma": "destine",
+  "zipf": 1.72,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "totter",
+  "source_rank": 424,
+  "lemma": "totter",
+  "zipf": 2.15,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "incubate",
+  "source_rank": 425,
+  "lemma": "incubate",
+  "zipf": 2.46,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "famished",
+  "source_rank": 426,
+  "lemma": "famish",
+  "zipf": 2.39,
+  "band": "obscure",
+  "flags": [
+   "inflection->famish",
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "engrave",
+  "source_rank": 429,
+  "lemma": "engrave",
+  "zipf": 2.37,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "fleshly",
+  "source_rank": 443,
+  "lemma": "fleshly",
+  "zipf": 1.96,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "repletion",
+  "source_rank": 449,
+  "lemma": "repletion",
+  "zipf": 1.33,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "expressible",
+  "source_rank": 452,
+  "lemma": "expressible",
+  "zipf": 1.74,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "disorient",
+  "source_rank": 465,
+  "lemma": "disorient",
+  "zipf": 1.94,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "mispronounce",
+  "source_rank": 466,
+  "lemma": "mispronounce",
+  "zipf": 1.89,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "nearsighted",
+  "source_rank": 475,
+  "lemma": "nearsighted",
+  "zipf": 2.05,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "shapeless",
+  "source_rank": 476,
+  "lemma": "shapeless",
+  "zipf": 2.39,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "humorist",
+  "source_rank": 496,
+  "lemma": "humorist",
+  "zipf": 2.44,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "asocial",
+  "source_rank": 498,
+  "lemma": "asocial",
+  "zipf": 1.99,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "flammability",
+  "source_rank": 512,
+  "lemma": "flammability",
+  "zipf": 2.09,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "edibility",
+  "source_rank": 523,
+  "lemma": "edibility",
+  "zipf": 1.58,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "snuffle",
+  "source_rank": 526,
+  "lemma": "snuffle",
+  "zipf": 1.57,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "entwine",
+  "source_rank": 531,
+  "lemma": "entwine",
+  "zipf": 1.91,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "dislocate",
+  "source_rank": 535,
+  "lemma": "dislocate",
+  "zipf": 2.17,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "stretchability",
+  "source_rank": 543,
+  "lemma": "stretchability",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "liberality",
+  "source_rank": 547,
+  "lemma": "liberality",
+  "zipf": 1.97,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "distressful",
+  "source_rank": 551,
+  "lemma": "distressful",
+  "zipf": 1.44,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "overrate",
+  "source_rank": 555,
+  "lemma": "overrate",
+  "zipf": 1.96,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "knobby",
+  "source_rank": 557,
+  "lemma": "knobby",
+  "zipf": 2.12,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "preachy",
+  "source_rank": 577,
+  "lemma": "preachy",
+  "zipf": 2.38,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "coarsen",
+  "source_rank": 581,
+  "lemma": "coarsen",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "measurability",
+  "source_rank": 583,
+  "lemma": "measurability",
+  "zipf": 1.33,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "memorialize",
+  "source_rank": 585,
+  "lemma": "memorialize",
+  "zipf": 2.34,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "throaty",
+  "source_rank": 587,
+  "lemma": "throaty",
+  "zipf": 2.24,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "sidesplitting",
+  "source_rank": 592,
+  "lemma": "sidesplitting",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "randomize",
+  "source_rank": 599,
+  "lemma": "randomize",
+  "zipf": 1.9,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "adventuresome",
+  "source_rank": 603,
+  "lemma": "adventuresome",
+  "zipf": 1.84,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "clunker",
+  "source_rank": 611,
+  "lemma": "clunker",
+  "zipf": 1.99,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "demount",
+  "source_rank": 615,
+  "lemma": "demount",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "doli",
+  "source_rank": 617,
+  "lemma": "doli",
+  "zipf": 1.73,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "clumpy",
+  "source_rank": 629,
+  "lemma": "clumpy",
+  "zipf": 1.98,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "deflower",
+  "source_rank": 642,
+  "lemma": "deflower",
+  "zipf": 1.49,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "chide",
+  "source_rank": 644,
+  "lemma": "chide",
+  "zipf": 2.18,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "bleary",
+  "source_rank": 652,
+  "lemma": "bleary",
+  "zipf": 2.22,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "thrum",
+  "source_rank": 657,
+  "lemma": "thrum",
+  "zipf": 1.97,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "abusiveness",
+  "source_rank": 658,
+  "lemma": "abusiveness",
+  "zipf": 1.22,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "ungenerous",
+  "source_rank": 662,
+  "lemma": "ungenerous",
+  "zipf": 1.89,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "tattle",
+  "source_rank": 664,
+  "lemma": "tattle",
+  "zipf": 2.34,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "naysay",
+  "source_rank": 666,
+  "lemma": "naysay",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "shoplift",
+  "source_rank": 667,
+  "lemma": "shoplift",
+  "zipf": 2.09,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "hemline",
+  "source_rank": 669,
+  "lemma": "hemline",
+  "zipf": 1.91,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "mistreat",
+  "source_rank": 672,
+  "lemma": "mistreat",
+  "zipf": 2.49,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "sidelong",
+  "source_rank": 687,
+  "lemma": "sidelong",
+  "zipf": 1.78,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "retinite",
+  "source_rank": 688,
+  "lemma": "retinite",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "infuriate",
+  "source_rank": 691,
+  "lemma": "infuriate",
+  "zipf": 2.41,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "puckish",
+  "source_rank": 700,
+  "lemma": "puckish",
+  "zipf": 1.5,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "misusage",
+  "source_rank": 713,
+  "lemma": "misusage",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "showery",
+  "source_rank": 715,
+  "lemma": "showery",
+  "zipf": 2.11,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "bestride",
+  "source_rank": 722,
+  "lemma": "bestride",
+  "zipf": 1.37,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "cheapen",
+  "source_rank": 732,
+  "lemma": "cheapen",
+  "zipf": 2.18,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "captivation",
+  "source_rank": 745,
+  "lemma": "captivation",
+  "zipf": 1.34,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "grungy",
+  "source_rank": 750,
+  "lemma": "grungy",
+  "zipf": 2.35,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "beauteous",
+  "source_rank": 754,
+  "lemma": "beauteous",
+  "zipf": 2.14,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "upstage",
+  "source_rank": 756,
+  "lemma": "upstage",
+  "zipf": 2.35,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "slithery",
+  "source_rank": 766,
+  "lemma": "slithery",
+  "zipf": 1.68,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "toothy",
+  "source_rank": 768,
+  "lemma": "toothy",
+  "zipf": 2.32,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "disadvantageous",
+  "source_rank": 783,
+  "lemma": "disadvantageous",
+  "zipf": 2.34,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "foamy",
+  "source_rank": 789,
+  "lemma": "foamy",
+  "zipf": 2.41,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "slaphappy",
+  "source_rank": 791,
+  "lemma": "slaphappy",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "stouthearted",
+  "source_rank": 801,
+  "lemma": "stouthearted",
+  "zipf": 1.13,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "misguidance",
+  "source_rank": 811,
+  "lemma": "misguidance",
+  "zipf": 1.41,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "unkindly",
+  "source_rank": 813,
+  "lemma": "unkindly",
+  "zipf": 1.99,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "excitability",
+  "source_rank": 814,
+  "lemma": "excitability",
+  "zipf": 2.26,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "straggle",
+  "source_rank": 818,
+  "lemma": "straggle",
+  "zipf": 1.44,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "screwy",
+  "source_rank": 819,
+  "lemma": "screwy",
+  "zipf": 2.31,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "sanitize",
+  "source_rank": 839,
+  "lemma": "sanitize",
+  "zipf": 2.42,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "blabbermouth",
+  "source_rank": 847,
+  "lemma": "blabbermouth",
+  "zipf": 1.73,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "enthrone",
+  "source_rank": 848,
+  "lemma": "enthrone",
+  "zipf": 1.54,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "unanswerable",
+  "source_rank": 857,
+  "lemma": "unanswerable",
+  "zipf": 2.27,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "hogwash",
+  "source_rank": 858,
+  "lemma": "hogwash",
+  "zipf": 2.38,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "reduplicate",
+  "source_rank": 862,
+  "lemma": "reduplicate",
+  "zipf": 1.06,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "affectation",
+  "source_rank": 868,
+  "lemma": "affectation",
+  "zipf": 2.29,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "inconsequent",
+  "source_rank": 885,
+  "lemma": "inconsequent",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "companionable",
+  "source_rank": 894,
+  "lemma": "companionable",
+  "zipf": 1.84,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "concussive",
+  "source_rank": 902,
+  "lemma": "concussive",
+  "zipf": 2.17,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "prearrange",
+  "source_rank": 908,
+  "lemma": "prearrange",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "sidle",
+  "source_rank": 913,
+  "lemma": "sidle",
+  "zipf": 2.0,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "peaceable",
+  "source_rank": 916,
+  "lemma": "peaceable",
+  "zipf": 2.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "feathery",
+  "source_rank": 922,
+  "lemma": "feathery",
+  "zipf": 2.49,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "nosh",
+  "source_rank": 930,
+  "lemma": "nosh",
+  "zipf": 2.19,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "sheepish",
+  "source_rank": 936,
+  "lemma": "sheepish",
+  "zipf": 2.42,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "gargle",
+  "source_rank": 939,
+  "lemma": "gargle",
+  "zipf": 2.38,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "enfold",
+  "source_rank": 946,
+  "lemma": "enfold",
+  "zipf": 1.87,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "quarrelsome",
+  "source_rank": 948,
+  "lemma": "quarrelsome",
+  "zipf": 2.22,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "barrette",
+  "source_rank": 953,
+  "lemma": "barrette",
+  "zipf": 2.09,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "referable",
+  "source_rank": 971,
+  "lemma": "referable",
+  "zipf": 1.67,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "sniffy",
+  "source_rank": 972,
+  "lemma": "sniffy",
+  "zipf": 1.81,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "fixedly",
+  "source_rank": 973,
+  "lemma": "fixedly",
+  "zipf": 1.87,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "jabber",
+  "source_rank": 983,
+  "lemma": "jabber",
+  "zipf": 2.26,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "twiddle",
+  "source_rank": 995,
+  "lemma": "twiddle",
+  "zipf": 2.12,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "scald",
+  "source_rank": 1000,
+  "lemma": "scald",
+  "zipf": 2.17,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "birthmark",
+  "source_rank": 1009,
+  "lemma": "birthmark",
+  "zipf": 2.45,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "hindmost",
+  "source_rank": 1010,
+  "lemma": "hindmost",
+  "zipf": 1.59,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "wheeze",
+  "source_rank": 1012,
+  "lemma": "wheeze",
+  "zipf": 2.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "insignificance",
+  "source_rank": 1013,
+  "lemma": "insignificance",
+  "zipf": 2.47,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "slosh",
+  "source_rank": 1019,
+  "lemma": "slosh",
+  "zipf": 2.1,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "midriff",
+  "source_rank": 1031,
+  "lemma": "midriff",
+  "zipf": 2.37,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "impoverish",
+  "source_rank": 1036,
+  "lemma": "impoverish",
+  "zipf": 1.93,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "clownish",
+  "source_rank": 1039,
+  "lemma": "clownish",
+  "zipf": 1.99,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "premeditation",
+  "source_rank": 1044,
+  "lemma": "premeditation",
+  "zipf": 2.41,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "twaddle",
+  "source_rank": 1055,
+  "lemma": "twaddle",
+  "zipf": 2.13,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "practicability",
+  "source_rank": 1060,
+  "lemma": "practicability",
+  "zipf": 1.68,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "flunk",
+  "source_rank": 1066,
+  "lemma": "flunk",
+  "zipf": 2.17,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "rebuff",
+  "source_rank": 1068,
+  "lemma": "rebuff",
+  "zipf": 2.34,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "knurl",
+  "source_rank": 1069,
+  "lemma": "knurl",
+  "zipf": 1.21,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "incompletion",
+  "source_rank": 1072,
+  "lemma": "incompletion",
+  "zipf": 1.86,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "pipsqueak",
+  "source_rank": 1081,
+  "lemma": "pipsqueak",
+  "zipf": 1.78,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "exclamatory",
+  "source_rank": 1093,
+  "lemma": "exclamatory",
+  "zipf": 1.49,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "shivery",
+  "source_rank": 1099,
+  "lemma": "shivery",
+  "zipf": 1.73,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "neigh",
+  "source_rank": 1102,
+  "lemma": "neigh",
+  "zipf": 2.49,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "parenthesize",
+  "source_rank": 1114,
+  "lemma": "parenthesize",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "podgy",
+  "source_rank": 1129,
+  "lemma": "podgy",
+  "zipf": 1.65,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "animalistic",
+  "source_rank": 1137,
+  "lemma": "animalistic",
+  "zipf": 2.32,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "numerable",
+  "source_rank": 1138,
+  "lemma": "numerable",
+  "zipf": 1.2,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "fluttery",
+  "source_rank": 1139,
+  "lemma": "fluttery",
+  "zipf": 1.84,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "elapse",
+  "source_rank": 1148,
+  "lemma": "elapse",
+  "zipf": 2.03,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "woozy",
+  "source_rank": 1157,
+  "lemma": "woozy",
+  "zipf": 2.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "zesty",
+  "source_rank": 1164,
+  "lemma": "zesty",
+  "zipf": 2.41,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "wariness",
+  "source_rank": 1171,
+  "lemma": "wariness",
+  "zipf": 2.21,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "perfectibility",
+  "source_rank": 1173,
+  "lemma": "perfectibility",
+  "zipf": 1.33,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "twittery",
+  "source_rank": 1182,
+  "lemma": "twittery",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "undergarment",
+  "source_rank": 1183,
+  "lemma": "undergarment",
+  "zipf": 2.04,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "inexpressible",
+  "source_rank": 1187,
+  "lemma": "inexpressible",
+  "zipf": 2.02,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "scathe",
+  "source_rank": 1191,
+  "lemma": "scathe",
+  "zipf": 1.33,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "archenemy",
+  "source_rank": 1196,
+  "lemma": "archenemy",
+  "zipf": 2.15,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "prideful",
+  "source_rank": 1208,
+  "lemma": "prideful",
+  "zipf": 2.46,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "tankard",
+  "source_rank": 1211,
+  "lemma": "tankard",
+  "zipf": 2.36,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "pockmark",
+  "source_rank": 1215,
+  "lemma": "pockmark",
+  "zipf": 1.22,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "oodles",
+  "source_rank": 1217,
+  "lemma": "oodles",
+  "zipf": 2.43,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "rakish",
+  "source_rank": 1227,
+  "lemma": "rakish",
+  "zipf": 2.01,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "postmark",
+  "source_rank": 1232,
+  "lemma": "postmark",
+  "zipf": 2.33,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "cheerless",
+  "source_rank": 1233,
+  "lemma": "cheerless",
+  "zipf": 1.76,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "adjoin",
+  "source_rank": 1240,
+  "lemma": "adjoin",
+  "zipf": 1.97,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "dethrone",
+  "source_rank": 1249,
+  "lemma": "dethrone",
+  "zipf": 2.36,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "raffish",
+  "source_rank": 1252,
+  "lemma": "raffish",
+  "zipf": 1.55,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "spoilage",
+  "source_rank": 1262,
+  "lemma": "spoilage",
+  "zipf": 2.35,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "refinish",
+  "source_rank": 1263,
+  "lemma": "refinish",
+  "zipf": 1.89,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "infirmity",
+  "source_rank": 1266,
+  "lemma": "infirmity",
+  "zipf": 2.32,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "niggling",
+  "source_rank": 1270,
+  "lemma": "niggle",
+  "zipf": 2.26,
+  "band": "obscure",
+  "flags": [
+   "inflection->niggle",
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "immensity",
+  "source_rank": 1279,
+  "lemma": "immensity",
+  "zipf": 2.29,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "mismanage",
+  "source_rank": 1281,
+  "lemma": "mismanage",
+  "zipf": 1.61,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "mischance",
+  "source_rank": 1285,
+  "lemma": "mischance",
+  "zipf": 1.53,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "perspire",
+  "source_rank": 1300,
+  "lemma": "perspire",
+  "zipf": 2.0,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "semisweet",
+  "source_rank": 1301,
+  "lemma": "semisweet",
+  "zipf": 1.49,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "snivel",
+  "source_rank": 1312,
+  "lemma": "snivel",
+  "zipf": 1.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "scrawl",
+  "source_rank": 1313,
+  "lemma": "scrawl",
+  "zipf": 2.27,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "permanency",
+  "source_rank": 1318,
+  "lemma": "permanency",
+  "zipf": 2.06,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "bewitch",
+  "source_rank": 1322,
+  "lemma": "bewitch",
+  "zipf": 2.01,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "clammy",
+  "source_rank": 1323,
+  "lemma": "clammy",
+  "zipf": 2.47,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "insincerity",
+  "source_rank": 1330,
+  "lemma": "insincerity",
+  "zipf": 2.07,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "discontented",
+  "source_rank": 1332,
+  "lemma": "discontent",
+  "zipf": 2.49,
+  "band": "obscure",
+  "flags": [
+   "inflection->discontent",
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "sinkage",
+  "source_rank": 1335,
+  "lemma": "sinkage",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "icicle",
+  "source_rank": 1336,
+  "lemma": "icicle",
+  "zipf": 2.43,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "witchery",
+  "source_rank": 1337,
+  "lemma": "witchery",
+  "zipf": 2.16,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "humorless",
+  "source_rank": 1338,
+  "lemma": "humorless",
+  "zipf": 2.22,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "severally",
+  "source_rank": 1339,
+  "lemma": "severally",
+  "zipf": 2.24,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "antlered",
+  "source_rank": 1352,
+  "lemma": "antlered",
+  "zipf": 1.63,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "fuddle",
+  "source_rank": 1366,
+  "lemma": "fuddle",
+  "zipf": 1.48,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "scamp",
+  "source_rank": 1367,
+  "lemma": "scamp",
+  "zipf": 2.32,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "pettish",
+  "source_rank": 1369,
+  "lemma": "pettish",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "heavyset",
+  "source_rank": 1370,
+  "lemma": "heavyset",
+  "zipf": 1.97,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "swimmingly",
+  "source_rank": 1373,
+  "lemma": "swimmingly",
+  "zipf": 2.35,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "gladsome",
+  "source_rank": 1383,
+  "lemma": "gladsome",
+  "zipf": 1.28,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "dwarfish",
+  "source_rank": 1385,
+  "lemma": "dwarfish",
+  "zipf": 1.57,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "visitant",
+  "source_rank": 1394,
+  "lemma": "visitant",
+  "zipf": 1.52,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "moralistic",
+  "source_rank": 1406,
+  "lemma": "moralistic",
+  "zipf": 2.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "corruptive",
+  "source_rank": 1425,
+  "lemma": "corruptive",
+  "zipf": 1.62,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "slicker",
+  "source_rank": 1432,
+  "lemma": "slick",
+  "zipf": 2.46,
+  "band": "obscure",
+  "flags": [
+   "inflection->slick",
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "shimmery",
+  "source_rank": 1455,
+  "lemma": "shimmery",
+  "zipf": 2.34,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "sightless",
+  "source_rank": 1458,
+  "lemma": "sightless",
+  "zipf": 1.93,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "gyp",
+  "source_rank": 1462,
+  "lemma": "gyp",
+  "zipf": 2.03,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "thousandfold",
+  "source_rank": 1463,
+  "lemma": "thousandfold",
+  "zipf": 1.67,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "squelch",
+  "source_rank": 1466,
+  "lemma": "squelch",
+  "zipf": 2.35,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "tarry",
+  "source_rank": 1475,
+  "lemma": "tarry",
+  "zipf": 2.43,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "ingratitude",
+  "source_rank": 1497,
+  "lemma": "ingratitude",
+  "zipf": 2.29,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "totalize",
+  "source_rank": 1501,
+  "lemma": "totalize",
+  "zipf": 1.12,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "recurve",
+  "source_rank": 1504,
+  "lemma": "recurve",
+  "zipf": 2.11,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "dumbfound",
+  "source_rank": 1509,
+  "lemma": "dumbfound",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "thwack",
+  "source_rank": 1512,
+  "lemma": "thwack",
+  "zipf": 2.06,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "faddish",
+  "source_rank": 1517,
+  "lemma": "faddish",
+  "zipf": 1.6,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "screechy",
+  "source_rank": 1529,
+  "lemma": "screechy",
+  "zipf": 1.71,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "knapsack",
+  "source_rank": 1531,
+  "lemma": "knapsack",
+  "zipf": 2.41,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "noiseless",
+  "source_rank": 1537,
+  "lemma": "noiseless",
+  "zipf": 2.03,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "ultramodern",
+  "source_rank": 1540,
+  "lemma": "ultramodern",
+  "zipf": 1.93,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "kindliness",
+  "source_rank": 1572,
+  "lemma": "kindliness",
+  "zipf": 1.55,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "preserver",
+  "source_rank": 1590,
+  "lemma": "preserver",
+  "zipf": 2.38,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "shuddery",
+  "source_rank": 1600,
+  "lemma": "shuddery",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "segmental",
+  "source_rank": 1611,
+  "lemma": "segmental",
+  "zipf": 2.49,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "confection",
+  "source_rank": 1616,
+  "lemma": "confection",
+  "zipf": 2.48,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "freckled",
+  "source_rank": 1625,
+  "lemma": "freckle",
+  "zipf": 2.36,
+  "band": "obscure",
+  "flags": [
+   "inflection->freckle",
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "abductor",
+  "source_rank": 1626,
+  "lemma": "abductor",
+  "zipf": 2.46,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "rubberneck",
+  "source_rank": 1630,
+  "lemma": "rubberneck",
+  "zipf": 1.54,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "preferment",
+  "source_rank": 1633,
+  "lemma": "preferment",
+  "zipf": 2.1,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "overemphasize",
+  "source_rank": 1653,
+  "lemma": "overemphasize",
+  "zipf": 1.73,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "squeegee",
+  "source_rank": 1654,
+  "lemma": "squeegee",
+  "zipf": 2.2,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "predetermine",
+  "source_rank": 1663,
+  "lemma": "predetermine",
+  "zipf": 1.68,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "zinger",
+  "source_rank": 1668,
+  "lemma": "zinger",
+  "zipf": 2.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "hoodlum",
+  "source_rank": 1681,
+  "lemma": "hoodlum",
+  "zipf": 2.29,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "irk",
+  "source_rank": 1683,
+  "lemma": "irk",
+  "zipf": 2.38,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "slobber",
+  "source_rank": 1688,
+  "lemma": "slobber",
+  "zipf": 2.17,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "purvey",
+  "source_rank": 1689,
+  "lemma": "purvey",
+  "zipf": 1.61,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "predecease",
+  "source_rank": 1697,
+  "lemma": "predecease",
+  "zipf": 1.14,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "desperado",
+  "source_rank": 1711,
+  "lemma": "desperado",
+  "zipf": 2.36,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "equidistant",
+  "source_rank": 1712,
+  "lemma": "equidistant",
+  "zipf": 2.45,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "tendril",
+  "source_rank": 1717,
+  "lemma": "tendril",
+  "zipf": 2.03,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "stupefy",
+  "source_rank": 1718,
+  "lemma": "stupefy",
+  "zipf": 1.67,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "scraggly",
+  "source_rank": 1727,
+  "lemma": "scraggly",
+  "zipf": 2.12,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "annul",
+  "source_rank": 1728,
+  "lemma": "annul",
+  "zipf": 2.49,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "solvability",
+  "source_rank": 1734,
+  "lemma": "solvability",
+  "zipf": 1.43,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "kilter",
+  "source_rank": 1740,
+  "lemma": "kilter",
+  "zipf": 2.48,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "demilitarize",
+  "source_rank": 1747,
+  "lemma": "demilitarize",
+  "zipf": 1.58,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "scabbard",
+  "source_rank": 1749,
+  "lemma": "scabbard",
+  "zipf": 2.46,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "discrepant",
+  "source_rank": 1762,
+  "lemma": "discrepant",
+  "zipf": 1.65,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "natter",
+  "source_rank": 1767,
+  "lemma": "natter",
+  "zipf": 2.14,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "misbegotten",
+  "source_rank": 1771,
+  "lemma": "misbegotten",
+  "zipf": 1.96,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "maraud",
+  "source_rank": 1778,
+  "lemma": "maraud",
+  "zipf": 1.31,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "acrophobia",
+  "source_rank": 1781,
+  "lemma": "acrophobia",
+  "zipf": 1.68,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "inexactitude",
+  "source_rank": 1782,
+  "lemma": "inexactitude",
+  "zipf": 1.09,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "traipse",
+  "source_rank": 1788,
+  "lemma": "traipse",
+  "zipf": 1.93,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "postern",
+  "source_rank": 1794,
+  "lemma": "postern",
+  "zipf": 1.79,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "determinate",
+  "source_rank": 1798,
+  "lemma": "determinate",
+  "zipf": 2.33,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "imperishable",
+  "source_rank": 1799,
+  "lemma": "imperishable",
+  "zipf": 2.16,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "blarney",
+  "source_rank": 1802,
+  "lemma": "blarney",
+  "zipf": 2.26,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "soporiferous",
+  "source_rank": 1803,
+  "lemma": "soporiferous",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "antipodes",
+  "source_rank": 1807,
+  "lemma": "antipode",
+  "zipf": 2.2,
+  "band": "obscure",
+  "flags": [
+   "inflection->antipode",
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "recantation",
+  "source_rank": 1808,
+  "lemma": "recantation",
+  "zipf": 1.75,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "surfeit",
+  "source_rank": 1809,
+  "lemma": "surfeit",
+  "zipf": 2.22,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "parvenu",
+  "source_rank": 1810,
+  "lemma": "parvenu",
+  "zipf": 1.58,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "saponification",
+  "source_rank": 1811,
+  "lemma": "saponification",
+  "zipf": 1.68,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "joviality",
+  "source_rank": 1812,
+  "lemma": "joviality",
+  "zipf": 1.62,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "baneful",
+  "source_rank": 1813,
+  "lemma": "baneful",
+  "zipf": 1.53,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "impertinence",
+  "source_rank": 1814,
+  "lemma": "impertinence",
+  "zipf": 2.25,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "conterminous",
+  "source_rank": 1816,
+  "lemma": "conterminous",
+  "zipf": 1.52,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "pinnate",
+  "source_rank": 1818,
+  "lemma": "pinnate",
+  "zipf": 2.17,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "scabrous",
+  "source_rank": 1819,
+  "lemma": "scabrous",
+  "zipf": 1.91,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "usurer",
+  "source_rank": 1820,
+  "lemma": "usurer",
+  "zipf": 1.7,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "comestible",
+  "source_rank": 1821,
+  "lemma": "comestible",
+  "zipf": 1.15,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "effloresce",
+  "source_rank": 1825,
+  "lemma": "effloresce",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "coruscate",
+  "source_rank": 1826,
+  "lemma": "coruscate",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "septennial",
+  "source_rank": 1827,
+  "lemma": "septennial",
+  "zipf": 1.23,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "omniscience",
+  "source_rank": 1829,
+  "lemma": "omniscience",
+  "zipf": 2.37,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "besot",
+  "source_rank": 1831,
+  "lemma": "besot",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "anticlimactic",
+  "source_rank": 1832,
+  "lemma": "anticlimactic",
+  "zipf": 2.23,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "sanctimony",
+  "source_rank": 1834,
+  "lemma": "sanctimony",
+  "zipf": 1.72,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "dipsomania",
+  "source_rank": 1835,
+  "lemma": "dipsomania",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "necrologist",
+  "source_rank": 1836,
+  "lemma": "necrologist",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "xenophobe",
+  "source_rank": 1837,
+  "lemma": "xenophobe",
+  "zipf": 1.91,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "clangorous",
+  "source_rank": 1838,
+  "lemma": "clangorous",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "sociality",
+  "source_rank": 1839,
+  "lemma": "sociality",
+  "zipf": 2.02,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "happenstance",
+  "source_rank": 1840,
+  "lemma": "happenstance",
+  "zipf": 2.44,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "ponderable",
+  "source_rank": 1843,
+  "lemma": "ponderable",
+  "zipf": 1.11,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "corrigible",
+  "source_rank": 1845,
+  "lemma": "corrigible",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "incommensurate",
+  "source_rank": 1846,
+  "lemma": "incommensurate",
+  "zipf": 1.39,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "evanescence",
+  "source_rank": 1847,
+  "lemma": "evanescence",
+  "zipf": 2.35,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "inculpable",
+  "source_rank": 1848,
+  "lemma": "inculpable",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "maleficence",
+  "source_rank": 1850,
+  "lemma": "maleficence",
+  "zipf": 1.23,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "glomerate",
+  "source_rank": 1851,
+  "lemma": "glomerate",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "dilatation",
+  "source_rank": 1853,
+  "lemma": "dilatation",
+  "zipf": 2.12,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "imprudent",
+  "source_rank": 1854,
+  "lemma": "imprudent",
+  "zipf": 2.35,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "variegate",
+  "source_rank": 1856,
+  "lemma": "variegate",
+  "zipf": 1.14,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "enigmatical",
+  "source_rank": 1857,
+  "lemma": "enigmatical",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "tenable",
+  "source_rank": 1860,
+  "lemma": "tenable",
+  "zipf": 2.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "lucubration",
+  "source_rank": 1864,
+  "lemma": "lucubration",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "nodulose",
+  "source_rank": 1865,
+  "lemma": "nodulose",
+  "zipf": 1.06,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "teratology",
+  "source_rank": 1866,
+  "lemma": "teratology",
+  "zipf": 1.38,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "pedate",
+  "source_rank": 1867,
+  "lemma": "pedate",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "aleatoric",
+  "source_rank": 1868,
+  "lemma": "aleatoric",
+  "zipf": 1.18,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "discussant",
+  "source_rank": 1871,
+  "lemma": "discussant",
+  "zipf": 1.47,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "tunicate",
+  "source_rank": 1873,
+  "lemma": "tunicate",
+  "zipf": 1.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "ethnocentrism",
+  "source_rank": 1874,
+  "lemma": "ethnocentrism",
+  "zipf": 2.09,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "halitosis",
+  "source_rank": 1876,
+  "lemma": "halitosis",
+  "zipf": 2.1,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "disjunctive",
+  "source_rank": 1880,
+  "lemma": "disjunctive",
+  "zipf": 1.97,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "effectually",
+  "source_rank": 1881,
+  "lemma": "effectually",
+  "zipf": 2.01,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "capacitate",
+  "source_rank": 1882,
+  "lemma": "capacitate",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "chastisement",
+  "source_rank": 1884,
+  "lemma": "chastisement",
+  "zipf": 2.2,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "sudoriferous",
+  "source_rank": 1885,
+  "lemma": "sudoriferous",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "extirpate",
+  "source_rank": 1887,
+  "lemma": "extirpate",
+  "zipf": 1.64,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "comity",
+  "source_rank": 1888,
+  "lemma": "comity",
+  "zipf": 2.11,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "tumulus",
+  "source_rank": 1890,
+  "lemma": "tumulus",
+  "zipf": 1.97,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "refutable",
+  "source_rank": 1891,
+  "lemma": "refutable",
+  "zipf": 1.54,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "unregenerate",
+  "source_rank": 1892,
+  "lemma": "unregenerate",
+  "zipf": 1.64,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "discommode",
+  "source_rank": 1898,
+  "lemma": "discommode",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "usurpation",
+  "source_rank": 1899,
+  "lemma": "usurpation",
+  "zipf": 2.33,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "pretermit",
+  "source_rank": 1900,
+  "lemma": "pretermit",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "graceless",
+  "source_rank": 1904,
+  "lemma": "graceless",
+  "zipf": 2.02,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "domesticate",
+  "source_rank": 1908,
+  "lemma": "domesticate",
+  "zipf": 2.09,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "underrate",
+  "source_rank": 1914,
+  "lemma": "underrate",
+  "zipf": 2.11,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "pallor",
+  "source_rank": 1920,
+  "lemma": "pallor",
+  "zipf": 2.16,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "sophisticate",
+  "source_rank": 1921,
+  "lemma": "sophisticate",
+  "zipf": 1.77,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "semiconscious",
+  "source_rank": 1923,
+  "lemma": "semiconscious",
+  "zipf": 1.46,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "pulverize",
+  "source_rank": 1928,
+  "lemma": "pulverize",
+  "zipf": 2.12,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "haunch",
+  "source_rank": 1938,
+  "lemma": "haunch",
+  "zipf": 1.83,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "intermingle",
+  "source_rank": 1940,
+  "lemma": "intermingle",
+  "zipf": 2.1,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "spindly",
+  "source_rank": 1947,
+  "lemma": "spindly",
+  "zipf": 2.31,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "preconception",
+  "source_rank": 1951,
+  "lemma": "preconception",
+  "zipf": 2.11,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "smolder",
+  "source_rank": 1955,
+  "lemma": "smolder",
+  "zipf": 2.01,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "lubber",
+  "source_rank": 1957,
+  "lemma": "lubber",
+  "zipf": 1.77,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "mangle",
+  "source_rank": 1971,
+  "lemma": "mangle",
+  "zipf": 2.39,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "decennial",
+  "source_rank": 1972,
+  "lemma": "decennial",
+  "zipf": 2.09,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "knurled",
+  "source_rank": 1976,
+  "lemma": "knurl",
+  "zipf": 1.77,
+  "band": "obscure",
+  "flags": [
+   "inflection->knurl",
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "unceremonious",
+  "source_rank": 1981,
+  "lemma": "unceremonious",
+  "zipf": 1.89,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "insentient",
+  "source_rank": 1985,
+  "lemma": "insentient",
+  "zipf": 1.23,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "debility",
+  "source_rank": 2004,
+  "lemma": "debility",
+  "zipf": 1.81,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "piffle",
+  "source_rank": 2010,
+  "lemma": "piffle",
+  "zipf": 1.91,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "inconsumable",
+  "source_rank": 2016,
+  "lemma": "inconsumable",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "blithesome",
+  "source_rank": 2017,
+  "lemma": "blithesome",
+  "zipf": 1.01,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.0"
+  ]
+ },
+ {
+  "word": "indigestible",
+  "source_rank": 2021,
+  "lemma": "indigestible",
+  "zipf": 2.1,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "infatuate",
+  "source_rank": 2025,
+  "lemma": "infatuate",
+  "zipf": 1.3,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "slapdash",
+  "source_rank": 2026,
+  "lemma": "slapdash",
+  "zipf": 2.0,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "broody",
+  "source_rank": 2030,
+  "lemma": "broody",
+  "zipf": 2.24,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "marketability",
+  "source_rank": 2031,
+  "lemma": "marketability",
+  "zipf": 2.39,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "exhilarate",
+  "source_rank": 2033,
+  "lemma": "exhilarate",
+  "zipf": 1.36,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "terminable",
+  "source_rank": 2037,
+  "lemma": "terminable",
+  "zipf": 1.54,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "foxed",
+  "source_rank": 2041,
+  "lemma": "fox",
+  "zipf": 1.82,
+  "band": "obscure",
+  "flags": [
+   "inflection->fox",
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "embitter",
+  "source_rank": 2044,
+  "lemma": "embitter",
+  "zipf": 1.19,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "expendability",
+  "source_rank": 2046,
+  "lemma": "expendability",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "seafarer",
+  "source_rank": 2048,
+  "lemma": "seafarer",
+  "zipf": 2.07,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "pizzazz",
+  "source_rank": 2054,
+  "lemma": "pizzazz",
+  "zipf": 2.28,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "dignitary",
+  "source_rank": 2055,
+  "lemma": "dignitary",
+  "zipf": 2.32,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "discourteous",
+  "source_rank": 2058,
+  "lemma": "discourteous",
+  "zipf": 2.11,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "transfigure",
+  "source_rank": 2060,
+  "lemma": "transfigure",
+  "zipf": 1.56,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "darksome",
+  "source_rank": 2071,
+  "lemma": "darksome",
+  "zipf": 1.5,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "quietus",
+  "source_rank": 2073,
+  "lemma": "quietus",
+  "zipf": 1.94,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "expansible",
+  "source_rank": 2074,
+  "lemma": "expansible",
+  "zipf": 1.23,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "decommission",
+  "source_rank": 2084,
+  "lemma": "decommission",
+  "zipf": 2.18,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "enliven",
+  "source_rank": 2086,
+  "lemma": "enliven",
+  "zipf": 2.41,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "truncheon",
+  "source_rank": 2090,
+  "lemma": "truncheon",
+  "zipf": 2.1,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "consolatory",
+  "source_rank": 2103,
+  "lemma": "consolatory",
+  "zipf": 1.54,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "soubrette",
+  "source_rank": 2104,
+  "lemma": "soubrette",
+  "zipf": 1.43,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "imprecate",
+  "source_rank": 2105,
+  "lemma": "imprecate",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "cacophonous",
+  "source_rank": 2106,
+  "lemma": "cacophonous",
+  "zipf": 1.94,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "translucence",
+  "source_rank": 2107,
+  "lemma": "translucence",
+  "zipf": 1.52,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "distrait",
+  "source_rank": 2109,
+  "lemma": "distrait",
+  "zipf": 1.07,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "sophistry",
+  "source_rank": 2110,
+  "lemma": "sophistry",
+  "zipf": 2.15,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "biddable",
+  "source_rank": 2111,
+  "lemma": "biddable",
+  "zipf": 1.6,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "recalcitrance",
+  "source_rank": 2114,
+  "lemma": "recalcitrance",
+  "zipf": 1.74,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "poignancy",
+  "source_rank": 2116,
+  "lemma": "poignancy",
+  "zipf": 2.35,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "drubbing",
+  "source_rank": 2117,
+  "lemma": "drub",
+  "zipf": 2.18,
+  "band": "obscure",
+  "flags": [
+   "inflection->drub",
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "esculent",
+  "source_rank": 2121,
+  "lemma": "esculent",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "stridency",
+  "source_rank": 2122,
+  "lemma": "stridency",
+  "zipf": 1.49,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "solstitial",
+  "source_rank": 2124,
+  "lemma": "solstitial",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "vertiginous",
+  "source_rank": 2126,
+  "lemma": "vertiginous",
+  "zipf": 2.02,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "epitomize",
+  "source_rank": 2128,
+  "lemma": "epitomize",
+  "zipf": 2.04,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "gasconade",
+  "source_rank": 2132,
+  "lemma": "gasconade",
+  "zipf": 1.64,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "cosmopolite",
+  "source_rank": 2133,
+  "lemma": "cosmopolite",
+  "zipf": 1.39,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "recumbency",
+  "source_rank": 2134,
+  "lemma": "recumbency",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "tantara",
+  "source_rank": 2136,
+  "lemma": "tantara",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "potentate",
+  "source_rank": 2138,
+  "lemma": "potentate",
+  "zipf": 1.94,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "peptic",
+  "source_rank": 2140,
+  "lemma": "peptic",
+  "zipf": 2.2,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "veracious",
+  "source_rank": 2141,
+  "lemma": "veracious",
+  "zipf": 1.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "slaughterous",
+  "source_rank": 2142,
+  "lemma": "slaughterous",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "orbicular",
+  "source_rank": 2145,
+  "lemma": "orbicular",
+  "zipf": 1.88,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "foliaceous",
+  "source_rank": 2146,
+  "lemma": "foliaceous",
+  "zipf": 1.02,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.0"
+  ]
+ },
+ {
+  "word": "sanative",
+  "source_rank": 2147,
+  "lemma": "sanative",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "deanery",
+  "source_rank": 2148,
+  "lemma": "deanery",
+  "zipf": 2.23,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "recessional",
+  "source_rank": 2149,
+  "lemma": "recessional",
+  "zipf": 1.8,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "exigent",
+  "source_rank": 2150,
+  "lemma": "exigent",
+  "zipf": 2.19,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "lecherous",
+  "source_rank": 2151,
+  "lemma": "lecherous",
+  "zipf": 2.34,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "demimonde",
+  "source_rank": 2153,
+  "lemma": "demimonde",
+  "zipf": 1.39,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "tillage",
+  "source_rank": 2155,
+  "lemma": "tillage",
+  "zipf": 2.35,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "jetsam",
+  "source_rank": 2156,
+  "lemma": "jetsam",
+  "zipf": 2.08,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "defoliate",
+  "source_rank": 2157,
+  "lemma": "defoliate",
+  "zipf": 1.5,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "estimable",
+  "source_rank": 2158,
+  "lemma": "estimable",
+  "zipf": 2.17,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "cuboid",
+  "source_rank": 2160,
+  "lemma": "cuboid",
+  "zipf": 2.02,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "egomaniac",
+  "source_rank": 2162,
+  "lemma": "egomaniac",
+  "zipf": 2.22,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "usurious",
+  "source_rank": 2165,
+  "lemma": "usurious",
+  "zipf": 1.75,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "disapprobation",
+  "source_rank": 2167,
+  "lemma": "disapprobation",
+  "zipf": 1.51,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "colloquialism",
+  "source_rank": 2168,
+  "lemma": "colloquialism",
+  "zipf": 2.02,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "stalactite",
+  "source_rank": 2169,
+  "lemma": "stalactite",
+  "zipf": 1.81,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "occultation",
+  "source_rank": 2170,
+  "lemma": "occultation",
+  "zipf": 2.06,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "consonance",
+  "source_rank": 2172,
+  "lemma": "consonance",
+  "zipf": 2.07,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "tenebrous",
+  "source_rank": 2173,
+  "lemma": "tenebrous",
+  "zipf": 1.44,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "parsimony",
+  "source_rank": 2174,
+  "lemma": "parsimony",
+  "zipf": 2.11,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "offertory",
+  "source_rank": 2175,
+  "lemma": "offertory",
+  "zipf": 1.89,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "mutineer",
+  "source_rank": 2176,
+  "lemma": "mutineer",
+  "zipf": 1.82,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "valediction",
+  "source_rank": 2177,
+  "lemma": "valediction",
+  "zipf": 1.66,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "inundation",
+  "source_rank": 2178,
+  "lemma": "inundation",
+  "zipf": 2.46,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "indiscrete",
+  "source_rank": 2180,
+  "lemma": "indiscrete",
+  "zipf": 1.34,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "placket",
+  "source_rank": 2182,
+  "lemma": "placket",
+  "zipf": 1.64,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "demurrer",
+  "source_rank": 2184,
+  "lemma": "demurrer",
+  "zipf": 1.55,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "accelerando",
+  "source_rank": 2185,
+  "lemma": "accelerando",
+  "zipf": 1.42,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "spatiality",
+  "source_rank": 2188,
+  "lemma": "spatiality",
+  "zipf": 1.49,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "suavity",
+  "source_rank": 2189,
+  "lemma": "suavity",
+  "zipf": 1.33,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "verbiage",
+  "source_rank": 2190,
+  "lemma": "verbiage",
+  "zipf": 2.43,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "manorial",
+  "source_rank": 2191,
+  "lemma": "manorial",
+  "zipf": 2.23,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "periphrasis",
+  "source_rank": 2197,
+  "lemma": "periphrasis",
+  "zipf": 1.17,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "feckless",
+  "source_rank": 2199,
+  "lemma": "feckless",
+  "zipf": 2.48,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "indisposed",
+  "source_rank": 2202,
+  "lemma": "indispose",
+  "zipf": 2.3,
+  "band": "obscure",
+  "flags": [
+   "inflection->indispose",
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "evacuee",
+  "source_rank": 2207,
+  "lemma": "evacuee",
+  "zipf": 1.93,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "gunlock",
+  "source_rank": 2211,
+  "lemma": "gunlock",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "disaffection",
+  "source_rank": 2216,
+  "lemma": "disaffection",
+  "zipf": 2.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "presupposition",
+  "source_rank": 2217,
+  "lemma": "presupposition",
+  "zipf": 2.16,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "superable",
+  "source_rank": 2219,
+  "lemma": "superable",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "disinclination",
+  "source_rank": 2220,
+  "lemma": "disinclination",
+  "zipf": 1.84,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "emblazon",
+  "source_rank": 2222,
+  "lemma": "emblazon",
+  "zipf": 1.33,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "winsome",
+  "source_rank": 2224,
+  "lemma": "winsome",
+  "zipf": 2.39,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "impersonality",
+  "source_rank": 2225,
+  "lemma": "impersonality",
+  "zipf": 1.37,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "pressurize",
+  "source_rank": 2231,
+  "lemma": "pressurize",
+  "zipf": 2.07,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "gradation",
+  "source_rank": 2233,
+  "lemma": "gradation",
+  "zipf": 2.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "scrunch",
+  "source_rank": 2234,
+  "lemma": "scrunch",
+  "zipf": 2.29,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "intricacy",
+  "source_rank": 2239,
+  "lemma": "intricacy",
+  "zipf": 2.33,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "opine",
+  "source_rank": 2240,
+  "lemma": "opine",
+  "zipf": 2.3,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "crotchety",
+  "source_rank": 2241,
+  "lemma": "crotchety",
+  "zipf": 2.05,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "odometer",
+  "source_rank": 2242,
+  "lemma": "odometer",
+  "zipf": 2.45,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "sagacious",
+  "source_rank": 2251,
+  "lemma": "sagacious",
+  "zipf": 1.8,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "delicatessen",
+  "source_rank": 2253,
+  "lemma": "delicatessen",
+  "zipf": 2.48,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "polychrome",
+  "source_rank": 2258,
+  "lemma": "polychrome",
+  "zipf": 2.26,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "cavort",
+  "source_rank": 2263,
+  "lemma": "cavort",
+  "zipf": 1.72,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "venturesome",
+  "source_rank": 2269,
+  "lemma": "venturesome",
+  "zipf": 1.35,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "disputable",
+  "source_rank": 2275,
+  "lemma": "disputable",
+  "zipf": 2.0,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "mannerism",
+  "source_rank": 2280,
+  "lemma": "mannerism",
+  "zipf": 2.28,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "zilch",
+  "source_rank": 2284,
+  "lemma": "zilch",
+  "zipf": 2.47,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "suggestible",
+  "source_rank": 2291,
+  "lemma": "suggestible",
+  "zipf": 1.87,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "combustibility",
+  "source_rank": 2298,
+  "lemma": "combustibility",
+  "zipf": 1.04,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.0"
+  ]
+ },
+ {
+  "word": "palpitate",
+  "source_rank": 2301,
+  "lemma": "palpitate",
+  "zipf": 1.26,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "regionalism",
+  "source_rank": 2302,
+  "lemma": "regionalism",
+  "zipf": 2.39,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "medicate",
+  "source_rank": 2304,
+  "lemma": "medicate",
+  "zipf": 2.48,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "exhaustibility",
+  "source_rank": 2305,
+  "lemma": "exhaustibility",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "henpeck",
+  "source_rank": 2306,
+  "lemma": "henpeck",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "dilapidation",
+  "source_rank": 2307,
+  "lemma": "dilapidation",
+  "zipf": 1.84,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "dispossession",
+  "source_rank": 2311,
+  "lemma": "dispossession",
+  "zipf": 2.31,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "personage",
+  "source_rank": 2313,
+  "lemma": "personage",
+  "zipf": 2.38,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "nutriment",
+  "source_rank": 2317,
+  "lemma": "nutriment",
+  "zipf": 1.51,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "reproof",
+  "source_rank": 2322,
+  "lemma": "reproof",
+  "zipf": 1.98,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "jangle",
+  "source_rank": 2326,
+  "lemma": "jangle",
+  "zipf": 2.28,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "heartsore",
+  "source_rank": 2327,
+  "lemma": "heartsore",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "presentment",
+  "source_rank": 2331,
+  "lemma": "presentment",
+  "zipf": 1.94,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "tumefy",
+  "source_rank": 2335,
+  "lemma": "tumefy",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "claptrap",
+  "source_rank": 2338,
+  "lemma": "claptrap",
+  "zipf": 2.22,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "comradeship",
+  "source_rank": 2344,
+  "lemma": "comradeship",
+  "zipf": 2.23,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "bedaub",
+  "source_rank": 2349,
+  "lemma": "bedaub",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "arcanum",
+  "source_rank": 2353,
+  "lemma": "arcanum",
+  "zipf": 2.11,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "demobilize",
+  "source_rank": 2358,
+  "lemma": "demobilize",
+  "zipf": 1.66,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "redouble",
+  "source_rank": 2359,
+  "lemma": "redouble",
+  "zipf": 2.26,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "slavish",
+  "source_rank": 2360,
+  "lemma": "slavish",
+  "zipf": 2.19,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "perceptibility",
+  "source_rank": 2363,
+  "lemma": "perceptibility",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "underutilize",
+  "source_rank": 2365,
+  "lemma": "underutilize",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "conniption",
+  "source_rank": 2369,
+  "lemma": "conniption",
+  "zipf": 1.66,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "impermanence",
+  "source_rank": 2371,
+  "lemma": "impermanence",
+  "zipf": 2.32,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "temporize",
+  "source_rank": 2373,
+  "lemma": "temporize",
+  "zipf": 1.18,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "polytheism",
+  "source_rank": 2376,
+  "lemma": "polytheism",
+  "zipf": 2.3,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "collate",
+  "source_rank": 2382,
+  "lemma": "collate",
+  "zipf": 2.42,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "smarmy",
+  "source_rank": 2390,
+  "lemma": "smarmy",
+  "zipf": 2.24,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "deviltry",
+  "source_rank": 2391,
+  "lemma": "deviltry",
+  "zipf": 1.25,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "blather",
+  "source_rank": 2393,
+  "lemma": "blather",
+  "zipf": 2.25,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "lunate",
+  "source_rank": 2394,
+  "lemma": "lunate",
+  "zipf": 1.68,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "somersault",
+  "source_rank": 2396,
+  "lemma": "somersault",
+  "zipf": 2.48,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "dramatics",
+  "source_rank": 2397,
+  "lemma": "dramatics",
+  "zipf": 2.49,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "buccaneer",
+  "source_rank": 2403,
+  "lemma": "buccaneer",
+  "zipf": 2.41,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "marriageability",
+  "source_rank": 2404,
+  "lemma": "marriageability",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "demoniacal",
+  "source_rank": 2410,
+  "lemma": "demoniacal",
+  "zipf": 1.02,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.0"
+  ]
+ },
+ {
+  "word": "roughhouse",
+  "source_rank": 2413,
+  "lemma": "roughhouse",
+  "zipf": 1.57,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "inebriate",
+  "source_rank": 2419,
+  "lemma": "inebriate",
+  "zipf": 1.63,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "scoundrelly",
+  "source_rank": 2421,
+  "lemma": "scoundrelly",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "foreshadow",
+  "source_rank": 2422,
+  "lemma": "foreshadow",
+  "zipf": 2.39,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "conjuror",
+  "source_rank": 2423,
+  "lemma": "conjuror",
+  "zipf": 1.68,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "educative",
+  "source_rank": 2425,
+  "lemma": "educative",
+  "zipf": 2.38,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "immobilize",
+  "source_rank": 2426,
+  "lemma": "immobilize",
+  "zipf": 2.35,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "regality",
+  "source_rank": 2431,
+  "lemma": "regality",
+  "zipf": 1.57,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "transect",
+  "source_rank": 2434,
+  "lemma": "transect",
+  "zipf": 1.94,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "impressible",
+  "source_rank": 2435,
+  "lemma": "impressible",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "bejewel",
+  "source_rank": 2436,
+  "lemma": "bejewel",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "disrobe",
+  "source_rank": 2439,
+  "lemma": "disrobe",
+  "zipf": 1.96,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "valiancy",
+  "source_rank": 2441,
+  "lemma": "valiancy",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "incorruptible",
+  "source_rank": 2442,
+  "lemma": "incorruptible",
+  "zipf": 2.46,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "coltish",
+  "source_rank": 2445,
+  "lemma": "coltish",
+  "zipf": 1.22,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "nicker",
+  "source_rank": 2446,
+  "lemma": "nicker",
+  "zipf": 1.52,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "deportee",
+  "source_rank": 2449,
+  "lemma": "deportee",
+  "zipf": 1.7,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "jounce",
+  "source_rank": 2451,
+  "lemma": "jounce",
+  "zipf": 1.02,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.0"
+  ]
+ },
+ {
+  "word": "sheathe",
+  "source_rank": 2452,
+  "lemma": "sheathe",
+  "zipf": 1.82,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "opposable",
+  "source_rank": 2453,
+  "lemma": "opposable",
+  "zipf": 2.15,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "oceanaut",
+  "source_rank": 2456,
+  "lemma": "oceanaut",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "waif",
+  "source_rank": 2457,
+  "lemma": "waif",
+  "zipf": 2.35,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "humanize",
+  "source_rank": 2463,
+  "lemma": "humanize",
+  "zipf": 2.45,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "drawl",
+  "source_rank": 2465,
+  "lemma": "drawl",
+  "zipf": 2.48,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "repayable",
+  "source_rank": 2466,
+  "lemma": "repayable",
+  "zipf": 2.0,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "precognition",
+  "source_rank": 2467,
+  "lemma": "precognition",
+  "zipf": 2.12,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "equable",
+  "source_rank": 2475,
+  "lemma": "equable",
+  "zipf": 1.63,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "restauranteur",
+  "source_rank": 2476,
+  "lemma": "restauranteur",
+  "zipf": 1.5,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "semiaquatic",
+  "source_rank": 2477,
+  "lemma": "semiaquatic",
+  "zipf": 1.34,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "syllabic",
+  "source_rank": 2479,
+  "lemma": "syllabic",
+  "zipf": 2.34,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "underwhelm",
+  "source_rank": 2482,
+  "lemma": "underwhelm",
+  "zipf": 1.39,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "remount",
+  "source_rank": 2483,
+  "lemma": "remount",
+  "zipf": 2.06,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "entangle",
+  "source_rank": 2488,
+  "lemma": "entangle",
+  "zipf": 2.2,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "roundel",
+  "source_rank": 2490,
+  "lemma": "roundel",
+  "zipf": 1.9,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "scrubby",
+  "source_rank": 2501,
+  "lemma": "scrubby",
+  "zipf": 2.31,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "beggary",
+  "source_rank": 2505,
+  "lemma": "beggary",
+  "zipf": 1.5,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "seraph",
+  "source_rank": 2507,
+  "lemma": "seraph",
+  "zipf": 2.41,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "protraction",
+  "source_rank": 2508,
+  "lemma": "protraction",
+  "zipf": 1.17,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "omissible",
+  "source_rank": 2512,
+  "lemma": "omissible",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "codify",
+  "source_rank": 2513,
+  "lemma": "codify",
+  "zipf": 2.39,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "notarize",
+  "source_rank": 2514,
+  "lemma": "notarize",
+  "zipf": 1.49,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "slacken",
+  "source_rank": 2515,
+  "lemma": "slacken",
+  "zipf": 2.0,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "coextensive",
+  "source_rank": 2523,
+  "lemma": "coextensive",
+  "zipf": 1.82,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "figuration",
+  "source_rank": 2525,
+  "lemma": "figuration",
+  "zipf": 2.14,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "slipshod",
+  "source_rank": 2528,
+  "lemma": "slipshod",
+  "zipf": 1.94,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "cagey",
+  "source_rank": 2530,
+  "lemma": "cagey",
+  "zipf": 2.39,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "malefactor",
+  "source_rank": 2533,
+  "lemma": "malefactor",
+  "zipf": 1.47,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "vaporous",
+  "source_rank": 2534,
+  "lemma": "vaporous",
+  "zipf": 1.81,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "tabular",
+  "source_rank": 2538,
+  "lemma": "tabular",
+  "zipf": 2.44,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "careworn",
+  "source_rank": 2539,
+  "lemma": "careworn",
+  "zipf": 1.66,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "turgid",
+  "source_rank": 2543,
+  "lemma": "turgid",
+  "zipf": 2.34,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "seclusive",
+  "source_rank": 2544,
+  "lemma": "seclusive",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "appertain",
+  "source_rank": 2549,
+  "lemma": "appertain",
+  "zipf": 1.16,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "repine",
+  "source_rank": 2555,
+  "lemma": "repine",
+  "zipf": 1.07,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "inharmonious",
+  "source_rank": 2560,
+  "lemma": "inharmonious",
+  "zipf": 1.38,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "retrench",
+  "source_rank": 2564,
+  "lemma": "retrench",
+  "zipf": 1.82,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "dandle",
+  "source_rank": 2565,
+  "lemma": "dandle",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "guzzle",
+  "source_rank": 2568,
+  "lemma": "guzzle",
+  "zipf": 2.16,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "percolate",
+  "source_rank": 2569,
+  "lemma": "percolate",
+  "zipf": 2.15,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "sonant",
+  "source_rank": 2572,
+  "lemma": "sonant",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "enrage",
+  "source_rank": 2574,
+  "lemma": "enrage",
+  "zipf": 2.38,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "oddment",
+  "source_rank": 2577,
+  "lemma": "oddment",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "notability",
+  "source_rank": 2593,
+  "lemma": "notability",
+  "zipf": 2.02,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "vexation",
+  "source_rank": 2594,
+  "lemma": "vexation",
+  "zipf": 1.98,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "inheritable",
+  "source_rank": 2600,
+  "lemma": "inheritable",
+  "zipf": 1.97,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "predicable",
+  "source_rank": 2604,
+  "lemma": "predicable",
+  "zipf": 1.73,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "preordain",
+  "source_rank": 2606,
+  "lemma": "preordain",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "gobbet",
+  "source_rank": 2610,
+  "lemma": "gobbet",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "precancerous",
+  "source_rank": 2611,
+  "lemma": "precancerous",
+  "zipf": 2.09,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "implosive",
+  "source_rank": 2612,
+  "lemma": "implosive",
+  "zipf": 1.5,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "superabundant",
+  "source_rank": 2613,
+  "lemma": "superabundant",
+  "zipf": 1.45,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "supportable",
+  "source_rank": 2615,
+  "lemma": "supportable",
+  "zipf": 1.96,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "nodular",
+  "source_rank": 2617,
+  "lemma": "nodular",
+  "zipf": 2.15,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "commentate",
+  "source_rank": 2621,
+  "lemma": "commentate",
+  "zipf": 2.23,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "trammel",
+  "source_rank": 2622,
+  "lemma": "trammel",
+  "zipf": 1.95,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "timberline",
+  "source_rank": 2625,
+  "lemma": "timberline",
+  "zipf": 2.23,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "gamesome",
+  "source_rank": 2632,
+  "lemma": "gamesome",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "fiendish",
+  "source_rank": 2633,
+  "lemma": "fiendish",
+  "zipf": 2.46,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "discontinuance",
+  "source_rank": 2640,
+  "lemma": "discontinuance",
+  "zipf": 2.09,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "gurgle",
+  "source_rank": 2643,
+  "lemma": "gurgle",
+  "zipf": 2.14,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "scummy",
+  "source_rank": 2644,
+  "lemma": "scummy",
+  "zipf": 2.37,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "individualize",
+  "source_rank": 2646,
+  "lemma": "individualize",
+  "zipf": 1.87,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "popularize",
+  "source_rank": 2654,
+  "lemma": "popularize",
+  "zipf": 2.46,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "signalize",
+  "source_rank": 2656,
+  "lemma": "signalize",
+  "zipf": 1.03,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.0"
+  ]
+ },
+ {
+  "word": "remediable",
+  "source_rank": 2661,
+  "lemma": "remediable",
+  "zipf": 1.26,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "overwrought",
+  "source_rank": 2662,
+  "lemma": "overwrought",
+  "zipf": 2.47,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "urbanite",
+  "source_rank": 2668,
+  "lemma": "urbanite",
+  "zipf": 1.67,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "preemption",
+  "source_rank": 2670,
+  "lemma": "preemption",
+  "zipf": 2.33,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "incivility",
+  "source_rank": 2672,
+  "lemma": "incivility",
+  "zipf": 2.1,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "evidential",
+  "source_rank": 2674,
+  "lemma": "evidential",
+  "zipf": 2.31,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "emote",
+  "source_rank": 2678,
+  "lemma": "emote",
+  "zipf": 2.46,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "decriminalize",
+  "source_rank": 2679,
+  "lemma": "decriminalize",
+  "zipf": 2.3,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "transmissible",
+  "source_rank": 2680,
+  "lemma": "transmissible",
+  "zipf": 2.37,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "unawares",
+  "source_rank": 2683,
+  "lemma": "unawares",
+  "zipf": 2.45,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "forestation",
+  "source_rank": 2697,
+  "lemma": "forestation",
+  "zipf": 1.66,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "subhuman",
+  "source_rank": 2699,
+  "lemma": "subhuman",
+  "zipf": 2.38,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "disburden",
+  "source_rank": 2701,
+  "lemma": "disburden",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "suburbanite",
+  "source_rank": 2704,
+  "lemma": "suburbanite",
+  "zipf": 1.7,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "deferment",
+  "source_rank": 2705,
+  "lemma": "deferment",
+  "zipf": 2.34,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "subjoin",
+  "source_rank": 2722,
+  "lemma": "subjoin",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "artificiality",
+  "source_rank": 2724,
+  "lemma": "artificiality",
+  "zipf": 2.0,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "janitorial",
+  "source_rank": 2725,
+  "lemma": "janitorial",
+  "zipf": 2.46,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "overcapitalize",
+  "source_rank": 2729,
+  "lemma": "overcapitalize",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "balderdash",
+  "source_rank": 2730,
+  "lemma": "balderdash",
+  "zipf": 1.94,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "deface",
+  "source_rank": 2732,
+  "lemma": "deface",
+  "zipf": 2.32,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "finagle",
+  "source_rank": 2733,
+  "lemma": "finagle",
+  "zipf": 1.76,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "pleasantry",
+  "source_rank": 2734,
+  "lemma": "pleasantry",
+  "zipf": 1.59,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "brilliancy",
+  "source_rank": 2735,
+  "lemma": "brilliancy",
+  "zipf": 1.77,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "previsional",
+  "source_rank": 2738,
+  "lemma": "previsional",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "rumpus",
+  "source_rank": 2740,
+  "lemma": "rumpus",
+  "zipf": 2.32,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "irreclaimable",
+  "source_rank": 2745,
+  "lemma": "irreclaimable",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "politicize",
+  "source_rank": 2747,
+  "lemma": "politicize",
+  "zipf": 2.24,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "squab",
+  "source_rank": 2753,
+  "lemma": "squab",
+  "zipf": 1.97,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "vaporize",
+  "source_rank": 2771,
+  "lemma": "vaporize",
+  "zipf": 2.47,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "oafish",
+  "source_rank": 2778,
+  "lemma": "oafish",
+  "zipf": 1.69,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "palmistry",
+  "source_rank": 2779,
+  "lemma": "palmistry",
+  "zipf": 1.8,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "splay",
+  "source_rank": 2784,
+  "lemma": "splay",
+  "zipf": 2.09,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "strangulate",
+  "source_rank": 2786,
+  "lemma": "strangulate",
+  "zipf": 1.04,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.0"
+  ]
+ },
+ {
+  "word": "triplicate",
+  "source_rank": 2787,
+  "lemma": "triplicate",
+  "zipf": 2.36,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "churl",
+  "source_rank": 2794,
+  "lemma": "churl",
+  "zipf": 1.51,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "murmurous",
+  "source_rank": 2795,
+  "lemma": "murmurous",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "recapitulation",
+  "source_rank": 2798,
+  "lemma": "recapitulation",
+  "zipf": 2.22,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "unsubstantial",
+  "source_rank": 2799,
+  "lemma": "unsubstantial",
+  "zipf": 1.59,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "reconnoiter",
+  "source_rank": 2901,
+  "lemma": "reconnoiter",
+  "zipf": 1.95,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "debouch",
+  "source_rank": 2904,
+  "lemma": "debouch",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "redaction",
+  "source_rank": 2905,
+  "lemma": "redaction",
+  "zipf": 2.29,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "tumescence",
+  "source_rank": 2906,
+  "lemma": "tumescence",
+  "zipf": 1.51,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "imperforate",
+  "source_rank": 2909,
+  "lemma": "imperforate",
+  "zipf": 1.84,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "objurgate",
+  "source_rank": 2910,
+  "lemma": "objurgate",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "insusceptible",
+  "source_rank": 2912,
+  "lemma": "insusceptible",
+  "zipf": 1.3,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "impetuosity",
+  "source_rank": 2914,
+  "lemma": "impetuosity",
+  "zipf": 1.64,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "frangible",
+  "source_rank": 2915,
+  "lemma": "frangible",
+  "zipf": 1.76,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "delusory",
+  "source_rank": 2916,
+  "lemma": "delusory",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "labyrinthine",
+  "source_rank": 2917,
+  "lemma": "labyrinthine",
+  "zipf": 2.43,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "rapacity",
+  "source_rank": 2918,
+  "lemma": "rapacity",
+  "zipf": 1.5,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "raconteur",
+  "source_rank": 2920,
+  "lemma": "raconteur",
+  "zipf": 2.13,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "excursive",
+  "source_rank": 2923,
+  "lemma": "excursive",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "carious",
+  "source_rank": 2926,
+  "lemma": "carious",
+  "zipf": 1.52,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "caseous",
+  "source_rank": 2929,
+  "lemma": "caseous",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "collocate",
+  "source_rank": 2931,
+  "lemma": "collocate",
+  "zipf": 1.11,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "incumbency",
+  "source_rank": 2933,
+  "lemma": "incumbency",
+  "zipf": 2.4,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.4"
+  ]
+ },
+ {
+  "word": "nictitate",
+  "source_rank": 2935,
+  "lemma": "nictitate",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "stringency",
+  "source_rank": 2936,
+  "lemma": "stringency",
+  "zipf": 1.84,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "perfidy",
+  "source_rank": 2937,
+  "lemma": "perfidy",
+  "zipf": 2.02,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "natation",
+  "source_rank": 2940,
+  "lemma": "natation",
+  "zipf": 1.1,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "sophism",
+  "source_rank": 2941,
+  "lemma": "sophism",
+  "zipf": 1.29,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.3"
+  ]
+ },
+ {
+  "word": "malapropos",
+  "source_rank": 2943,
+  "lemma": "malapropos",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "parotid",
+  "source_rank": 2944,
+  "lemma": "parotid",
+  "zipf": 2.05,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "styptic",
+  "source_rank": 2945,
+  "lemma": "styptic",
+  "zipf": 1.5,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "apothegm",
+  "source_rank": 2946,
+  "lemma": "apothegm",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "telekinesis",
+  "source_rank": 2948,
+  "lemma": "telekinesis",
+  "zipf": 2.46,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.5"
+  ]
+ },
+ {
+  "word": "salvageable",
+  "source_rank": 2950,
+  "lemma": "salvageable",
+  "zipf": 2.27,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "deportment",
+  "source_rank": 2953,
+  "lemma": "deportment",
+  "zipf": 2.09,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.1"
+  ]
+ },
+ {
+  "word": "vituperation",
+  "source_rank": 2955,
+  "lemma": "vituperation",
+  "zipf": 1.52,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "coquet",
+  "source_rank": 2956,
+  "lemma": "coquet",
+  "zipf": 1.55,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "nasalize",
+  "source_rank": 2957,
+  "lemma": "nasalize",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "verdancy",
+  "source_rank": 2958,
+  "lemma": "verdancy",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "devitalize",
+  "source_rank": 2961,
+  "lemma": "devitalize",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "comportment",
+  "source_rank": 2962,
+  "lemma": "comportment",
+  "zipf": 1.74,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.7"
+  ]
+ },
+ {
+  "word": "gesticulate",
+  "source_rank": 2963,
+  "lemma": "gesticulate",
+  "zipf": 1.58,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "tractable",
+  "source_rank": 2964,
+  "lemma": "tractable",
+  "zipf": 2.21,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.2"
+  ]
+ },
+ {
+  "word": "pilotage",
+  "source_rank": 2965,
+  "lemma": "pilotage",
+  "zipf": 1.94,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.9"
+  ]
+ },
+ {
+  "word": "pasteurize",
+  "source_rank": 2966,
+  "lemma": "pasteurize",
+  "zipf": 1.51,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "truculence",
+  "source_rank": 2967,
+  "lemma": "truculence",
+  "zipf": 1.43,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.4"
+  ]
+ },
+ {
+  "word": "blazonry",
+  "source_rank": 2970,
+  "lemma": "blazonry",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "vociferate",
+  "source_rank": 2971,
+  "lemma": "vociferate",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "plumose",
+  "source_rank": 2972,
+  "lemma": "plumose",
+  "zipf": 1.13,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "impecuniosity",
+  "source_rank": 2973,
+  "lemma": "impecuniosity",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "sinistral",
+  "source_rank": 2976,
+  "lemma": "sinistral",
+  "zipf": 1.64,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "unbosom",
+  "source_rank": 2977,
+  "lemma": "unbosom",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "necessitous",
+  "source_rank": 2979,
+  "lemma": "necessitous",
+  "zipf": 1.08,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "improvidence",
+  "source_rank": 2980,
+  "lemma": "improvidence",
+  "zipf": 1.07,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.1"
+  ]
+ },
+ {
+  "word": "bravura",
+  "source_rank": 2981,
+  "lemma": "bravura",
+  "zipf": 2.27,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ },
+ {
+  "word": "mephitic",
+  "source_rank": 2982,
+  "lemma": "mephitic",
+  "zipf": 1.22,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "oligarchical",
+  "source_rank": 2983,
+  "lemma": "oligarchical",
+  "zipf": 1.78,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.8"
+  ]
+ },
+ {
+  "word": "schlocky",
+  "source_rank": 2987,
+  "lemma": "schlocky",
+  "zipf": 1.49,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "obscurant",
+  "source_rank": 2988,
+  "lemma": "obscurant",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "tractile",
+  "source_rank": 2990,
+  "lemma": "tractile",
+  "zipf": 0.0,
+  "band": "unknown",
+  "flags": [
+   "zipf0_notfound"
+  ]
+ },
+ {
+  "word": "lambent",
+  "source_rank": 2991,
+  "lemma": "lambent",
+  "zipf": 1.61,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.6"
+  ]
+ },
+ {
+  "word": "naturalize",
+  "source_rank": 2994,
+  "lemma": "naturalize",
+  "zipf": 2.03,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.0"
+  ]
+ },
+ {
+  "word": "chivvy",
+  "source_rank": 2995,
+  "lemma": "chivvy",
+  "zipf": 1.17,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.2"
+  ]
+ },
+ {
+  "word": "scofflaw",
+  "source_rank": 2996,
+  "lemma": "scofflaw",
+  "zipf": 1.51,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf1.5"
+  ]
+ },
+ {
+  "word": "inviolable",
+  "source_rank": 2998,
+  "lemma": "inviolable",
+  "zipf": 2.32,
+  "band": "obscure",
+  "flags": [
+   "obscure_zipf2.3"
+  ]
+ }
+]

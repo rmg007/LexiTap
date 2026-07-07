@@ -18,7 +18,14 @@
 import { existsSync, renameSync, readFileSync } from 'node:fs';
 import { resolve, dirname, basename } from 'node:path';
 import { logger } from '@/lib/logger';
-import { flagValue } from '@/commands/validate';
+import {
+  flagValue,
+  countBlanks,
+  hasInTokenUnderscore,
+  exampleLeaksAnswer,
+  VALID_THEMES,
+} from '@/commands/validate';
+import { WORD_TYPES } from '@/schema/types';
 import { DEFAULT_MASTER_PATH } from '@/commands/export-master';
 import {
   readMasterRecords,
@@ -26,6 +33,7 @@ import {
   masterWordToRow,
   orderByFrequency,
   appendProgress,
+  PENDING_DEFINITION,
 } from '@/commands/master-store';
 import { validateSenseIngestItem } from '@/commands/synthesize-senses';
 import { validateMasterQuestions } from '@/commands/question-validators';
@@ -46,8 +54,9 @@ import {
 } from '@/providers/openaiClient';
 
 /** Rough per-word token constants for the cost estimate (long prose + 5 Qs). */
-export const EST_IN_TOKENS_PER_WORD = 1500;
-export const EST_OUT_TOKENS_PER_WORD = 1200;
+export const EST_IN_TOKENS_PER_WORD = 1550;
+/** Slightly above the senses+questions-only cost — accounts for base fields on bare stubs. */
+export const EST_OUT_TOKENS_PER_WORD = 1300;
 /** Number of authored questions required per word. */
 export const REQUIRED_QUESTION_COUNT = 5;
 
@@ -77,6 +86,38 @@ export interface EnrichItemValidation {
 }
 
 /**
+ * Validate the base fields (pos/definition/example_sentence/word_type/theme)
+ * the model must supply for a bare-stub word (one with no prior definition).
+ * Mirrors the `validate --strict` rules (#1/#2/#8/#9/#10) so a stub that
+ * passes this check will also pass the release-gate validator.
+ */
+export function validateEnrichBaseFields(item: MasterEnrichItem, word: string): EnrichItemValidation {
+  if (!item.definition || item.definition.trim().length === 0) {
+    return { ok: false, reason: 'base: definition required for a bare-stub word' };
+  }
+  if (!item.example_sentence || item.example_sentence.trim().length === 0) {
+    return { ok: false, reason: 'base: example_sentence required for a bare-stub word' };
+  }
+  const blanks = countBlanks(item.example_sentence);
+  if (blanks !== 1) {
+    return { ok: false, reason: `base: example_sentence expected exactly one '_', found ${blanks}` };
+  }
+  if (hasInTokenUnderscore(item.example_sentence)) {
+    return { ok: false, reason: "base: example_sentence blank '_' is inside a word token" };
+  }
+  if (exampleLeaksAnswer(word, item.example_sentence)) {
+    return { ok: false, reason: `base: example_sentence leaks the answer word '${word}'` };
+  }
+  if (item.word_type && !WORD_TYPES.includes(item.word_type as (typeof WORD_TYPES)[number])) {
+    return { ok: false, reason: `base: invalid word_type '${item.word_type}'` };
+  }
+  if (item.theme && !VALID_THEMES.has(item.theme)) {
+    return { ok: false, reason: `base: invalid theme '${item.theme}'` };
+  }
+  return { ok: true };
+}
+
+/**
  * Validate one generated item against the batch word: identity match, senses
  * (V1–V10), and exactly 5 well-formed questions (Q1–Q9). Returns the first
  * failing reason — the item is dropped on any failure (fail-closed).
@@ -84,6 +125,10 @@ export interface EnrichItemValidation {
 export function validateEnrichItem(item: MasterEnrichItem, word: WordRow): EnrichItemValidation {
   if (item.word && item.word.toLowerCase() !== word.word.toLowerCase()) {
     return { ok: false, reason: `returned word '${item.word}' != batch word '${word.word}'` };
+  }
+  if (word.definition === PENDING_DEFINITION) {
+    const baseCheck = validateEnrichBaseFields(item, word.word);
+    if (!baseCheck.ok) return baseCheck;
   }
   let senseErrors: ReturnType<typeof validateSenseIngestItem>;
   try {
@@ -198,6 +243,14 @@ export async function enrichMasterCommand(args: string[], deps: EnrichMasterDeps
         totals.invalidDropped += 1;
         logger.warn(`invalid item dropped (word: ${row.word}, id: ${row.id}): ${check.reason}`);
         continue;
+      }
+      if (row.definition === PENDING_DEFINITION) {
+        // Bare stub — validateEnrichBaseFields already confirmed these are present+valid.
+        rec.definition = item.definition!;
+        rec.example_sentence = item.example_sentence!;
+        rec.pos = item.pos ?? rec.pos;
+        rec.word_type = item.word_type ?? rec.word_type;
+        rec.theme = item.theme ?? rec.theme;
       }
       rec.senses = item.senses;
       rec.questions = item.questions;
