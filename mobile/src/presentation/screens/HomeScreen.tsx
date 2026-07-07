@@ -9,6 +9,7 @@ import {
   DailyCapMeter,
   KnowledgeMapBar,
   StreakBadge,
+  Skeleton,
 } from '@/presentation/components';
 import { useServices, type DailyProgressMetrics } from '@/presentation/services';
 import {
@@ -62,6 +63,45 @@ function timeOfDayGreeting(): string {
   return 'Good evening';
 }
 
+// Loading placeholders for the very first load only (see hasLoadedOnce below).
+// Mirror the real content's shape so nothing shifts when the swap happens.
+function StreakBadgeSkeleton(): React.JSX.Element {
+  const { radii } = useTheme();
+  return <Skeleton width={56} height={28} style={{ borderRadius: radii.full }} />;
+}
+
+function FocalCardSkeleton(): React.JSX.Element {
+  const { spacing } = useTheme();
+  return (
+    <Card raised>
+      <View style={{ gap: spacing.s4 }}>
+        <View style={{ gap: spacing.s1 }}>
+          <Skeleton width={180} height={22} />
+          <Skeleton width="70%" height={16} />
+        </View>
+        <Skeleton width="100%" height={12} />
+        <Skeleton width="100%" height={44} />
+      </View>
+    </Card>
+  );
+}
+
+function TierCardSkeleton(): React.JSX.Element {
+  const { spacing } = useTheme();
+  return (
+    <Card>
+      <View style={{ gap: spacing.s4 }}>
+        <View style={{ gap: spacing.s2 }}>
+          <Skeleton width={140} height={22} />
+          <Skeleton width="100%" height={12} />
+          <Skeleton width={160} height={16} />
+        </View>
+        <Skeleton width="100%" height={44} />
+      </View>
+    </Card>
+  );
+}
+
 export function HomeScreen({
   greetingName,
   onStartReview,
@@ -77,43 +117,49 @@ export function HomeScreen({
   const [dailyProgress, setDailyProgress] = useState<DailyProgressMetrics>(DEFAULT_DAILY_PROGRESS);
   const [segments, setSegments] = useState<KnowledgeMapSegments>(ZERO_SEGMENTS);
   const [masteryError, setMasteryError] = useState(false);
+  // Gates the skeleton vs. real content, not a per-field spinner: every read
+  // below is fetched in parallel and committed in one batch, so the very
+  // first load goes skeleton → fully-populated in a single transition (no
+  // section, badge, or card popping in ahead of the others). Later
+  // refreshSignal-triggered reloads never flip this back to false, so a
+  // returning visit updates the numbers in place instead of re-showing the
+  // skeleton.
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   const load = useCallback(async () => {
-    try {
-      setStats(await queries.getUserStats());
-      setStatsError(false);
-    } catch {
-      // Offline-first, but distinguish a genuine read failure from a
-      // brand-new zero-state — a returning learner should never see their
-      // real streak silently replaced by zero with no explanation.
-      setStats(null);
-      setStatsError(true);
-    }
+    const [statsResult, activeSessionResult, dailyProgressResult, segmentsResult] = await Promise.all([
+      queries
+        .getUserStats()
+        .then((value) => ({ ok: true as const, value }))
+        // Offline-first, but distinguish a genuine read failure from a
+        // brand-new zero-state — a returning learner should never see their
+        // real streak silently replaced by zero with no explanation.
+        .catch(() => ({ ok: false as const, value: null })),
+      queries
+        .getActiveSession()
+        .then((value) => ({ ok: true as const, value }))
+        .catch(() => ({ ok: false as const, value: null })),
+      ACTIVE_TIER
+        ? queries
+            .getDailyProgress(asTierId(ACTIVE_TIER.id))
+            .then((value) => ({ ok: true as const, value }))
+            .catch(() => ({ ok: false as const, value: DEFAULT_DAILY_PROGRESS }))
+        : Promise.resolve({ ok: true as const, value: DEFAULT_DAILY_PROGRESS }),
+      ACTIVE_TIER
+        ? queries
+            .getTierKnowledgeMap(asTierId(ACTIVE_TIER.id))
+            .then((value) => ({ ok: true as const, value }))
+            .catch(() => ({ ok: false as const, value: ZERO_SEGMENTS }))
+        : Promise.resolve({ ok: true as const, value: ZERO_SEGMENTS }),
+    ]);
 
-    try {
-      setActiveSession(await queries.getActiveSession());
-    } catch {
-      setActiveSession(null);
-    }
-
-    try {
-      if (ACTIVE_TIER) {
-        const progress = await queries.getDailyProgress(asTierId(ACTIVE_TIER.id));
-        setDailyProgress(progress);
-      }
-    } catch {
-      setDailyProgress(DEFAULT_DAILY_PROGRESS);
-    }
-
-    try {
-      if (ACTIVE_TIER) {
-        setSegments(await queries.getTierKnowledgeMap(asTierId(ACTIVE_TIER.id)));
-        setMasteryError(false);
-      }
-    } catch {
-      setSegments(ZERO_SEGMENTS);
-      setMasteryError(true);
-    }
+    setStats(statsResult.value);
+    setStatsError(!statsResult.ok);
+    setActiveSession(activeSessionResult.value);
+    setDailyProgress(dailyProgressResult.value);
+    setSegments(segmentsResult.value);
+    setMasteryError(!segmentsResult.ok);
+    setHasLoadedOnce(true);
   }, [queries]);
 
   useEffect(() => {
@@ -165,7 +211,9 @@ export function HomeScreen({
             {greetingName ?? 'Welcome back'}
           </Text>
         </View>
-        {statsError ? (
+        {!hasLoadedOnce ? (
+          <StreakBadgeSkeleton />
+        ) : statsError ? (
           <Text variant="caption" color="textTertiary">
             Streak unavailable
           </Text>
@@ -174,85 +222,94 @@ export function HomeScreen({
         )}
       </View>
 
-      {/* Exactly one raised focal card at a time: Resume beats Start review. */}
-      {hasResume && activeSession !== null ? (
-        <Card raised>
-          <View style={{ gap: spacing.s4 }}>
-            <View style={{ gap: spacing.s1 }}>
-              <Text variant="headline" color="textPrimary">
-                Resume learning
-              </Text>
-              <Text variant="caption" color="textTertiary" tabularNums>
-                {resumeWord != null
-                  ? `Pick up where you left off · ${resumePosition}/${activeSession.batch.length} · "${resumeWord}"`
-                  : `Pick up where you left off · ${resumePosition}/${activeSession.batch.length}`}
-              </Text>
-            </View>
-            <Button
-              label="Resume"
-              variant="primary"
-              fullWidth
-              testID="resume-session"
-              onPress={() => onResume?.(activeSession)}
-            />
-          </View>
-        </Card>
-      ) : (
-        <Card raised>
-          <View style={{ gap: spacing.s4 }}>
-            <View style={{ gap: spacing.s1 }}>
-              <Text variant="headline" color="textPrimary">
-                Words ready to review
-              </Text>
-              <Text variant="caption" color="textTertiary">
-                {atCap
-                  ? 'Today\'s reviews are done'
-                  : `${dailyProgress.reviewsCompletedToday} of ${dailyProgress.effectiveDailyCap} reviews done`}
-              </Text>
-            </View>
-            <DailyCapMeter
-              completed={dailyProgress.reviewsCompletedToday}
-              cap={dailyProgress.effectiveDailyCap}
-            />
-            {/* No dead CTA once today's cap is reached — nothing left to review. */}
-            {!atCap && <Button label="Start review" variant="primary" fullWidth onPress={onStartReview} />}
-          </View>
-        </Card>
-      )}
-
-      <Card>
-        <View style={{ gap: spacing.s4 }}>
-          <View style={{ gap: spacing.s2 }}>
-            <Text variant="headline" color="textPrimary">
-              {ACTIVE_TIER?.displayName ?? 'Your words'}
-            </Text>
-            {masteryError ? (
-              <Text variant="caption" color="textTertiary">
-                Couldn't load your progress
-              </Text>
-            ) : (
-              <>
-                <KnowledgeMapBar segments={segments} />
-                <Text variant="caption" color="textTertiary" tabularNums>
-                  {knowledgeLabel}
-                </Text>
-                {knownEstimate > 0 && (
-                  <Text variant="caption" color="textSecondary">
-                    {`You're starting from an estimated ${knownEstimate.toLocaleString()} words already known.`}
-                  </Text>
-                )}
-              </>
-            )}
-          </View>
-          <Button
-            label="Keep learning"
-            variant="secondary"
-            fullWidth
-            testID="learn-new-words"
-            onPress={onLearnNewWords}
-          />
+      {!hasLoadedOnce ? (
+        <View accessibilityRole="text" accessibilityLabel="Loading home" style={{ gap: spacing.s4 }}>
+          <FocalCardSkeleton />
+          <TierCardSkeleton />
         </View>
-      </Card>
+      ) : (
+        <>
+          {/* Exactly one raised focal card at a time: Resume beats Start review. */}
+          {hasResume && activeSession !== null ? (
+            <Card raised>
+              <View style={{ gap: spacing.s4 }}>
+                <View style={{ gap: spacing.s1 }}>
+                  <Text variant="headline" color="textPrimary">
+                    Resume learning
+                  </Text>
+                  <Text variant="caption" color="textTertiary" tabularNums>
+                    {resumeWord != null
+                      ? `Pick up where you left off · ${resumePosition}/${activeSession.batch.length} · "${resumeWord}"`
+                      : `Pick up where you left off · ${resumePosition}/${activeSession.batch.length}`}
+                  </Text>
+                </View>
+                <Button
+                  label="Resume"
+                  variant="primary"
+                  fullWidth
+                  testID="resume-session"
+                  onPress={() => onResume?.(activeSession)}
+                />
+              </View>
+            </Card>
+          ) : (
+            <Card raised>
+              <View style={{ gap: spacing.s4 }}>
+                <View style={{ gap: spacing.s1 }}>
+                  <Text variant="headline" color="textPrimary">
+                    Words ready to review
+                  </Text>
+                  <Text variant="caption" color="textTertiary">
+                    {atCap
+                      ? 'Today\'s reviews are done'
+                      : `${dailyProgress.reviewsCompletedToday} of ${dailyProgress.effectiveDailyCap} reviews done`}
+                  </Text>
+                </View>
+                <DailyCapMeter
+                  completed={dailyProgress.reviewsCompletedToday}
+                  cap={dailyProgress.effectiveDailyCap}
+                />
+                {/* No dead CTA once today's cap is reached — nothing left to review. */}
+                {!atCap && <Button label="Start review" variant="primary" fullWidth onPress={onStartReview} />}
+              </View>
+            </Card>
+          )}
+
+          <Card>
+            <View style={{ gap: spacing.s4 }}>
+              <View style={{ gap: spacing.s2 }}>
+                <Text variant="headline" color="textPrimary">
+                  {ACTIVE_TIER?.displayName ?? 'Your words'}
+                </Text>
+                {masteryError ? (
+                  <Text variant="caption" color="textTertiary">
+                    Couldn't load your progress
+                  </Text>
+                ) : (
+                  <>
+                    <KnowledgeMapBar segments={segments} />
+                    <Text variant="caption" color="textTertiary" tabularNums>
+                      {knowledgeLabel}
+                    </Text>
+                    {knownEstimate > 0 && (
+                      <Text variant="caption" color="textSecondary">
+                        {`You're starting from an estimated ${knownEstimate.toLocaleString()} words already known.`}
+                      </Text>
+                    )}
+                  </>
+                )}
+              </View>
+              <Button
+                label="Keep learning"
+                variant="secondary"
+                fullWidth
+                testID="learn-new-words"
+                onPress={onLearnNewWords}
+              />
+            </View>
+          </Card>
+        </>
+      )}
     </Screen>
   );
 }

@@ -193,3 +193,48 @@ describe('HomeScreen — first-run endowed copy (Phase 4.3)', () => {
     expect(queryByText(/already known/)).toBeNull();
   });
 });
+
+describe('HomeScreen — loading skeleton (atomic reveal, no partial pop)', () => {
+  // The bug this proves fixed: the 4 reads (stats, active session, daily
+  // progress, tier segments) used to be independent sequential awaits with no
+  // loading gate at all — each one popped its own card/badge in as soon as it
+  // resolved, so a slow read (e.g. stats) left the rest of the screen showing
+  // stale default state in the meantime. Every read is now awaited together
+  // and committed in one batch, so the screen must go loading-placeholder →
+  // fully-populated in a single transition — never a partial mix.
+  function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
+    let resolve!: (value: T) => void;
+    const promise = new Promise<T>((res) => {
+      resolve = res;
+    });
+    return { promise, resolve };
+  }
+
+  it('shows the loading placeholder — not the streak badge or tier card alone — until every read resolves', async () => {
+    const statsGate = deferred<UserStats | null>();
+    const services = defaultServices({
+      getActiveSession: async () => null,
+      getUserStats: () => statsGate.promise,
+      getTierKnowledgeMap: async () => ({ known: 1, learning: 1, new: 3, total: 5 }),
+    });
+    const { getByLabelText, queryByText, queryByLabelText, findByText } = await renderWithProviders(
+      <HomeScreen onStartReview={jest.fn()} onLearnNewWords={jest.fn()} />,
+      services,
+    );
+
+    // Stats hasn't resolved yet: the loading placeholder is up, and neither
+    // the streak badge nor the tier card (whose read already finished) has
+    // appeared — proving the reveal waits for ALL reads, not just the
+    // fastest one.
+    expect(getByLabelText('Loading home')).toBeTruthy();
+    expect(queryByText('Words ready to review')).toBeNull();
+    expect(queryByText(/known ·/)).toBeNull();
+
+    statsGate.resolve({ streak: initialStreakState(), totalSessions: 5, totalWordsMastered: 1 });
+
+    // Now both appear together, in the same transition, and the placeholder is gone.
+    await findByText('Words ready to review');
+    await findByText(/known ·/);
+    expect(queryByLabelText('Loading home')).toBeNull();
+  });
+});
