@@ -71,3 +71,36 @@ describe('SettingsScreen — hygiene (Phases 14-18, 4.4)', () => {
     expect(setSpy).toHaveBeenCalledWith(true); // stored analyticsOptOut flips to true
   });
 });
+
+describe('SettingsScreen — analytics switch never flashes the wrong state', () => {
+  // The bug this proves fixed: analyticsOptOut defaulted to false before the
+  // AsyncStorage read resolved, so an opted-out learner briefly saw the
+  // switch rendered ON (as if sharing) for one frame, then flip OFF once the
+  // real value loaded. The switch must not render at all until the real
+  // value is known.
+  function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
+    let resolve!: (value: T) => void;
+    const promise = new Promise<T>((res) => {
+      resolve = res;
+    });
+    return { promise, resolve };
+  }
+
+  it('shows a loading placeholder, not the switch, until the stored opt-out value resolves', async () => {
+    const optOutGate = deferred<boolean>();
+    jest.spyOn(AnalyticsOptOutStore, 'getAnalyticsOptOut').mockReturnValue(optOutGate.promise);
+
+    const { getByTestId, queryByLabelText, findByLabelText } = await renderSettings();
+
+    // Real value (opted out = true) hasn't resolved yet: no switch is
+    // rendered at all, so it can't show the wrong "sharing" state.
+    expect(getByTestId('analytics-switch-loading')).toBeTruthy();
+    expect(queryByLabelText('Share usage analytics')).toBeNull();
+
+    optOutGate.resolve(true); // learner had opted out
+
+    const toggle = await findByLabelText('Share usage analytics');
+    expect(toggle.props.value).toBe(false); // opted out -> displayed as NOT sharing
+    expect(queryByLabelText('Loading')).toBeNull();
+  });
+});

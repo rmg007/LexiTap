@@ -60,7 +60,7 @@ export function SettingsScreen(): React.JSX.Element {
   const { session, signOut } = useAuth();
   const [dbHealth, setDbHealth] = useState<ContentDbHealth | null>(null);
   const [hoverState, setHoverState] = useState<ThemePreference | null>(null);
-  const [analyticsOptOut, setAnalyticsOptOutLocal] = useState(false);
+  const [analyticsOptOut, setAnalyticsOptOutLocal] = useState<boolean | null>(null);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteCountdown, setDeleteCountdown] = useState(DELETE_COUNTDOWN_SECS);
@@ -77,8 +77,13 @@ export function SettingsScreen(): React.JSX.Element {
   );
 
   useEffect(() => {
-    queries.getContentDbHealth().then(setDbHealth).catch(() => undefined);
-    getAnalyticsOptOut().then(setAnalyticsOptOutLocal).catch(() => undefined);
+    Promise.all([
+      queries.getContentDbHealth().catch(() => null),
+      getAnalyticsOptOut().catch(() => false),
+    ]).then(([health, optOut]) => {
+      setDbHealth(health);
+      setAnalyticsOptOutLocal(optOut);
+    });
   }, [queries]);
 
   useEffect(() => {
@@ -325,20 +330,24 @@ export function SettingsScreen(): React.JSX.Element {
             showChevron={false}
             accessibilityLabel="Share usage analytics"
             trailing={
-              <Switch
-                // Displayed value is the positive framing ("sharing"); the
-                // stored flag (analyticsOptOut) and everything that reads it
-                // in infrastructure/analytics/ are untouched — only this
-                // file's display + handler invert it (tactical Phase 15).
-                value={!analyticsOptOut}
-                onValueChange={(shared) => void handleAnalyticsToggle(!shared)}
-                trackColor={{ false: colors.bgSurfaceRaised, true: colors.accentSubtle }}
-                thumbColor={analyticsOptOut ? colors.textTertiary : colors.accent}
-                accessibilityRole="switch"
-                accessibilityLabel="Share usage analytics"
-                accessibilityHint="Help improve the app with anonymous usage data"
-                accessible
-              />
+              analyticsOptOut === null ? (
+                <ActivityIndicator size="small" color={colors.textTertiary} testID="analytics-switch-loading" />
+              ) : (
+                <Switch
+                  // Displayed value is the positive framing ("sharing"); the
+                  // stored flag (analyticsOptOut) and everything that reads it
+                  // in infrastructure/analytics/ are untouched — only this
+                  // file's display + handler invert it (tactical Phase 15).
+                  value={!analyticsOptOut}
+                  onValueChange={(shared) => void handleAnalyticsToggle(!shared)}
+                  trackColor={{ false: colors.bgSurfaceRaised, true: colors.accentSubtle }}
+                  thumbColor={analyticsOptOut ? colors.textTertiary : colors.accent}
+                  accessibilityRole="switch"
+                  accessibilityLabel="Share usage analytics"
+                  accessibilityHint="Help improve the app with anonymous usage data"
+                  accessible
+                />
+              )
             }
           />
         </View>
