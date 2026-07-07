@@ -102,7 +102,19 @@ export async function openDatabase(): Promise<DatabaseHandle> {
   // ('words.db') is resolved by SQLite against the process CWD (app-bundle root
   // on iOS), not expo-sqlite's dir, so it fails to open on-device even though
   // installContentDb() just placed the file there — that was the C0 bug.
-  await db.execAsync(`ATTACH DATABASE '${contentDbAttachPath()}' AS contentdb`);
+  //
+  // Idempotent: expo-sqlite's connection registry lives in node_modules, which
+  // React Fast Refresh does NOT reset — so a dev-only remount of the root
+  // component (e.g. editing _layout.tsx's hooks forces React to remount rather
+  // than hot-patch) can call openDatabase() again against a connection that
+  // already has `contentdb` attached. Re-attaching the same alias throws
+  // ("database contentdb is already in use"), which used to surface as a
+  // spurious createContainer() failure. Checking database_list first makes a
+  // repeat call a no-op instead of an error.
+  const attached = await db.getAllAsync<{ name: string }>('PRAGMA database_list', []);
+  if (!attached.some((row) => row.name === 'contentdb')) {
+    await db.execAsync(`ATTACH DATABASE '${contentDbAttachPath()}' AS contentdb`);
+  }
   await applyMigrations(db);
   return wrap(db);
 }

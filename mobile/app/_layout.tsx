@@ -64,6 +64,12 @@ function RootLayout(): React.JSX.Element {
         if (!cancelled) setServices(c.services);
       })
       .catch((error) => {
+        // A superseded attempt (Fast Refresh remounted this effect before the
+        // prior createContainer() settled) must not surface as a live failure —
+        // only the `then` branch checked `cancelled`, so a doomed first attempt
+        // racing a second, successful one still logged + reported a spurious
+        // error even though the app booted fine on the surviving attempt.
+        if (cancelled) return;
         logger.error('Failed to initialize app container', { error: String(error) });
         captureException(error);
       });
