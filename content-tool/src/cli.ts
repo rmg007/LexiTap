@@ -21,9 +21,14 @@ import { logger } from '@/lib/logger';
 const USAGE = `lexitap-tool <command> [options]
 
 Commands:
-  import           --source <path> [--tier <slug>] [--type t] [--on-conflict update|skip|error] [--dry-run]
-                   (a .jsonl source = master importer, no --tier; a .csv source = legacy per-tier import)
-  import-master    --source <path.jsonl> [--dry-run]  (load words_master.jsonl: words + categories + senses + questions)
+  import           --source <path> [--tier <slug>] [--type t] [--on-conflict update|skip|error] [--dry-run] [--no-prune]
+                   (a .jsonl source = master importer [see import-master; --no-prune applies], no --tier;
+                   a .csv source = legacy per-tier import, --no-prune ignored)
+  import-master    --source <path.jsonl> [--dry-run] [--no-prune]
+                   (load words_master.jsonl: words + categories + senses + questions.
+                   By default, any active word absent from the file is soft-deleted
+                   [prunes word_tiers/word_senses/sense_examples/word_questions too];
+                   pass --no-prune to import a deliberately partial file as-is)
   import-pseudo    --source <path>   (import pseudo_words CSV for DIAG-A false-alarm detection)
   ingest-senses    --source <path.jsonl>  [--dry-run]  (load rich sense/example enrichment)
   export-master    [--output <path.jsonl>]  (dump working DB -> words_master.jsonl, round-trip/bootstrap)

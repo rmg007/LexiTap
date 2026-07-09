@@ -3,6 +3,7 @@ import {
   coerceMasterWord,
   parseMasterFile,
   importMaster,
+  findPruneCandidates,
 } from '@/commands/import-master';
 import { buildMasterRecords, serializeMasterRecords, type MasterWord } from '@/commands/export-master';
 import { openMemoryContentDb, type DB } from '@/lib/db';
@@ -217,5 +218,119 @@ describe('round-trip export-master <-> import-master', () => {
     expect(reExported).toEqual(exported);
     src.close();
     dst.close();
+  });
+});
+
+// ─── prune: a word removed from the master file must not zombie forever ───────
+
+describe('importMaster pruning', () => {
+  it('regression: N words imported, one removed from the file, re-import prunes exactly that word', () => {
+    const db = openMemoryContentDb();
+    importMaster(
+      db,
+      [rec({ word: 'alpha' }), rec({ word: 'beta' }), rec({ word: 'gamma' })],
+      { now: () => 1 },
+    );
+    expect(
+      (db.prepare(`SELECT COUNT(*) n FROM words WHERE deleted_at IS NULL`).get() as { n: number }).n,
+    ).toBe(3);
+
+    // 'beta' removed from the master file — re-import the remaining 2.
+    const r = importMaster(db, [rec({ word: 'alpha' }), rec({ word: 'gamma' })], { now: () => 2 });
+
+    expect(r.pruned).toBe(1);
+    const betaId = makeWordId('beta');
+    const beta = db.prepare(`SELECT deleted_at FROM words WHERE id=?`).get(betaId) as {
+      deleted_at: number | null;
+    };
+    expect(beta.deleted_at).toBe(2);
+
+    for (const word of ['alpha', 'gamma']) {
+      const row = db.prepare(`SELECT deleted_at FROM words WHERE id=?`).get(makeWordId(word)) as {
+        deleted_at: number | null;
+      };
+      expect(row.deleted_at).toBeNull();
+    }
+    expect(
+      (db.prepare(`SELECT COUNT(*) n FROM words WHERE deleted_at IS NULL`).get() as { n: number }).n,
+    ).toBe(2);
+    db.close();
+  });
+
+  it('cascades the prune to word_tiers/word_senses/sense_examples/word_questions', () => {
+    const db = openMemoryContentDb();
+    importMaster(
+      db,
+      [
+        rec({
+          word: 'beta',
+          categories: ['B2', 'foundation', 'business'],
+          senses: [
+            { sense_index: 0, pos: null, short_gloss: 'g', explanation: 'e', image_path: null, examples: ['x', 'y'] },
+          ],
+          questions: [
+            { question_index: 0, type: 'true_false', prompt: 'p', correct: 'False', distractors: ['True'], hint: null, explanation: 'because', reviewed: false },
+          ],
+        }),
+      ],
+      { now: () => 1 },
+    );
+    const betaId = makeWordId('beta');
+    expect((db.prepare(`SELECT COUNT(*) n FROM word_tiers WHERE word_id=?`).get(betaId) as { n: number }).n).toBe(2);
+    expect((db.prepare(`SELECT COUNT(*) n FROM word_senses WHERE word_id=?`).get(betaId) as { n: number }).n).toBe(1);
+    expect((db.prepare(`SELECT COUNT(*) n FROM sense_examples`).get() as { n: number }).n).toBe(2);
+    expect((db.prepare(`SELECT COUNT(*) n FROM word_questions WHERE word_id=?`).get(betaId) as { n: number }).n).toBe(1);
+
+    // 'beta' removed entirely from the next import.
+    const r = importMaster(db, [], { now: () => 2 });
+    expect(r.pruned).toBe(1);
+
+    expect((db.prepare(`SELECT COUNT(*) n FROM word_tiers WHERE word_id=?`).get(betaId) as { n: number }).n).toBe(0);
+    expect((db.prepare(`SELECT COUNT(*) n FROM word_senses WHERE word_id=?`).get(betaId) as { n: number }).n).toBe(0);
+    expect((db.prepare(`SELECT COUNT(*) n FROM sense_examples`).get() as { n: number }).n).toBe(0);
+    expect((db.prepare(`SELECT COUNT(*) n FROM word_questions WHERE word_id=?`).get(betaId) as { n: number }).n).toBe(0);
+    db.close();
+  });
+
+  it('{ prune: false } leaves an absent word untouched', () => {
+    const db = openMemoryContentDb();
+    importMaster(db, [rec({ word: 'alpha' }), rec({ word: 'beta' })], { now: () => 1 });
+
+    const r = importMaster(db, [rec({ word: 'alpha' })], { now: () => 2, prune: false });
+    expect(r.pruned).toBe(0);
+
+    const beta = db.prepare(`SELECT deleted_at FROM words WHERE id=?`).get(makeWordId('beta')) as {
+      deleted_at: number | null;
+    };
+    expect(beta.deleted_at).toBeNull();
+    db.close();
+  });
+
+  it('re-adding a pruned word later restores it via the normal upsert (deleted_at cleared)', () => {
+    const db = openMemoryContentDb();
+    importMaster(db, [rec({ word: 'alpha' }), rec({ word: 'beta' })], { now: () => 1 });
+    importMaster(db, [rec({ word: 'alpha' })], { now: () => 2 }); // beta pruned
+    importMaster(db, [rec({ word: 'alpha' }), rec({ word: 'beta' })], { now: () => 3 }); // beta returns
+
+    const beta = db.prepare(`SELECT deleted_at FROM words WHERE id=?`).get(makeWordId('beta')) as {
+      deleted_at: number | null;
+    };
+    expect(beta.deleted_at).toBeNull();
+    db.close();
+  });
+
+  it('findPruneCandidates reports active words absent from the given records, without writing', () => {
+    const db = openMemoryContentDb();
+    importMaster(db, [rec({ word: 'alpha' }), rec({ word: 'beta' })], { now: () => 1 });
+
+    const candidates = findPruneCandidates(db, [rec({ word: 'alpha' })]);
+    expect(candidates.map((c) => c.word)).toEqual(['beta']);
+
+    // Nothing was written — a real re-import still reports beta as prunable.
+    const stillActive = db.prepare(`SELECT deleted_at FROM words WHERE id=?`).get(makeWordId('beta')) as {
+      deleted_at: number | null;
+    };
+    expect(stillActive.deleted_at).toBeNull();
+    db.close();
   });
 });

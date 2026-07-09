@@ -13,11 +13,27 @@
  *   - A1/A2/B1/B2/C1/C2  -> words.cefr_level (first wins; >1 warns)
  *   - any configured tier slug -> a word_tiers row
  *   - anything else -> a hard error (a typo'd category must not silently vanish)
+ *
+ * PRUNE (default on): a word's row lingering forever after its line is deleted
+ * from the master file was a real recurring bug (161 "purged" function words and
+ * 27 proper nouns both zombied back into a shipped `words.db` a day after being
+ * removed — see memory/2026-07-07_proper-noun-purge-and-zombie-words-bug.md).
+ * Every real invocation of this command (CLI docs, PHASE3_4_RUNBOOK.md, the
+ * `categorize`/`enrich-master` "next" hints) always passes the WHOLE canonical
+ * `words_master.jsonl`, never a filtered subset — so treating "absent from this
+ * import" as "removed" is safe as the default. Any active `words` row whose id
+ * isn't in the parsed set is soft-deleted (`deleted_at`), and its `word_tiers` /
+ * `word_senses` / `sense_examples` / `word_questions` rows are cleaned up the
+ * same way an existing word's children are on a normal re-import. Soft-deleting
+ * (not hard-deleting) `words` means re-adding the same word later is a plain
+ * upsert that clears `deleted_at` back to NULL — no special-cased "undelete".
+ * Pass `--no-prune` (or `{ prune: false }`) to import against a deliberately
+ * partial file without touching anything absent from it.
  */
 
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import type { DB } from '@/lib/db';
-import { openWorkingDb } from '@/lib/db';
+import { openWorkingDb, openWorkingDbReadonly, WORKING_DB_PATH } from '@/lib/db';
 import { loadConfig, tierSlugs } from '@/lib/config';
 import { makeWordId, makeSenseId, makeExampleId, makeQuestionId, normalizeWord } from '@/lib/ids';
 import { logger } from '@/lib/logger';
@@ -214,19 +230,38 @@ export interface ImportMasterResult {
   questions: number;
   /** words whose `categories` held more than one CEFR level (first kept). */
   multiCefrWarnings: number;
+  /** active words soft-deleted because their word was absent from this import. */
+  pruned: number;
+}
+
+/**
+ * Active `words` rows (id + word) in `db` whose id is NOT among `records` —
+ * i.e. what a real (non-`--no-prune`) import would soft-delete. Exported so the
+ * CLI can preview the prune set under `--dry-run` without writing anything.
+ */
+export function findPruneCandidates(db: DB, records: MasterWord[]): { id: string; word: string }[] {
+  const keepIds = new Set(records.map((r) => makeWordId(r.word)));
+  const active = db.prepare(`SELECT id, word FROM words WHERE deleted_at IS NULL`).all() as {
+    id: string;
+    word: string;
+  }[];
+  return active.filter((w) => !keepIds.has(w.id));
 }
 
 /**
  * Write parsed master records into the working DB. Full upsert per word; child
- * rows (tiers/senses/examples/questions) are replaced clean-slate. Single
- * transaction — a throw rolls the whole import back.
+ * rows (tiers/senses/examples/questions) are replaced clean-slate. By default,
+ * any active word absent from `records` is pruned (see the file-header PRUNE
+ * note) — pass `{ prune: false }` to import a deliberately partial file as-is.
+ * Single transaction — a throw rolls the whole import (and prune) back.
  */
 export function importMaster(
   db: DB,
   records: MasterWord[],
-  options: { now?: () => number } = {},
+  options: { now?: () => number; prune?: boolean } = {},
 ): ImportMasterResult {
   const now = options.now ?? (() => Date.now());
+  const prune = options.prune ?? true;
   const result: ImportMasterResult = {
     words: 0,
     memberships: 0,
@@ -234,6 +269,7 @@ export function importMaster(
     examples: 0,
     questions: 0,
     multiCefrWarnings: 0,
+    pruned: 0,
   };
 
   const upsertWord = db.prepare(UPSERT_WORD);
@@ -255,6 +291,7 @@ export function importMaster(
     `INSERT INTO word_questions (id, word_id, question_index, type, prompt, correct, distractors, hint, explanation, reviewed, created_at, deleted_at)
      VALUES (@id, @word_id, @question_index, @type, @prompt, @correct, @distractors, @hint, @explanation, @reviewed, @created_at, NULL)`,
   );
+  const pruneWord = db.prepare(`UPDATE words SET deleted_at = @deleted_at WHERE id = @id`);
 
   const tx = db.transaction((items: MasterWord[]) => {
     for (const rec of items) {
@@ -342,6 +379,25 @@ export function importMaster(
         result.questions += 1;
       }
     }
+
+    // Prune: any active word not present in this import is soft-deleted, and
+    // its children are cleaned up the same way an existing word's children are
+    // replaced above (word_tiers/sense_examples have no deleted_at column — hard
+    // delete; words/word_senses/word_questions carry it — soft delete for words,
+    // hard delete for senses/questions since they're always rebuilt from scratch
+    // if the word ever comes back).
+    if (prune) {
+      const ts = now();
+      for (const { id } of findPruneCandidates(db, items)) {
+        pruneWord.run({ id, deleted_at: ts });
+        delTiers.run(id);
+        const existingSenseIds = (selSenseIds.all(id) as { id: string }[]).map((r) => r.id);
+        for (const sid of existingSenseIds) delExamples.run(sid);
+        delSenses.run(id);
+        delQuestions.run(id);
+        result.pruned += 1;
+      }
+    }
   });
 
   tx(records);
@@ -353,6 +409,7 @@ export function importMaster(
 export function importMasterCommand(args: string[]): void {
   const source = flagValue(args, '--source');
   const dryRun = args.includes('--dry-run');
+  const prune = !args.includes('--no-prune');
   if (!source) throw new Error('import-master requires --source <path.jsonl>');
 
   const validSlugs = new Set(tierSlugs(loadConfig()));
@@ -370,17 +427,41 @@ export function importMasterCommand(args: string[]): void {
     logger.print(
       `dry-run: ${records.length} words / ${senses} senses / ${questions} questions parsed (nothing written)`,
     );
+    if (!prune) {
+      logger.print('dry-run: --no-prune passed — no words would be pruned');
+      return;
+    }
+    if (!existsSync(WORKING_DB_PATH)) {
+      logger.print('dry-run: working DB does not exist yet — nothing to prune');
+      return;
+    }
+    const db = openWorkingDbReadonly();
+    try {
+      const candidates = findPruneCandidates(db, records);
+      if (candidates.length === 0) {
+        logger.print('dry-run: no active words are absent from the source — nothing would be pruned');
+      } else {
+        const sample = candidates.slice(0, 10).map((c) => c.word).join(', ');
+        logger.print(
+          `dry-run: would prune ${candidates.length} word(s) absent from ${source}: ${sample}` +
+            (candidates.length > 10 ? ', …' : ''),
+        );
+      }
+    } finally {
+      db.close();
+    }
     return;
   }
 
   const db = openWorkingDb();
   try {
-    const r = importMaster(db, records);
+    const r = importMaster(db, records, { prune });
     if (r.multiCefrWarnings > 0) {
       logger.warn(`${r.multiCefrWarnings} word(s) had >1 CEFR level in categories — kept the first`);
     }
     logger.print(
-      `import-master: ${r.words} words / ${r.memberships} memberships / ${r.senses} senses / ${r.examples} examples / ${r.questions} questions`,
+      `import-master: ${r.words} words / ${r.memberships} memberships / ${r.senses} senses / ${r.examples} examples / ${r.questions} questions` +
+        (prune ? ` / ${r.pruned} pruned` : ' (pruning skipped: --no-prune)'),
     );
   } finally {
     db.close();
