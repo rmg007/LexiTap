@@ -59,11 +59,9 @@ content-tool 308/308 ✓ · mobile 617/617 ✓
 
 ## Follow-up items (not this session's scope)
 
-- **`cefr_level` ordering in learn batch**: `selectNewWords` in
-  [`wordQueries.ts`](../mobile/src/infrastructure/db/queries/wordQueries.ts) previously avoided
-  `cefr_level` ordering because only 2% of foundation was labelled. Coverage is now 100% — revisit
-  whether CEFR-band ordering is better than `difficulty` ordering for the learn queue (separate
-  task, see AGENTS.md note).
+- **`cefr_level` ordering in learn batch**: ~~revisit~~ **CLOSED (2026-07-11)**. CEFR has only
+  6 buckets — too coarse to order 1,000+ words within a single band. `difficulty ASC,
+  frequency_rank ASC` is correct and stays. No code change needed.
 - **Phase 2 (common3k)**: blocked on Ryan sourcing a real frequency list (Oxford 3000 / NGSL /
   similar). Plan file documents what to do once the list is sourced.
 - **`theme: 'General'` backfill**: 2,574 warnings, separate known debt item, unchanged.
