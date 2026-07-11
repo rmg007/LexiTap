@@ -11,7 +11,11 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 
 > **⚠️ SOURCE OF TRUTH:** [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md) is the current, task-level execution plan (updated 2026-05-31). This file mirrors the phase structure and status for quick reference; **consult RELEASE_PLAN.md for actual dependencies, current blockers, and revised task list** (e.g., auth in P3 not P5, content as the long pole, Phase 2 requires analytics instrumentation, per-table sync deleted). Updates below reconcile this file with the audit.
 
-## 🟢 Active Front (2026-07-06)
+## 🟢 Active Front (2026-07-11)
+
+**2026-07-10 ✅ — Foundation CEFR backfill done:** 2,038 foundation-only words with no CEFR received levels; 0 foundation words now lack CEFR (100% coverage). words.db v8, 6,566 words. See [memory note](../../memory/2026-07-10_foundation-cefr-backfill.md).
+
+**2026-07-10 ✅ — CONTENT-3 IELTS done:** 683 existing words tagged `ielts`/`ielts-extended`; 2,317 net-new words ingested + enriched; 36 adversarial findings fixed. words.db v6 → v8, 6,566 words total. See [memory note](../../memory/2026-07-10_ielts-ingest.md). **Remaining CONTENT-3 stubs: gre/gmat/business/advanced/common9k (5 tiers) — Ryan-sourcing blocker per tier.**
 
 **2026-07-06 ✅ — CONTENT-2 done + CONTENT-3 (TOEFL) done:** resolved CONTENT-2's held seeding-strategy question (`gpt-4o-mini` sync is cheap enough — ~$8 total across 4 passes, no Batch API rewrite needed) and ran the actual bulk enrichment for the first time. Shipped `words.db` `user_version=3`, 4,560 words (was 2,881) — 1,837 real TOEFL words + ~1,500 previously-empty-senses foundation words enriched. content-tool 303 / mobile 614 tests green. Found + fixed 4 real pipeline bugs (a pre-existing config gap had silently blocked the whole JSONL pipeline for a month) and, via content-safety review, removed an explicit-content word that had been fully quizzed into the 13+ app. See [memory note](../../memory/2026-07-06_toefl-ingest-enrichment.md).
 
@@ -34,8 +38,8 @@ tags: [roadmap, phases, milestones, two-track, content-cadence, gates]
 2. **IAP-1 sandbox verify (build 4 needed).** RC-1 ✅ — trigger EAS build 4, then: sandbox purchase → entitlement unlocks pack; "Restore purchases" works; alias visible in the RC dashboard.
 3. **Recruit 50 beta testers (BETA-2).** Everything pre-written in [plans/BETA2_RECRUITMENT_KIT.md](../../plans/BETA2_RECRUITMENT_KIT.md) — post + enroll. D7 gate: 7 days from first session.
 4. **SUPA-1 — Supabase Pro plan** (~$25/mo): free tier auto-paused the backend once already; required before submission.
-5. **CONTENT-3 remaining tiers (ielts/gre/gmat/business/advanced/common9k) — source a word list per tier.** TOEFL is done; the playbook is proven and repeatable (see [`plans/TOEFL_INGEST_PLAN.md`](../../plans/TOEFL_INGEST_PLAN.md)) — the blocker per tier is Ryan sourcing/approving a real word list, same as TOEFL this round.
-6. **New EAS build needed** to ship E2E-1's fixes + the new app icon (both compiled into the binary, not JS-updatable via EAS Update) — bump `buildNumber` in `app.config.ts`.
+5. **New EAS build needed** to ship E2E-1's fixes + the new app icon (both compiled into the binary, not JS-updatable via EAS Update) — bump `buildNumber` in `app.config.ts`.
+6. **CONTENT-3 remaining tiers (gre/gmat/business/advanced/common9k — 5 stubs) — source a word list per tier.** TOEFL + IELTS are done; proven playbook — blocker per tier is Ryan sourcing a real word list.
 
 **Tracked, lower priority:** AUTH-2 + RC-2 code + secrets ✅ done — live verify folds into the AUTH-1 device pass. Dependabot: ✅ 0 open alerts (2026-07-04 re-triage). Splash screen still shows the old icon mark — cheap follow-up, same asset pipeline. Sentry auth token needed as EAS secret before production builds.
 
@@ -46,8 +50,8 @@ The detailed product roadmap: 6 phases across 21 weeks, two parallel build track
 | Item | Value |
 |------|-------|
 | Phase | **1 → 2/3 — Build gate cleared; entering Beta + Phase 3 setup** (see [../../plans/RELEASE_PLAN.md](../../plans/RELEASE_PLAN.md)) |
-| Code written | Track A CLI exists; content is Foundation 2,848 + TOEFL 1,837 words enriched (4,560 words shipped, `user_version=3`, was 2,881; ielts/gre/gmat/business/advanced/common9k specialty tiers still ~5-word stubs, need Ryan to source a list per the now-proven TOEFL playbook). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB) + rich word-detail read layer + multi-sense UI (459 tests). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. Learn loop wired end-to-end (card → quick-check → SRS) as of 2026-06-09. |
-| Last updated | 2026-07-06 (CONTENT-2 done + CONTENT-3 TOEFL done — see [../../memory/2026-07-06_toefl-ingest-enrichment.md](../../memory/2026-07-06_toefl-ingest-enrichment.md)) |
+| Code written | Track A CLI exists; content is Foundation 2,620 (100% CEFR) + TOEFL 1,837 + IELTS 2,317 = **6,566 words shipped, `words.db` v8**. gre/gmat/business/advanced/common9k still ~5-word stubs (Ryan-sourcing blocker). Track B domain logic done + tested (quiz loop, SRS, mastery, streak, 2 widgets, DB) + rich word-detail read layer + multi-sense UI (617 tests). **Fixed 2026-05-30:** words.db device delivery, `tiers.ts` model, Jest harness. Per-table sync deleted; auth is a **Phase 3** dependency. Learn loop wired end-to-end (card → quick-check → SRS) as of 2026-06-09. |
+| Last updated | 2026-07-11 (IELTS done + Foundation CEFR backfill — words.db v8, 6,566 words, 100% CEFR on foundation) |
 
 ## Table of Contents
 

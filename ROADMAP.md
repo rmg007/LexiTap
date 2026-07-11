@@ -12,9 +12,11 @@ status: active
 
 ---
 
-## 🟢 Active Front (2026-07-06)
+## 🟢 Active Front (2026-07-11)
 
 **Shipped since 2026-05-31 (verified, committed):**
+- **2026-07-10 ✅ — Foundation CEFR backfill done:** 2,038 foundation-only words with no CEFR received levels via `categorize`; 7 adversarial corrections + 2 model-missed words hand-assigned; 0 foundation words now lack CEFR (100% coverage). words.db v8, 6,566 words. commit `61dd199`. See [memory note](memory/2026-07-10_foundation-cefr-backfill.md).
+- **2026-07-10 ✅ — CONTENT-3 IELTS done:** 683 existing words tagged `ielts`/`ielts-extended`; 2,317 net-new words ingested + enriched; 36 adversarial findings fixed. words.db v6, 6,566 words (was 4,332 / v3 before IELTS). commit `fcc9eb1`. See [memory note](memory/2026-07-10_ielts-ingest.md). **Remaining CONTENT-3 stubs: gre/gmat/business/advanced/common9k (5 tiers) — Ryan-sourcing blocker per tier.**
 - **2026-07-06 ✅ — CONTENT-2 done + CONTENT-3 (TOEFL) done:** resolved CONTENT-2's held seeding-strategy question (`gpt-4o-mini` sync is cheap enough — ~$8 total across 4 passes, no Batch API rewrite needed) and ran the actual bulk enrichment for the first time. Shipped `words.db` `user_version=3`, 4,560 words (was 2,881) — 1,837 real TOEFL words + ~1,500 previously-empty-senses foundation words enriched. content-tool 303 / mobile 614 tests green. Found + fixed 4 real pipeline bugs (a pre-existing config gap had silently blocked the whole JSONL pipeline for a month) and, via content-safety review, removed an explicit-content word that had been fully quizzed into the 13+ app. See [memory note](memory/2026-07-06_toefl-ingest-enrichment.md).
 - **2026-07-04 ✅ — E2E-1 done (last agent-runnable frontier task, code track now fully clear):** the black-screen blocker was a stale dev-client binary — a fresh `expo run:ios` fixed it, no code change. Found + fixed 3 real bugs live: an unbounded network await in `createContainer()`'s BK2 gate that could hang cold start forever (`05cfeb5`), a missing `testID` on quiz options that left Submit permanently disabled (`0fbba76`), and `learn-loop.yaml` assuming 1 quick-check question when there are 10/batch. Full green run verified past the UI — `user.db` shows real `user_progress`/`quiz_attempts` rows after. Also: **new app icon** (bold custom "LT" monogram, replaces a font-dependent placeholder that was technically wrong for the App Store spec, `7e02eff`) and **Dependabot back to 0 open alerts** (`2b8bf42`).
 - **2026-06-11 ✅ — RC-1 done + five-chat parallel batch merged:** RevenueCat fully configured (entitlements `foundation_access` + `all_packs`, 3 products matching ASC SKUs, Offering `default` Current) → **IAP-1 ready** (sandbox verify on build 4). **AUTH-2 + RC-2 code + secrets ✅** (Apple token revocation + RevenueCat customer deletion in delete-account, 15 Deno tests, deployed — live verify folds into the AUTH-1 device pass). **BETA-2 recruitment kit** ready ([plans/BETA2_RECRUITMENT_KIT.md](plans/BETA2_RECRUITMENT_KIT.md)). **Dependabot: 0 open alerts** (post-SDK-56 re-triage). **TestFlight tester feedback fixed** (paywall safe-area, full DOB picker, Lucide Icon system — emoji now hard-blocked in app UI) + **SKUs/paywall aligned to the ASC 3-product model** (`daff1c3`, app version 0.0.1). **E2E-1 reopened:** first live Maestro run blocked at the (now-fixed) paywall safe-area bug — green re-run is the one agent-runnable frontier task.
@@ -31,7 +33,7 @@ status: active
 3. **Recruit 50 beta testers (BETA-2).** Everything is pre-written in [plans/BETA2_RECRUITMENT_KIT.md](plans/BETA2_RECRUITMENT_KIT.md) (posts per subreddit with self-promo rules verified, invite blurb, tester onboarding message, D7 tracking checklist) — post + enroll. D7 gate: 7 days from first session.
 4. **SUPA-1 — Supabase Pro plan** (~$25/mo): free tier auto-paused the backend once already; must be on Pro before App Store submission.
 5. **New EAS build needed to ship E2E-1's fixes + the new app icon/adaptive-icon** — both are compiled into the binary, not JS-updatable via EAS Update. Bump `buildNumber` in `app.config.ts` per the existing convention.
-6. **CONTENT-3 remaining tiers (ielts/gre/gmat/business/advanced/common9k) — source a word list per tier.** TOEFL is done; the playbook is proven and repeatable (see [`plans/TOEFL_INGEST_PLAN.md`](plans/TOEFL_INGEST_PLAN.md)) — the blocker per tier is Ryan sourcing/approving a real word list, same as TOEFL this round.
+6. **CONTENT-3 remaining tiers (gre/gmat/business/advanced/common9k — 5 stubs) — source a word list per tier.** TOEFL + IELTS are done; the playbook is proven and repeatable — the blocker per tier is Ryan sourcing/approving a real word list.
 
 **Tracked, lower priority:**
 - **RC-1 ✅ 2026-06-11** — RevenueCat configured: entitlements `foundation_access` + `all_packs`, 3 products matching ASC SKUs, Offering `default` set as Current. IAP-1 now `ready`. RC-2 code + secret done ✅.
@@ -52,10 +54,10 @@ This root file is the at-a-glance mirror. The canonical product roadmap is [lexi
 | Item | Value |
 |------|-------|
 | Phase | **1 → 2/3 — Build gate cleared; entering Beta + Phase 3 setup** (see [plans/RELEASE_PLAN.md](plans/RELEASE_PLAN.md)) |
-| Code written | Domain logic done + tested (SRS, scheduling, mastery, quiz session, DB, 2 widgets). **Fixed 2026-05-30:** words.db delivery (was loading empty on device), `tiers.ts` monetization model, broken Jest harness. Per-table sync was deleted. Auth is a **Phase 3** dependency (not 5). Content: Foundation 2,848 + TOEFL 1,837 words enriched (4,560 words shipped, `user_version=3`, was 2,881) — see [memory note](memory/2026-07-06_toefl-ingest-enrichment.md). ielts/gre/gmat/business/advanced/common9k specialty tiers still ~5-word stubs (need Ryan to source a list, same playbook as TOEFL). Learn loop wired end-to-end (card → quick-check → SRS) as of 2026-06-09. |
+| Code written | Domain logic done + tested (SRS, scheduling, mastery, quiz session, DB, 2 widgets). **Fixed 2026-05-30:** words.db delivery (was loading empty on device), `tiers.ts` monetization model, broken Jest harness. Per-table sync was deleted. Auth is a **Phase 3** dependency (not 5). Content: Foundation 2,620 words (100% CEFR) + TOEFL 1,837 + IELTS 2,317 = **6,566 words shipped, `words.db` v8**. gre/gmat/business/advanced/common9k still ~5-word stubs (5 tiers; Ryan-sourcing blocker, proven playbook). Learn loop wired end-to-end (card → quick-check → SRS) as of 2026-06-09. |
 | Stack | React Native (Expo) + TypeScript + SQLite + Supabase |
 | Target | Global ESL learners (cram schools & test prep individuals) |
-| Last updated | 2026-07-06 (CONTENT-2 done + CONTENT-3 TOEFL done — see Active Front / ORCHESTRATION.md) |
+| Last updated | 2026-07-11 (IELTS done + Foundation CEFR backfill done — words.db v8, 6,566 words) |
 
 ---
 
