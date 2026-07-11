@@ -65,8 +65,9 @@ export function selectWordsDueForReview(
 // Active words the user has never seen (no progress row), for the learn flow.
 // Active filter applies. Ordered easiest-first by `difficulty` (1-4, 100%
 // foundation coverage), `frequency_rank` as the common-first tiebreak. NOT
-// `created_at` (pipeline insertion order = noise) and NOT `cefr_level` (only
-// ~2% of foundation is labelled — revisit once backfilled). See AGENTS.md.
+// `created_at` (pipeline insertion order = noise). `cefr_level` is now 100%
+// backfilled on foundation; revisit whether CEFR-band ordering is better than
+// `difficulty` — tracked in memory/2026-07-10_foundation-cefr-backfill.md.
 export function selectNewWords(
   db: DatabaseHandle,
   tierId: string,
