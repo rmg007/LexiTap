@@ -266,10 +266,12 @@ export function validateRows(
 function loadWords(db: DB, tier?: string): WordRow[] {
   if (tier) {
     return db
-      .prepare(`SELECT w.* FROM words w JOIN word_tiers wt ON wt.word_id = w.id WHERE wt.tier_id = ?`)
+      .prepare(
+        `SELECT w.* FROM words w JOIN word_tiers wt ON wt.word_id = w.id WHERE wt.tier_id = ? AND w.deleted_at IS NULL`
+      )
       .all(tier) as WordRow[];
   }
-  return db.prepare(`SELECT * FROM words`).all() as WordRow[];
+  return db.prepare(`SELECT * FROM words WHERE deleted_at IS NULL`).all() as WordRow[];
 }
 
 function loadMemberships(db: DB, tier?: string): WordTierRow[] {

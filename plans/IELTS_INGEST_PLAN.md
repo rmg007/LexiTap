@@ -1,6 +1,6 @@
 # IELTS 3000 Ingest + Enrichment Plan
 
-**Status:** draft (2026-07-10) — pending Ryan's accept.
+**Status:** done (2026-07-10) — all 6 phases executed, shipped `words.db` user_version=6.
 **Goal:** add real IELTS exam vocabulary coverage to the app — tag the words we already teach as
 IELTS-relevant, and enrich the ones we don't have yet (definition/senses/quiz) so they're actually
 learnable, not just rows in a table.

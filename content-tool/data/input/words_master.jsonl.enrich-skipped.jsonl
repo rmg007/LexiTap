@@ -119,7 +119,6 @@
 {"word_id":"word_b727a735e7c5ddd7","word":"movement","reason":"Already defined; no need for additional content."}
 {"word_id":"word_0ec6d15054978025","word":"response","reason":"Already defined; no need for additional content."}
 {"word_id":"word_e7b1fff7007b6358","word":"types","reason":"Already defined; no need for additional content."}
-{"word_id":"word_2eda8ad1632af052","word":"job","reason":"Already defined; no need for additional content."}
 {"word_id":"word_425ffc1422dc4f32","word":"iii","reason":"This word is too obscure and not commonly used in modern English."}
 {"word_id":"word_26752f2002d606ec","word":"protection","reason":"provider_error"}
 {"word_id":"word_c255751d518c0bfa","word":"discussion","reason":"provider_error"}
@@ -214,12 +213,9 @@
 {"word_id":"word_60c58ad2ef34d96f","word":"communication","reason":"Already defined; skip as it does not need base fields."}
 {"word_id":"word_45fa151bf9a11c0e","word":"truth","reason":"Already defined; skip as it does not need base fields."}
 {"word_id":"word_56b80273da1d7c0a","word":"characteristics","reason":"Already defined; skip as it does not need base fields."}
-{"word_id":"word_589d230a8d00f115","word":"individual","reason":"Already defined; skip as it does not need base fields."}
 {"word_id":"word_aa743a0aaec8f7d7","word":"david","reason":"Proper noun; not suitable for vocabulary teaching."}
-{"word_id":"word_81e4a5523e4e1843","word":"budget","reason":"Already has base fields."}
 {"word_id":"word_ec436f3e94703e8e","word":"majority","reason":"Already has base fields."}
 {"word_id":"word_af3bc6c2eb74afe4","word":"covered","reason":"Already has base fields."}
-{"word_id":"word_60020d1b19707b58","word":"scale","reason":"Already has base fields."}
 {"word_id":"word_d243d8c0186632bd","word":"proceedings","reason":"Already has base fields."}
 {"word_id":"word_4a47653d5fc58fc6","word":"prior","reason":"provider_error"}
 {"word_id":"word_37bce22dd534a44e","word":"amended","reason":"provider_error"}
@@ -231,7 +227,6 @@
 {"word_id":"word_759cc80a7701ce99","word":"reasonable","reason":"This word is too common and has no unique teaching points."}
 {"word_id":"word_bd370d1b6f9b3580","word":"step","reason":"This word is too common and has no unique teaching points."}
 {"word_id":"word_37926bac108626bb","word":"responsible","reason":"This word is too common and has no unique teaching points."}
-{"word_id":"word_0608c4054662dd90","word":"agent","reason":"This word is too common and has no unique teaching points."}
 {"word_id":"word_4b5fdc6e9d5042e7","word":"hall","reason":"provider_error"}
 {"word_id":"word_248902131a732628","word":"spring","reason":"provider_error"}
 {"word_id":"word_79e7a877318679b1","word":"appeared","reason":"provider_error"}
@@ -278,7 +273,6 @@
 {"word_id":"word_c949c0afd96a975e","word":"traditional","reason":"This word is too broad and does not have a distinct enough meaning for ESL learners."}
 {"word_id":"word_d67cca5aaed6ead2","word":"brother","reason":"This word is too simple and commonly understood by learners."}
 {"word_id":"word_658b4f744451340a","word":"authorities","reason":"This word is too general and does not provide a specific enough context for ESL learners."}
-{"word_id":"word_bb362a46a483f3f8","word":"media","reason":"This word is too broad and does not have a distinct enough meaning for ESL learners."}
 {"word_id":"word_9012c45d7bd54d45","word":"plate","reason":"provider_error"}
 {"word_id":"word_2f1909d0e2439cfe","word":"representatives","reason":"provider_error"}
 {"word_id":"word_731f1adee44b0d49","word":"scientific","reason":"provider_error"}
@@ -351,7 +345,6 @@
 {"word_id":"word_e55e91b2cc22ba11","word":"talk","reason":"provider_error"}
 {"word_id":"word_dc724af18fbdd4e5","word":"testing","reason":"provider_error"}
 {"word_id":"word_5019bac93989553b","word":"museum","reason":"provider_error"}
-{"word_id":"word_bbbf26a1fbb280a5","word":"density","reason":"provider_error"}
 {"word_id":"word_52d081ef4d70e170","word":"married","reason":"provider_error"}
 {"word_id":"word_411b089d2971d317","word":"teaching","reason":"provider_error"}
 {"word_id":"word_c2b37ef88f80018b","word":"mechanical","reason":"provider_error"}
@@ -359,12 +352,10 @@
 {"word_id":"word_81529fbdf906c26e","word":"instruction","reason":"provider_error"}
 {"word_id":"word_fe7110fa2c82ee4f","word":"aircraft","reason":"provider_error"}
 {"word_id":"word_432aeb804333fe6b","word":"fell","reason":"provider_error"}
-{"word_id":"word_00b32f658d1b9125","word":"philosophy","reason":"provider_error"}
 {"word_id":"word_001f63800ae37c35","word":"manufacturing","reason":"provider_error"}
 {"word_id":"word_64b8cefeebbdf01f","word":"understood","reason":"provider_error"}
 {"word_id":"word_736137d4cd0b99af","word":"pounds","reason":"provider_error"}
 {"word_id":"word_13941e1954950871","word":"recommended","reason":"provider_error"}
-{"word_id":"word_39a6bd435eb632f8","word":"grade","reason":"provider_error"}
 {"word_id":"word_37ebb98c6a9d3189","word":"charged","reason":"provider_error"}
 {"word_id":"word_15fe6865954b3311","word":"cambridge","reason":"provider_error"}
 {"word_id":"word_1925f793093581c4","word":"command","reason":"provider_error"}
@@ -410,7 +401,6 @@
 {"word_id":"word_a74a18cfae627c70","word":"extended","reason":"provider_error"}
 {"word_id":"word_0284c6ac58cb47bb","word":"tools","reason":"provider_error"}
 {"word_id":"word_2ece2907b252e510","word":"shares","reason":"provider_error"}
-{"word_id":"word_80d7ab15fdb172ce","word":"nevertheless","reason":"Not generating content for this adverb as it is already well understood."}
 {"word_id":"word_42625bfecef1fbf9","word":"sand","reason":"Not generating content for this noun as it is already well understood."}
 {"word_id":"word_9353ba3e41d223f4","word":"americans","reason":"Not generating content for this noun as it is a demonym."}
 {"word_id":"word_25f6f05321caad02","word":"career","reason":"Not generating content for this noun as it is already well understood."}
@@ -428,12 +418,10 @@
 {"word_id":"word_76f3b5a7170a9221","word":"act","reason":"provider_error"}
 {"word_id":"word_c52888225c692996","word":"fall","reason":"provider_error"}
 {"word_id":"word_e9691a0dce6469fc","word":"extensive","reason":"Not generating content for this word as it already has a definition."}
-{"word_id":"word_5d2432d4636d257e","word":"cycle","reason":"Not generating content for this word as it already has a definition."}
 {"word_id":"word_bf31c52c32b0fcda","word":"safe","reason":"Not generating content for this word as it already has a definition."}
 {"word_id":"word_f6a0d6c96c1f47bc","word":"perform","reason":"Not generating content for this word as it already has a definition."}
 {"word_id":"word_3a85e310858fac24","word":"expense","reason":"Not generating content for this word as it already has a definition."}
 {"word_id":"word_3cd0f6484b7e10a3","word":"usa","reason":"Proper noun; specific name of a country."}
-{"word_id":"word_8fb3697a791f0332","word":"marked","reason":"Inflected verb form; should teach the base form 'mark' instead."}
 {"word_id":"word_3a9ba9542642b5d7","word":"diseases","reason":"Plural noun; should teach the base form 'disease' instead."}
 {"word_id":"word_e5edb94ec7c2fc31","word":"rise","reason":"Common noun; should teach the base form 'rise' as a verb instead."}
 {"word_id":"word_c73c99fd6024c8c0","word":"perfect","reason":"Adjective; lacks sufficient distinct senses for teaching."}
@@ -443,13 +431,11 @@
 {"word_id":"word_4d46077c78ecf874","word":"bound","reason":"provider_error"}
 {"word_id":"word_ac981f4c7f0d3615","word":"directors","reason":"provider_error"}
 {"word_id":"word_e4d68c5a97e46632","word":"limit","reason":"provider_error"}
-{"word_id":"word_c4b038d0316060f7","word":"chief","reason":"Word is too general and can refer to various contexts."}
 {"word_id":"word_7b34cb1928c13b29","word":"drugs","reason":"Word has multiple meanings and can be sensitive in nature."}
 {"word_id":"word_c073d97dd896ff8d","word":"italy","reason":"Proper noun; does not fit vocabulary teaching."}
 {"word_id":"word_50644481c7cd620b","word":"present","reason":"Ambiguous; can refer to a noun or verb, needs clarification."}
 {"word_id":"word_8b6cd6222f82a538","word":"standing","reason":"Inflected form; should teach 'stand' instead."}
 {"word_id":"word_3a21295d813c26eb","word":"store","reason":"Common noun; no unique teaching point."}
-{"word_id":"word_e78fe7049341b361","word":"mode","reason":"Common noun; no unique teaching point."}
 {"word_id":"word_12084ab0210b87e7","word":"islands","reason":"provider_error"}
 {"word_id":"word_7a104738973573b6","word":"resource","reason":"provider_error"}
 {"word_id":"word_6cf68316b17fdb32","word":"representation","reason":"provider_error"}
@@ -510,7 +496,6 @@
 {"word_id":"word_53c200308b18fe4d","word":"constitutional","reason":"Word is too advanced for the target audience."}
 {"word_id":"word_7b7f9366a36031a0","word":"objectives","reason":"Word is too advanced for the target audience."}
 {"word_id":"word_58076e4127e6bdb1","word":"crisis","reason":"Word is too advanced for the target audience."}
-{"word_id":"word_90370074d3556c85","word":"vessel","reason":"Word is too advanced for the target audience."}
 {"word_id":"word_45ba5108139372ec","word":"behalf","reason":"provider_error"}
 {"word_id":"word_9e2f1451d5dd96de","word":"programme","reason":"provider_error"}
 {"word_id":"word_cb041de2d6f39ee4","word":"speaking","reason":"provider_error"}
@@ -566,7 +551,6 @@
 {"word_id":"word_4329d0bfa1ced269","word":"corporations","reason":"This word is too general and does not require additional senses or questions."}
 {"word_id":"word_744cb9a9fb3d5583","word":"ann","reason":"This word is a proper noun and does not require additional senses or questions."}
 {"word_id":"word_622eecdcc1cbabb5","word":"troops","reason":"This word is too general and does not require additional senses or questions."}
-{"word_id":"word_97332beb836e49da","word":"consequently","reason":"This word is too general and does not require additional senses or questions."}
 {"word_id":"word_833da188871dde4c","word":"vi","reason":"This word is too general and does not require additional senses or questions."}
 {"word_id":"word_d2a04d71301a8915","word":"client","reason":"provider_error"}
 {"word_id":"word_6612af2ed3b61197","word":"patent","reason":"provider_error"}
@@ -642,7 +626,6 @@
 {"word_id":"word_c74f87e2b80060a9","word":"equations","reason":"The word is too specific and not commonly used outside academic contexts."}
 {"word_id":"word_383d407b8cacf822","word":"bible","reason":"The word is a proper noun and not suitable for general vocabulary teaching."}
 {"word_id":"word_5a5d7a49980fd29f","word":"jersey","reason":"The word is too specific and not commonly used outside of sports contexts."}
-{"word_id":"word_35a34c2218eaca77","word":"principal","reason":"The word is too specific and not commonly used outside of educational contexts."}
 {"word_id":"word_51288d140528c2d5","word":"spain","reason":"provider_error"}
 {"word_id":"word_78b6f944434eac18","word":"conversation","reason":"provider_error"}
 {"word_id":"word_e2d35ad940f107b7","word":"latin","reason":"provider_error"}
@@ -666,7 +649,6 @@
 {"word_id":"word_036cb735c62f952a","word":"compliance","reason":"provider_error"}
 {"word_id":"word_1f7dbf5d83aeee47","word":"mountains","reason":"provider_error"}
 {"word_id":"word_615193f904a227a9","word":"arthur","reason":"provider_error"}
-{"word_id":"word_caee3e9d54b49ae5","word":"novel","reason":"provider_error"}
 {"word_id":"word_6266c5dbe4b431f5","word":"excess","reason":"provider_error"}
 {"word_id":"word_5d74ae093a16a00e","word":"taylor","reason":"provider_error"}
 {"word_id":"word_233471efd5752016","word":"pollution","reason":"provider_error"}
@@ -687,13 +669,10 @@
 {"word_id":"word_577633048497efd1","word":"assumption","reason":"provider_error"}
 {"word_id":"word_8f835ab723c137a1","word":"personality","reason":"provider_error"}
 {"word_id":"word_14d65341f0634f21","word":"considerations","reason":"provider_error"}
-{"word_id":"word_17cb65e86213d6c2","word":"vital","reason":"provider_error"}
 {"word_id":"word_b746d79201944bf5","word":"mixed","reason":"provider_error"}
 {"word_id":"word_9fdf36c79835189a","word":"managed","reason":"provider_error"}
 {"word_id":"word_f732dfdbd0aed627","word":"jackson","reason":"A common last name for people, not suitable for vocabulary teaching."}
-{"word_id":"word_68970a95b4a63f29","word":"regardless","reason":"Word is too vague and lacks distinct teaching value."}
 {"word_id":"word_2193563cace6e200","word":"impressive","reason":"Word is too subjective and lacks distinct teaching value."}
-{"word_id":"word_26b2a66d3f9245c6","word":"reputation","reason":"Word is too abstract and lacks distinct teaching value."}
 {"word_id":"word_7da7b5f7e3712250","word":"ridiculous","reason":"Word is too subjective and lacks distinct teaching value."}
 {"word_id":"word_c8f39db21b5d86f1","word":"penalty","reason":"Word is too abstract and lacks distinct teaching value."}
 {"word_id":"word_083814db3f4825eb","word":"instantly","reason":"provider_error"}
@@ -701,19 +680,14 @@
 {"word_id":"word_f08a7a19e6f47e11","word":"blessed","reason":"provider_error"}
 {"word_id":"word_50de66b735d30738","word":"serial","reason":"provider_error"}
 {"word_id":"word_5b5ec785077c39e1","word":"disgusting","reason":"provider_error"}
-{"word_id":"word_4768682bfb3e1a5b","word":"controversial","reason":"provider_error"}
-{"word_id":"word_1bf17bb6c76709bd","word":"regulatory","reason":"Word is too technical and may not be relevant for general learners."}
 {"word_id":"word_d6dc139f529a10b7","word":"invasion","reason":"Word has a negative connotation and may not be suitable for all learners."}
-{"word_id":"word_5f191134dde6f71f","word":"motivation","reason":"Word is too broad and lacks a specific context for learners."}
 {"word_id":"word_8eb9612e70b5f246","word":"departure","reason":"Word is too general and does not provide a clear learning opportunity."}
 {"word_id":"word_b9b4d1f1383dd40a","word":"integrity","reason":"Word is abstract and may not be easily understood by learners."}
-{"word_id":"word_24fc197e1a51d91a","word":"chronic","reason":"Needs base fields but is a common adjective."}
 {"word_id":"word_a589b5592b0fb847","word":"commentary","reason":"Needs base fields but is a common noun."}
 {"word_id":"word_0ffa932690225172","word":"nightmare","reason":"Needs base fields but is a common noun."}
 {"word_id":"word_3478fe69c7dcebc1","word":"coin","reason":"Needs base fields but is a common noun."}
 {"word_id":"word_cfc8b23ab1a14c03","word":"confusion","reason":"Needs base fields but is a common noun."}
 {"word_id":"word_efade50ee3985996","word":"rifle","reason":"provider_error"}
-{"word_id":"word_e1e8289afa6b54e4","word":"bias","reason":"provider_error"}
 {"word_id":"word_f26b63d628c9b567","word":"assignment","reason":"provider_error"}
 {"word_id":"word_4a0739026ddc0004","word":"tropical","reason":"provider_error"}
 {"word_id":"word_78c67c126575c20c","word":"garbage","reason":"provider_error"}
@@ -721,8 +695,6 @@
 {"word_id":"word_c2945cad39150147","word":"beloved","reason":"The word is too vague and lacks distinct senses for teaching."}
 {"word_id":"word_3b41c7aefc79a08f","word":"mysterious","reason":"The word is too vague and lacks distinct senses for teaching."}
 {"word_id":"word_6a8b69538ccf59ad","word":"substitute","reason":"The word is too vague and lacks distinct senses for teaching."}
-{"word_id":"word_fe41988a74be75ce","word":"aviation","reason":"The word is too vague and lacks distinct senses for teaching."}
-{"word_id":"word_502101a265a02512","word":"notion","reason":"The word is too vague and lacks distinct senses for teaching."}
 {"word_id":"word_a561609311858d03","word":"graduation","reason":"provider_error"}
 {"word_id":"word_c5be5b3d86d8c8a2","word":"capability","reason":"provider_error"}
 {"word_id":"word_22a436c8d4244490","word":"nomination","reason":"provider_error"}
@@ -743,19 +715,14 @@
 {"word_id":"word_2830d7acf7340997","word":"oath","reason":"provider_error"}
 {"word_id":"word_29d7b47b8affe7c1","word":"nationalist","reason":"The word is a demonym and does not fit the criteria for vocabulary teaching."}
 {"word_id":"word_c0bed61c5a070090","word":"scrap","reason":"The word is too vague and can refer to multiple unrelated meanings."}
-{"word_id":"word_f64c7429d841d548","word":"slope","reason":"The word is too general and lacks a specific context for teaching."}
 {"word_id":"word_6c80e648a67d2112","word":"terrific","reason":"The word is often used informally and can have varying meanings, making it less suitable for teaching."}
-{"word_id":"word_6ff3fca6b17e5f06","word":"aftermath","reason":"The word is context-specific and may not be relevant for general vocabulary learning."}
 {"word_id":"word_4da8d5d4e14e087e","word":"allowance","reason":"Word is too general and lacks specific context."}
 {"word_id":"word_d3496bacbfccf29e","word":"timely","reason":"Word is too general and lacks specific context."}
-{"word_id":"word_910080e7e25ca7a0","word":"niche","reason":"Word is too general and lacks specific context."}
 {"word_id":"word_326d177fc0fd78f7","word":"splash","reason":"Word is too general and lacks specific context."}
 {"word_id":"word_a063e117d8a47d2a","word":"carriage","reason":"Word is too general and lacks specific context."}
-{"word_id":"word_5e705951b3b2e851","word":"methodology","reason":"Too specialized for general vocabulary."}
 {"word_id":"word_6166afad3a8d9f4d","word":"reliance","reason":"Too abstract for basic learners."}
 {"word_id":"word_8c3639f99033264d","word":"privileged","reason":"Too nuanced for general vocabulary."}
 {"word_id":"word_4f31b4124aac6b10","word":"obesity","reason":"Too specialized for general vocabulary."}
-{"word_id":"word_e2d52298cc96033c","word":"taxation","reason":"Too specialized for general vocabulary."}
 {"word_id":"word_b9e30c5fd2906349","word":"jealousy","reason":"provider_error"}
 {"word_id":"word_611a2ab1db7d3380","word":"ingredient","reason":"provider_error"}
 {"word_id":"word_31c31e4d9247bebd","word":"salty","reason":"provider_error"}
@@ -769,9 +736,6 @@
 {"word_id":"word_d910b92f3bdf4ca4","word":"continuation","reason":"provider_error"}
 {"word_id":"word_b10a8c637a91f427","word":"shady","reason":"provider_error"}
 {"word_id":"word_c0eeb6c8238369db","word":"tribune","reason":"Obscure and not commonly used in modern English."}
-{"word_id":"word_67d33103404f536c","word":"spontaneous","reason":"Obscure and not commonly used in modern English."}
-{"word_id":"word_8fbbd07f2d96e050","word":"milestone","reason":"Obscure and not commonly used in modern English."}
-{"word_id":"word_908897f614cc47da","word":"marginal","reason":"Obscure and not commonly used in modern English."}
 {"word_id":"word_08b251460aa1e7bf","word":"misunderstanding","reason":"Obscure and not commonly used in modern English."}
 {"word_id":"word_5b0fe021bfa51a93","word":"overlap","reason":"provider_error"}
 {"word_id":"word_b5da25e0cd1def45","word":"emission","reason":"provider_error"}
@@ -779,8 +743,6 @@
 {"word_id":"word_43223d18cf4877f9","word":"residency","reason":"provider_error"}
 {"word_id":"word_ddbbf6166888b293","word":"creed","reason":"provider_error"}
 {"word_id":"word_dcd5e5991d0c9b07","word":"contamination","reason":"provider_error"}
-{"word_id":"word_74e023ef235c5e0a","word":"seldom","reason":"The word is too basic and does not require additional teaching content."}
-{"word_id":"word_edcc418fefaa1482","word":"practitioner","reason":"The word is too basic and does not require additional teaching content."}
 {"word_id":"word_4f57da69dfb172b6","word":"accessory","reason":"The word is too basic and does not require additional teaching content."}
 {"word_id":"word_42d9d2622f862cd8","word":"temporal","reason":"The word is too basic and does not require additional teaching content."}
 {"word_id":"word_3cac01bf8a72799e","word":"stationary","reason":"The word is too basic and does not require additional teaching content."}
@@ -799,9 +761,7 @@
 {"word_id":"word_b5ba0f69b527a4b3","word":"slang","reason":"The word is too broad and does not provide a clear, focused learning opportunity."}
 {"word_id":"word_224ecd8ca8661176","word":"portrayal","reason":"The word is too abstract and does not lend itself to specific, learner-friendly examples."}
 {"word_id":"word_ad6f1f9080cf9b19","word":"mystical","reason":"The word is overly vague and lacks a clear, practical application for learners."}
-{"word_id":"word_ece7517569811ff9","word":"compassionate","reason":"The word is too broad and does not provide a clear, focused learning opportunity."}
 {"word_id":"word_53bcf3125cbbcd87","word":"truce","reason":"Word is too vague and lacks distinct senses."}
-{"word_id":"word_71dfa770f6293c78","word":"recreate","reason":"Word is too vague and lacks distinct senses."}
 {"word_id":"word_fc0fd9d4347a09a0","word":"bilingual","reason":"Word is too vague and lacks distinct senses."}
 {"word_id":"word_c42aa1e1309aec15","word":"harden","reason":"Word is too vague and lacks distinct senses."}
 {"word_id":"word_66db06c507d3874a","word":"turmoil","reason":"Word is too vague and lacks distinct senses."}
@@ -814,7 +774,6 @@
 {"word_id":"word_127d385157d35485","word":"scramble","reason":"Needs further context to define appropriately."}
 {"word_id":"word_df7202768245eb99","word":"shameless","reason":"Needs further context to define appropriately."}
 {"word_id":"word_7cbdd1ebf0c21f7c","word":"playwright","reason":"Needs further context to define appropriately."}
-{"word_id":"word_3bf7e63ecf2211c9","word":"scatter","reason":"Needs further context to define appropriately."}
 {"word_id":"word_7d7f7751675dab23","word":"dazzling","reason":"Needs further context to define appropriately."}
 {"word_id":"word_b4a670e024386dad","word":"slander","reason":"provider_error"}
 {"word_id":"word_1a2bc8800d4d38e2","word":"issuance","reason":"provider_error"}
@@ -829,7 +788,6 @@
 {"word_id":"word_0b6bd4de1e4bc710","word":"toxin","reason":"provider_error"}
 {"word_id":"word_7217e902e8649fad","word":"punishable","reason":"provider_error"}
 {"word_id":"word_38708fd51bb30968","word":"corrective","reason":"Too vague; needs more context for a meaningful definition."}
-{"word_id":"word_86f774f1e9174299","word":"physique","reason":"Too specific; may not be relevant for general vocabulary."}
 {"word_id":"word_ab9741f21c3f0a85","word":"mockery","reason":"Potentially negative connotation; may not be suitable for all learners."}
 {"word_id":"word_13bb39bb77977f92","word":"ovation","reason":"Context-specific; may not be widely applicable in everyday conversation."}
 {"word_id":"word_f4d9a0bf311f1a04","word":"recourse","reason":"Abstract concept; may not be easily understood by all learners."}
@@ -841,10 +799,8 @@
 {"word_id":"word_0d4c51b303e3e93f","word":"ardent","reason":"provider_error"}
 {"word_id":"word_a0690273be9242a9","word":"triathlon","reason":"needs_base: true"}
 {"word_id":"word_d571f35bf20f3035","word":"ultimatum","reason":"needs_base: true"}
-{"word_id":"word_006ee67db67fddc9","word":"fathom","reason":"needs_base: true"}
 {"word_id":"word_00ef0a7431263dce","word":"pitiful","reason":"needs_base: true"}
 {"word_id":"word_8f071fb158cbeced","word":"leakage","reason":"needs_base: true"}
-{"word_id":"word_3c60aac9e8372a8d","word":"infiltration","reason":"Too specialized and not relevant for general learners."}
 {"word_id":"word_73403ccfa63431da","word":"liberate","reason":"Too broad and not specific enough for a single sense."}
 {"word_id":"word_f61e48375320d200","word":"affirmation","reason":"Too abstract and not commonly used in daily conversation."}
 {"word_id":"word_8779b41d1f294478","word":"kayak","reason":"Too specific; better taught in a broader context."}
@@ -858,12 +814,9 @@
 {"word_id":"word_d65f71223044afa3","word":"carcass","reason":"Word is too specific and may not be relevant for general vocabulary."}
 {"word_id":"word_302e5ed762f5ffca","word":"feeble","reason":"Word is somewhat obscure and may not be commonly used by learners."}
 {"word_id":"word_d98fe9f8897108e4","word":"mingle","reason":"Word is too vague and context-dependent for a clear definition."}
-{"word_id":"word_2f461bbf1fecb383","word":"fallacy","reason":"Word is more abstract and may not be essential for everyday communication."}
 {"word_id":"word_47e7048968673b4f","word":"inquest","reason":"Word is specialized and may not be relevant for general vocabulary."}
-{"word_id":"word_c81c7ba481d2808c","word":"rectify","reason":"Not enough context to generate meaningful content."}
 {"word_id":"word_d6f772f88778b226","word":"rapport","reason":"Not enough context to generate meaningful content."}
 {"word_id":"word_273cdd4447a348a1","word":"swagger","reason":"Not enough context to generate meaningful content."}
-{"word_id":"word_36c5a35b6c8943c7","word":"fatality","reason":"Not enough context to generate meaningful content."}
 {"word_id":"word_77798bcfb4c9c041","word":"nugget","reason":"Not enough context to generate meaningful content."}
 {"word_id":"word_2b20ac56086862a9","word":"provenance","reason":"Word is too obscure for general learners."}
 {"word_id":"word_1ce3ff276fe11ba9","word":"machete","reason":"Word is too obscure for general learners."}
@@ -910,7 +863,6 @@
 {"word_id":"word_43389783c9f8b5ba","word":"oblong","reason":"provider_error"}
 {"word_id":"word_f233db995d30a2bf","word":"scrapbook","reason":"Too specific; not commonly used in general vocabulary."}
 {"word_id":"word_d159c6ecee8628f0","word":"ablaze","reason":"Obscure; not commonly used in everyday conversation."}
-{"word_id":"word_a2247667b41ff672","word":"hasten","reason":"Obscure; not commonly used in everyday conversation."}
 {"word_id":"word_90b5657589f5eff9","word":"heady","reason":"Obscure; not commonly used in everyday conversation."}
 {"word_id":"word_731cc7a426a01969","word":"somatic","reason":"Obscure; not commonly used in everyday conversation."}
 {"word_id":"word_72acfaf1332326e3","word":"thoroughfare","reason":"No relevant definition or senses found."}
@@ -929,7 +881,6 @@
 {"word_id":"word_8a52faeec4b797a4","word":"artful","reason":"Vague term that may not provide clear context for learners."}
 {"word_id":"word_743bdccef6708751","word":"inflection","reason":"Technical term primarily used in linguistic contexts."}
 {"word_id":"word_75b0e33576d92842","word":"pearly","reason":"Skipped due to lack of relevant senses."}
-{"word_id":"word_4e10a20409165491","word":"admissible","reason":"Skipped due to lack of relevant senses."}
 {"word_id":"word_894a8a137f2421dd","word":"peachy","reason":"Skipped due to lack of relevant senses."}
 {"word_id":"word_8667c06232ab9ccb","word":"lackey","reason":"Skipped due to lack of relevant senses."}
 {"word_id":"word_79cf993eb90484d3","word":"tipsy","reason":"Skipped due to lack of relevant senses."}
@@ -947,7 +898,6 @@
 {"word_id":"word_fc8c352b83225324","word":"orifice","reason":"provider_error"}
 {"word_id":"word_c9cdcaeb12ec9985","word":"scepter","reason":"Obscure; not commonly used in everyday language."}
 {"word_id":"word_64af155fb3de12b4","word":"rustle","reason":"Obscure; not commonly used in everyday language."}
-{"word_id":"word_ec7ae9b5d2676667","word":"authenticate","reason":"Obscure; not commonly used in everyday language."}
 {"word_id":"word_2517a00e841ba181","word":"dimple","reason":"Obscure; not commonly used in everyday language."}
 {"word_id":"word_e78608b0aa589f6a","word":"secrete","reason":"Obscure; not commonly used in everyday language."}
 {"word_id":"word_58121e3a96282d6f","word":"befall","reason":"Word is too obscure and not commonly used."}
@@ -969,7 +919,6 @@
 {"word_id":"word_4d7add5ce4636396","word":"titian","reason":"Proper noun; refers to a specific artist."}
 {"word_id":"word_04a10934fd818428","word":"fluted","reason":"Too vague; lacks clear definition for teaching."}
 {"word_id":"word_faa1217d344ebd2e","word":"repulsion","reason":"Too abstract; lacks clear definition for teaching."}
-{"word_id":"word_2cc5e4d250a17fff","word":"disavow","reason":"Too obscure; lacks clear definition for teaching."}
 {"word_id":"word_d45202f6ed06af30","word":"jaunt","reason":"Too informal; lacks clear definition for teaching."}
 {"word_id":"word_69176d8caba47b91","word":"bylaw","reason":"Too specific and not commonly used in everyday conversation."}
 {"word_id":"word_296010c70178577c","word":"downy","reason":"Too obscure and not relevant for general vocabulary."}
@@ -983,7 +932,6 @@
 {"word_id":"word_03b23fef403101be","word":"sectarianism","reason":"provider_error"}
 {"word_id":"word_10f94904c14ac5f6","word":"slurp","reason":"provider_error"}
 {"word_id":"word_ad71870f59ddad10","word":"alarmist","reason":"Word is too general and lacks specific educational value."}
-{"word_id":"word_e67829891c77c758","word":"conspiratorial","reason":"Word is too obscure and not commonly used in everyday language."}
 {"word_id":"word_0c133413552e11b4","word":"rostrum","reason":"Word is too specialized and not relevant for general vocabulary learning."}
 {"word_id":"word_dee19d8a80cf22b7","word":"lucent","reason":"Word is too obscure and not commonly used in everyday language."}
 {"word_id":"word_bca758c94b7a8ac2","word":"tryst","reason":"Word is too specialized and not relevant for general vocabulary learning."}
@@ -1134,13 +1082,11 @@
 {"word_id":"word_67a4c84cb8378800","word":"fresh","reason":"provider_error"}
 {"word_id":"word_2457e0c6c0e097ae","word":"findings","reason":"provider_error"}
 {"word_id":"word_2c65275ae0b05e53","word":"protein","reason":"No additional content needed; already defined."}
-{"word_id":"word_bbbf26a1fbb280a5","word":"density","reason":"No additional content needed; already defined."}
 {"word_id":"word_52d081ef4d70e170","word":"married","reason":"No additional content needed; already defined."}
 {"word_id":"word_411b089d2971d317","word":"teaching","reason":"No additional content needed; already defined."}
 {"word_id":"word_15fe6865954b3311","word":"cambridge","reason":"Proper noun, not suitable for vocabulary teaching."}
 {"word_id":"word_4955742b2d74102e","word":"hope","reason":"Verb form without distinct senses."}
 {"word_id":"word_13941e1954950871","word":"recommended","reason":"Verb form without distinct senses."}
-{"word_id":"word_39a6bd435eb632f8","word":"grade","reason":"Noun form without distinct senses."}
 {"word_id":"word_37ebb98c6a9d3189","word":"charged","reason":"Verb form without distinct senses."}
 {"word_id":"word_972a13cbbe5e845e","word":"rich","reason":"provider_error"}
 {"word_id":"word_bfdaa5ad17c919b4","word":"kinds","reason":"provider_error"}
@@ -1211,8 +1157,6 @@
 {"word_id":"word_54669547a225ff20","word":"martin","reason":"This is a common male first name and not suitable for vocabulary teaching."}
 {"word_id":"word_fac37bc72e5805e4","word":"camp","reason":"This word is too general and lacks depth for teaching."}
 {"word_id":"word_3bdc13e1111b336b","word":"involving","reason":"This word is a verb form that should be taught in its base form 'involve'."}
-{"word_id":"word_51713409935576d6","word":"export","reason":"This word is too specific and lacks broader usage for vocabulary teaching."}
-{"word_id":"word_1594b7a4636275b8","word":"seek","reason":"This word is a verb that should be taught in its base form 'seek'."}
 {"word_id":"word_8f4f9f2dcbaf9bd8","word":"israel","reason":"Proper noun; does not fit vocabulary teaching."}
 {"word_id":"word_7e5ee19287692d4f","word":"waters","reason":"Too vague and not commonly used in the intended context."}
 {"word_id":"word_0b743a74b5268c56","word":"revised","reason":"Inflected form; should teach the base form 'revise' instead."}
@@ -1315,7 +1259,6 @@
 {"word_id":"word_eac923ffd38e75dc","word":"song","reason":"provider_error"}
 {"word_id":"word_b7b2fb7443bcfed3","word":"gift","reason":"provider_error"}
 {"word_id":"word_615193f904a227a9","word":"arthur","reason":"Proper noun, common male name."}
-{"word_id":"word_caee3e9d54b49ae5","word":"novel","reason":"Already defined in the input."}
 {"word_id":"word_4db924a2e861f8da","word":"lose","reason":"Already defined in the input."}
 {"word_id":"word_42d0dcee94dc9452","word":"kansas","reason":"Proper noun, name of a state."}
 {"word_id":"word_a4b0ff03c1e40e96","word":"iowa","reason":"Proper noun, name of a state."}
@@ -1334,12 +1277,10 @@
 {"word_id":"word_457774c6f0228627","word":"sweet","reason":"Already has a definition and examples."}
 {"word_id":"word_c23c07aee2002fe3","word":"finds","reason":"Already has a definition and examples."}
 {"word_id":"word_a8e574ec54efa6ee","word":"soc","reason":"Already has a definition and examples."}
-{"word_id":"word_7a9b93cfa651fbc2","word":"sensitive","reason":"Already has a definition and examples."}
 {"word_id":"word_54e2fcb9cc6fe546","word":"lie","reason":"The word 'lie' has multiple meanings that can cause confusion and is not specific enough for the target audience."}
 {"word_id":"word_26de05a44d1e5fe8","word":"accuracy","reason":"The word 'accuracy' is too abstract and may not be relevant for the target audience."}
 {"word_id":"word_d6c822010fb777a0","word":"sets","reason":"The word 'sets' is too vague and can refer to many different contexts."}
 {"word_id":"word_f03743864646f350","word":"passing","reason":"The word 'passing' is too general and can refer to various actions without a clear context."}
-{"word_id":"word_06eff510132bf8eb","word":"integration","reason":"The word 'integration' is too complex and abstract for the target audience."}
 {"word_id":"word_84e2ed80439bd6d1","word":"championship","reason":"provider_error"}
 {"word_id":"word_4a19573b7e72b724","word":"classical","reason":"provider_error"}
 {"word_id":"word_1ed683bc29502c38","word":"soft-spoken","reason":"provider_error"}
@@ -1347,10 +1288,8 @@
 {"word_id":"word_4c87891558ebeb3b","word":"legendary","reason":"provider_error"}
 {"word_id":"word_f08a7a19e6f47e11","word":"blessed","reason":"provider_error"}
 {"word_id":"word_5b5ec785077c39e1","word":"disgusting","reason":"Word is too subjective and lacks distinct educational value."}
-{"word_id":"word_4768682bfb3e1a5b","word":"controversial","reason":"Word is too subjective and lacks distinct educational value."}
 {"word_id":"word_75afa872370d3da0","word":"occupation","reason":"Word is too broad and lacks distinct educational value."}
 {"word_id":"word_efade50ee3985996","word":"rifle","reason":"Word is too specific and lacks distinct educational value."}
-{"word_id":"word_e1e8289afa6b54e4","word":"bias","reason":"Word is too subjective and lacks distinct educational value."}
 {"word_id":"word_ad8317924b75d19f","word":"navigation","reason":"The word is too broad and lacks a specific context for meaningful teaching."}
 {"word_id":"word_d89d955d2f093ddb","word":"remainder","reason":"The word is commonly understood but lacks sufficient context for ESL learners."}
 {"word_id":"word_8fa68a8ce5bffb5c","word":"arctic","reason":"The word is a proper noun referring to a specific region, not suitable for vocabulary teaching."}
@@ -1359,7 +1298,6 @@
 {"word_id":"word_b0cc834f4942dddf","word":"implied","reason":"Word needs base fields."}
 {"word_id":"word_7ee781b4e01eca3e","word":"regiment","reason":"Word needs base fields."}
 {"word_id":"word_3c3b3206267dd4d2","word":"guild","reason":"Word needs base fields."}
-{"word_id":"word_c36e51b02bb648d3","word":"merchandise","reason":"Word needs base fields."}
 {"word_id":"word_fb3a4b96066b1db3","word":"elimination","reason":"Word needs base fields."}
 {"word_id":"word_8d13318ea523c584","word":"uncommon","reason":"provider_error"}
 {"word_id":"word_9583ab9a667d1952","word":"haunted","reason":"provider_error"}
@@ -1367,10 +1305,8 @@
 {"word_id":"word_adfa59cc50d2bd2c","word":"pharmacy","reason":"provider_error"}
 {"word_id":"word_d5f971577a2eb7b2","word":"forgiveness","reason":"provider_error"}
 {"word_id":"word_9245884c9bcc771d","word":"problematic","reason":"provider_error"}
-{"word_id":"word_4aed35968daf6e54","word":"apparel","reason":"Too general and not learner-relevant."}
 {"word_id":"word_92f23f2136333a40","word":"realization","reason":"Too abstract and not learner-relevant."}
 {"word_id":"word_2519bd6a7580decc","word":"classy","reason":"Too subjective and not learner-relevant."}
-{"word_id":"word_33d3f70dacf79ce2","word":"integrate","reason":"Too broad and not learner-relevant."}
 {"word_id":"word_2926bd39965a2d53","word":"motto","reason":"Too specific and not learner-relevant."}
 {"word_id":"word_9ffd1077867c2090","word":"rebound","reason":"provider_error"}
 {"word_id":"word_64958c4dcf9dfe71","word":"inhabited","reason":"provider_error"}
@@ -1412,7 +1348,6 @@
 {"word_id":"word_9c5bf8d2dcc385fc","word":"imposition","reason":"Too abstract and less relevant for everyday use."}
 {"word_id":"word_d75838c3facfe7bb","word":"recoil","reason":"Limited use in everyday conversation; more specialized."}
 {"word_id":"word_ea7c8e9a9c615cc4","word":"perverse","reason":"Potentially confusing and not commonly used in daily English."}
-{"word_id":"word_8ed3831b52eb69c3","word":"sobriety","reason":"Specific to a context that may not be relevant for general learners."}
 {"word_id":"word_eef2d23367ae77ad","word":"forsaken","reason":"provider_error"}
 {"word_id":"word_a718e2a6b92b563e","word":"singularity","reason":"provider_error"}
 {"word_id":"word_ced2d00155c5f7d0","word":"distraught","reason":"provider_error"}
@@ -1432,7 +1367,6 @@
 {"word_id":"word_7df8e9afde1670ad","word":"calligraphy","reason":"provider_error"}
 {"word_id":"word_fa0e9a3f7fe76ce5","word":"thwart","reason":"provider_error"}
 {"word_id":"word_2a2e3ac2a4cbe0d8","word":"fetching","reason":"Word is too vague without clear context or meaning."}
-{"word_id":"word_c3b2aea29651409d","word":"impasse","reason":"Word is too obscure and lacks common usage."}
 {"word_id":"word_7270dfc5549abb9a","word":"perky","reason":"Word is too informal and lacks a clear definition."}
 {"word_id":"word_fa2ca509fa3e8098","word":"spitfire","reason":"Word is a slang term and lacks a clear definition."}
 {"word_id":"word_64cb628629724ed5","word":"abreast","reason":"Word is too context-specific and lacks common usage."}
@@ -1453,10 +1387,7 @@
 {"word_id":"word_e7d49ed28896ab82","word":"infertile","reason":"provider_error"}
 {"word_id":"word_0649badd8f7f17dd","word":"astonishment","reason":"provider_error"}
 {"word_id":"word_53560fe7f16d350b","word":"tingle","reason":"provider_error"}
-{"word_id":"word_e1045c352ecfe76f","word":"necessitate","reason":"The word is too obscure for general learners."}
 {"word_id":"word_f373d829ed3a034d","word":"eccentricity","reason":"The word is too obscure for general learners."}
-{"word_id":"word_755fd789e1bd6158","word":"whittle","reason":"The word is too obscure for general learners."}
-{"word_id":"word_9f6953a512e5e840","word":"fragmentary","reason":"The word is too obscure for general learners."}
 {"word_id":"word_7c4c1fa53abb5c4d","word":"enslave","reason":"The word is too obscure for general learners."}
 {"word_id":"word_ec8389ec4cf6c831","word":"indecisive","reason":"provider_error"}
 {"word_id":"word_349af806e4a5fc25","word":"trample","reason":"provider_error"}
@@ -1531,8 +1462,6 @@
 {"word_id":"word_890c540ed18a0cb8","word":"issues","reason":"provider_error"}
 {"word_id":"word_cbdb0cc7f3f5b4be","word":"charles","reason":"A male given name."}
 {"word_id":"word_432f62c7a71c113b","word":"produce","reason":"The word is too broad and lacks specific teaching content."}
-{"word_id":"word_8151325dcdbae9e0","word":"sample","reason":"The word is too broad and lacks specific teaching content."}
-{"word_id":"word_49c2c209ff874dd5","word":"demand","reason":"The word is too broad and lacks specific teaching content."}
 {"word_id":"word_57a4e7ca7f6cbd2e","word":"strength","reason":"The word is too broad and lacks specific teaching content."}
 {"word_id":"word_da7153ee73f11310","word":"started","reason":"The word is too broad and lacks specific teaching content."}
 {"word_id":"word_a027184a55211cd2","word":"paul","reason":"Proper noun; a male first name."}
@@ -1555,7 +1484,6 @@
 {"word_id":"word_352f7829a2384b00","word":"second","reason":"provider_error"}
 {"word_id":"word_cb0dff2129f80544","word":"railway","reason":"provider_error"}
 {"word_id":"word_55b5a0f748d3a82d","word":"edward","reason":"Proper noun, a common male first name."}
-{"word_id":"word_00b32f658d1b9125","word":"philosophy","reason":"No additional content needed, already has a definition."}
 {"word_id":"word_001f63800ae37c35","word":"manufacturing","reason":"No additional content needed, already has a definition."}
 {"word_id":"word_64b8cefeebbdf01f","word":"understood","reason":"No additional content needed, already has a definition."}
 {"word_id":"word_1925f793093581c4","word":"command","reason":"No additional content needed, already has a definition."}
@@ -1637,7 +1565,6 @@
 {"word_id":"word_570043596e41f906","word":"errors","reason":"provider_error"}
 {"word_id":"word_ea118158db412243","word":"spread","reason":"provider_error"}
 {"word_id":"word_14d65341f0634f21","word":"considerations","reason":"No additional content needed; already has a complete entry."}
-{"word_id":"word_17cb65e86213d6c2","word":"vital","reason":"No additional content needed; already has a complete entry."}
 {"word_id":"word_b746d79201944bf5","word":"mixed","reason":"No additional content needed; already has a complete entry."}
 {"word_id":"word_903c106e2b595fa7","word":"ltd","reason":"No additional content needed; already has a complete entry."}
 {"word_id":"word_e0e10e6fff2b1d4c","word":"trump","reason":"Pending enrichment and definition."}
@@ -1686,7 +1613,6 @@
 {"word_id":"word_cf0f3f416e6fa283","word":"permit","reason":"Verb already has a definition."}
 {"word_id":"word_1739255434be3794","word":"discharge","reason":"Noun already has a definition."}
 {"word_id":"word_6e77d135758c9c84","word":"strongly","reason":"Adverb already has a definition."}
-{"word_id":"word_dcdc8b2d0a795513","word":"temporary","reason":"Adjective already has a definition."}
 {"word_id":"word_92504616ed595e2e","word":"sequence","reason":"provider_error"}
 {"word_id":"word_fc166eb81361ff31","word":"route","reason":"provider_error"}
 {"word_id":"word_797efd83f8c15dee","word":"implementation","reason":"provider_error"}
@@ -1735,8 +1661,6 @@
 {"word_id":"word_c6f0c54de9cf09b5","word":"insistence","reason":"The word is too vague and lacks a clear definition for learners."}
 {"word_id":"word_fa8dcdedecf4715c","word":"blackmail","reason":"The word is sensitive and may not be appropriate for all learners."}
 {"word_id":"word_86fdd824df433c42","word":"daft","reason":"The word is informal and may not be widely understood by learners."}
-{"word_id":"word_6c02556dfe745738","word":"contour","reason":"The word is too specialized and may not be relevant for general learners."}
-{"word_id":"word_f24c4515f21fca44","word":"inclination","reason":"The word is abstract and may not have a clear, practical use for learners."}
 {"word_id":"word_f6281d76f33ab6c1","word":"heartless","reason":"Word is a negative adjective describing a lack of compassion."}
 {"word_id":"word_2882863e6e2ab7b2","word":"oblivious","reason":"Word describes a state of being unaware, often used in a negative context."}
 {"word_id":"word_c3b9a01442e0611c","word":"latency","reason":"Technical term primarily used in computing and may not be widely applicable."}
@@ -1752,3 +1676,694 @@
 {"word_id":"word_ea36a2a224f71b7b","word":"spiteful","reason":"Spiteful is too advanced and not commonly used in everyday conversation."}
 {"word_id":"word_1f5dbc42215cf26d","word":"retroactive","reason":"Retroactive is a technical term that may not be relevant for general learners."}
 {"word_id":"word_c24df5927e0bda79","word":"quench","reason":"Quench is too advanced and not commonly used in everyday conversation."}
+{"word_id":"word_51a675c8070563e5","word":"became","reason":"provider_error"}
+{"word_id":"word_5116e40694ac48f6","word":"mother","reason":"provider_error"}
+{"word_id":"word_7cb06027e87e7d84","word":"organization","reason":"provider_error"}
+{"word_id":"word_94ec44c4f4ad3b8a","word":"believe","reason":"provider_error"}
+{"word_id":"word_048b0cb1b94379c7","word":"values","reason":"provider_error"}
+{"word_id":"word_828d338a9b04221c","word":"source","reason":"provider_error"}
+{"word_id":"word_c9560d94ee198303","word":"approved","reason":"provider_error"}
+{"word_id":"word_861c4f67e887dec8","word":"easy","reason":"provider_error"}
+{"word_id":"word_326b426f9ac7a96e","word":"actions","reason":"provider_error"}
+{"word_id":"word_5ba2688dffd71df8","word":"models","reason":"provider_error"}
+{"word_id":"word_b681487927bbb2be","word":"western","reason":"provider_error"}
+{"word_id":"word_5822e8526d6212f0","word":"courts","reason":"provider_error"}
+{"word_id":"word_4690d8ffc3a4467b","word":"circuit","reason":"provider_error"}
+{"word_id":"word_fa5461993bc05255","word":"respectively","reason":"provider_error"}
+{"word_id":"word_a4b48a81cdab1e1a","word":"wrong","reason":"provider_error"}
+{"word_id":"word_352f7829a2384b00","word":"second","reason":"provider_error"}
+{"word_id":"word_cb0dff2129f80544","word":"railway","reason":"provider_error"}
+{"word_id":"word_8b48fdf8ac0ef7ab","word":"lived","reason":"provider_error"}
+{"word_id":"word_8015f1d1fd4aee94","word":"advice","reason":"provider_error"}
+{"word_id":"word_92504616ed595e2e","word":"sequence","reason":"provider_error"}
+{"word_id":"word_fc166eb81361ff31","word":"route","reason":"provider_error"}
+{"word_id":"word_797efd83f8c15dee","word":"implementation","reason":"provider_error"}
+{"word_id":"word_8527edb7b0cd63a6","word":"efficient","reason":"provider_error"}
+{"word_id":"word_5ccbf9c9c5fc1bc3","word":"category","reason":"provider_error"}
+{"word_id":"word_e0a06c2e3929d6f0","word":"latter","reason":"provider_error"}
+{"word_id":"word_ad200e6671a94894","word":"goals","reason":"provider_error"}
+{"word_id":"word_e0c3dcbb64a2c520","word":"permitted","reason":"provider_error"}
+{"word_id":"word_0baff051a09687b4","word":"declared","reason":"provider_error"}
+{"word_id":"word_9424ac79de34c97c","word":"noise","reason":"provider_error"}
+{"word_id":"word_5b17a6c606a82daf","word":"comments","reason":"provider_error"}
+{"word_id":"word_3f14ecc8cc777b55","word":"later","reason":"provider_error"}
+{"word_id":"word_4979d619a7b7afcc","word":"drive","reason":"provider_error"}
+{"word_id":"word_85c274929bc0e28e","word":"middle","reason":"provider_error"}
+{"word_id":"word_5042d146667518a1","word":"shop","reason":"provider_error"}
+{"word_id":"word_05b4b7c2a278dcf8","word":"cited","reason":"provider_error"}
+{"word_id":"word_ff9f2d5c9eda0ce8","word":"rooms","reason":"provider_error"}
+{"word_id":"word_97d3d178c6886ca6","word":"consequences","reason":"provider_error"}
+{"word_id":"word_6cf34755b9de3322","word":"baby","reason":"provider_error"}
+{"word_id":"word_8b5241c71bbdffec","word":"caught","reason":"provider_error"}
+{"word_id":"word_ffdf4ccbf050a0f3","word":"bone","reason":"provider_error"}
+{"word_id":"word_76a4e12c213db0ac","word":"draw","reason":"provider_error"}
+{"word_id":"word_26e8e3d3a68a48f9","word":"eastern","reason":"provider_error"}
+{"word_id":"word_888b131b020ac93b","word":"societies","reason":"provider_error"}
+{"word_id":"word_c455b38e07622839","word":"join","reason":"provider_error"}
+{"word_id":"word_d583e247cac42d7f","word":"mills","reason":"provider_error"}
+{"word_id":"word_04fef6d9820c1233","word":"facilitate","reason":"provider_error"}
+{"word_id":"word_7ecd02fc2b52fa45","word":"undermine","reason":"provider_error"}
+{"word_id":"word_e204d28a2874f612","word":"validate","reason":"provider_error"}
+{"word_id":"word_1b6669289bc75c37","word":"presume","reason":"provider_error"}
+{"word_id":"word_21b80bf15e697fc5","word":"speculate","reason":"provider_error"}
+{"word_id":"word_62c6fc4e5717d61a","word":"deduce","reason":"provider_error"}
+{"word_id":"word_6c241e40fc8e24d7","word":"prioritize","reason":"provider_error"}
+{"word_id":"word_14a8e5f4b592926e","word":"reconcile","reason":"provider_error"}
+{"word_id":"word_dd3cf290d8a578d6","word":"crucial","reason":"provider_error"}
+{"word_id":"word_02f396e3d3455e1d","word":"inherent","reason":"provider_error"}
+{"word_id":"word_0d8898fc6c141dff","word":"profound","reason":"provider_error"}
+{"word_id":"word_28089e4373ea3a44","word":"prevalent","reason":"provider_error"}
+{"word_id":"word_a45c2264b8cab0f1","word":"explicit","reason":"provider_error"}
+{"word_id":"word_09d7304dc0a40d12","word":"implicit","reason":"provider_error"}
+{"word_id":"word_afbeeda5d8678788","word":"unprecedented","reason":"provider_error"}
+{"word_id":"word_70fc1f770c120494","word":"rigorous","reason":"provider_error"}
+{"word_id":"word_cc352edb928b3d0d","word":"amend","reason":"provider_error"}
+{"word_id":"word_4dc2fddce604bd9a","word":"anticipate","reason":"provider_error"}
+{"word_id":"word_d20bd8dbae29ebb6","word":"thorough","reason":"provider_error"}
+{"word_id":"word_63d62d4aee9a5d4f","word":"trigger","reason":"provider_error"}
+{"word_id":"word_68d16beb94cea3bb","word":"ultimately","reason":"provider_error"}
+{"word_id":"word_90e7552bb9a2611e","word":"underlying","reason":"provider_error"}
+{"word_id":"word_86a4261d849a6e99","word":"verify","reason":"provider_error"}
+{"word_id":"word_67d5faf462717d7b","word":"versatile","reason":"provider_error"}
+{"word_id":"word_9db184cc3f5af95b","word":"candid","reason":"provider_error"}
+{"word_id":"word_d01a341706c2a5c6","word":"capitalize","reason":"provider_error"}
+{"word_id":"word_ac490049aa88adee","word":"captivate","reason":"provider_error"}
+{"word_id":"word_b15f6a18731660f4","word":"cognitive","reason":"provider_error"}
+{"word_id":"word_36d0981b3375d78b","word":"compile","reason":"provider_error"}
+{"word_id":"word_80ce4d93e78be4c8","word":"comply","reason":"provider_error"}
+{"word_id":"word_9767364f4a236a12","word":"degrade","reason":"provider_error"}
+{"word_id":"word_3c513544bca249e4","word":"deliberate","reason":"provider_error"}
+{"word_id":"word_c231b852ae4245c3","word":"delve","reason":"provider_error"}
+{"word_id":"word_65aa5fa968c0be2a","word":"demographic","reason":"provider_error"}
+{"word_id":"word_77d24a96cfa03362","word":"deplete","reason":"provider_error"}
+{"word_id":"word_602d9caf0b398a70","word":"depict","reason":"provider_error"}
+{"word_id":"word_9f4acf4ed952265c","word":"dictate","reason":"provider_error"}
+{"word_id":"word_f86d317b9f1228eb","word":"dilute","reason":"provider_error"}
+{"word_id":"word_f57e38069445fdec","word":"discard","reason":"provider_error"}
+{"word_id":"word_e8fcfa624e4fb662","word":"discourse","reason":"provider_error"}
+{"word_id":"word_da5071ba5b34561d","word":"disintegrate","reason":"provider_error"}
+{"word_id":"word_98ed1a9258313547","word":"dismantle","reason":"provider_error"}
+{"word_id":"word_8ecf325a4a609159","word":"agile","reason":"provider_error"}
+{"word_id":"word_d67763fde650be71","word":"agitate","reason":"provider_error"}
+{"word_id":"word_ae21c64a87f6bb0b","word":"align","reason":"provider_error"}
+{"word_id":"word_2eef808d0142d902","word":"alleged","reason":"provider_error"}
+{"word_id":"word_c9c89717cd069f5e","word":"ambience","reason":"provider_error"}
+{"word_id":"word_7d0cc1699a1d0288","word":"amenity","reason":"provider_error"}
+{"word_id":"word_8d69c2fd589aa3ea","word":"humane","reason":"provider_error"}
+{"word_id":"word_e2ac482d1288cec4","word":"hybrid","reason":"provider_error"}
+{"word_id":"word_2b1af727bf18508c","word":"affordability","reason":"provider_error"}
+{"word_id":"word_e8df2087ea8cba64","word":"allocation","reason":"provider_error"}
+{"word_id":"word_6e546a8ece83dc23","word":"appreciate","reason":"provider_error"}
+{"word_id":"word_6e2a78fad6370cd2","word":"austerity","reason":"provider_error"}
+{"word_id":"word_454a46df2e6590d6","word":"organism","reason":"provider_error"}
+{"word_id":"word_db9a124c355d3689","word":"outbreak","reason":"provider_error"}
+{"word_id":"word_14997c15b937a682","word":"literacy","reason":"provider_error"}
+{"word_id":"word_c17e7c31e9a89470","word":"mentor","reason":"provider_error"}
+{"word_id":"word_00b9b2cfa4e55438","word":"plagiarism","reason":"provider_error"}
+{"word_id":"word_fbd74750aaa8cb1c","word":"proficiency","reason":"provider_error"}
+{"word_id":"word_00ae51f72241e85e","word":"syllabus","reason":"provider_error"}
+{"word_id":"word_faca8625951c15c6","word":"tuition","reason":"provider_error"}
+{"word_id":"word_6902c06fa20e1f12","word":"conscientious","reason":"provider_error"}
+{"word_id":"word_d60f71981f757495","word":"forthcoming","reason":"provider_error"}
+{"word_id":"word_e2b2bf1b330216cb","word":"ruthless","reason":"provider_error"}
+{"word_id":"word_3530ee5df975c87f","word":"wary","reason":"provider_error"}
+{"word_id":"word_1a9252013891fed7","word":"parallel","reason":"provider_error"}
+{"word_id":"word_cf1dc74ca627ec43","word":"synonymous","reason":"provider_error"}
+{"word_id":"word_4829baec0d830e8d","word":"burnout","reason":"provider_error"}
+{"word_id":"word_66bfee70e80575b2","word":"commercialize","reason":"provider_error"}
+{"word_id":"word_f4299ace9da74892","word":"empowerment","reason":"provider_error"}
+{"word_id":"word_cb032efc307e3773","word":"retiree","reason":"provider_error"}
+{"word_id":"word_4283c5d33e65cca2","word":"deviation","reason":"provider_error"}
+{"word_id":"word_1f7b3e48ea835751","word":"increment","reason":"provider_error"}
+{"word_id":"word_22e852345ecf1d87","word":"incentivize","reason":"provider_error"}
+{"word_id":"word_3f2f31eb828a3c5c","word":"micromanage","reason":"provider_error"}
+{"word_id":"word_64512b621ed3fc94","word":"proactive","reason":"provider_error"}
+{"word_id":"word_abc98b621f2c1835","word":"synergy","reason":"provider_error"}
+{"word_id":"word_d096ee038d10924e","word":"visionary","reason":"provider_error"}
+{"word_id":"word_4f124ac4c087c3d6","word":"jeopardy","reason":"provider_error"}
+{"word_id":"word_99a0a36600d3fe91","word":"persevere","reason":"provider_error"}
+{"word_id":"word_5fd4a5f7939e48f3","word":"relentless","reason":"provider_error"}
+{"word_id":"word_4beca6486c7caea0","word":"catastrophe","reason":"provider_error"}
+{"word_id":"word_b5ffc01452db1448","word":"cyclone","reason":"provider_error"}
+{"word_id":"word_420eab3804b4066f","word":"devastation","reason":"provider_error"}
+{"word_id":"word_03cb7358f1089b5d","word":"myriad","reason":"provider_error"}
+{"word_id":"word_21b9dd7be0e02219","word":"flourish","reason":"provider_error"}
+{"word_id":"word_8522deabf98b9189","word":"bipartisan","reason":"provider_error"}
+{"word_id":"word_e2907a2e99aa6aeb","word":"constituency","reason":"provider_error"}
+{"word_id":"word_ae5948d30bf4eebe","word":"referendum","reason":"provider_error"}
+{"word_id":"word_63ec3a47282447c0","word":"suffrage","reason":"provider_error"}
+{"word_id":"word_9cd98b18b129c7c1","word":"impartial","reason":"provider_error"}
+{"word_id":"word_d52eb69974bc52a7","word":"agnostic","reason":"provider_error"}
+{"word_id":"word_8da4f587f30db3e6","word":"skepticism","reason":"provider_error"}
+{"word_id":"word_18933a744214de16","word":"diligence","reason":"provider_error"}
+{"word_id":"word_46ce45230091967b","word":"toil","reason":"provider_error"}
+{"word_id":"word_8cf70a6643875e78","word":"hibernate","reason":"provider_error"}
+{"word_id":"word_dde774eaa5e5b5dc","word":"migratory","reason":"provider_error"}
+{"word_id":"word_3c1338a4a4644ecc","word":"nocturnal","reason":"provider_error"}
+{"word_id":"word_b49e8f373dd8cfb2","word":"resounding","reason":"provider_error"}
+{"word_id":"word_31dafde891312644","word":"proliferate","reason":"provider_error"}
+{"word_id":"word_d5eeb110afeba0ac","word":"recede","reason":"provider_error"}
+{"word_id":"word_4496371252e51fd7","word":"disperse","reason":"provider_error"}
+{"word_id":"word_81a5b34cb663f88e","word":"fuse","reason":"provider_error"}
+{"word_id":"word_fbf8f36249b4aae9","word":"segregate","reason":"provider_error"}
+{"word_id":"word_f8b380da7e8c757a","word":"counterintuitive","reason":"provider_error"}
+{"word_id":"word_b4d749d405adbf84","word":"nonpartisan","reason":"provider_error"}
+{"word_id":"word_eab213a499301e79","word":"hypersensitive","reason":"provider_error"}
+{"word_id":"word_c0c33780fb71bbaf","word":"pseudonym","reason":"provider_error"}
+{"word_id":"word_c32dca251fbe6786","word":"brittle","reason":"provider_error"}
+{"word_id":"word_21ba46e1b6007b51","word":"coarse","reason":"provider_error"}
+{"word_id":"word_0b82bf149aecb021","word":"ethic","reason":"provider_error"}
+{"word_id":"word_ac6636e36f5e2f03","word":"flexible","reason":"provider_error"}
+{"word_id":"word_794326126475dfac","word":"fluency","reason":"provider_error"}
+{"word_id":"word_0e543b666973effc","word":"interpreter","reason":"provider_error"}
+{"word_id":"word_ef6866ce0a7d40aa","word":"literal","reason":"provider_error"}
+{"word_id":"word_6d65eed9ff4f2299","word":"cityscape","reason":"provider_error"}
+{"word_id":"word_deb837d344348e6c","word":"pedestrianize","reason":"provider_error"}
+{"word_id":"word_ebc9b6bbc24c6abb","word":"skyline","reason":"provider_error"}
+{"word_id":"word_6b810c90aa9a9985","word":"react","reason":"provider_error"}
+{"word_id":"word_63bb094ca4821a02","word":"relax","reason":"provider_error"}
+{"word_id":"word_31a221740d41fc99","word":"rely","reason":"provider_error"}
+{"word_id":"word_8dd6d34decdc0d26","word":"survive","reason":"provider_error"}
+{"word_id":"word_810a25d76c31e495","word":"symbol","reason":"provider_error"}
+{"word_id":"word_5d8798fd55bbfab5","word":"tense","reason":"provider_error"}
+{"word_id":"word_73905f4f19659418","word":"trafficking","reason":"provider_error"}
+{"word_id":"word_c5e8cfa79b53d0af","word":"reliable","reason":"provider_error"}
+{"word_id":"word_a0ccfe3bf278809a","word":"relieve","reason":"provider_error"}
+{"word_id":"word_88960a397b6cc3a2","word":"relocate","reason":"provider_error"}
+{"word_id":"word_41ffe5457d1a557c","word":"remote","reason":"provider_error"}
+{"word_id":"word_37eca5751d1f6d7d","word":"render","reason":"provider_error"}
+{"word_id":"word_f102476ae6a4dd43","word":"renew","reason":"provider_error"}
+{"word_id":"word_6263ffe0abb187dc","word":"authenticity","reason":"provider_error"}
+{"word_id":"word_e93d4e41f1ef7701","word":"objectivity","reason":"provider_error"}
+{"word_id":"word_272043d62e8f8806","word":"subjectivity","reason":"provider_error"}
+{"word_id":"word_f59cfa0ad48682c8","word":"viewpoint","reason":"provider_error"}
+{"word_id":"word_8fc09b916932134f","word":"elite","reason":"provider_error"}
+{"word_id":"word_04b32409afc0de2b","word":"underclass","reason":"provider_error"}
+{"word_id":"word_fa175ce5976faa78","word":"deterrent","reason":"provider_error"}
+{"word_id":"word_e65790677fc63ce8","word":"mitigate","reason":"provider_error"}
+{"word_id":"word_1ec8ed23068e9caa","word":"alleviate","reason":"provider_error"}
+{"word_id":"word_29af3434dc232081","word":"exacerbate","reason":"provider_error"}
+{"word_id":"word_eb8cad81c40850d6","word":"underpin","reason":"provider_error"}
+{"word_id":"word_82f0130121c4cfdf","word":"pervasive","reason":"provider_error"}
+{"word_id":"word_e349674cd3392338","word":"arbitrary","reason":"provider_error"}
+{"word_id":"word_df2165907007d3e7","word":"plausible","reason":"provider_error"}
+{"word_id":"word_e553227129e2aab9","word":"dubious","reason":"provider_error"}
+{"word_id":"word_cf4ed1002e42dfcb","word":"contentious","reason":"provider_error"}
+{"word_id":"word_adfab20d8f0d780f","word":"conspicuous","reason":"provider_error"}
+{"word_id":"word_95ffa8943cab45c5","word":"adverse","reason":"provider_error"}
+{"word_id":"word_074ec60f6e90ee0b","word":"appreciable","reason":"provider_error"}
+{"word_id":"word_81cc9cb210d5f785","word":"autonomous","reason":"provider_error"}
+{"word_id":"word_68023c950fce89de","word":"bolster","reason":"provider_error"}
+{"word_id":"word_9f35bfd4011fa7db","word":"condone","reason":"provider_error"}
+{"word_id":"word_808dab7938622b79","word":"deviate","reason":"provider_error"}
+{"word_id":"word_be423f0c027b3622","word":"peripheral","reason":"provider_error"}
+{"word_id":"word_0aec96ac18e02dbc","word":"pertinent","reason":"provider_error"}
+{"word_id":"word_448883820668044b","word":"predominant","reason":"provider_error"}
+{"word_id":"word_a794acf93334cb9a","word":"proponent","reason":"provider_error"}
+{"word_id":"word_90471ca530fdd90a","word":"provisional","reason":"provider_error"}
+{"word_id":"word_1dce71ca26340b78","word":"reciprocal","reason":"provider_error"}
+{"word_id":"word_89ef701b64b3eba7","word":"ascribe","reason":"provider_error"}
+{"word_id":"word_c955d041e3c70981","word":"astute","reason":"provider_error"}
+{"word_id":"word_4f0f1dc419dd7c18","word":"austere","reason":"provider_error"}
+{"word_id":"word_94fab5833278905c","word":"benevolent","reason":"provider_error"}
+{"word_id":"word_15045832eb7eb4d0","word":"calibrate","reason":"provider_error"}
+{"word_id":"word_df636f85ef183f20","word":"caveat","reason":"provider_error"}
+{"word_id":"word_d34fe37698c3c748","word":"clout","reason":"provider_error"}
+{"word_id":"word_608531a8ef677d59","word":"coerce","reason":"provider_error"}
+{"word_id":"word_c230b1ae2b543822","word":"collate","reason":"provider_error"}
+{"word_id":"word_6a4afe71f4e04e31","word":"colloquial","reason":"provider_error"}
+{"word_id":"word_dca5d0fd5109c958","word":"complacent","reason":"provider_error"}
+{"word_id":"word_7c33b213e3280642","word":"complicit","reason":"provider_error"}
+{"word_id":"word_9c5500bdb07e2ab8","word":"disdain","reason":"provider_error"}
+{"word_id":"word_6a75e668365aefba","word":"dispel","reason":"provider_error"}
+{"word_id":"word_de608d31e634db29","word":"dissent","reason":"provider_error"}
+{"word_id":"word_fcde3007bea6eb9b","word":"antiquated","reason":"provider_error"}
+{"word_id":"word_d6ec8b69568b8596","word":"apex","reason":"provider_error"}
+{"word_id":"word_00672d944d9225b3","word":"appal","reason":"provider_error"}
+{"word_id":"word_e5c2bb9235d8db73","word":"apprehend","reason":"provider_error"}
+{"word_id":"word_f21ad3dff8cb7e81","word":"appropriation","reason":"provider_error"}
+{"word_id":"word_1f6f869f2cc326de","word":"dynamism","reason":"provider_error"}
+{"word_id":"word_e3164293edaffa30","word":"eclectic","reason":"provider_error"}
+{"word_id":"word_58ebc177d318abca","word":"egalitarian","reason":"provider_error"}
+{"word_id":"word_d2c26414c3b6d01c","word":"eloquent","reason":"provider_error"}
+{"word_id":"word_537c0adb76140ef5","word":"elusive","reason":"provider_error"}
+{"word_id":"word_1425ad40cf9d0c4e","word":"emancipate","reason":"provider_error"}
+{"word_id":"word_dacb0bcc0e34a506","word":"fraught","reason":"provider_error"}
+{"word_id":"word_33d7ae381996f9b3","word":"frivolous","reason":"provider_error"}
+{"word_id":"word_09ceeb502730e295","word":"grandiose","reason":"provider_error"}
+{"word_id":"word_3b19bb32e9d06c62","word":"gravitate","reason":"provider_error"}
+{"word_id":"word_199ed00ff250235a","word":"gratuitous","reason":"provider_error"}
+{"word_id":"word_13a4a6ecb0367084","word":"haphazard","reason":"provider_error"}
+{"word_id":"word_1bbe6dd1229af223","word":"hedge","reason":"provider_error"}
+{"word_id":"word_1377c2a05098b0c2","word":"heterogeneous","reason":"provider_error"}
+{"word_id":"word_4ea3178369e0ab0a","word":"homogeneous","reason":"provider_error"}
+{"word_id":"word_b0e036b11e99dad3","word":"hyperbole","reason":"provider_error"}
+{"word_id":"word_d9c709db47c079e9","word":"hypocrisy","reason":"provider_error"}
+{"word_id":"word_d867c493f75e5785","word":"bespoke","reason":"provider_error"}
+{"word_id":"word_5b9bab66b2b37a01","word":"depreciate","reason":"provider_error"}
+{"word_id":"word_4e27cdf76729c0bc","word":"endowment","reason":"provider_error"}
+{"word_id":"word_d3d56888d3162009","word":"hallmark","reason":"provider_error"}
+{"word_id":"word_e7bf0a07989836bb","word":"incur","reason":"provider_error"}
+{"word_id":"word_92aa2eae6bdd28de","word":"insolvent","reason":"provider_error"}
+{"word_id":"word_543bd676ae8f4b47","word":"liquidity","reason":"provider_error"}
+{"word_id":"word_9ec395ca2864c34f","word":"lucrative","reason":"provider_error"}
+{"word_id":"word_ebbb3770709a5d1b","word":"macroeconomic","reason":"provider_error"}
+{"word_id":"word_6edf673678345a74","word":"malpractice","reason":"provider_error"}
+{"word_id":"word_27d2ad547b5b96fb","word":"procurement","reason":"provider_error"}
+{"word_id":"word_6d35e0f68c7bcd6b","word":"protectionism","reason":"provider_error"}
+{"word_id":"word_44f008941c50ab82","word":"regressive","reason":"provider_error"}
+{"word_id":"word_71d802dab20f9f7c","word":"remuneration","reason":"provider_error"}
+{"word_id":"word_a56675f5108f7585","word":"solvent","reason":"provider_error"}
+{"word_id":"word_54d56ee7eb9c661d","word":"syndicate","reason":"provider_error"}
+{"word_id":"word_245d1e8a77f995f8","word":"tender","reason":"provider_error"}
+{"word_id":"word_f94b2322c81ad718","word":"anomalous","reason":"provider_error"}
+{"word_id":"word_551b399bbfa53473","word":"fossilize","reason":"provider_error"}
+{"word_id":"word_88147c8c363e3cba","word":"pedagogy","reason":"provider_error"}
+{"word_id":"word_318f8f8c8f912b90","word":"remedial","reason":"provider_error"}
+{"word_id":"word_2fc5d66875c0081f","word":"congenital","reason":"provider_error"}
+{"word_id":"word_fadad0c2cc8c5883","word":"debilitating","reason":"provider_error"}
+{"word_id":"word_2458f7f0e8983fac","word":"incubation","reason":"provider_error"}
+{"word_id":"word_2dfcb4debf8c5de3","word":"prognosis","reason":"provider_error"}
+{"word_id":"word_cd5eacc6d807ff62","word":"audacity","reason":"provider_error"}
+{"word_id":"word_bf2790f0a948eaca","word":"balk","reason":"provider_error"}
+{"word_id":"word_61144e0a1e956224","word":"benefactor","reason":"provider_error"}
+{"word_id":"word_fdd006a123b0ddee","word":"bravado","reason":"provider_error"}
+{"word_id":"word_ab504bc0546f7616","word":"brusque","reason":"provider_error"}
+{"word_id":"word_2d39f3b19bc380b4","word":"callous","reason":"provider_error"}
+{"word_id":"word_3795b14b100a7397","word":"plausibility","reason":"provider_error"}
+{"word_id":"word_17877e0ebe4251bb","word":"meager","reason":"provider_error"}
+{"word_id":"word_6682eace4871d59a","word":"negligent","reason":"provider_error"}
+{"word_id":"word_a061fba2d675ab2f","word":"scant","reason":"provider_error"}
+{"word_id":"word_fc7645566c490037","word":"substantive","reason":"provider_error"}
+{"word_id":"word_9457039418268b49","word":"sweeping","reason":"provider_error"}
+{"word_id":"word_defe4a008986a770","word":"injunction","reason":"provider_error"}
+{"word_id":"word_4fe0fd261579a6ab","word":"ordinance","reason":"provider_error"}
+{"word_id":"word_a20e7481161cc239","word":"ratify","reason":"provider_error"}
+{"word_id":"word_f75a30ed20c31c99","word":"rescind","reason":"provider_error"}
+{"word_id":"word_0a11c48619319b36","word":"sanction","reason":"provider_error"}
+{"word_id":"word_ba01b57a9d48aa4c","word":"stipulate","reason":"provider_error"}
+{"word_id":"word_a0952d0e2bcb9590","word":"ethnography","reason":"provider_error"}
+{"word_id":"word_f744e20b0b7dfe7b","word":"paleontology","reason":"provider_error"}
+{"word_id":"word_39c18a055dc4260d","word":"vernacular","reason":"provider_error"}
+{"word_id":"word_d0313481b57ad201","word":"aquifer","reason":"provider_error"}
+{"word_id":"word_e28f069e79b5fb79","word":"staggering","reason":"provider_error"}
+{"word_id":"word_fd57f00b03be6cb2","word":"startling","reason":"provider_error"}
+{"word_id":"word_680abe58bd4bb8d3","word":"incumbent","reason":"provider_error"}
+{"word_id":"word_c89d89231f300d09","word":"insurgent","reason":"provider_error"}
+{"word_id":"word_c4bae7d4de9e65c5","word":"stringent","reason":"provider_error"}
+{"word_id":"word_420ea56b9d5e50c6","word":"vehement","reason":"provider_error"}
+{"word_id":"word_1793d42a783d7c45","word":"buoyancy","reason":"provider_error"}
+{"word_id":"word_46b34019abdeece8","word":"enormity","reason":"provider_error"}
+{"word_id":"word_72c37c2af489a513","word":"pretension","reason":"provider_error"}
+{"word_id":"word_90b4323d536b0bd8","word":"propensity","reason":"provider_error"}
+{"word_id":"word_4480957886a3ab1b","word":"sanctity","reason":"provider_error"}
+{"word_id":"word_4b83cc90ee08f66b","word":"solemnity","reason":"provider_error"}
+{"word_id":"word_85f1ba507919a8ae","word":"timidity","reason":"provider_error"}
+{"word_id":"word_c8b85c7f7a5b7bf7","word":"unanimity","reason":"provider_error"}
+{"word_id":"word_c5be4da3c6ceceac","word":"colloquialism","reason":"provider_error"}
+{"word_id":"word_438a7727880f7b9b","word":"etymology","reason":"provider_error"}
+{"word_id":"word_3a34a8b83ee33cc4","word":"lexicon","reason":"provider_error"}
+{"word_id":"word_208bee2915abda97","word":"inundate","reason":"provider_error"}
+{"word_id":"word_4d9fe5f57b004f4d","word":"posit","reason":"provider_error"}
+{"word_id":"word_b29ca34b64f26192","word":"gamut","reason":"provider_error"}
+{"word_id":"word_77c23bdf21f4e131","word":"plethora","reason":"provider_error"}
+{"word_id":"word_47ef7825324d9bb6","word":"languish","reason":"provider_error"}
+{"word_id":"word_956deb22d15f446a","word":"wane","reason":"provider_error"}
+{"word_id":"word_566c1223407a77b7","word":"relativism","reason":"provider_error"}
+{"word_id":"word_f90e10d0bcdf5020","word":"subliminal","reason":"provider_error"}
+{"word_id":"word_50ea65deba76b1ee","word":"attrition","reason":"provider_error"}
+{"word_id":"word_ee27db1394414b6d","word":"nepotism","reason":"provider_error"}
+{"word_id":"word_590b7f62ed36b48b","word":"modernity","reason":"provider_error"}
+{"word_id":"word_00bbe7ff9c03b3c1","word":"postmodern","reason":"provider_error"}
+{"word_id":"word_780e5528e2000c20","word":"extrapolate","reason":"provider_error"}
+{"word_id":"word_91f6e60801bb2f79","word":"perpetuate","reason":"provider_error"}
+{"word_id":"word_58274a5beab9da59","word":"circumvent","reason":"provider_error"}
+{"word_id":"word_9fffc7bd35a8e060","word":"curtail","reason":"provider_error"}
+{"word_id":"word_cd4ebec97fe05087","word":"expedite","reason":"provider_error"}
+{"word_id":"word_aa4b65f60558fd9d","word":"tenable","reason":"provider_error"}
+{"word_id":"word_2e26d67e17211610","word":"protracted","reason":"provider_error"}
+{"word_id":"word_2d43d7a5e13a4186","word":"accentuate","reason":"provider_error"}
+{"word_id":"word_94ea5135d58c5d0a","word":"accrue","reason":"provider_error"}
+{"word_id":"word_de515d54b70acb1a","word":"acumen","reason":"provider_error"}
+{"word_id":"word_0514f0642f8497e6","word":"adroit","reason":"provider_error"}
+{"word_id":"word_bb5062d91b773fa4","word":"amalgamate","reason":"provider_error"}
+{"word_id":"word_843eedf817ca074e","word":"intransigent","reason":"provider_error"}
+{"word_id":"word_554c0c8a92f89154","word":"inured","reason":"provider_error"}
+{"word_id":"word_969dc72ee8f05508","word":"malaise","reason":"provider_error"}
+{"word_id":"word_da1829441bfcd7b4","word":"unabashed","reason":"provider_error"}
+{"word_id":"word_60715dc8f25eaf7a","word":"unassailable","reason":"provider_error"}
+{"word_id":"word_d39a8dc0bcc71842","word":"unbridled","reason":"provider_error"}
+{"word_id":"word_fba24d026b998cf2","word":"indefatigable","reason":"provider_error"}
+{"word_id":"word_1a688b428c678d4e","word":"obdurate","reason":"provider_error"}
+{"word_id":"word_bf0b5a4813b85326","word":"parsimonious","reason":"provider_error"}
+{"word_id":"word_e6feb1ca5806b8f0","word":"sanguine","reason":"provider_error"}
+{"word_id":"word_77fbf728ef6a8b45","word":"truculent","reason":"provider_error"}
+{"word_id":"word_46710a6adbf519c2","word":"avaricious","reason":"provider_error"}
+{"word_id":"word_c68b98bbc35e2f11","word":"denouement","reason":"provider_error"}
+{"word_id":"word_4768b179535a1e27","word":"encumbrance","reason":"provider_error"}
+{"word_id":"word_3eda6344aea6a6fa","word":"exhortation","reason":"provider_error"}
+{"word_id":"word_e740501139167d3d","word":"expunge","reason":"provider_error"}
+{"word_id":"word_f4ce63a7f31354e5","word":"extemporaneous","reason":"provider_error"}
+{"word_id":"word_a538e819e753a0f6","word":"fetter","reason":"provider_error"}
+{"word_id":"word_fe7110fa2c82ee4f","word":"aircraft","reason":"provider_error"}
+{"word_id":"word_c64033672f5ca984","word":"engine","reason":"provider_error"}
+{"word_id":"word_d53b257ba8da2741","word":"ice","reason":"provider_error"}
+{"word_id":"word_972a13cbbe5e845e","word":"rich","reason":"provider_error"}
+{"word_id":"word_8015f1d1fd4aee94","word":"advice","reason":"provider_error"}
+{"word_id":"word_92504616ed595e2e","word":"sequence","reason":"provider_error"}
+{"word_id":"word_fc166eb81361ff31","word":"route","reason":"provider_error"}
+{"word_id":"word_797efd83f8c15dee","word":"implementation","reason":"provider_error"}
+{"word_id":"word_8527edb7b0cd63a6","word":"efficient","reason":"provider_error"}
+{"word_id":"word_5ccbf9c9c5fc1bc3","word":"category","reason":"provider_error"}
+{"word_id":"word_54ccb2d90fca8ab1","word":"substance","reason":"provider_error"}
+{"word_id":"word_e78b52d7bb28ef2a","word":"suppose","reason":"provider_error"}
+{"word_id":"word_5042d146667518a1","word":"shop","reason":"provider_error"}
+{"word_id":"word_05b4b7c2a278dcf8","word":"cited","reason":"provider_error"}
+{"word_id":"word_ff9f2d5c9eda0ce8","word":"rooms","reason":"provider_error"}
+{"word_id":"word_97d3d178c6886ca6","word":"consequences","reason":"provider_error"}
+{"word_id":"word_6cf34755b9de3322","word":"baby","reason":"provider_error"}
+{"word_id":"word_8b5241c71bbdffec","word":"caught","reason":"provider_error"}
+{"word_id":"word_ffdf4ccbf050a0f3","word":"bone","reason":"provider_error"}
+{"word_id":"word_76a4e12c213db0ac","word":"draw","reason":"provider_error"}
+{"word_id":"word_26e8e3d3a68a48f9","word":"eastern","reason":"provider_error"}
+{"word_id":"word_657db1e0dffa000c","word":"raise","reason":"provider_error"}
+{"word_id":"word_26275c038c1ba16a","word":"arranged","reason":"provider_error"}
+{"word_id":"word_c9390ce196939064","word":"rocks","reason":"provider_error"}
+{"word_id":"word_e29e8d943c26ff16","word":"finding","reason":"provider_error"}
+{"word_id":"word_841117513f5207a8","word":"leaves","reason":"provider_error"}
+{"word_id":"word_d2a04d71301a8915","word":"client","reason":"provider_error"}
+{"word_id":"word_6cdd5c40bc686273","word":"arrangements","reason":"provider_error"}
+{"word_id":"word_e97bbc300bead09d","word":"damages","reason":"provider_error"}
+{"word_id":"word_3dbcdc08e11750ff","word":"recognize","reason":"provider_error"}
+{"word_id":"word_d583e247cac42d7f","word":"mills","reason":"Already has complete entry."}
+{"word_id":"word_f578a9e248fbe9f0","word":"quantify","reason":"provider_error"}
+{"word_id":"word_7eb6050d0520ac84","word":"retain","reason":"provider_error"}
+{"word_id":"word_658c8286c17e4026","word":"reveal","reason":"provider_error"}
+{"word_id":"word_a5062f56eb9c6341","word":"revise","reason":"provider_error"}
+{"word_id":"word_b37299e1f1f93a4a","word":"sequential","reason":"provider_error"}
+{"word_id":"word_bea8411e219c0dd3","word":"sparse","reason":"provider_error"}
+{"word_id":"word_fb9d9865dae58697","word":"affluent","reason":"provider_error"}
+{"word_id":"word_b3d43e4a2d5192e9","word":"apprehensive","reason":"provider_error"}
+{"word_id":"word_52b3a0d28c064349","word":"aspiration","reason":"provider_error"}
+{"word_id":"word_57389f5f80a5ecf4","word":"avert","reason":"provider_error"}
+{"word_id":"word_224bb226ded3af54","word":"belated","reason":"provider_error"}
+{"word_id":"word_8600e8291145097e","word":"bilateral","reason":"provider_error"}
+{"word_id":"word_77d24a96cfa03362","word":"deplete","reason":"provider_error"}
+{"word_id":"word_602d9caf0b398a70","word":"depict","reason":"provider_error"}
+{"word_id":"word_9f4acf4ed952265c","word":"dictate","reason":"provider_error"}
+{"word_id":"word_f86d317b9f1228eb","word":"dilute","reason":"provider_error"}
+{"word_id":"word_f57e38069445fdec","word":"discard","reason":"provider_error"}
+{"word_id":"word_e8fcfa624e4fb662","word":"discourse","reason":"provider_error"}
+{"word_id":"word_cca6ff5ca0b43025","word":"deforestation","reason":"provider_error"}
+{"word_id":"word_b927ef9bdaeb1778","word":"degradation","reason":"provider_error"}
+{"word_id":"word_04b4ce72b7217617","word":"retrospect","reason":"provider_error"}
+{"word_id":"word_b70ce0e001e94d74","word":"paraphrase","reason":"provider_error"}
+{"word_id":"word_512767cdff378816","word":"rhetoric","reason":"provider_error"}
+{"word_id":"word_3d07e48f77290383","word":"rhetorical","reason":"provider_error"}
+{"word_id":"word_ae7d03f00ecba695","word":"adaptability","reason":"provider_error"}
+{"word_id":"word_4547bd227f901b52","word":"compatibility","reason":"provider_error"}
+{"word_id":"word_24c5512fcc2da0c7","word":"probation","reason":"provider_error"}
+{"word_id":"word_c911f281afc8af5c","word":"severance","reason":"provider_error"}
+{"word_id":"word_c8c62b60c9e028c4","word":"tenure","reason":"provider_error"}
+{"word_id":"word_ebc418d023d1bedf","word":"anonymize","reason":"provider_error"}
+{"word_id":"word_d780042543b5df97","word":"encryption","reason":"provider_error"}
+{"word_id":"word_190b435b70400ff4","word":"consult","reason":"provider_error"}
+{"word_id":"word_10b3b9d9c0eea382","word":"stance","reason":"provider_error"}
+{"word_id":"word_9c83db73a0e4aaac","word":"ambiguity","reason":"provider_error"}
+{"word_id":"word_8da4f587f30db3e6","word":"skepticism","reason":"provider_error"}
+{"word_id":"word_18933a744214de16","word":"diligence","reason":"provider_error"}
+{"word_id":"word_46ce45230091967b","word":"toil","reason":"provider_error"}
+{"word_id":"word_8cf70a6643875e78","word":"hibernate","reason":"provider_error"}
+{"word_id":"word_f8b380da7e8c757a","word":"counterintuitive","reason":"provider_error"}
+{"word_id":"word_b4d749d405adbf84","word":"nonpartisan","reason":"provider_error"}
+{"word_id":"word_eab213a499301e79","word":"hypersensitive","reason":"provider_error"}
+{"word_id":"word_c0c33780fb71bbaf","word":"pseudonym","reason":"provider_error"}
+{"word_id":"word_c32dca251fbe6786","word":"brittle","reason":"provider_error"}
+{"word_id":"word_21ba46e1b6007b51","word":"coarse","reason":"provider_error"}
+{"word_id":"word_ac6636e36f5e2f03","word":"flexible","reason":"provider_error"}
+{"word_id":"word_785987648f85190c","word":"format","reason":"provider_error"}
+{"word_id":"word_9e59d42533de1328","word":"generate","reason":"provider_error"}
+{"word_id":"word_e3fb63980a171554","word":"guarantee","reason":"provider_error"}
+{"word_id":"word_d3f2311914ceec55","word":"identical","reason":"provider_error"}
+{"word_id":"word_7d98ad90ac8076d2","word":"repository","reason":"provider_error"}
+{"word_id":"word_794326126475dfac","word":"fluency","reason":"provider_error"}
+{"word_id":"word_0e543b666973effc","word":"interpreter","reason":"provider_error"}
+{"word_id":"word_ef6866ce0a7d40aa","word":"literal","reason":"provider_error"}
+{"word_id":"word_6d65eed9ff4f2299","word":"cityscape","reason":"provider_error"}
+{"word_id":"word_deb837d344348e6c","word":"pedestrianize","reason":"provider_error"}
+{"word_id":"word_29af3434dc232081","word":"exacerbate","reason":"provider_error"}
+{"word_id":"word_eb8cad81c40850d6","word":"underpin","reason":"provider_error"}
+{"word_id":"word_58ebc177d318abca","word":"egalitarian","reason":"provider_error"}
+{"word_id":"word_d2c26414c3b6d01c","word":"eloquent","reason":"provider_error"}
+{"word_id":"word_537c0adb76140ef5","word":"elusive","reason":"provider_error"}
+{"word_id":"word_1425ad40cf9d0c4e","word":"emancipate","reason":"provider_error"}
+{"word_id":"word_d6d74850f573a81d","word":"entrenched","reason":"provider_error"}
+{"word_id":"word_8d5fb254a70cf8ea","word":"fervor","reason":"provider_error"}
+{"word_id":"word_b0b0a11e2df96769","word":"insular","reason":"provider_error"}
+{"word_id":"word_b0e56ccf8c82aaac","word":"irreconcilable","reason":"provider_error"}
+{"word_id":"word_811446b7bf9f2b2b","word":"irrevocable","reason":"provider_error"}
+{"word_id":"word_6c6278a85fc4948c","word":"malevolent","reason":"provider_error"}
+{"word_id":"word_31a7d874fda4ac36","word":"misgiving","reason":"provider_error"}
+{"word_id":"word_99124e8b25883341","word":"disarray","reason":"provider_error"}
+{"word_id":"word_23c5d535e5c281fe","word":"discordant","reason":"provider_error"}
+{"word_id":"word_680abe58bd4bb8d3","word":"incumbent","reason":"provider_error"}
+{"word_id":"word_c89d89231f300d09","word":"insurgent","reason":"provider_error"}
+{"word_id":"word_c4bae7d4de9e65c5","word":"stringent","reason":"provider_error"}
+{"word_id":"word_420ea56b9d5e50c6","word":"vehement","reason":"provider_error"}
+{"word_id":"word_1793d42a783d7c45","word":"buoyancy","reason":"provider_error"}
+{"word_id":"word_208bee2915abda97","word":"inundate","reason":"provider_error"}
+{"word_id":"word_4d9fe5f57b004f4d","word":"posit","reason":"provider_error"}
+{"word_id":"word_b29ca34b64f26192","word":"gamut","reason":"provider_error"}
+{"word_id":"word_77c23bdf21f4e131","word":"plethora","reason":"provider_error"}
+{"word_id":"word_47ef7825324d9bb6","word":"languish","reason":"provider_error"}
+{"word_id":"word_956deb22d15f446a","word":"wane","reason":"provider_error"}
+{"word_id":"word_7ed429e4bfba9888","word":"bane","reason":"provider_error"}
+{"word_id":"word_590b5d9e4748aee2","word":"bastion","reason":"provider_error"}
+{"word_id":"word_b2127ee90ff6515b","word":"beget","reason":"provider_error"}
+{"word_id":"word_8bb6dd3c7ad2cfe8","word":"belie","reason":"provider_error"}
+{"word_id":"word_b73adf5f409db824","word":"bifurcate","reason":"provider_error"}
+{"word_id":"word_49f697a8b043e7d8","word":"cavalier","reason":"provider_error"}
+{"word_id":"word_c68b98bbc35e2f11","word":"denouement","reason":"provider_error"}
+{"word_id":"word_4768b179535a1e27","word":"encumbrance","reason":"provider_error"}
+{"word_id":"word_3eda6344aea6a6fa","word":"exhortation","reason":"provider_error"}
+{"word_id":"word_e740501139167d3d","word":"expunge","reason":"provider_error"}
+{"word_id":"word_f4ce63a7f31354e5","word":"extemporaneous","reason":"provider_error"}
+{"word_id":"word_a538e819e753a0f6","word":"fetter","reason":"provider_error"}
+{"word_id":"word_ffdf4ccbf050a0f3","word":"bone","reason":"provider_error"}
+{"word_id":"word_76a4e12c213db0ac","word":"draw","reason":"provider_error"}
+{"word_id":"word_26e8e3d3a68a48f9","word":"eastern","reason":"provider_error"}
+{"word_id":"word_657db1e0dffa000c","word":"raise","reason":"provider_error"}
+{"word_id":"word_26275c038c1ba16a","word":"arranged","reason":"provider_error"}
+{"word_id":"word_c9390ce196939064","word":"rocks","reason":"provider_error"}
+{"word_id":"word_02f396e3d3455e1d","word":"inherent","reason":"provider_error"}
+{"word_id":"word_0d8898fc6c141dff","word":"profound","reason":"provider_error"}
+{"word_id":"word_28089e4373ea3a44","word":"prevalent","reason":"provider_error"}
+{"word_id":"word_1ab3d39121ef606b","word":"subjective","reason":"provider_error"}
+{"word_id":"word_a9693078731878c7","word":"hypothetical","reason":"provider_error"}
+{"word_id":"word_a7e05566f3eeac5f","word":"viable","reason":"provider_error"}
+{"word_id":"word_90e7552bb9a2611e","word":"underlying","reason":"provider_error"}
+{"word_id":"word_fb9d9865dae58697","word":"affluent","reason":"provider_error"}
+{"word_id":"word_b3d43e4a2d5192e9","word":"apprehensive","reason":"provider_error"}
+{"word_id":"word_52b3a0d28c064349","word":"aspiration","reason":"provider_error"}
+{"word_id":"word_57389f5f80a5ecf4","word":"avert","reason":"provider_error"}
+{"word_id":"word_224bb226ded3af54","word":"belated","reason":"provider_error"}
+{"word_id":"word_f9e668244243b271","word":"globalization","reason":"provider_error"}
+{"word_id":"word_1a10fb153a919b07","word":"overpopulation","reason":"provider_error"}
+{"word_id":"word_71570b44af4e5c81","word":"affluence","reason":"provider_error"}
+{"word_id":"word_c6670de6f04d439e","word":"aerospace","reason":"provider_error"}
+{"word_id":"word_4b7835b90d570bbf","word":"lunar","reason":"provider_error"}
+{"word_id":"word_eea1a1b88e41822d","word":"multidimensional","reason":"provider_error"}
+{"word_id":"word_190b435b70400ff4","word":"consult","reason":"provider_error"}
+{"word_id":"word_5429eb02ba5e19de","word":"generalization","reason":"provider_error"}
+{"word_id":"word_10b3b9d9c0eea382","word":"stance","reason":"provider_error"}
+{"word_id":"word_9c83db73a0e4aaac","word":"ambiguity","reason":"provider_error"}
+{"word_id":"word_8da4f587f30db3e6","word":"skepticism","reason":"provider_error"}
+{"word_id":"word_18933a744214de16","word":"diligence","reason":"provider_error"}
+{"word_id":"word_90471ca530fdd90a","word":"provisional","reason":"provider_error"}
+{"word_id":"word_1dce71ca26340b78","word":"reciprocal","reason":"provider_error"}
+{"word_id":"word_89ef701b64b3eba7","word":"ascribe","reason":"provider_error"}
+{"word_id":"word_c955d041e3c70981","word":"astute","reason":"provider_error"}
+{"word_id":"word_94fab5833278905c","word":"benevolent","reason":"provider_error"}
+{"word_id":"word_15045832eb7eb4d0","word":"calibrate","reason":"provider_error"}
+{"word_id":"word_7c33b213e3280642","word":"complicit","reason":"provider_error"}
+{"word_id":"word_8232aa58b3ee5f91","word":"contingent","reason":"provider_error"}
+{"word_id":"word_1ab3280796d42482","word":"converge","reason":"provider_error"}
+{"word_id":"word_173bc3120e684794","word":"discretionary","reason":"provider_error"}
+{"word_id":"word_2f411d3bba163647","word":"cardinal","reason":"provider_error"}
+{"word_id":"word_58ebc177d318abca","word":"egalitarian","reason":"provider_error"}
+{"word_id":"word_260abdbabde191e3","word":"conceivably","reason":"provider_error"}
+{"word_id":"word_bcfd80e5e7f987ed","word":"monolithic","reason":"provider_error"}
+{"word_id":"word_e7e76b9be340bd64","word":"multifaceted","reason":"provider_error"}
+{"word_id":"word_f2763279c66afa9c","word":"innocuous","reason":"provider_error"}
+{"word_id":"word_8d545f076919fbb6","word":"insidious","reason":"provider_error"}
+{"word_id":"word_b0b0a11e2df96769","word":"insular","reason":"provider_error"}
+{"word_id":"word_680abe58bd4bb8d3","word":"incumbent","reason":"provider_error"}
+{"word_id":"word_c89d89231f300d09","word":"insurgent","reason":"provider_error"}
+{"word_id":"word_c4bae7d4de9e65c5","word":"stringent","reason":"provider_error"}
+{"word_id":"word_420ea56b9d5e50c6","word":"vehement","reason":"provider_error"}
+{"word_id":"word_1793d42a783d7c45","word":"buoyancy","reason":"provider_error"}
+{"word_id":"word_46b34019abdeece8","word":"enormity","reason":"provider_error"}
+{"word_id":"word_c12cde135131ff6a","word":"demonstrable","reason":"provider_error"}
+{"word_id":"word_e5c80fb9d5dc0899","word":"indelible","reason":"provider_error"}
+{"word_id":"word_89fef9e436fe893f","word":"infallible","reason":"provider_error"}
+{"word_id":"word_b1d2a9920d34e19a","word":"acquisitive","reason":"provider_error"}
+{"word_id":"word_583e3002681e62d0","word":"scrupulous","reason":"provider_error"}
+{"word_id":"word_4827e617fcfc6a75","word":"unrelenting","reason":"provider_error"}
+{"word_id":"word_c702149b446de94a","word":"bigotry","reason":"provider_error"}
+{"word_id":"word_da5045f9eabdd39c","word":"xenophobic","reason":"provider_error"}
+{"word_id":"word_03fe032e13096aa3","word":"dogma","reason":"provider_error"}
+{"word_id":"word_f276358f6c8c6609","word":"orthodoxy","reason":"provider_error"}
+{"word_id":"word_708086ce9bb61642","word":"zealot","reason":"provider_error"}
+{"word_id":"word_74d5567663faebe0","word":"zealous","reason":"provider_error"}
+{"word_id":"word_4fb64cf828d31429","word":"vindictive","reason":"provider_error"}
+{"word_id":"word_4afa65b8c912f513","word":"veiled","reason":"provider_error"}
+{"word_id":"word_8a80a7507de05cb8","word":"throng","reason":"provider_error"}
+{"word_id":"word_d081a0d42567aabf","word":"nascent","reason":"provider_error"}
+{"word_id":"word_f04a2c21cb9e2d68","word":"garbled","reason":"provider_error"}
+{"word_id":"word_9773a2062200590e","word":"intersperse","reason":"provider_error"}
+{"word_id":"word_02aa7e5a771beea1","word":"apposite","reason":"provider_error"}
+{"word_id":"word_e9b35d86dcb36907","word":"avow","reason":"provider_error"}
+{"word_id":"word_3249323c663d25c6","word":"consummate","reason":"provider_error"}
+{"word_id":"word_08e1a26cf51cb6fb","word":"countervailing","reason":"provider_error"}
+{"word_id":"word_c68b98bbc35e2f11","word":"denouement","reason":"provider_error"}
+{"word_id":"word_4768b179535a1e27","word":"encumbrance","reason":"provider_error"}
+{"word_id":"word_9424ac79de34c97c","word":"noise","reason":"provider_error"}
+{"word_id":"word_5b17a6c606a82daf","word":"comments","reason":"provider_error"}
+{"word_id":"word_3f14ecc8cc777b55","word":"later","reason":"provider_error"}
+{"word_id":"word_ffdf4ccbf050a0f3","word":"bone","reason":"provider_error"}
+{"word_id":"word_76a4e12c213db0ac","word":"draw","reason":"provider_error"}
+{"word_id":"word_26e8e3d3a68a48f9","word":"eastern","reason":"provider_error"}
+{"word_id":"word_657db1e0dffa000c","word":"raise","reason":"provider_error"}
+{"word_id":"word_26275c038c1ba16a","word":"arranged","reason":"provider_error"}
+{"word_id":"word_c9390ce196939064","word":"rocks","reason":"provider_error"}
+{"word_id":"word_841117513f5207a8","word":"leaves","reason":"provider_error"}
+{"word_id":"word_d2a04d71301a8915","word":"client","reason":"provider_error"}
+{"word_id":"word_6cdd5c40bc686273","word":"arrangements","reason":"provider_error"}
+{"word_id":"word_57389f5f80a5ecf4","word":"avert","reason":"provider_error"}
+{"word_id":"word_224bb226ded3af54","word":"belated","reason":"provider_error"}
+{"word_id":"word_77d24a96cfa03362","word":"deplete","reason":"provider_error"}
+{"word_id":"word_602d9caf0b398a70","word":"depict","reason":"provider_error"}
+{"word_id":"word_9f4acf4ed952265c","word":"dictate","reason":"provider_error"}
+{"word_id":"word_f86d317b9f1228eb","word":"dilute","reason":"provider_error"}
+{"word_id":"word_9c83db73a0e4aaac","word":"ambiguity","reason":"provider_error"}
+{"word_id":"word_8da4f587f30db3e6","word":"skepticism","reason":"provider_error"}
+{"word_id":"word_18933a744214de16","word":"diligence","reason":"provider_error"}
+{"word_id":"word_8cf70a6643875e78","word":"hibernate","reason":"provider_error"}
+{"word_id":"word_862298a39b9dce3b","word":"undocumented","reason":"provider_error"}
+{"word_id":"word_c6ac39391a72f71f","word":"suppression","reason":"provider_error"}
+{"word_id":"word_07546e2443252062","word":"adjudicator","reason":"provider_error"}
+{"word_id":"word_439eade5cee6c33b","word":"belligerent","reason":"provider_error"}
+{"word_id":"word_11da95f844d312f4","word":"deferential","reason":"provider_error"}
+{"word_id":"word_28d9ab8c49715d9e","word":"insolent","reason":"provider_error"}
+{"word_id":"word_55c50bce192c0ac7","word":"jovial","reason":"provider_error"}
+{"word_id":"word_8da24bbec7b7d96a","word":"tenacious","reason":"provider_error"}
+{"word_id":"word_246bfd9d75c5c0fb","word":"gradation","reason":"provider_error"}
+{"word_id":"word_d5192797c00dc19d","word":"assiduous","reason":"provider_error"}
+{"word_id":"word_a3b6e77da8b8b360","word":"caustic","reason":"provider_error"}
+{"word_id":"word_ae20e1200ea68f71","word":"hapless","reason":"provider_error"}
+{"word_id":"word_bdbffddd83b19b27","word":"aberrant","reason":"provider_error"}
+{"word_id":"word_9c6cd591259e6898","word":"filial","reason":"provider_error"}
+{"word_id":"word_7cb06027e87e7d84","word":"organization","reason":"provider_error"}
+{"word_id":"word_c64033672f5ca984","word":"engine","reason":"provider_error"}
+{"word_id":"word_d53b257ba8da2741","word":"ice","reason":"provider_error"}
+{"word_id":"word_972a13cbbe5e845e","word":"rich","reason":"provider_error"}
+{"word_id":"word_fc166eb81361ff31","word":"route","reason":"provider_error"}
+{"word_id":"word_9424ac79de34c97c","word":"noise","reason":"provider_error"}
+{"word_id":"word_bde4fcfe6cc9fbf1","word":"staple","reason":"provider_error"}
+{"word_id":"word_04b4ce72b7217617","word":"retrospect","reason":"provider_error"}
+{"word_id":"word_b70ce0e001e94d74","word":"paraphrase","reason":"provider_error"}
+{"word_id":"word_512767cdff378816","word":"rhetoric","reason":"provider_error"}
+{"word_id":"word_3d07e48f77290383","word":"rhetorical","reason":"provider_error"}
+{"word_id":"word_ae7d03f00ecba695","word":"adaptability","reason":"provider_error"}
+{"word_id":"word_13a4a6ecb0367084","word":"haphazard","reason":"provider_error"}
+{"word_id":"word_8bcff2ab7a28149f","word":"biosphere","reason":"provider_error"}
+{"word_id":"word_2d39f3b19bc380b4","word":"callous","reason":"provider_error"}
+{"word_id":"word_1f23487e39b45a71","word":"downtrodden","reason":"provider_error"}
+{"word_id":"word_48c910b6614c4a0a","word":"cryptography","reason":"provider_error"}
+{"word_id":"word_3dc0607f0246bdb6","word":"meteorological","reason":"provider_error"}
+{"word_id":"word_11da95f844d312f4","word":"deferential","reason":"provider_error"}
+{"word_id":"word_28d9ab8c49715d9e","word":"insolent","reason":"provider_error"}
+{"word_id":"word_55c50bce192c0ac7","word":"jovial","reason":"provider_error"}
+{"word_id":"word_8da24bbec7b7d96a","word":"tenacious","reason":"provider_error"}
+{"word_id":"word_7629b856b8c16dfb","word":"juxtaposition","reason":"provider_error"}
+{"word_id":"word_260abdbabde191e3","word":"conceivably","reason":"provider_error"}
+{"word_id":"word_c64033672f5ca984","word":"engine","reason":"provider_error"}
+{"word_id":"word_d53b257ba8da2741","word":"ice","reason":"provider_error"}
+{"word_id":"word_972a13cbbe5e845e","word":"rich","reason":"provider_error"}
+{"word_id":"word_80d7ab15fdb172ce","word":"nevertheless","reason":"provider_error"}
+{"word_id":"word_5d2432d4636d257e","word":"cycle","reason":"provider_error"}
+{"word_id":"word_8fb3697a791f0332","word":"marked","reason":"provider_error"}
+{"word_id":"word_33d3f70dacf79ce2","word":"integrate","reason":"provider_error"}
+{"word_id":"word_4768682bfb3e1a5b","word":"controversial","reason":"provider_error"}
+{"word_id":"word_4dc2fddce604bd9a","word":"anticipate","reason":"provider_error"}
+{"word_id":"word_e1e8289afa6b54e4","word":"bias","reason":"provider_error"}
+{"word_id":"word_502101a265a02512","word":"notion","reason":"provider_error"}
+{"word_id":"word_d2dc8738683f5817","word":"objective","reason":"provider_error"}
+{"word_id":"word_006ee67db67fddc9","word":"fathom","reason":"provider_error"}
+{"word_id":"word_a3782828daa3053d","word":"flagship","reason":"provider_error"}
+{"word_id":"word_a2247667b41ff672","word":"hasten","reason":"provider_error"}
+{"word_id":"word_910080e7e25ca7a0","word":"niche","reason":"provider_error"}
+{"word_id":"word_4e47b852b7b7bbb5","word":"sluggish","reason":"provider_error"}
+{"word_id":"word_4a7986abc4e027c5","word":"stimulus","reason":"provider_error"}
+{"word_id":"word_19277fe527cb9330","word":"surplus","reason":"Not enough context or distinct meanings to generate content."}
+{"word_id":"word_e2d52298cc96033c","word":"taxation","reason":"Not enough context or distinct meanings to generate content."}
+{"word_id":"word_4a7256df9500598f","word":"thrive","reason":"Not enough context or distinct meanings to generate content."}
+{"word_id":"word_83e4fbbbb4a2eca1","word":"turnover","reason":"Not enough context or distinct meanings to generate content."}
+{"word_id":"word_4489926ad3a9d960","word":"pesticide","reason":"Not enough context or distinct meanings to generate content."}
+{"word_id":"word_c6ac39391a72f71f","word":"suppression","reason":"Word is too general and lacks specific context."}
+{"word_id":"word_8fbbd07f2d96e050","word":"milestone","reason":"Word is too general and lacks specific context."}
+{"word_id":"word_fe41988a74be75ce","word":"aviation","reason":"Word is too general and lacks specific context."}
+{"word_id":"word_86f774f1e9174299","word":"physique","reason":"Word is too general and lacks specific context."}
+{"word_id":"word_80fd353e4037eaef","word":"consist","reason":"Word is too general and lacks specific context."}
+{"word_id":"word_968d77ca9e41d0ed","word":"involve","reason":"provider_error"}
+{"word_id":"word_d0da2a3805a77cb7","word":"accommodate","reason":"provider_error"}
+{"word_id":"word_84900cb68e875d99","word":"accompany","reason":"provider_error"}
+{"word_id":"word_68e3e9374d2c1ad0","word":"despite","reason":"provider_error"}
+{"word_id":"word_59b189070af751d4","word":"display","reason":"provider_error"}
+{"word_id":"word_5d3f344b5bd21e95","word":"duration","reason":"provider_error"}
+{"word_id":"word_2f95bdc8b1dee37d","word":"extortion","reason":"provider_error"}
+{"word_id":"word_a0e019c0c56c8911","word":"fraud","reason":"provider_error"}
+{"word_id":"word_9f9bdfe45a7826a6","word":"homicide","reason":"provider_error"}
+{"word_id":"word_a98809c47f5ed30f","word":"smuggling","reason":"provider_error"}
+{"word_id":"word_6ff3fca6b17e5f06","word":"aftermath","reason":"provider_error"}
+{"word_id":"word_71dfa770f6293c78","word":"recreate","reason":"provider_error"}
+{"word_id":"word_15c87e10dcfee24e","word":"terrorism","reason":"provider_error"}
+{"word_id":"word_4e71a7b918831f1f","word":"threat","reason":"provider_error"}
+{"word_id":"word_4429f68570da76c2","word":"tone","reason":"provider_error"}
+{"word_id":"word_a0d73f624ffe9961","word":"vivid","reason":"provider_error"}
+{"word_id":"word_908897f614cc47da","word":"marginal","reason":"provider_error"}
+{"word_id":"word_3411327ba8e9abe4","word":"refute","reason":"provider_error"}
+{"word_id":"word_bcb13f062798bba2","word":"divulge","reason":"provider_error"}
+{"word_id":"word_c0e3750f4e0f7c80","word":"annihilate","reason":"provider_error"}
+{"word_id":"word_5c461ca98c1ea925","word":"annotate","reason":"provider_error"}
+{"word_id":"word_8fe5368e5b2371aa","word":"asymmetry","reason":"provider_error"}
+{"word_id":"word_11751d0a26763833","word":"atrocity","reason":"provider_error"}
+{"word_id":"word_158c742eec89a107","word":"atypical","reason":"provider_error"}
+{"word_id":"word_dacb0bcc0e34a506","word":"fraught","reason":"provider_error"}
+{"word_id":"word_13a4a6ecb0367084","word":"haphazard","reason":"provider_error"}
+{"word_id":"word_8bcff2ab7a28149f","word":"biosphere","reason":"provider_error"}
+{"word_id":"word_2d39f3b19bc380b4","word":"callous","reason":"provider_error"}
+{"word_id":"word_1f23487e39b45a71","word":"downtrodden","reason":"provider_error"}
+{"word_id":"word_48c910b6614c4a0a","word":"cryptography","reason":"provider_error"}
+{"word_id":"word_c64033672f5ca984","word":"engine","reason":"provider_error"}
+{"word_id":"word_d53b257ba8da2741","word":"ice","reason":"provider_error"}
+{"word_id":"word_972a13cbbe5e845e","word":"rich","reason":"provider_error"}
+{"word_id":"word_80d7ab15fdb172ce","word":"nevertheless","reason":"provider_error"}
+{"word_id":"word_5d2432d4636d257e","word":"cycle","reason":"provider_error"}
+{"word_id":"word_8fb3697a791f0332","word":"marked","reason":"provider_error"}
+{"word_id":"word_35a34c2218eaca77","word":"principal","reason":"provider_error"}
+{"word_id":"word_caee3e9d54b49ae5","word":"novel","reason":"provider_error"}
+{"word_id":"word_063dcf21f72d017b","word":"superior","reason":"provider_error"}
+{"word_id":"word_63e295a85beef836","word":"undoubtedly","reason":"provider_error"}
+{"word_id":"word_cefc253f5f4b326e","word":"nonetheless","reason":"provider_error"}
+{"word_id":"word_b4d32ccb24956ee5","word":"subsequently","reason":"provider_error"}
+{"word_id":"word_caee3e9d54b49ae5","word":"novel","reason":"provider_error"}
+{"word_id":"word_063dcf21f72d017b","word":"superior","reason":"provider_error"}
+{"word_id":"word_63e295a85beef836","word":"undoubtedly","reason":"provider_error"}
+{"word_id":"word_cefc253f5f4b326e","word":"nonetheless","reason":"provider_error"}
+{"word_id":"word_b4d32ccb24956ee5","word":"subsequently","reason":"provider_error"}
+{"word_id":"word_9d7c261bb879e057","word":"whereas","reason":"provider_error"}
+{"word_id":"word_64e5defaed355eed","word":"anathema","reason":"Word is too obscure for learners."}
+{"word_id":"word_b3f9fadab0ed0a8a","word":"apogee","reason":"Word is too obscure for learners."}
+{"word_id":"word_2323679a26122019","word":"arrogate","reason":"Word is too obscure for learners."}
+{"word_id":"word_2dd9e1aaa76e781f","word":"auspices","reason":"Word is too obscure for learners."}

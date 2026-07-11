@@ -62,6 +62,16 @@
       "audio": true
     },
     {
+      "slug": "ielts-extended",
+      "name": "IELTS Vocabulary — Extended",
+      "description": "Lower-frequency IELTS vocabulary (Batches 11-15) for advanced exam prep.",
+      "is_free": false,
+      "sku": "com.lexitap.exam.ielts",
+      "display_order": 10,
+      "requires_theme": false,
+      "audio": true
+    },
+    {
       "slug": "gre",
       "name": "GRE Vocabulary",
       "description": "Advanced academic words for the GRE.",

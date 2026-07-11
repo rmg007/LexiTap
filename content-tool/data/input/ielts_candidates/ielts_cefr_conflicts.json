@@ -1,0 +1,67 @@
+[
+ {
+  "word": "phenomenon",
+  "existing": "C1",
+  "source": "B2"
+ },
+ {
+  "word": "hypothesis",
+  "existing": "C1",
+  "source": "B2"
+ },
+ {
+  "word": "infer",
+  "existing": "C1",
+  "source": "B2"
+ },
+ {
+  "word": "allocate",
+  "existing": "C1",
+  "source": "B2"
+ },
+ {
+  "word": "advocate",
+  "existing": "C1",
+  "source": "B2"
+ },
+ {
+  "word": "ambiguous",
+  "existing": "C1",
+  "source": "B2"
+ },
+ {
+  "word": "meticulous",
+  "existing": "B2",
+  "source": "C1"
+ },
+ {
+  "word": "contradict",
+  "existing": "C1",
+  "source": "B2"
+ },
+ {
+  "word": "inevitable",
+  "existing": "C1",
+  "source": "B2"
+ },
+ {
+  "word": "pragmatic",
+  "existing": "C1",
+  "source": "B2"
+ },
+ {
+  "word": "resilient",
+  "existing": "C1",
+  "source": "B2"
+ },
+ {
+  "word": "portfolio",
+  "existing": "B1",
+  "source": "B2"
+ },
+ {
+  "word": "stakeholder",
+  "existing": "C1",
+  "source": "B2"
+ }
+]

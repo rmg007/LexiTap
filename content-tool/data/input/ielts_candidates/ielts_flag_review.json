@@ -1,0 +1,680 @@
+[
+ {
+  "word": "sophisticated",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 129,
+  "flags": [
+   "inflection->sophisticate"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "compelling",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 143,
+  "flags": [
+   "inflection->compel"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "protracted",
+  "cefr_level": "C2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 275,
+  "flags": [
+   "inflection->protract"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "underlying",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 317,
+  "flags": [
+   "inflection->underlie"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "bereft",
+  "cefr_level": "C2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 365,
+  "flags": [
+   "inflection->bereave"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "alleged",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 497,
+  "flags": [
+   "inflection->allege"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "aspiring",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 543,
+  "flags": [
+   "inflection->aspire"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "credentials",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 628,
+  "flags": [
+   "inflection->credential"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "daunting",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 633,
+  "flags": [
+   "inflection->daunt"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "disgruntled",
+  "cefr_level": "C1",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 662,
+  "flags": [
+   "inflection->disgruntle"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "ensuing",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 701,
+  "flags": [
+   "inflection->ensue"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "entrenched",
+  "cefr_level": "C1",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 703,
+  "flags": [
+   "inflection->entrench"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "exacting",
+  "cefr_level": "C1",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 722,
+  "flags": [
+   "inflection->exact"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "flawed",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 757,
+  "flags": [
+   "inflection->flaw"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "bespoke",
+  "cefr_level": "C1",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 814,
+  "flags": [
+   "inflection->bespeak"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "indebted",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 841,
+  "flags": [
+   "inflection->indebt"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "debilitating",
+  "cefr_level": "C1",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1064,
+  "flags": [
+   "inflection->debilitate"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "aggrieved",
+  "cefr_level": "C2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1151,
+  "flags": [
+   "inflection->aggrieve"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "disparaging",
+  "cefr_level": "C1",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1195,
+  "flags": [
+   "inflection->disparage"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "downtrodden",
+  "cefr_level": "C1",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1200,
+  "flags": [
+   "inflection->downtrod"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "estranged",
+  "cefr_level": "C1",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1208,
+  "flags": [
+   "inflection->estrange"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "grudging",
+  "cefr_level": "C1",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1228,
+  "flags": [
+   "inflection->grudge",
+   "lemma_in_master"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "hackneyed",
+  "cefr_level": "C2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1230,
+  "flags": [
+   "inflection->hackney"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "zoning",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1267,
+  "flags": [
+   "inflection->zone",
+   "lemma_in_master"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "exhilarating",
+  "cefr_level": "C1",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1282,
+  "flags": [
+   "inflection->exhilarate"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "upbringing",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1302,
+  "flags": [
+   "inflection->upbring"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "meager",
+  "cefr_level": "C1",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1369,
+  "flags": [
+   "inflection->meagre"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "sweeping",
+  "cefr_level": "C1",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1379,
+  "flags": [
+   "inflection->sweep"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "analytical",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1470,
+  "flags": [
+   "inflection->analytic"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "overcrowding",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1520,
+  "flags": [
+   "inflection->overcrowd"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "alarming",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1558,
+  "flags": [
+   "inflection->alarm"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "staggering",
+  "cefr_level": "C1",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1559,
+  "flags": [
+   "inflection->stagger"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "startling",
+  "cefr_level": "C1",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1560,
+  "flags": [
+   "inflection->startle"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "striking",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1561,
+  "flags": [
+   "inflection->strike"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "unsettling",
+  "cefr_level": "C1",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1562,
+  "flags": [
+   "inflection->unsettle",
+   "lemma_in_master"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "poaching",
+  "cefr_level": "B2",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1615,
+  "flags": [
+   "inflection->poach"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "overarching",
+  "cefr_level": "B2",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1652,
+  "flags": [
+   "inflection->overarch"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "inured",
+  "cefr_level": "C2",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1681,
+  "flags": [
+   "inflection->inure"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "disenchanted",
+  "cefr_level": "C1",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1690,
+  "flags": [
+   "inflection->disenchant"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "unbridled",
+  "cefr_level": "C2",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1693,
+  "flags": [
+   "inflection->unbridle"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "unwitting",
+  "cefr_level": "C1",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1700,
+  "flags": [
+   "inflection->unwit"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "dejected",
+  "cefr_level": "C1",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1801,
+  "flags": [
+   "inflection->deject"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "incensed",
+  "cefr_level": "C1",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1803,
+  "flags": [
+   "inflection->incense"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "dogged",
+  "cefr_level": "C1",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1831,
+  "flags": [
+   "inflection->dog",
+   "lemma_in_master"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "auspices",
+  "cefr_level": "C2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1892,
+  "flags": [
+   "inflection->auspice"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "enervating",
+  "cefr_level": "C2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1902,
+  "flags": [
+   "inflection->enervate"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "lackluster",
+  "cefr_level": "C1",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1933,
+  "flags": [
+   "inflection->lacklustre"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "countervailing",
+  "cefr_level": "C2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2027,
+  "flags": [
+   "inflection->countervail"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "demeaning",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2029,
+  "flags": [
+   "inflection->demean"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "embattled",
+  "cefr_level": "C1",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2037,
+  "flags": [
+   "inflection->embattle"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "pioneering",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2082,
+  "flags": [
+   "inflection->pioneer",
+   "lemma_in_master"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "caliber",
+  "cefr_level": "C1",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2085,
+  "flags": [
+   "inflection->calibre"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "veiled",
+  "cefr_level": "C1",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2138,
+  "flags": [
+   "inflection->veil"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "garbled",
+  "cefr_level": "C1",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2177,
+  "flags": [
+   "inflection->garble"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "perplexing",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2179,
+  "flags": [
+   "inflection->perplex"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "resounding",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2190,
+  "flags": [
+   "inflection->resound"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "doping",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2221,
+  "flags": [
+   "inflection->dope"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "inclined",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2692,
+  "flags": [
+   "inflection->incline"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "smuggling",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2761,
+  "flags": [
+   "inflection->smuggle",
+   "lemma_in_master"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "trafficking",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2762,
+  "flags": [
+   "inflection->traffick"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ },
+ {
+  "word": "skilled",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2874,
+  "flags": [
+   "inflection->skill",
+   "lemma_in_master"
+  ],
+  "resolution": "kept (2026-07-10 review): distinct testable IELTS word, not a true duplicate"
+ }
+]

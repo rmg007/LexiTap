@@ -1,0 +1,4783 @@
+[
+ {
+  "word": "significant",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 1
+ },
+ {
+  "word": "substantial",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 2
+ },
+ {
+  "word": "considerable",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 3
+ },
+ {
+  "word": "negligible",
+  "cefr_level": "C1",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 4
+ },
+ {
+  "word": "nevertheless",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 11
+ },
+ {
+  "word": "furthermore",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 13
+ },
+ {
+  "word": "moreover",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 14
+ },
+ {
+  "word": "consequently",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 15
+ },
+ {
+  "word": "thereby",
+  "cefr_level": "C1",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 17
+ },
+ {
+  "word": "phenomenon",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 27
+ },
+ {
+  "word": "hypothesis",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 41
+ },
+ {
+  "word": "framework",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 47
+ },
+ {
+  "word": "mechanism",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 48
+ },
+ {
+  "word": "trajectory",
+  "cefr_level": "C1",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 49
+ },
+ {
+  "word": "incentive",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 53
+ },
+ {
+  "word": "infer",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 76
+ },
+ {
+  "word": "allocate",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 79
+ },
+ {
+  "word": "advocate",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 87
+ },
+ {
+  "word": "constitute",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 90
+ },
+ {
+  "word": "articulate",
+  "cefr_level": "C1",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 95
+ },
+ {
+  "word": "fundamental",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 119
+ },
+ {
+  "word": "ubiquitous",
+  "cefr_level": "C1",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 127
+ },
+ {
+  "word": "ambiguous",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 131
+ },
+ {
+  "word": "empirical",
+  "cefr_level": "C1",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 134
+ },
+ {
+  "word": "feasible",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 137
+ },
+ {
+  "word": "comprehensive",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 163
+ },
+ {
+  "word": "meticulous",
+  "cefr_level": "C1",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 165
+ },
+ {
+  "word": "aesthetic",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 168
+ },
+ {
+  "word": "aggravate",
+  "cefr_level": "C1",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 170
+ },
+ {
+  "word": "ample",
+  "cefr_level": "C1",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 173
+ },
+ {
+  "word": "apparent",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 176
+ },
+ {
+  "word": "attribute",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 179
+ },
+ {
+  "word": "capacity",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 184
+ },
+ {
+  "word": "complement",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 187
+ },
+ {
+  "word": "contemporary",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 192
+ },
+ {
+  "word": "contradict",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 193
+ },
+ {
+  "word": "contrast",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 194
+ },
+ {
+  "word": "contribute",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 195
+ },
+ {
+  "word": "convention",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 197
+ },
+ {
+  "word": "delegate",
+  "cefr_level": "B2",
+  "batch": 1,
+  "tier": "Core",
+  "source_rank": 200
+ },
+ {
+  "word": "ensure",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 218
+ },
+ {
+  "word": "equivalent",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 221
+ },
+ {
+  "word": "evident",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 226
+ },
+ {
+  "word": "evolve",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 228
+ },
+ {
+  "word": "exceed",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 229
+ },
+ {
+  "word": "forge",
+  "cefr_level": "C1",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 237
+ },
+ {
+  "word": "genuine",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 239
+ },
+ {
+  "word": "incremental",
+  "cefr_level": "C1",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 245
+ },
+ {
+  "word": "inevitable",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 247
+ },
+ {
+  "word": "optimal",
+  "cefr_level": "C1",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 265
+ },
+ {
+  "word": "pragmatic",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 278
+ },
+ {
+  "word": "refine",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 285
+ },
+ {
+  "word": "reiterate",
+  "cefr_level": "C1",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 287
+ },
+ {
+  "word": "relevant",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 288
+ },
+ {
+  "word": "reluctant",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 289
+ },
+ {
+  "word": "resilient",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 290
+ },
+ {
+  "word": "scope",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 296
+ },
+ {
+  "word": "scrutinize",
+  "cefr_level": "C1",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 297
+ },
+ {
+  "word": "simultaneous",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 299
+ },
+ {
+  "word": "subsequent",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 307
+ },
+ {
+  "word": "sufficient",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 308
+ },
+ {
+  "word": "terminate",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 312
+ },
+ {
+  "word": "transform",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 314
+ },
+ {
+  "word": "uniform",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 318
+ },
+ {
+  "word": "utilize",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 319
+ },
+ {
+  "word": "valid",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 320
+ },
+ {
+  "word": "visible",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 325
+ },
+ {
+  "word": "yield",
+  "cefr_level": "C1",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 326
+ },
+ {
+  "word": "aloof",
+  "cefr_level": "C2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 339
+ },
+ {
+  "word": "antithesis",
+  "cefr_level": "C2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 346
+ },
+ {
+  "word": "appease",
+  "cefr_level": "C1",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 348
+ },
+ {
+  "word": "assimilate",
+  "cefr_level": "C1",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 354
+ },
+ {
+  "word": "attest",
+  "cefr_level": "C1",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 356
+ },
+ {
+  "word": "benchmark",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 362
+ },
+ {
+  "word": "clarity",
+  "cefr_level": "B2",
+  "batch": 2,
+  "tier": "Core",
+  "source_rank": 378
+ },
+ {
+  "word": "deviant",
+  "cefr_level": "C1",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 434
+ },
+ {
+  "word": "dilemma",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 441
+ },
+ {
+  "word": "diminutive",
+  "cefr_level": "C2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 443
+ },
+ {
+  "word": "domain",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 467
+ },
+ {
+  "word": "accord",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 475
+ },
+ {
+  "word": "accordingly",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 476
+ },
+ {
+  "word": "alliance",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 499
+ },
+ {
+  "word": "amass",
+  "cefr_level": "C1",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 503
+ },
+ {
+  "word": "anarchy",
+  "cefr_level": "C1",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 512
+ },
+ {
+  "word": "anonymity",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 518
+ },
+ {
+  "word": "apparatus",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 525
+ },
+ {
+  "word": "appendix",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 527
+ },
+ {
+  "word": "archaic",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 535
+ },
+ {
+  "word": "ardent",
+  "cefr_level": "C1",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 536
+ },
+ {
+  "word": "arena",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 537
+ },
+ {
+  "word": "arrogance",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 538
+ },
+ {
+  "word": "artifact",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 540
+ },
+ {
+  "word": "backlash",
+  "cefr_level": "B2",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 560
+ },
+ {
+  "word": "candor",
+  "cefr_level": "C1",
+  "batch": 3,
+  "tier": "Core",
+  "source_rank": 579
+ },
+ {
+  "word": "confront",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 610
+ },
+ {
+  "word": "defunct",
+  "cefr_level": "C1",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 642
+ },
+ {
+  "word": "deliberation",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 644
+ },
+ {
+  "word": "demeanor",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 646
+ },
+ {
+  "word": "disband",
+  "cefr_level": "C1",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 660
+ },
+ {
+  "word": "divisive",
+  "cefr_level": "C1",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 671
+ },
+ {
+  "word": "doctrine",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 672
+ },
+ {
+  "word": "dominion",
+  "cefr_level": "C2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 673
+ },
+ {
+  "word": "embargo",
+  "cefr_level": "C1",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 686
+ },
+ {
+  "word": "empower",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 691
+ },
+ {
+  "word": "enduring",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 697
+ },
+ {
+  "word": "ephemeral",
+  "cefr_level": "C2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 705
+ },
+ {
+  "word": "evocative",
+  "cefr_level": "C1",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 721
+ },
+ {
+  "word": "expertise",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 732
+ },
+ {
+  "word": "extraneous",
+  "cefr_level": "C1",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 737
+ },
+ {
+  "word": "facet",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 742
+ },
+ {
+  "word": "foreboding",
+  "cefr_level": "C2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 761
+ },
+ {
+  "word": "forfeit",
+  "cefr_level": "C1",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 763
+ },
+ {
+  "word": "forthright",
+  "cefr_level": "C1",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 768
+ },
+ {
+  "word": "franchise",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 772
+ },
+ {
+  "word": "gauge",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 778
+ },
+ {
+  "word": "glaring",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 781
+ },
+ {
+  "word": "glorify",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 782
+ },
+ {
+  "word": "harness",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 792
+ },
+ {
+  "word": "haven",
+  "cefr_level": "B2",
+  "batch": 4,
+  "tier": "Core",
+  "source_rank": 794
+ },
+ {
+  "word": "bankrupt",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 812
+ },
+ {
+  "word": "cartel",
+  "cefr_level": "C1",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 817
+ },
+ {
+  "word": "clientele",
+  "cefr_level": "C1",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 818
+ },
+ {
+  "word": "corporate",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 821
+ },
+ {
+  "word": "counterfeit",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 822
+ },
+ {
+  "word": "enterprise",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 831
+ },
+ {
+  "word": "equity",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 833
+ },
+ {
+  "word": "export",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 834
+ },
+ {
+  "word": "fiscal",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 835
+ },
+ {
+  "word": "liability",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 849
+ },
+ {
+  "word": "liquidate",
+  "cefr_level": "C1",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 850
+ },
+ {
+  "word": "monetary",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 859
+ },
+ {
+  "word": "mortgage",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 861
+ },
+ {
+  "word": "negotiable",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 864
+ },
+ {
+  "word": "portfolio",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 871
+ },
+ {
+  "word": "productivity",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 875
+ },
+ {
+  "word": "prosperity",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 877
+ },
+ {
+  "word": "revenue",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 886
+ },
+ {
+  "word": "stakeholder",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 893
+ },
+ {
+  "word": "standardize",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 894
+ },
+ {
+  "word": "tariff",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 900
+ },
+ {
+  "word": "venture",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 907
+ },
+ {
+  "word": "biodegradable",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 915
+ },
+ {
+  "word": "cognition",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 918
+ },
+ {
+  "word": "compound",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 919
+ },
+ {
+  "word": "dosage",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 923
+ },
+ {
+  "word": "emission",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 925
+ },
+ {
+  "word": "engineer",
+  "cefr_level": "C1",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 926
+ },
+ {
+  "word": "extinction",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 930
+ },
+ {
+  "word": "infectious",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 941
+ },
+ {
+  "word": "pollutant",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 956
+ },
+ {
+  "word": "prototype",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 957
+ },
+ {
+  "word": "radiation",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 958
+ },
+ {
+  "word": "sequence",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 964
+ },
+ {
+  "word": "toxin",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 970
+ },
+ {
+  "word": "volatile",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 973
+ },
+ {
+  "word": "conservation",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 977
+ },
+ {
+  "word": "endangered",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 983
+ },
+ {
+  "word": "reservoir",
+  "cefr_level": "B2",
+  "batch": 5,
+  "tier": "Core",
+  "source_rank": 992
+ },
+ {
+  "word": "anxiety",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1004
+ },
+ {
+  "word": "attachment",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1006
+ },
+ {
+  "word": "inhibition",
+  "cefr_level": "C1",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1020
+ },
+ {
+  "word": "reinforcement",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1030
+ },
+ {
+  "word": "resilience",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1032
+ },
+ {
+  "word": "temperament",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1034
+ },
+ {
+  "word": "faculty",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1044
+ },
+ {
+  "word": "acute",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1057
+ },
+ {
+  "word": "ailment",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1058
+ },
+ {
+  "word": "clinical",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1061
+ },
+ {
+  "word": "diagnosis",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1065
+ },
+ {
+  "word": "hygiene",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1067
+ },
+ {
+  "word": "editorial",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1084
+ },
+ {
+  "word": "fabrication",
+  "cefr_level": "C1",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1085
+ },
+ {
+  "word": "manipulate",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1088
+ },
+ {
+  "word": "tabloid",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1094
+ },
+ {
+  "word": "cohesion",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1097
+ },
+ {
+  "word": "ethnicity",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1098
+ },
+ {
+  "word": "heritage",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1099
+ },
+ {
+  "word": "integration",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1102
+ },
+ {
+  "word": "migration",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1104
+ },
+ {
+  "word": "pluralism",
+  "cefr_level": "C1",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1107
+ },
+ {
+  "word": "allegation",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1116
+ },
+ {
+  "word": "defendant",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1119
+ },
+ {
+  "word": "jurisdiction",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1126
+ },
+ {
+  "word": "misdemeanor",
+  "cefr_level": "C1",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1129
+ },
+ {
+  "word": "offender",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1130
+ },
+ {
+  "word": "plaintiff",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1132
+ },
+ {
+  "word": "statute",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1135
+ },
+ {
+  "word": "testimony",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1136
+ },
+ {
+  "word": "census",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1139
+ },
+ {
+  "word": "density",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1141
+ },
+ {
+  "word": "fertility",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1142
+ },
+ {
+  "word": "mortality",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1144
+ },
+ {
+  "word": "cliche",
+  "cefr_level": "B2",
+  "batch": 6,
+  "tier": "Core",
+  "source_rank": 1178
+ },
+ {
+  "word": "fleeting",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1215
+ },
+ {
+  "word": "forlorn",
+  "cefr_level": "C1",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1218
+ },
+ {
+  "word": "harrowing",
+  "cefr_level": "C1",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1232
+ },
+ {
+  "word": "blueprint",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1242
+ },
+ {
+  "word": "disruptive",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1248
+ },
+ {
+  "word": "glitch",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1251
+ },
+ {
+  "word": "sprawl",
+  "cefr_level": "C1",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1265
+ },
+ {
+  "word": "narrative",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1273
+ },
+ {
+  "word": "endurance",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1281
+ },
+ {
+  "word": "strenuous",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1284
+ },
+ {
+  "word": "paternal",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1299
+ },
+ {
+  "word": "perishable",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1310
+ },
+ {
+  "word": "forerunner",
+  "cefr_level": "C1",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1328
+ },
+ {
+  "word": "legacy",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1329
+ },
+ {
+  "word": "emphasis",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1337
+ },
+ {
+  "word": "synopsis",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1344
+ },
+ {
+  "word": "thesis",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1345
+ },
+ {
+  "word": "assumption",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1348
+ },
+ {
+  "word": "coherence",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1350
+ },
+ {
+  "word": "compensation",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1351
+ },
+ {
+  "word": "distinction",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1353
+ },
+ {
+  "word": "implementation",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1356
+ },
+ {
+  "word": "presumption",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1359
+ },
+ {
+  "word": "abundant",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1363
+ },
+ {
+  "word": "colossal",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1364
+ },
+ {
+  "word": "immeasurable",
+  "cefr_level": "C1",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1366
+ },
+ {
+  "word": "innumerable",
+  "cefr_level": "C1",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1368
+ },
+ {
+  "word": "minuscule",
+  "cefr_level": "C1",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1370
+ },
+ {
+  "word": "minute",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1371
+ },
+ {
+  "word": "paltry",
+  "cefr_level": "C2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1373
+ },
+ {
+  "word": "sizable",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1377
+ },
+ {
+  "word": "velocity",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1392
+ },
+ {
+  "word": "binding",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1396
+ },
+ {
+  "word": "clause",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1398
+ },
+ {
+  "word": "compliance",
+  "cefr_level": "B2",
+  "batch": 7,
+  "tier": "Core",
+  "source_rank": 1399
+ },
+ {
+  "word": "provision",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1408
+ },
+ {
+  "word": "testament",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1415
+ },
+ {
+  "word": "domineering",
+  "cefr_level": "C1",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1426
+ },
+ {
+  "word": "sabbatical",
+  "cefr_level": "C1",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1456
+ },
+ {
+  "word": "sample",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1466
+ },
+ {
+  "word": "deduction",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1472
+ },
+ {
+  "word": "discernment",
+  "cefr_level": "C1",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1473
+ },
+ {
+  "word": "heuristic",
+  "cefr_level": "C1",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1474
+ },
+ {
+  "word": "insightful",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1475
+ },
+ {
+  "word": "reflective",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1479
+ },
+ {
+  "word": "behemoth",
+  "cefr_level": "C2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1495
+ },
+ {
+  "word": "treaty",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1516
+ },
+ {
+  "word": "metropolis",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1519
+ },
+ {
+  "word": "marked",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1529
+ },
+ {
+  "word": "stagnant",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1536
+ },
+ {
+  "word": "nomad",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1547
+ },
+ {
+  "word": "oceanic",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1555
+ },
+ {
+  "word": "misconception",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1563
+ },
+ {
+  "word": "overstate",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1568
+ },
+ {
+  "word": "unfounded",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1571
+ },
+ {
+  "word": "parasitic",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1581
+ },
+ {
+  "word": "civic",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1582
+ },
+ {
+  "word": "communal",
+  "cefr_level": "B2",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1583
+ },
+ {
+  "word": "exasperation",
+  "cefr_level": "C1",
+  "batch": 8,
+  "tier": "Core",
+  "source_rank": 1598
+ },
+ {
+  "word": "reminisce",
+  "cefr_level": "B2",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1605
+ },
+ {
+  "word": "resentment",
+  "cefr_level": "B2",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1606
+ },
+ {
+  "word": "segregation",
+  "cefr_level": "B2",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1611
+ },
+ {
+  "word": "ornamental",
+  "cefr_level": "B2",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1626
+ },
+ {
+  "word": "flimsy",
+  "cefr_level": "B2",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1637
+ },
+ {
+  "word": "inconclusive",
+  "cefr_level": "B2",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1638
+ },
+ {
+  "word": "robust",
+  "cefr_level": "B2",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1639
+ },
+ {
+  "word": "grueling",
+  "cefr_level": "C1",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1656
+ },
+ {
+  "word": "collaborative",
+  "cefr_level": "B2",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1661
+ },
+ {
+  "word": "jeopardize",
+  "cefr_level": "B2",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1669
+ },
+ {
+  "word": "reckless",
+  "cefr_level": "B2",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1671
+ },
+ {
+  "word": "indefensible",
+  "cefr_level": "C1",
+  "batch": 9,
+  "tier": "Core",
+  "source_rank": 1760
+ },
+ {
+  "word": "computation",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1810
+ },
+ {
+  "word": "numerical",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1812
+ },
+ {
+  "word": "cardiovascular",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1821
+ },
+ {
+  "word": "perseverance",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1832
+ },
+ {
+  "word": "submit",
+  "cefr_level": "C1",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1843
+ },
+ {
+  "word": "multitude",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1847
+ },
+ {
+  "word": "atrophy",
+  "cefr_level": "C1",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1849
+ },
+ {
+  "word": "monumental",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1855
+ },
+ {
+  "word": "reverence",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1879
+ },
+ {
+  "word": "decrepit",
+  "cefr_level": "C1",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1897
+ },
+ {
+  "word": "surveillance",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1924
+ },
+ {
+  "word": "antiquity",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1925
+ },
+ {
+  "word": "document",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1945
+ },
+ {
+  "word": "legislation",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1955
+ },
+ {
+  "word": "negotiate",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1959
+ },
+ {
+  "word": "normalize",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1960
+ },
+ {
+  "word": "simplify",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1966
+ },
+ {
+  "word": "transition",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1968
+ },
+ {
+  "word": "proportional",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1974
+ },
+ {
+  "word": "indeterminate",
+  "cefr_level": "C1",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1977
+ },
+ {
+  "word": "hindsight",
+  "cefr_level": "B2",
+  "batch": 10,
+  "tier": "Core",
+  "source_rank": 1990
+ },
+ {
+  "word": "deportation",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2006
+ },
+ {
+  "word": "displacement",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2007
+ },
+ {
+  "word": "promotional",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2015
+ },
+ {
+  "word": "duality",
+  "cefr_level": "C1",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2035
+ },
+ {
+  "word": "foray",
+  "cefr_level": "C1",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2059
+ },
+ {
+  "word": "adolescence",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2063
+ },
+ {
+  "word": "developmental",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2064
+ },
+ {
+  "word": "formative",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2065
+ },
+ {
+  "word": "tenant",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2076
+ },
+ {
+  "word": "novel",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2080
+ },
+ {
+  "word": "originality",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2081
+ },
+ {
+  "word": "superlative",
+  "cefr_level": "C2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2094
+ },
+ {
+  "word": "maritime",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2102
+ },
+ {
+  "word": "freight",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2105
+ },
+ {
+  "word": "captivity",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2107
+ },
+ {
+  "word": "sardonic",
+  "cefr_level": "C1",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2128
+ },
+ {
+  "word": "patent",
+  "cefr_level": "C2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2137
+ },
+ {
+  "word": "prevalence",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2142
+ },
+ {
+  "word": "tribunal",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2149
+ },
+ {
+  "word": "reverie",
+  "cefr_level": "C2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2153
+ },
+ {
+  "word": "hasty",
+  "cefr_level": "B2",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2184
+ },
+ {
+  "word": "raucous",
+  "cefr_level": "C1",
+  "batch": 11,
+  "tier": "Extended",
+  "source_rank": 2189
+ },
+ {
+  "word": "antidote",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2201
+ },
+ {
+  "word": "nondescript",
+  "cefr_level": "C1",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2205
+ },
+ {
+  "word": "nonsensical",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2207
+ },
+ {
+  "word": "hyperactive",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2210
+ },
+ {
+  "word": "pliable",
+  "cefr_level": "C1",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2216
+ },
+ {
+  "word": "structural",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2236
+ },
+ {
+  "word": "abandon",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2242
+ },
+ {
+  "word": "conduct",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2243
+ },
+ {
+  "word": "advocacy",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2254
+ },
+ {
+  "word": "persecution",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2257
+ },
+ {
+  "word": "foreclosure",
+  "cefr_level": "C1",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2262
+ },
+ {
+  "word": "transmission",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2264
+ },
+ {
+  "word": "aspect",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2265
+ },
+ {
+  "word": "assume",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2266
+ },
+ {
+  "word": "establish",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2268
+ },
+ {
+  "word": "context",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2269
+ },
+ {
+  "word": "achieve",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2271
+ },
+ {
+  "word": "analyze",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2276
+ },
+ {
+  "word": "applicable",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2277
+ },
+ {
+  "word": "approach",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2278
+ },
+ {
+  "word": "assist",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2280
+ },
+ {
+  "word": "authority",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2281
+ },
+ {
+  "word": "available",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2282
+ },
+ {
+  "word": "category",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2283
+ },
+ {
+  "word": "circumstance",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2284
+ },
+ {
+  "word": "complexity",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2285
+ },
+ {
+  "word": "consent",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2287
+ },
+ {
+  "word": "core",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2288
+ },
+ {
+  "word": "data",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2289
+ },
+ {
+  "word": "environment",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2292
+ },
+ {
+  "word": "estimate",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2293
+ },
+ {
+  "word": "external",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2294
+ },
+ {
+  "word": "factor",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2295
+ },
+ {
+  "word": "feature",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2296
+ },
+ {
+  "word": "indicate",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2298
+ },
+ {
+  "word": "individual",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2299
+ },
+ {
+  "word": "institute",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2300
+ },
+ {
+  "word": "maximize",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2301
+ },
+ {
+  "word": "obtain",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2303
+ },
+ {
+  "word": "procedure",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2306
+ },
+ {
+  "word": "process",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2307
+ },
+ {
+  "word": "promote",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2308
+ },
+ {
+  "word": "require",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2310
+ },
+ {
+  "word": "sector",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2312
+ },
+ {
+  "word": "appropriate",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2316
+ },
+ {
+  "word": "capable",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2317
+ },
+ {
+  "word": "constant",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2319
+ },
+ {
+  "word": "cycle",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2324
+ },
+ {
+  "word": "debate",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2325
+ },
+ {
+  "word": "domestic",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2332
+ },
+ {
+  "word": "draft",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2333
+ },
+ {
+  "word": "dynamic",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2335
+ },
+ {
+  "word": "economic",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2336
+ },
+ {
+  "word": "enable",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2337
+ },
+ {
+  "word": "energy",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2338
+ },
+ {
+  "word": "error",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2340
+ },
+ {
+  "word": "foundation",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2345
+ },
+ {
+  "word": "function",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2346
+ },
+ {
+  "word": "fund",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2347
+ },
+ {
+  "word": "grant",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2349
+ },
+ {
+  "word": "guideline",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2351
+ },
+ {
+  "word": "hence",
+  "cefr_level": "C1",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2352
+ },
+ {
+  "word": "highlight",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2353
+ },
+ {
+  "word": "ignorance",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2356
+ },
+ {
+  "word": "impact",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2357
+ },
+ {
+  "word": "income",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2362
+ },
+ {
+  "word": "initial",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2363
+ },
+ {
+  "word": "instance",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2365
+ },
+ {
+  "word": "internal",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2369
+ },
+ {
+  "word": "investigate",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2373
+ },
+ {
+  "word": "issue",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2376
+ },
+ {
+  "word": "labor",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2378
+ },
+ {
+  "word": "layer",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2379
+ },
+ {
+  "word": "legal",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2380
+ },
+ {
+  "word": "levy",
+  "cefr_level": "C1",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2382
+ },
+ {
+  "word": "license",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2383
+ },
+ {
+  "word": "maintain",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2387
+ },
+ {
+  "word": "major",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2388
+ },
+ {
+  "word": "mental",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2391
+ },
+ {
+  "word": "method",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2392
+ },
+ {
+  "word": "minor",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2398
+ },
+ {
+  "word": "network",
+  "cefr_level": "B2",
+  "batch": 12,
+  "tier": "Extended",
+  "source_rank": 2399
+ },
+ {
+  "word": "occur",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2401
+ },
+ {
+  "word": "offset",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2402
+ },
+ {
+  "word": "period",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2403
+ },
+ {
+  "word": "perspective",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2404
+ },
+ {
+  "word": "phase",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2405
+ },
+ {
+  "word": "policy",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2406
+ },
+ {
+  "word": "portion",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2407
+ },
+ {
+  "word": "potential",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2409
+ },
+ {
+  "word": "preliminary",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2413
+ },
+ {
+  "word": "previous",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2414
+ },
+ {
+  "word": "primary",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2415
+ },
+ {
+  "word": "principal",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2417
+ },
+ {
+  "word": "principle",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2418
+ },
+ {
+  "word": "prior",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2419
+ },
+ {
+  "word": "professional",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2422
+ },
+ {
+  "word": "proportion",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2424
+ },
+ {
+  "word": "publication",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2426
+ },
+ {
+  "word": "range",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2428
+ },
+ {
+  "word": "ratio",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2429
+ },
+ {
+  "word": "readily",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2430
+ },
+ {
+  "word": "region",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2433
+ },
+ {
+  "word": "release",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2436
+ },
+ {
+  "word": "remove",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2438
+ },
+ {
+  "word": "research",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2439
+ },
+ {
+  "word": "resource",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2441
+ },
+ {
+  "word": "role",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2445
+ },
+ {
+  "word": "route",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2446
+ },
+ {
+  "word": "scheme",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2448
+ },
+ {
+  "word": "section",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2449
+ },
+ {
+  "word": "secure",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2450
+ },
+ {
+  "word": "seek",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2451
+ },
+ {
+  "word": "similar",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2454
+ },
+ {
+  "word": "site",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2455
+ },
+ {
+  "word": "source",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2457
+ },
+ {
+  "word": "specific",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2458
+ },
+ {
+  "word": "stable",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2460
+ },
+ {
+  "word": "status",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2461
+ },
+ {
+  "word": "strategy",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2463
+ },
+ {
+  "word": "stress",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2464
+ },
+ {
+  "word": "structure",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2465
+ },
+ {
+  "word": "sum",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2466
+ },
+ {
+  "word": "summary",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2467
+ },
+ {
+  "word": "survey",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2469
+ },
+ {
+  "word": "target",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2471
+ },
+ {
+  "word": "team",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2472
+ },
+ {
+  "word": "technical",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2473
+ },
+ {
+  "word": "technique",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2474
+ },
+ {
+  "word": "technology",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2475
+ },
+ {
+  "word": "temporary",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2476
+ },
+ {
+  "word": "text",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2477
+ },
+ {
+  "word": "theory",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2479
+ },
+ {
+  "word": "tradition",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2481
+ },
+ {
+  "word": "transfer",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2482
+ },
+ {
+  "word": "undertake",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2486
+ },
+ {
+  "word": "unique",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2488
+ },
+ {
+  "word": "vary",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2489
+ },
+ {
+  "word": "version",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2490
+ },
+ {
+  "word": "vision",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2493
+ },
+ {
+  "word": "visual",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2494
+ },
+ {
+  "word": "volume",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2495
+ },
+ {
+  "word": "welfare",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2497
+ },
+ {
+  "word": "scale",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2501
+ },
+ {
+  "word": "span",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2502
+ },
+ {
+  "word": "bleak",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2503
+ },
+ {
+  "word": "sweltering",
+  "cefr_level": "C1",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2505
+ },
+ {
+  "word": "temperate",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2506
+ },
+ {
+  "word": "scavenge",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2510
+ },
+ {
+  "word": "summit",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2513
+ },
+ {
+  "word": "minority",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2515
+ },
+ {
+  "word": "acquisition",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2517
+ },
+ {
+  "word": "capital",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2520
+ },
+ {
+  "word": "commerce",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2521
+ },
+ {
+  "word": "competitive",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2522
+ },
+ {
+  "word": "consumer",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2524
+ },
+ {
+  "word": "contract",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2525
+ },
+ {
+  "word": "demand",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2526
+ },
+ {
+  "word": "manufacture",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2528
+ },
+ {
+  "word": "output",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2531
+ },
+ {
+  "word": "production",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2532
+ },
+ {
+  "word": "platform",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2538
+ },
+ {
+  "word": "software",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2539
+ },
+ {
+  "word": "dialogue",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2541
+ },
+ {
+  "word": "medium",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2542
+ },
+ {
+  "word": "security",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2543
+ },
+ {
+  "word": "assess",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2544
+ },
+ {
+  "word": "criteria",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2545
+ },
+ {
+  "word": "examine",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2546
+ },
+ {
+  "word": "grade",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2547
+ },
+ {
+  "word": "result",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2550
+ },
+ {
+  "word": "accurate",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2554
+ },
+ {
+  "word": "additional",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2558
+ },
+ {
+  "word": "adequate",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2559
+ },
+ {
+  "word": "administration",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2560
+ },
+ {
+  "word": "advance",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2562
+ },
+ {
+  "word": "affect",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2563
+ },
+ {
+  "word": "aid",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2564
+ },
+ {
+  "word": "alternative",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2566
+ },
+ {
+  "word": "ambitious",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2567
+ },
+ {
+  "word": "annual",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2569
+ },
+ {
+  "word": "appeal",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2570
+ },
+ {
+  "word": "apply",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2571
+ },
+ {
+  "word": "array",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2575
+ },
+ {
+  "word": "assault",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2576
+ },
+ {
+  "word": "attitude",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2580
+ },
+ {
+  "word": "bond",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2583
+ },
+ {
+  "word": "boundary",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2585
+ },
+ {
+  "word": "brief",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2587
+ },
+ {
+  "word": "broad",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2588
+ },
+ {
+  "word": "budget",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2589
+ },
+ {
+  "word": "campaign",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2591
+ },
+ {
+  "word": "channel",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2595
+ },
+ {
+  "word": "chapter",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2596
+ },
+ {
+  "word": "chief",
+  "cefr_level": "B2",
+  "batch": 13,
+  "tier": "Extended",
+  "source_rank": 2597
+ },
+ {
+  "word": "classify",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2601
+ },
+ {
+  "word": "code",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2602
+ },
+ {
+  "word": "commission",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2603
+ },
+ {
+  "word": "community",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2605
+ },
+ {
+  "word": "complex",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2606
+ },
+ {
+  "word": "component",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2607
+ },
+ {
+  "word": "computer",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2608
+ },
+ {
+  "word": "concept",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2610
+ },
+ {
+  "word": "confine",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2611
+ },
+ {
+  "word": "conflict",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2613
+ },
+ {
+  "word": "contact",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2615
+ },
+ {
+  "word": "couple",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2618
+ },
+ {
+  "word": "create",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2619
+ },
+ {
+  "word": "credit",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2620
+ },
+ {
+  "word": "current",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2621
+ },
+ {
+  "word": "design",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2623
+ },
+ {
+  "word": "device",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2624
+ },
+ {
+  "word": "discriminate",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2625
+ },
+ {
+  "word": "economy",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2629
+ },
+ {
+  "word": "element",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2630
+ },
+ {
+  "word": "equipment",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2632
+ },
+ {
+  "word": "estate",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2633
+ },
+ {
+  "word": "fee",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2635
+ },
+ {
+  "word": "file",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2636
+ },
+ {
+  "word": "final",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2637
+ },
+ {
+  "word": "finance",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2638
+ },
+ {
+  "word": "focus",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2639
+ },
+ {
+  "word": "formula",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2640
+ },
+ {
+  "word": "generation",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2642
+ },
+ {
+  "word": "goal",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2643
+ },
+ {
+  "word": "combatant",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2645
+ },
+ {
+  "word": "strategic",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2650
+ },
+ {
+  "word": "archive",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2657
+ },
+ {
+  "word": "index",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2659
+ },
+ {
+  "word": "manuscript",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2660
+ },
+ {
+  "word": "dependent",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2674
+ },
+ {
+  "word": "relapse",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2677
+ },
+ {
+  "word": "bottleneck",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2678
+ },
+ {
+  "word": "inspection",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2687
+ },
+ {
+  "word": "identity",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2688
+ },
+ {
+  "word": "image",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2689
+ },
+ {
+  "word": "incident",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2691
+ },
+ {
+  "word": "input",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2694
+ },
+ {
+  "word": "instruction",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2696
+ },
+ {
+  "word": "instrument",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2697
+ },
+ {
+  "word": "intelligence",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2698
+ },
+ {
+  "word": "interpretation",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2699
+ },
+ {
+  "word": "item",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2700
+ },
+ {
+  "word": "job",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2701
+ },
+ {
+  "word": "journal",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2702
+ },
+ {
+  "word": "lecture",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2704
+ },
+ {
+  "word": "liberal",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2705
+ },
+ {
+  "word": "maximum",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2707
+ },
+ {
+  "word": "media",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2708
+ },
+ {
+  "word": "medical",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2709
+ },
+ {
+  "word": "military",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2710
+ },
+ {
+  "word": "minimum",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2711
+ },
+ {
+  "word": "ministry",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2712
+ },
+ {
+  "word": "mode",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2713
+ },
+ {
+  "word": "nuclear",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2718
+ },
+ {
+  "word": "obvious",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2719
+ },
+ {
+  "word": "option",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2721
+ },
+ {
+  "word": "overall",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2723
+ },
+ {
+  "word": "overlap",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2724
+ },
+ {
+  "word": "panel",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2726
+ },
+ {
+  "word": "passive",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2728
+ },
+ {
+  "word": "percent",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2729
+ },
+ {
+  "word": "philosophy",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2730
+ },
+ {
+  "word": "physical",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2731
+ },
+ {
+  "word": "positive",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2733
+ },
+ {
+  "word": "project",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2734
+ },
+ {
+  "word": "psychology",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2735
+ },
+ {
+  "word": "style",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2740
+ },
+ {
+  "word": "tissue",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2744
+ },
+ {
+  "word": "transport",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2746
+ },
+ {
+  "word": "vehicle",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2747
+ },
+ {
+  "word": "garment",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2751
+ },
+ {
+  "word": "residence",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2754
+ },
+ {
+  "word": "vandalism",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2763
+ },
+ {
+  "word": "amendment",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2764
+ },
+ {
+  "word": "constitution",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2766
+ },
+ {
+  "word": "federal",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2767
+ },
+ {
+  "word": "legislature",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2768
+ },
+ {
+  "word": "clergy",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2769
+ },
+ {
+  "word": "congregation",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2770
+ },
+ {
+  "word": "denomination",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2771
+ },
+ {
+  "word": "sacred",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2774
+ },
+ {
+  "word": "outrage",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2782
+ },
+ {
+  "word": "relief",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2784
+ },
+ {
+  "word": "forefront",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2789
+ },
+ {
+  "word": "juncture",
+  "cefr_level": "C1",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2791
+ },
+ {
+  "word": "climax",
+  "cefr_level": "B2",
+  "batch": 14,
+  "tier": "Extended",
+  "source_rank": 2799
+ },
+ {
+  "word": "reflect",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2808
+ },
+ {
+  "word": "reform",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2809
+ },
+ {
+  "word": "regional",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2812
+ },
+ {
+  "word": "relation",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2813
+ },
+ {
+  "word": "represent",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2822
+ },
+ {
+  "word": "representative",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2823
+ },
+ {
+  "word": "republic",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2825
+ },
+ {
+  "word": "resign",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2830
+ },
+ {
+  "word": "retreat",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2834
+ },
+ {
+  "word": "retrieve",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2835
+ },
+ {
+  "word": "revolutionary",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2839
+ },
+ {
+  "word": "rural",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2844
+ },
+ {
+  "word": "sacrifice",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2845
+ },
+ {
+  "word": "salary",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2846
+ },
+ {
+  "word": "script",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2851
+ },
+ {
+  "word": "secondary",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2852
+ },
+ {
+  "word": "seize",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2854
+ },
+ {
+  "word": "sensitive",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2858
+ },
+ {
+  "word": "separate",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2859
+ },
+ {
+  "word": "series",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2860
+ },
+ {
+  "word": "session",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2862
+ },
+ {
+  "word": "severe",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2864
+ },
+ {
+  "word": "shallow",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2865
+ },
+ {
+  "word": "shatter",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2866
+ },
+ {
+  "word": "shortage",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2869
+ },
+ {
+  "word": "signal",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2872
+ },
+ {
+  "word": "slight",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2875
+ },
+ {
+  "word": "solid",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2877
+ },
+ {
+  "word": "somewhat",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2878
+ },
+ {
+  "word": "oversight",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2881
+ },
+ {
+  "word": "transparency",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2882
+ },
+ {
+  "word": "credibility",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2884
+ },
+ {
+  "word": "class",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2888
+ },
+ {
+  "word": "standard",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2892
+ },
+ {
+  "word": "state",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2893
+ },
+ {
+  "word": "stock",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2897
+ },
+ {
+  "word": "storage",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2898
+ },
+ {
+  "word": "stream",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2900
+ },
+ {
+  "word": "substance",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2904
+ },
+ {
+  "word": "suit",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2907
+ },
+ {
+  "word": "superior",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2908
+ },
+ {
+  "word": "supply",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2909
+ },
+ {
+  "word": "supreme",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2910
+ },
+ {
+  "word": "surface",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2911
+ },
+ {
+  "word": "tend",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2922
+ },
+ {
+  "word": "tendency",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2923
+ },
+ {
+  "word": "term",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2925
+ },
+ {
+  "word": "territory",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2926
+ },
+ {
+  "word": "thus",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2930
+ },
+ {
+  "word": "title",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2931
+ },
+ {
+  "word": "total",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2933
+ },
+ {
+  "word": "track",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2934
+ },
+ {
+  "word": "trade",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2935
+ },
+ {
+  "word": "tragedy",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2936
+ },
+ {
+  "word": "trial",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2939
+ },
+ {
+  "word": "unemployment",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2942
+ },
+ {
+  "word": "union",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2943
+ },
+ {
+  "word": "unit",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2944
+ },
+ {
+  "word": "urban",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2948
+ },
+ {
+  "word": "utility",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2951
+ },
+ {
+  "word": "variation",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2954
+ },
+ {
+  "word": "vast",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2955
+ },
+ {
+  "word": "vessel",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2958
+ },
+ {
+  "word": "vice",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2960
+ },
+ {
+  "word": "violence",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2962
+ },
+ {
+  "word": "vital",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2965
+ },
+ {
+  "word": "voyage",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2968
+ },
+ {
+  "word": "wage",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2969
+ },
+ {
+  "word": "waste",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2970
+ },
+ {
+  "word": "wealth",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2971
+ },
+ {
+  "word": "witness",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2974
+ },
+ {
+  "word": "worth",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2975
+ },
+ {
+  "word": "youth",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2977
+ },
+ {
+  "word": "zone",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2978
+ },
+ {
+  "word": "absence",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2979
+ },
+ {
+  "word": "actual",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2980
+ },
+ {
+  "word": "addition",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2981
+ },
+ {
+  "word": "advantage",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2985
+ },
+ {
+  "word": "affair",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2986
+ },
+ {
+  "word": "agency",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2988
+ },
+ {
+  "word": "agenda",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2989
+ },
+ {
+  "word": "agent",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2990
+ },
+ {
+  "word": "alert",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2993
+ },
+ {
+  "word": "ally",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2994
+ },
+ {
+  "word": "amount",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2995
+ },
+ {
+  "word": "analysis",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2996
+ },
+ {
+  "word": "angle",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2997
+ },
+ {
+  "word": "architect",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 2999
+ },
+ {
+  "word": "area",
+  "cefr_level": "B2",
+  "batch": 15,
+  "tier": "Extended",
+  "source_rank": 3000
+ }
+]
